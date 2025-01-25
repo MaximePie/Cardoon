@@ -10,6 +10,8 @@ lerna-debug.log*
 Cardoon/node_modules
 Cardoon/dist
 Cardoon/dist-ssr
+server/node_modules
+server/config/config.js
 *.local
 
 # Editor directories and files

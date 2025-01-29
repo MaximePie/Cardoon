@@ -2,6 +2,7 @@
 import express from "express";
 const router = express.Router();
 import Card from "../../models/Card.js";
+import { clearDBAndSeed } from "../../controllers/card.js";
 
 // @route   GET api/books/test
 // @desc    Tests books route
@@ -11,12 +12,12 @@ router.get("/test", (req, res) => res.send("Card route testing!"));
 // @route   GET api/books
 // @desc    Get all books
 // @access  Public
-router.get("/", (req, res) => {
-  Card.find()
-    .then((cards) => res.json(cards))
-    .catch((err) =>
-      res.status(404).json({ noCardFound: "No noCardFound found" })
-    );
+router.get("/", async (req, res) => {
+  await clearDBAndSeed();
+
+  const cards = await Card.find();
+  const result = cards;
+  res.json(cards);
 });
 
 // @route   GET api/books/:id

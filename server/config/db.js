@@ -3,7 +3,6 @@
 import mongoose from "mongoose";
 import config from "./config.js";
 const db = config;
-/* Replace <password> with your database password */
 
 mongoose.set("strictQuery", true, "useNewUrlParser", true);
 

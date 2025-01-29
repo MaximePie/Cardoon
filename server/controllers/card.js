@@ -28,7 +28,7 @@ import Card from "../models/Card.js";
  */
 export const clearDBAndSeed = async () => {
   await Card.deleteMany({});
-  const cards = await Card.insertMany([
+  await Card.insertMany([
     {
       question: "Mad en avancé ?",
       answer: "Out of mind",
@@ -55,7 +55,4 @@ export const clearDBAndSeed = async () => {
       interval: 1,
     },
   ]);
-
-  console.log("Database cleared and seeded with new cards");
-  console.log(cards);
 };

@@ -13,10 +13,7 @@ router.get("/test", (req, res) => res.send("Card route testing!"));
 // @desc    Get all books
 // @access  Public
 router.get("/", async (req, res) => {
-  await clearDBAndSeed();
-
   const cards = await Card.find();
-  const result = cards;
   res.json(cards);
 });
 
@@ -34,10 +31,17 @@ router.get("/:id", (req, res) => {
 // @route   POST api/books
 // @desc    Add/save book
 // @access  Public
-router.post("/", (req, res) => {
-  Card.create(req.body)
-    .then((card) => res.json({ msg: "card added successfully" }))
-    .catch((err) => res.status(400).json({ error: "Unable to add this card" }));
+router.post("/", async (req, res) => {
+  console.log(req.body);
+
+  const newCard = {
+    question: req.body.question,
+    answer: req.body.answer,
+    interval: 5, // 5 seconds
+  };
+
+  const createdCard = await Card.create(newCard);
+  res.json(createdCard);
 });
 
 // @route   PUT api/books/:id

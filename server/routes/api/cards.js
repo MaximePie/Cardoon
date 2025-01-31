@@ -2,7 +2,7 @@
 import express from "express";
 const router = express.Router();
 import Card from "../../models/Card.js";
-import { clearDBAndSeed } from "../../controllers/card.js";
+import authMiddleware from "../../middleware/auth.js";
 
 // @route   GET api/books/test
 // @desc    Tests books route
@@ -31,9 +31,8 @@ router.get("/:id", (req, res) => {
 // @route   POST api/books
 // @desc    Add/save book
 // @access  Public
-router.post("/", async (req, res) => {
-  console.log(req.body);
-
+router.post("/", authMiddleware, async (req, res) => {
+  console.log(req.user.username);
   const newCard = {
     question: req.body.question,
     answer: req.body.answer,
@@ -53,6 +52,11 @@ router.put("/:id", (req, res) => {
     .catch((err) =>
       res.status(400).json({ error: "Unable to update the Database" })
     );
+});
+
+router.put("/updateInterval/:id", async (req, res) => {
+  // isCorrectAnswer === true => increase interval
+  // isCorrectAnswer === false => decrease interval
 });
 
 // @route   DELETE api/books/:id

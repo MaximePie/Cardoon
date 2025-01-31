@@ -4,7 +4,6 @@ import mongoose from "mongoose";
  * A card has the following properties:
  * A question (String)
  * An answer (String)
- * An interval in second (Number)
  */
 const CardSchema = new mongoose.Schema({
   question: {
@@ -13,10 +12,6 @@ const CardSchema = new mongoose.Schema({
   },
   answer: {
     type: String,
-    required: true,
-  },
-  interval: {
-    type: Number,
     required: true,
   },
 });

@@ -1,21 +1,7 @@
 import Card from "../models/Card.js";
+import User from "../models/User.js";
+import UserCard from "../models/UserCard.js";
 
-/**
- * const CardSchema = new mongoose.Schema({
-   question: {
-     type: String,
-     required: true,
-   },
-   answer: {
-     type: String,
-     required: true,
-   },
-   interval: {
-     type: Number,
-     required: true,
-   },
- });
- */
 /**
  * Remove all cards from the database and seed it with new cards
  *
@@ -26,33 +12,46 @@ import Card from "../models/Card.js";
  * "Get Married" => "Tie the knot"
  * "Lazy" => "Couch-potato"
  */
-export const clearDBAndSeed = async () => {
+export const clearDBAndSeed = async (req, res) => {
   await Card.deleteMany({});
-  await Card.insertMany([
+  const cards = await Card.insertMany([
     {
       question: "Mad en avancé ?",
       answer: "Out of mind",
-      interval: 1,
     },
     {
       question: "Not sure",
       answer: "On the fence",
-      interval: 1,
     },
     {
       question: "Very happy",
       answer: "Over the moon",
-      interval: 1,
     },
     {
       question: "Get Married",
       answer: "Tie the knot",
-      interval: 1,
     },
     {
       question: "Lazy",
       answer: "Couch-potato",
-      interval: 1,
     },
   ]);
+
+  await User.deleteMany({});
+  const user = await User.createUser("john", "doe");
+
+  await UserCard.deleteMany({});
+
+  cards.forEach(async (card) => {
+    await user.attachCard(card._id);
+  });
+
+  const userCards = await user.getCards();
+
+  res.json({
+    message: "Database cleared and seeded",
+    cards,
+    user,
+    userCards,
+  });
 };

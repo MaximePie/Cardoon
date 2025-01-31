@@ -24,3 +24,8 @@ This is a MERN stack
 > Todo : Start working on basic cards form
 
 ### 29 01 2025
+
+- Created very basic card style
+- Added basic crud
+
+> TODO : Use Increment to filter the cards

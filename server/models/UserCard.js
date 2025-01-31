@@ -32,6 +32,13 @@ const UserCardSchema = new mongoose.Schema({
   },
 });
 
+UserCardSchema.methods.updateInterval = async function (newInterval) {
+  this.interval = newInterval;
+  this.lastReviewed = new Date();
+  this.nextReview = new Date(Date.now() + newInterval * 1000);
+  await this.save();
+};
+
 const UserCard = mongoose.model("UserCard", UserCardSchema);
 
 export default UserCard;

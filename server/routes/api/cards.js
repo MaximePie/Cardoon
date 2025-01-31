@@ -3,6 +3,7 @@ import express from "express";
 const router = express.Router();
 import Card from "../../models/Card.js";
 import authMiddleware from "../../middleware/auth.js";
+import User from "../../models/User.js";
 
 // @route   GET api/books/test
 // @desc    Tests books route
@@ -32,7 +33,7 @@ router.get("/:id", (req, res) => {
 // @desc    Add/save book
 // @access  Public
 router.post("/", authMiddleware, async (req, res) => {
-  console.log(req.user.username);
+  const user = await User.findById(req.user.id);
   const newCard = {
     question: req.body.question,
     answer: req.body.answer,
@@ -40,6 +41,8 @@ router.post("/", authMiddleware, async (req, res) => {
   };
 
   const createdCard = await Card.create(newCard);
+  await user.attachCard(createdCard._id);
+
   res.json(createdCard);
 });
 
@@ -52,11 +55,6 @@ router.put("/:id", (req, res) => {
     .catch((err) =>
       res.status(400).json({ error: "Unable to update the Database" })
     );
-});
-
-router.put("/updateInterval/:id", async (req, res) => {
-  // isCorrectAnswer === true => increase interval
-  // isCorrectAnswer === false => decrease interval
 });
 
 // @route   DELETE api/books/:id

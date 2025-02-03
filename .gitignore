@@ -13,6 +13,7 @@ Cardoon/dist-ssr
 server/node_modules
 server/config/config.js
 *.local
+server/.env
 
 # Editor directories and files
 .vscode/*

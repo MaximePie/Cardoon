@@ -4,6 +4,9 @@ const router = express.Router();
 import Card from "../../models/Card.js";
 import authMiddleware from "../../middleware/auth.js";
 import User from "../../models/User.js";
+import { uploadImage } from "../../utils/imagesManager.js";
+import { IncomingForm } from "formidable";
+import UserCard from "../../models/UserCard.js";
 
 // @route   GET api/books/test
 // @desc    Tests books route
@@ -33,17 +36,58 @@ router.get("/:id", (req, res) => {
 // @desc    Add/save book
 // @access  Public
 router.post("/", authMiddleware, async (req, res) => {
-  const user = await User.findById(req.user.id);
-  const newCard = {
-    question: req.body.question,
-    answer: req.body.answer,
-    interval: 5, // 5 seconds
-  };
+  const form = new IncomingForm();
 
-  const createdCard = await Card.create(newCard);
-  await user.attachCard(createdCard._id);
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      return res.status(400).json({ error: "Error parsing the files" });
+    }
+    try {
+      const answer = fields.answer[0];
+      const question = fields.question[0];
+      const image = files.image;
+      let imageLink = fields.imageLink?.length > 0 ? fields.imageLink[0] : null;
 
-  res.json(createdCard);
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      if (!answer) {
+        return res.status(400).json({ error: "Answer is required" });
+      }
+
+      if (!question && !image) {
+        return res.status(400).json({
+          error: "Question or image is required",
+        });
+      }
+
+      if (!imageLink) {
+        if (!files.image || files.image.length === 0) {
+          imageLink = null;
+        } else {
+          imageLink = await uploadImage(files.image[0]);
+        }
+      }
+
+      const newCard = {
+        question,
+        answer,
+        imageLink,
+      };
+
+      const createdCard = await Card.create(newCard);
+      await user.attachCard(createdCard._id);
+
+      res.json({ ...createdCard.toObject(), imageLink });
+    } catch (err) {
+      console.error(err);
+      res
+        .status(500)
+        .json({ errorMessage: "Error while creating card: " + err.message });
+    }
+  });
 });
 
 // @route   PUT api/books/:id
@@ -60,10 +104,19 @@ router.put("/:id", (req, res) => {
 // @route   DELETE api/books/:id
 // @desc    Delete book by id
 // @access  Public
-router.delete("/:id", (req, res) => {
-  Card.findByIdAndDelete(req.params.id)
-    .then((card) => res.json({ mgs: "Card entry deleted successfully" }))
-    .catch((err) => res.status(404).json({ error: "No such a card" }));
+router.delete("/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const myCard = await Card.findById(id);
+    const card = await Card.findByIdAndDelete(id);
+    if (!card) {
+      return res.status(404).json({ error: "No such card" });
+    }
+    await UserCard.deleteMany({ card: card._id });
+    res.json({ msg: "Card entry deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Error deleting the card" });
+  }
 });
 
 export default router;

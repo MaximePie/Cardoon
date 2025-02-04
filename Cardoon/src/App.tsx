@@ -66,14 +66,16 @@ const App = () => {
       <button onClick={login}>Login</button>
       {error && <p>Erreur : {error}</p>}
       <CardForm onAdd={fetch} />
-      {userCards.map((userCard: PopulatedUserCard) => (
-        <Card
-          key={userCard._id}
-          card={userCard}
-          onDelete={deleteCard}
-          onUpdate={onUpdate}
-        />
-      ))}
+      <div className="Cards">
+        {userCards.map((userCard: PopulatedUserCard) => (
+          <Card
+            key={userCard._id}
+            card={userCard}
+            onDelete={deleteCard}
+            onUpdate={onUpdate}
+          />
+        ))}
+      </div>
     </div>
   );
 };

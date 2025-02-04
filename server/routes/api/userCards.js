@@ -15,15 +15,14 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 router.put("/updateInterval/:id", async (req, res) => {
-  // isCorrectAnswer === true => increase interval
   const userCard = await UserCard.findById(req.params.id);
   if (req.body.isCorrectAnswer) {
-    await userCard.updateInterval(parseInt(userCard.interval * 1.618));
+    await userCard.updateInterval(parseInt(userCard.interval * 1.618) + 1);
   } else {
     await userCard.updateInterval(parseInt(userCard.interval / 2));
   }
 
-  // isCorrectAnswer === false => decrease interval
+  res.json([]);
 });
 
 export default router;

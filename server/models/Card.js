@@ -14,6 +14,9 @@ const CardSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  imageLink: {
+    type: String,
+  },
 });
 
 const Card = mongoose.model("Card", CardSchema);

@@ -1,8 +1,10 @@
 // db.js
 
 import mongoose from "mongoose";
-import config from "./config.js";
-const db = config;
+import dotenv from "dotenv";
+dotenv.config();
+const db = process.env.DATABASE_URL || "";
+console.log(db);
 
 mongoose.set("strictQuery", true, "useNewUrlParser", true);
 

@@ -4,7 +4,6 @@ const router = express.Router();
 import { clearDBAndSeed } from "../../controllers/database.js";
 import User from "../../models/User.js";
 import jwt from "jsonwebtoken";
-import { jwtSecret } from "../../config/config.js";
 import bcrypt from "bcrypt";
 import authMiddleware from "../../middleware/auth.js";
 
@@ -15,6 +14,7 @@ router.get("/seed", clearDBAndSeed);
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  const jwtSecret = process.env.JWT_SECRET;
 
   // Replace this with your actual user authentication logic
   const user = await User.getUserByEmail(email);

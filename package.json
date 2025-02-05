@@ -1,0 +1,16 @@
+{
+  "name": "cardoon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "install-server": "cd server && yarn",
+    "start-server": "cd server && yarn app",
+    "install-client": "cd Cardoon && yarn",
+    "build-client": "cd Cardoon && yarn build",
+    "start-client": "cd Cardoon && yarn dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

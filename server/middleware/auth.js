@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { jwtSecret } from "../config/config.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -11,6 +11,8 @@ const authMiddleware = (req, res, next) => {
   if (!token) {
     return res.status(401).json({ message: "Token missing" });
   }
+
+  const jwtSecret = process.env.JWT_SECRET;
 
   try {
     const decodedToken = jwt.verify(token, jwtSecret);

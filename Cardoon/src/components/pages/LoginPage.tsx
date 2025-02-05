@@ -19,13 +19,6 @@ export default function LoginForm() {
 
   const { post, data } = usePost<LoginResponse>(ACTIONS.LOGIN);
 
-  const seed = async () => {
-    const confirm = window.confirm("Voulez-vous vraiment supprimer tout ?");
-    if (confirm) {
-      await axios.get("http://localhost:8082/api/users/seed");
-    }
-  };
-
   useEffect(() => {
     if (data) {
       if (!data.token) {

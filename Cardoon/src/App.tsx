@@ -1,5 +1,5 @@
 import axios from "axios";
-import "./styles/App.scss";
+import "./styles/app.scss";
 import { PopulatedUserCard, User } from "./types/common";
 import CardForm from "./components/molecules/CardForm/CardForm";
 import { RESOURCES, useDelete, useFetch } from "./hooks/server";

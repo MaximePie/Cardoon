@@ -1,16 +1,11 @@
 import { useState } from "react";
 import { RESOURCES, usePost } from "../../../hooks/server";
-
-interface CardFormProps {
-  onAdd: () => void;
-}
-
 /**
  * question: String
  * answer: String
  * @returns
  */
-export default ({ onAdd }: CardFormProps) => {
+export default () => {
   const { post, error } = usePost(RESOURCES.CARDS);
 
   const [newCard, setNewCard] = useState({
@@ -52,12 +47,10 @@ export default ({ onAdd }: CardFormProps) => {
     });
 
     setImage(null);
-
-    onAdd();
   };
 
   return (
-    <>
+    <div className="CardForm">
       <form onSubmit={onSubmit}>
         <label>
           Question:
@@ -93,6 +86,6 @@ export default ({ onAdd }: CardFormProps) => {
         <button type="submit">Ajouter</button>
       </form>
       <div>{error}</div>
-    </>
+    </div>
   );
 };

@@ -16,6 +16,15 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  email: {
+    type: String,
+    required: true,
+  },
+
+  score: {
+    type: Number,
+    default: 0,
+  },
 });
 
 UserSchema.methods.attachCard = async function (cardId) {
@@ -44,14 +53,24 @@ UserSchema.methods.getOutdatedCards = async function () {
   }).populate("card");
 };
 
-UserSchema.statics.createUser = async function (username, password) {
+UserSchema.statics.createUser = async function (email, password, username) {
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return this.create({ username, password: hashedPassword });
+  return this.create({ username, password: hashedPassword, email });
 };
 
 UserSchema.statics.getUserByUsername = async function (username) {
   return this.findOne({ username });
+};
+
+UserSchema.statics.getUserByEmail = async function (email) {
+  return this.findOne({ email });
+};
+
+UserSchema.methods.addScore = async function (interval) {
+  const newScore = this.score + interval;
+  this.score = newScore;
+  await this.save();
 };
 
 const User = mongoose.model("User", UserSchema);

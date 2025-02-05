@@ -14,15 +14,15 @@ import authMiddleware from "../../middleware/auth.js";
 router.get("/seed", clearDBAndSeed);
 
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   // Replace this with your actual user authentication logic
-  const user = await User.getUserByUsername(username);
+  const user = await User.getUserByEmail(email);
 
   if (!user) {
     return res
       .status(401)
-      .json({ error: "Invalid credentials", username, password });
+      .json({ error: "Invalid credentials", email, password });
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
@@ -30,12 +30,25 @@ router.post("/login", async (req, res) => {
   if (isMatch) {
     // Generate a JWT token
     const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: "1h" });
-    res.json({ token });
+    res.json({ token, user });
   } else {
     res.status(401).json({ error: "Invalid credentials" });
   }
 });
 
+router.post("/register", async (req, res) => {
+  const { email, password, username } = req.body;
+
+  const user = await User.getUserByEmail(email);
+
+  if (user) {
+    return res.status(400).json({ error: "User already exists" });
+  }
+
+  const newUser = await User.createUser(email, password, username);
+
+  res.json(newUser);
+});
 // Route to verify token
 router.get("/verify-token", authMiddleware, (req, res) => {
   res.json({ valid: true });

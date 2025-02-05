@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { PopulatedUserCard } from "../../../types/common";
+import { useContext, useEffect, useState } from "react";
+import { PopulatedUserCard, User } from "../../../types/common";
 import classNames from "classnames";
 import { ACTIONS, usePut } from "../../../hooks/server";
+import { UserContext } from "../../../App";
 
 interface CardProps {
   card: PopulatedUserCard;
@@ -9,6 +10,9 @@ interface CardProps {
   onUpdate: (id: string) => void;
 }
 
+interface PutResult {
+  user: User;
+}
 export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
   const {
     card: { question, answer, imageLink, _id: cardId },
@@ -17,7 +21,15 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
   } = card;
   const [isRecto, flipCard] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { put } = usePut(ACTIONS.UPDATE_INTERVAL);
+  const { put, data } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
+  const { setUser } = useContext(UserContext);
+
+  useEffect(() => {
+    console.log(data); // Not triggered
+    if (data) {
+      setUser(data.user);
+    }
+  }, [data]);
 
   const cardClassNames = classNames("Card", {
     "Card--verso": !isRecto,
@@ -33,7 +45,7 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
     }
   };
 
-  const succeed = () => {
+  const succeed = async () => {
     put(userCardId, { isCorrectAnswer: true });
     onAnswer(userCardId);
   };

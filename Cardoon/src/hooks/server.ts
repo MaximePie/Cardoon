@@ -6,10 +6,13 @@ import Cookies from "js-cookie";
 export const RESOURCES = {
   USERCARDS: "userCards",
   CARDS: "cards",
+  USER: "user",
   // PLAYERS: "players",
 };
 export const ACTIONS = {
   UPDATE_INTERVAL: "userCards/updateInterval",
+  LOGIN: "users/login",
+  REGISTER: "users/register",
 };
 
 // Custom hook to get data
@@ -45,12 +48,11 @@ export const useFetch = <T>(resource: string) => {
 
   return { data, loading, error: formattedError, fetch };
 };
-
-export const usePut = (resource: string) => {
+export const usePut = <T>(resource: string) => {
   const url = "http://localhost:8082/api/" + resource;
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("null");
+  const [data, setData] = useState<T | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<undefined | string>(undefined);
 
   const put = async (id: string, payload: any) => {
     setLoading(true);
@@ -93,9 +95,9 @@ export const useDelete = (resource: string) => {
   return { loading, error, deleteResource };
 };
 
-export const usePost = (resource: string) => {
+export const usePost = <T>(resource: string) => {
   const url = "http://localhost:8082/api/" + resource;
-  const [data, setData] = useState(null);
+  const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<undefined | string>(undefined);
 

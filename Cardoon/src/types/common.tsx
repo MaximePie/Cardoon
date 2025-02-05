@@ -13,3 +13,9 @@ export interface Card {
   interval: number;
   imageLink: string;
 }
+
+export interface User {
+  _id: string;
+  username: string;
+  score: number;
+}

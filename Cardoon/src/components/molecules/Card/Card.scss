@@ -1,0 +1,28 @@
+.Card {
+  background-color: rgb(216, 245, 255);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+  margin: 20px;
+  max-width: 300px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.4s ease-in-out;
+
+  display: grid;
+  // Top line : 80px;
+  // Bottom line : 1fr;
+  grid-template-rows: 80px 1fr;
+  // center
+  justify-items: center;
+
+  img {
+    max-width: 200px;
+    max-height: 200px;
+  }
+
+  &--verso {
+    transform: rotateY(360deg);
+    background-color: rgb(181, 255, 210);
+  }
+}

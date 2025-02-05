@@ -52,6 +52,8 @@ export const usePut = <T>(resource: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
 
+  console.log("data from server", data); // Empty
+
   const put = async (id: string, payload: any) => {
     setLoading(true);
     try {
@@ -59,6 +61,7 @@ export const usePut = <T>(resource: string) => {
         "token"
       )}`;
       const response = await axios.put(url + "/" + id, payload);
+      console.log("Response", response, response.data); // Has something
       setData(response.data);
       setLoading(false);
     } catch (err: any) {

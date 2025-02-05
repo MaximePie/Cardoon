@@ -3,6 +3,9 @@ import { PopulatedUserCard, User } from "../../../types/common";
 import classNames from "classnames";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { UserContext } from "../../../App";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface CardProps {
   card: PopulatedUserCard;
@@ -22,10 +25,10 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
   const [isRecto, flipCard] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
   const { put, data } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
-  const { setUser } = useContext(UserContext);
+  const { setUser, addScore } = useContext(UserContext);
 
   useEffect(() => {
-    console.log(data); // Not triggered
+    console.log("Data updated:", data); // Not triggered
     if (data) {
       setUser(data.user);
     }
@@ -47,6 +50,7 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
 
   const succeed = async () => {
     put(userCardId, { isCorrectAnswer: true });
+    addScore(card.interval);
     onAnswer(userCardId);
   };
 
@@ -57,24 +61,40 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
 
   const handleDeleteClick = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    await onDelete(id);
+    const confirm = window.confirm(
+      "Are you sure you want to delete this card?"
+    );
+    if (confirm) onDelete(id);
   };
 
   return (
     <div className={cardClassNames} onClick={onCardClick}>
       {isRecto ? (
-        <p>
-          {question}
-          <span>🧠 {interval}</span>
-          <button onClick={(e) => handleDeleteClick(cardId, e)}>Delete</button>
+        <>
+          <h5>
+            {question} <span>🧠 {interval}</span>
+          </h5>
           {imageLink && <img src={imageLink} alt="Card image" />}
-        </p>
+        </>
       ) : (
         showAnswer && (
           <>
-            <p>{answer}</p>
-            <button onClick={succeed}>ok</button>
-            <button onClick={fail}>pas ok</button>
+            <h5>{answer}</h5>
+            <Stack spacing={2} direction="row">
+              <Button color="success" onClick={succeed}>
+                ok
+              </Button>
+              <Button color="secondary" onClick={fail}>
+                pas ok
+              </Button>
+              <Button
+                color="error"
+                onClick={(e) => handleDeleteClick(cardId, e)}
+                startIcon={<DeleteIcon />}
+              >
+                Supprimer
+              </Button>
+            </Stack>
           </>
         )
       )}

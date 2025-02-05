@@ -11,7 +11,6 @@ import RegisterPage from "./components/pages/RegisterPage";
 
 const Navbar = () => {
   const { user, logout } = useContext(UserContext);
-  console.log(user);
   return (
     <nav>
       <Link to="/">Jeu</Link>
@@ -52,8 +51,12 @@ const Game = () => {
     // Remove the card from the list, then fetch the new list
     setUserCards(userCards.filter((card) => card._id !== id));
 
-    if (userCards.length <= 1) {
-      fetch();
+    if (userCards.length <= 0) {
+      // We intentionally wait 2 seconds before fetching the new list to wait for the card to be
+      // updated
+      setTimeout(() => {
+        fetch();
+      }, 2000);
     }
   };
 
@@ -110,6 +113,7 @@ interface UserContextType {
   user: User;
   setUser: (user: User) => void;
   logout: () => void;
+  addScore: (score: number) => void;
 }
 export const UserContext = createContext<UserContextType>({
   user: {
@@ -119,6 +123,7 @@ export const UserContext = createContext<UserContextType>({
   },
   setUser: () => {},
   logout: () => {},
+  addScore: () => {},
 });
 
 export const UserContextProvider = ({
@@ -148,6 +153,10 @@ export const UserContextProvider = ({
     }
   }, []);
 
+  const addScore = (score: number) => {
+    setUser({ ...user, score: user.score + score });
+  };
+
   // Clear the cookie
   const logout = () => {
     document.cookie = "token=;max-age=0";
@@ -162,6 +171,7 @@ export const UserContextProvider = ({
         user,
         setUser,
         logout,
+        addScore,
       }}
     >
       {children}

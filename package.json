@@ -8,9 +8,12 @@
     "start-server": "cd server && yarn app",
     "install-client": "cd Cardoon && yarn",
     "build-client": "cd Cardoon && yarn build",
-    "start-client": "cd Cardoon && yarn dev"
+    "start-client": "cd Cardoon && yarn start"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
 }

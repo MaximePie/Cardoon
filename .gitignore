@@ -14,6 +14,7 @@ server/node_modules
 server/config/config.js
 *.local
 server/.env
+Cardoon/.env
 
 # Editor directories and files
 .vscode/*

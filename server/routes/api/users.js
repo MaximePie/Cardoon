@@ -12,6 +12,11 @@ import authMiddleware from "../../middleware/auth.js";
 // @access  Public
 router.get("/seed", clearDBAndSeed);
 
+router.get("/me", authMiddleware, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  res.json(user);
+});
+
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const jwtSecret = process.env.JWT_SECRET;

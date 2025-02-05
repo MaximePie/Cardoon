@@ -14,6 +14,7 @@ export const ACTIONS = {
   UPDATE_INTERVAL: "userCards/updateInterval",
   LOGIN: "users/login",
   REGISTER: "users/register",
+  ME: "users/me",
 };
 
 // Custom hook to get data

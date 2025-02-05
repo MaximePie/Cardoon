@@ -2,7 +2,7 @@ import axios from "axios";
 import "./styles/app.scss";
 import { PopulatedUserCard, User } from "./types/common";
 import CardForm from "./components/molecules/CardForm/CardForm";
-import { RESOURCES, useDelete, useFetch } from "./hooks/server";
+import { ACTIONS, RESOURCES, useDelete, useFetch } from "./hooks/server";
 import Card from "./components/molecules/Card/Card";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
@@ -131,7 +131,7 @@ export const UserContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { fetch } = useFetch<User>(RESOURCES.USER);
+  const { fetch, data } = useFetch<User>(ACTIONS.ME);
 
   const [user, setUser] = useState<User>({
     _id: "",
@@ -152,6 +152,12 @@ export const UserContextProvider = ({
       fetch();
     }
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      setUser(data);
+    }
+  }, [data]);
 
   const addScore = (score: number) => {
     setUser({ ...user, score: user.score + score });

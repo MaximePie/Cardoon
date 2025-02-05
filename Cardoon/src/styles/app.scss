@@ -31,5 +31,18 @@
   &__image {
     width: 100px;
     height: 100px;
+
+    // Grow and shrink animation
+    animation: growShrink 2s infinite;
+  }
+}
+
+@keyframes growShrink {
+  0%,
+  100% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1);
   }
 }

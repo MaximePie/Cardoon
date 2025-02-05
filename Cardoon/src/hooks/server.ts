@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+const backUrl = import.meta.env.VITE_API_URL;
 
 // Resources
 export const RESOURCES = {
@@ -17,7 +18,7 @@ export const ACTIONS = {
 
 // Custom hook to get data
 export const useFetch = <T>(resource: string) => {
-  const url = "http://localhost:8082/api/" + resource;
+  const url = `${backUrl}/api/${resource}`;
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<undefined | string>(undefined);
@@ -49,7 +50,7 @@ export const useFetch = <T>(resource: string) => {
   return { data, loading, error: formattedError, fetch };
 };
 export const usePut = <T>(resource: string) => {
-  const url = "http://localhost:8082/api/" + resource;
+  const url = `${backUrl}/api/` + resource;
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
@@ -79,7 +80,7 @@ export const useDelete = (resource: string) => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
       "token"
     )}`;
-    const url = "http://localhost:8082/api/" + resource + "/" + id;
+    const url = `${backUrl}/api/` + resource + "/" + id;
     setLoading(true);
     try {
       await axios.delete(url).catch((err) => {
@@ -96,7 +97,7 @@ export const useDelete = (resource: string) => {
 };
 
 export const usePost = <T>(resource: string) => {
-  const url = "http://localhost:8082/api/" + resource;
+  const url = `${backUrl}/api/` + resource;
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<undefined | string>(undefined);

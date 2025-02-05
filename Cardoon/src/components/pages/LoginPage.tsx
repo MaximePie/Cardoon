@@ -4,6 +4,7 @@ import { ACTIONS, usePost } from "../../hooks/server";
 import { User } from "../../types/common";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface LoginResponse {
   user: User;
@@ -18,6 +19,7 @@ export default function LoginForm() {
   const { setUser } = useContext(UserContext);
 
   const { post, data } = usePost<LoginResponse>(ACTIONS.LOGIN);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (data) {
@@ -30,7 +32,8 @@ export default function LoginForm() {
       // Store it as a cookie with lifetime 90days
       document.cookie = `token=${data.token};max-age=${60 * 60 * 24 * 90}`;
       setUser(data.user);
-      document.location.href = "/";
+
+      navigate("/");
     }
   }, [data]);
 

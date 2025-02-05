@@ -44,10 +44,7 @@ export const useFetch = <T>(resource: string) => {
       });
   };
 
-  const formattedError =
-    error === "Invalid token" ? "Essayez de vous connecter" : error;
-
-  return { data, loading, error: formattedError, fetch };
+  return { data, loading, error, fetch };
 };
 export const usePut = <T>(resource: string) => {
   const url = `${backUrl}/api/` + resource;

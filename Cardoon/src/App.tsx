@@ -10,10 +10,12 @@ import LoginPage from "./components/pages/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage";
 
 const Navbar = () => {
+  const { user } = useContext(UserContext);
+  console.log(user);
   return (
     <nav>
       <Link to="/">Jeu</Link>
-      <Link to="/login">Login</Link>
+      {!user._id && <Link to="/login">Login</Link>}
       <Link to="/add-card">Ajouter une carte</Link>
     </nav>
   );
@@ -48,9 +50,31 @@ const Game = () => {
       fetch();
     }
   };
+
+  if (!user) {
+    return (
+      <div>
+        <h1>
+          Bienvenue sur Cardoon, commencez par créer un compte ou vous connecter
+          !
+        </h1>
+        <Link to="/login">Se connecter</Link>
+        <Link to="/register">S'inscrire</Link>
+      </div>
+    );
+  }
+
+  if (error === "Invalid token") {
+    return (
+      <p>
+        Votre session a expiré, veuillez vous{" "}
+        <Link to="/login">reconnecter</Link>
+      </p>
+    );
+  }
+
   return (
     <div>
-      {error && <p>Erreur : {error}</p>}
       <div className="BrainCell">
         <h1>Obtenez des synapses!</h1>
         <div className="BrainCell__score">

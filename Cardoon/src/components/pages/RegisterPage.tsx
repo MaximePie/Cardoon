@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1>Register</h1>
+      <h1>Créer un compte</h1>
       <input
         type="email"
         placeholder="Email"

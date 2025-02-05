@@ -10,13 +10,19 @@ import LoginPage from "./components/pages/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage";
 
 const Navbar = () => {
-  const { user } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   console.log(user);
   return (
     <nav>
       <Link to="/">Jeu</Link>
-      {!user._id && <Link to="/login">Login</Link>}
       <Link to="/add-card">Ajouter une carte</Link>
+      {!user._id && <Link to="/login">Login</Link>}
+      {!user._id && <Link to="/register">Créer un compte</Link>}
+      {user._id && (
+        <Link to="/" onClick={logout}>
+          Logout
+        </Link>
+      )}
     </nav>
   );
 };
@@ -103,6 +109,7 @@ const Game = () => {
 interface UserContextType {
   user: User;
   setUser: (user: User) => void;
+  logout: () => void;
 }
 export const UserContext = createContext<UserContextType>({
   user: {
@@ -111,6 +118,7 @@ export const UserContext = createContext<UserContextType>({
     score: 0,
   },
   setUser: () => {},
+  logout: () => {},
 });
 
 export const UserContextProvider = ({
@@ -140,11 +148,20 @@ export const UserContextProvider = ({
     }
   }, []);
 
+  // Clear the cookie
+  const logout = () => {
+    document.cookie = "token=;max-age=0";
+    setUser({ _id: "", username: "", score: 0 });
+    // Redirect to /
+    document.location.href = "/";
+  };
+
   return (
     <UserContext.Provider
       value={{
         user,
         setUser,
+        logout,
       }}
     >
       {children}

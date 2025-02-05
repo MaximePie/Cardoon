@@ -12,17 +12,23 @@ import RegisterPage from "./components/pages/RegisterPage";
 const Navbar = () => {
   const { user, logout } = useContext(UserContext);
   return (
-    <nav>
-      <Link to="/">Jeu</Link>
-      <Link to="/add-card">Ajouter une carte</Link>
-      {!user._id && <Link to="/login">Login</Link>}
-      {!user._id && <Link to="/register">Créer un compte</Link>}
-      {user._id && (
-        <Link to="/" onClick={logout}>
-          Logout
-        </Link>
+    <div className="Navbar">
+      {!user._id && (
+        <>
+          <Link to="/login">Login</Link>
+          <Link to="/register">Créer un compte</Link>
+        </>
       )}
-    </nav>
+      {user._id && (
+        <>
+          <Link to="/">Jeu</Link>
+          <Link to="/add-card">Ajouter une carte</Link>
+          <Link to="/" onClick={logout}>
+            Logout
+          </Link>
+        </>
+      )}
+    </div>
   );
 };
 

@@ -1,5 +1,13 @@
 @use "../components/molecules/Card/Card" as Card;
 
+/* Reset some default styles */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .Cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -44,5 +52,21 @@
   }
   50% {
     transform: scale(1);
+  }
+}
+
+.Navbar {
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #00d9ff;
+  color: white;
+  flex-direction: row;
+
+  a {
+    color: white;
+    text-transform: uppercase;
+    font-family: "Roboto", sans-serif;
   }
 }

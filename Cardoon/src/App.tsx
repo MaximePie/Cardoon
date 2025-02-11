@@ -46,7 +46,13 @@ const Game = () => {
   }, [data]);
 
   const { deleteResource } = useDelete(RESOURCES.CARDS);
-  if (loading) return <p>Chargement...</p>;
+  if (loading)
+    return (
+      <p>
+        Chargement... (Oui, c'est un fournisseur gratuit, 'faut qu'il démarre
+        tahi, ça peut prendre une bonne minute. Au délà, appelez Geoffrey.)
+      </p>
+    );
 
   const deleteCard = async (cardId: string) => {
     await deleteResource(cardId);

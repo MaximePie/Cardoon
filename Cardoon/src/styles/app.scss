@@ -1,11 +1,12 @@
 @use "../components/molecules/Card/Card" as Card;
-
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&family=Roboto+Slab:wght@300;400&display=swap");
 /* Reset some default styles */
 body,
 html {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "red hat text", sans-serif;
 }
 
 .Cards {

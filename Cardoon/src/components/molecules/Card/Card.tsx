@@ -6,6 +6,7 @@ import { UserContext } from "../../../App";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Chip, Divider, IconButton } from "@mui/material";
 
 interface CardProps {
   card: PopulatedUserCard;
@@ -26,9 +27,9 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
   const [showAnswer, setShowAnswer] = useState(false);
   const { put, data } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
   const { setUser, addScore } = useContext(UserContext);
+  const [isFlipping, setIsFlipping] = useState(false);
 
   useEffect(() => {
-    console.log("Data updated:", data); // Not triggered
     if (data) {
       setUser(data.user);
     }
@@ -36,14 +37,17 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
 
   const cardClassNames = classNames("Card", {
     "Card--verso": !isRecto,
+    "Card--isFlipping": isFlipping,
   });
 
   // If recto, set to false, else do nothing
   const onCardClick = () => {
+    setIsFlipping(true);
     if (isRecto) {
       flipCard(false);
       setTimeout(() => {
         setShowAnswer(true);
+        setIsFlipping(false);
       }, 400);
     }
   };
@@ -71,29 +75,46 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
     <div className={cardClassNames} onClick={onCardClick}>
       {isRecto ? (
         <>
-          <h5>
-            {question} <span>🧠 {interval}</span>
-          </h5>
-          {imageLink && <img src={imageLink} alt="Card image" />}
+          <Chip className="Card__score" label={`🧠 ${interval}`} />
+          <Stack
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <p>{question}</p>
+            {imageLink && (
+              <>
+                <Divider sx={{ my: 2, borderColor: "rgba(0, 0, 0, 0.12)" }} />
+                <img
+                  src={imageLink}
+                  alt="Card image"
+                  style={{ width: "100%", borderRadius: "8px" }}
+                />
+              </>
+            )}
+          </Stack>
         </>
       ) : (
         showAnswer && (
           <>
-            <h5>{answer}</h5>
-            <Stack spacing={2} direction="row">
+            <p>{answer}</p>
+            <Stack spacing={1} direction="row">
               <Button color="success" onClick={succeed}>
                 ok
               </Button>
               <Button color="secondary" onClick={fail}>
                 pas ok
               </Button>
-              <Button
+              <IconButton
                 color="error"
                 onClick={(e) => handleDeleteClick(cardId, e)}
-                startIcon={<DeleteIcon />}
+                className="Card__delete"
+                size="small"
               >
-                Supprimer
-              </Button>
+                <DeleteIcon />
+              </IconButton>
             </Stack>
           </>
         )

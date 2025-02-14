@@ -43,14 +43,14 @@
 
   &--verso {
     /* Ajout de l'animation de spin */
-    animation: card-spin 0.6s ease-in-out;
     background: linear-gradient(135deg, #d9ffc8, #afff9f);
     grid-template-rows: 1fr 80px;
     align-items: center;
   }
 
   &--isFlipping {
-    animation: card-spin 0.8s ease-in-out;
+    animation: card-spin 0.2s ease-in-out;
+    transform: rotateY(180deg); /* Retourne la carte */
     transform: none; /* Ignore l'effet hover */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     pointer-events: none; /* Empêche d'autres interactions pendant l'animation */
@@ -71,12 +71,9 @@
 }
 @keyframes card-spin {
   0% {
-    transform: rotateY(0);
-  }
-  50% {
-    transform: rotateY(180deg); /* Milieu */
+    transform: rotateY(0deg); /* Départ */
   }
   100% {
-    transform: rotateY(360deg);
+    transform: rotateY(180deg); /* Milieu */
   }
 }

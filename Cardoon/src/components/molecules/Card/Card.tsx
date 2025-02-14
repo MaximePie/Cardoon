@@ -42,13 +42,13 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
 
   // If recto, set to false, else do nothing
   const onCardClick = () => {
-    setIsFlipping(true);
     if (isRecto) {
+      setIsFlipping(true);
       flipCard(false);
       setTimeout(() => {
         setShowAnswer(true);
         setIsFlipping(false);
-      }, 400);
+      }, 200);
     }
   };
 

@@ -21,8 +21,14 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const jwtSecret = process.env.JWT_SECRET;
 
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ errorMessage: "Please provide email and password" });
+  }
+
   // Replace this with your actual user authentication logic
-  const user = await User.getUserByEmail(email);
+  const user = await User.getUserByEmail(email.trim().toLowerCase());
 
   if (!user) {
     return res

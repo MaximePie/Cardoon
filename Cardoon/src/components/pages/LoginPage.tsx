@@ -15,11 +15,21 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<undefined | string>(undefined);
   const { setUser } = useContext(UserContext);
+  const [formError, setFormError] = useState<string | undefined>(undefined);
+  const [isErroneous, setIsErroneous] = useState(false);
 
-  const { post, data } = usePost<LoginResponse>(ACTIONS.LOGIN);
+  const { post, data, error } = usePost<LoginResponse>(ACTIONS.LOGIN);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!email || !password) {
+      setIsErroneous(true);
+    } else {
+      setIsErroneous(false);
+      setFormError(undefined);
+    }
+  }, [email, password]);
 
   useEffect(() => {
     if (data) {
@@ -40,13 +50,13 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    try {
-      await post({ email, password });
-    } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
-    } finally {
-      setLoading(false);
-    }
+
+    // if (!email || !password) {
+    //   setFormError("Please fill in all fields");
+    //   setLoading(false);
+    //   return;
+    // }
+    post({ email, password });
   };
 
   return (
@@ -68,9 +78,12 @@ export default function LoginForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button type="submit" disabled={loading}>
+      {JSON.stringify(error)}
+      <button type="submit" disabled={loading || isErroneous}>
         Login
       </button>
+
+      {formError && <p className="formError">{formError}</p>}
       {error && <p>{error}</p>}
     </form>
   );

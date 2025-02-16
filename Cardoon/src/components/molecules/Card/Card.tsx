@@ -86,7 +86,6 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
             <p>{question}</p>
             {imageLink && (
               <>
-                <Divider sx={{ my: 2, borderColor: "rgba(0, 0, 0, 0.12)" }} />
                 <img
                   src={imageLink}
                   alt="Card image"

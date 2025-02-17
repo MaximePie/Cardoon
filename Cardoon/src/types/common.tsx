@@ -12,6 +12,7 @@ export interface Card {
   answer: string;
   interval: number;
   imageLink: string;
+  category: string;
 }
 
 export interface User {

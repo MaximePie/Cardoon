@@ -1,5 +1,6 @@
 @use "../components/molecules/Card/Card" as Card;
 @use "../components/pages/LoginPage/LoginPage" as LoginPage;
+@use "../components/pages/TokenErrorPage/TokenErrorPage" as NotFoundPage;
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&family=Roboto+Slab:wght@300;400&display=swap");
 /* Reset some default styles */
 body,
@@ -13,6 +14,13 @@ html {
 .Cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+  &__magic-wand-button {
+    // Float bottom right
+    position: fixed !important;
+    bottom: 1rem;
+    right: 1rem;
+  }
 }
 
 .CardForm {
@@ -62,13 +70,23 @@ html {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #00d9ff;
+  background: linear-gradient(to right, #22d3ee, #2dd4bf, #3b82f6);
   color: white;
   flex-direction: row;
 
   a {
-    color: white;
-    text-transform: uppercase;
-    font-family: "Roboto", sans-serif;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border-radius: 6px;
+    color: #007bff;
+    font-weight: bold;
+    transition: transform 0.2s, background-color 0.2s;
+    text-decoration: none;
+
+    &:hover {
+      background-color: #007bff;
+      color: white;
+      transform: scale(1.05);
+    }
   }
 }

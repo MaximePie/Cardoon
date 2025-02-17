@@ -13,6 +13,11 @@ import UserCard from "../../models/UserCard.js";
 // @access  Public
 router.get("/test", (req, res) => res.send("Card route testing!"));
 
+router.get("/categories", async (req, res) => {
+  const categories = await Card.distinct("category");
+  res.json(categories);
+});
+
 // @route   GET api/books
 // @desc    Get all books
 // @access  Public
@@ -28,7 +33,7 @@ router.get("/:id", (req, res) => {
   Card.findById(req.params.id)
     .then((card) => res.json(card))
     .catch((err) =>
-      res.status(404).json({ noCardFound: "No noCardFound found" })
+      res.status(404).json({ noCardFound: "No CardFound found" })
     );
 });
 
@@ -46,6 +51,7 @@ router.post("/", authMiddleware, async (req, res) => {
       const answer = fields.answer[0];
       const question = fields.question[0];
       const image = files.image;
+      const category = fields.category[0];
       let imageLink = fields.imageLink?.length > 0 ? fields.imageLink[0] : null;
 
       const user = await User.findById(req.user.id);
@@ -75,6 +81,7 @@ router.post("/", authMiddleware, async (req, res) => {
         question,
         answer,
         imageLink,
+        category,
       };
 
       const createdCard = await Card.create(newCard);

@@ -6,7 +6,7 @@ import { UserContext } from "../../../App";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Chip, Divider, IconButton } from "@mui/material";
+import { Chip, IconButton } from "@mui/material";
 
 interface CardProps {
   card: PopulatedUserCard;
@@ -72,7 +72,14 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
   };
 
   return (
-    <div className={cardClassNames} onClick={onCardClick}>
+    <div
+      className={cardClassNames}
+      onClick={onCardClick}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        succeed();
+      }}
+    >
       {isRecto ? (
         <>
           <Chip className="Card__score" label={`🧠 ${interval}`} />

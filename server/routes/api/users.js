@@ -19,6 +19,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
+  console.log(email, password);
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!email || !password) {

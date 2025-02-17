@@ -8,6 +8,9 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LoginPage from "./components/pages/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage";
+import { Fab } from "@mui/material";
+import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";
+import { TokenErrorPage } from "./components/pages/TokenErrorPage/TokenErrorPage";
 
 const Navbar = () => {
   const { user, logout } = useContext(UserContext);
@@ -86,13 +89,31 @@ const Game = () => {
   }
 
   if (error === "Invalid token") {
-    return (
-      <p>
-        Votre session a expiré, veuillez vous{" "}
-        <Link to="/login">reconnecter</Link>
-      </p>
-    );
+    return <TokenErrorPage />;
   }
+
+  if (error) {
+    return <p>Erreur: {error}</p>;
+  }
+
+  // Make a prompt to generate new questions
+  // The prompt asks the LLM API to generate new questions from the existing ones.
+  // For each existing question, we pair it with the answer like this : [{
+  //   "question": "What is the capital of France?", "answer": "Paris"}]
+  const generateLLMQuestions = async () => {
+    console.log("Incoming");
+  };
+
+  // Display a confirm modal
+  const generateQuestions = () => {
+    const answer = window.confirm(
+      "Êtes-vous sûr de vouloir générer de nouvelles questions?"
+    );
+
+    if (answer) {
+      generateLLMQuestions();
+    }
+  };
 
   return (
     <div>
@@ -108,6 +129,14 @@ const Game = () => {
         </div>
       </div>
       <div className="Cards">
+        <Fab
+          color="primary"
+          aria-label="add"
+          className="Cards__magic-wand-button"
+          onClick={generateQuestions}
+        >
+          <AutoFixHighIcon />
+        </Fab>
         {userCards.map((userCard: PopulatedUserCard) => (
           <Card
             key={userCard._id}

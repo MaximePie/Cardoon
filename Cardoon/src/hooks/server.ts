@@ -8,6 +8,7 @@ export const RESOURCES = {
   USERCARDS: "userCards",
   CARDS: "cards",
   USER: "user",
+  CATEGORIES: "cards/categories",
   // PLAYERS: "players",
 };
 export const ACTIONS = {

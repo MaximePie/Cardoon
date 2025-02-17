@@ -51,11 +51,11 @@ export default function LoginForm() {
     e.preventDefault();
     setLoading(true);
 
-    // if (!email || !password) {
-    //   setFormError("Please fill in all fields");
-    //   setLoading(false);
-    //   return;
-    // }
+    if (!email || !password) {
+      setFormError("Please fill in all fields");
+      setLoading(false);
+      return;
+    }
     post({ email, password });
   };
 

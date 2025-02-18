@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../App";
-import { ACTIONS, usePost } from "../../hooks/server";
-import { User } from "../../types/common";
+import { UserContext } from "../../../App";
+import { ACTIONS, usePost } from "../../../hooks/server";
+import { User } from "../../../types/common";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";

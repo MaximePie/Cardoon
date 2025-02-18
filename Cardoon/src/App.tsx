@@ -6,7 +6,7 @@ import { ACTIONS, RESOURCES, useDelete, useFetch } from "./hooks/server";
 import Card from "./components/molecules/Card/Card";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import LoginPage from "./components/pages/LoginPage";
+import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage";
 import { Fab } from "@mui/material";
 import AutoFixHighIcon from "@mui/icons-material/AutoFixHigh";

@@ -30,6 +30,12 @@ const UserCardSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  answerStreak: {
+    // Number of consecutive correct answers
+    // Resets to 0 if the user gets an answer wrong
+    type: Number,
+    default: 0,
+  },
 });
 
 UserCardSchema.methods.updateInterval = async function (newInterval) {

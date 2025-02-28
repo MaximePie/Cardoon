@@ -63,8 +63,7 @@ export default function LoginForm() {
     <form onSubmit={handleSubmit}>
       <h1>Login</h1>
       <p>
-        Pas encore de compte ?{" "}
-        <Link to="/register">'faut le créer mon/a gâtée </Link>
+        Pas encore de compte ? <Link to="/register">Crée-le maintenant</Link>
       </p>
       <input
         // type="email"
@@ -80,7 +79,7 @@ export default function LoginForm() {
       />
       {JSON.stringify(error)}
       <button type="submit" disabled={loading || isErroneous}>
-        Login
+        {loading ? "Chargement" : "Se connecter"}
       </button>
 
       {formError && <p className="formError">{formError}</p>}

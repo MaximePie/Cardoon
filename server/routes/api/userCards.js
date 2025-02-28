@@ -18,11 +18,15 @@ router.put("/updateInterval/:id", async (req, res) => {
   const userCard = await UserCard.findById(req.params.id);
   const user = await User.findById(userCard.user);
   if (req.body.isCorrectAnswer) {
-    user.addScore(userCard.interval);
-    await userCard.updateInterval(
-      parseInt(userCard.interval * 1.618) + Math.max(1, user.answerStreak)
-    );
+    if (!userCard.answerStreak) {
+      userCard.answerStreak = 0;
+    }
     userCard.answerStreak++;
+
+    await user.addScore(userCard.interval);
+    await userCard.updateInterval(
+      parseInt(userCard.interval * 1.618) + Math.max(1, userCard.answerStreak)
+    );
     await userCard.save();
   } else {
     userCard.answerStreak = 0;

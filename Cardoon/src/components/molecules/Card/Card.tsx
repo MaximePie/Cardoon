@@ -82,7 +82,6 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
     >
       {isRecto ? (
         <>
-          <Chip className="Card__score" label={`🧠 ${interval}`} />
           <Stack
             sx={{
               display: "flex",
@@ -105,6 +104,7 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
       ) : (
         showAnswer && (
           <>
+            <Chip className="Card__score" label={`🧠 ${interval}`} />
             <p>{answer}</p>
             <Stack spacing={1} direction="row">
               <Button color="success" onClick={succeed}>

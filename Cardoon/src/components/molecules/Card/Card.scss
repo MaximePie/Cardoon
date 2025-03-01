@@ -61,13 +61,6 @@
     top: 1em;
     left: 1em;
   }
-
-  /* Hover - Transition plus dynamique */
-  &:hover:not(.Card--isFlipping) {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.12);
-    transform: scale(1.05); /* Ajout d'une élévation mineure */
-    transition: transform 0.4s ease-out, box-shadow 0.4s ease-out; /* Transition plus dynamique */
-  }
 }
 @keyframes card-spin {
   0% {

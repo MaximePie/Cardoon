@@ -50,8 +50,8 @@ router.post("/", authMiddleware, async (req, res) => {
     try {
       const answer = fields.answer[0];
       const question = fields.question[0];
-      const image = files.image;
-      const category = fields.category[0];
+      const image = files.image ? files.image[0] : null;
+      const category = fields.category ? fields.category[0] : null;
       let imageLink = fields.imageLink?.length > 0 ? fields.imageLink[0] : null;
 
       const user = await User.findById(req.user.id);
@@ -73,7 +73,7 @@ router.post("/", authMiddleware, async (req, res) => {
         if (!files.image || files.image.length === 0) {
           imageLink = null;
         } else {
-          imageLink = await uploadImage(files.image[0]);
+          imageLink = await uploadImage(image);
         }
       }
 

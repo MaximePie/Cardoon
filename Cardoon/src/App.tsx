@@ -51,6 +51,11 @@ const Game = () => {
   useEffect(() => {
     if (data) {
       setUserCards(shuffleArray(data));
+      console.log(
+        data
+          .filter(({ card }) => !card.imageLink)
+          .map(({ card }) => `${card.question};${card.answer};${card.category}`)
+      );
     }
   }, [data]);
 

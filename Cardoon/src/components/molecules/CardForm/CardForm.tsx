@@ -27,7 +27,9 @@ export const ImagePaster = ({ onUpload, shouldReset }: ImagePasterProp) => {
         );
         if (imageTypes.length > 0) {
           const blob = await item.getType(imageTypes[0]);
-          const file = new File([blob], "pasted-image", { type: blob.type });
+          const extension = blob.type.split("/")[1]; // 'png', 'jpeg'...
+          const filename = `pasted-image-${Date.now()}.${extension}`;
+          const file = new File([blob], filename, { type: blob.type });
 
           // Générer l'aperçu
           setPreview(URL.createObjectURL(blob));

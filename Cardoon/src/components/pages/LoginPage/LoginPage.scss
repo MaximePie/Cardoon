@@ -1,4 +1,124 @@
+$primary-color: #4c64ec;
+$secondary-color: #14b8a6;
+$background-gradient: linear-gradient(
+  to bottom,
+  $primary-color,
+  $secondary-color
+);
+$text-color: #4a5568;
+$link-color: #1a56db;
 .formError {
   color: red;
   font-size: 0.8em;
+}
+
+.LoginPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #4f8ff7, #3ddbd9);
+  padding: 1rem;
+
+  &__form {
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+  }
+
+  &__form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: $text-color;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #d2d6dc;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: $text-color;
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 4px rgba(76, 100, 236, 0.4);
+      }
+    }
+  }
+
+  &__form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    .LoginPage__remember-me {
+      display: flex;
+      align-items: center;
+      font-size: 0.875rem;
+      color: lighten($text-color, 20%);
+      input {
+        margin-right: 0.5rem;
+      }
+    }
+
+    .link {
+      font-size: 0.875rem;
+      color: $link-color;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+
+  &__subitle {
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    color: lighten($text-color, 20%);
+  }
+
+  &__link {
+    color: $link-color;
+    font-weight: 500;
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__submit {
+    background: $primary-color;
+    color: #ffffff;
+    padding: 0.75rem;
+    width: 100%;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+    &:hover {
+      background: darken($primary-color, 5%);
+    }
+  }
 }

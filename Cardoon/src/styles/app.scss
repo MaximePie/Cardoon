@@ -9,6 +9,11 @@ html {
   padding: 0;
   box-sizing: border-box;
   font-family: "red hat text", sans-serif;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .Cards {
@@ -73,7 +78,8 @@ html {
   background: linear-gradient(to right, #22d3ee, #2dd4bf, #3b82f6);
   color: white;
   flex-direction: row;
-
+  position: absolute;
+  width: 100%;
   a {
     padding: 0.5rem 1rem;
     background-color: white;

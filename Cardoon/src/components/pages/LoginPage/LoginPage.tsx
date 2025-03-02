@@ -19,6 +19,8 @@ export default function LoginForm() {
   const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isErroneous, setIsErroneous] = useState(false);
 
+  const [rememberMe, setRememberMe] = useState(false);
+
   const { post, data, error } = usePost<LoginResponse>(ACTIONS.LOGIN);
   const navigate = useNavigate();
 
@@ -56,34 +58,63 @@ export default function LoginForm() {
       setLoading(false);
       return;
     }
+    // TODO - add remember me functionality
     post({ email, password });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h1>Login</h1>
-      <p>
-        Pas encore de compte ? <Link to="/register">Crée-le maintenant</Link>
-      </p>
-      <input
-        // type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      {JSON.stringify(error)}
-      <button type="submit" disabled={loading || isErroneous}>
-        {loading ? "Chargement" : "Se connecter"}
-      </button>
+    <div className="LoginPage">
+      <form onSubmit={handleSubmit} className="LoginPage__form">
+        <h1 className="LoginPage__title">Connexion</h1>
+        <p className="LoginPage__subtitle">
+          Pas encore de compte ?{" "}
+          <Link className="LoginPage__link" to="/register">
+            Crée-le maintenant
+          </Link>
+        </p>
+        <div className="LoginPage__form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            // type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="LoginPage__form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <div className="LoginPage__form-options">
+          <label className="LoginPage__remember-me">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+            />
+            Remember Me
+          </label>
+          <a href="#" className="link">
+            Forgot Password?
+          </a>
+        </div>
+        {JSON.stringify(error)}
+        <button
+          type="submit"
+          disabled={loading || isErroneous}
+          className="LoginPage__submit"
+        >
+          {loading ? "Chargement" : "Se connecter"}
+        </button>
 
-      {formError && <p className="formError">{formError}</p>}
-      {error && <p>{error}</p>}
-    </form>
+        {formError && <p className="formError">{formError}</p>}
+        {error && <p>{error}</p>}
+      </form>
+    </div>
   );
 }

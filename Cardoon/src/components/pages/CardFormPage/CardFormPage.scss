@@ -1,0 +1,42 @@
+.CardFormPage {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* Exemple de dégradé personnalisé */
+  background: linear-gradient(
+    120deg,
+    #4c64ec 0%,
+    /* Couleur 1 */ #14b8a6 50%,
+    /* Couleur 2 */ #3b82f6 100% /* Couleur 3 */
+  );
+
+  &__header {
+    text-align: center;
+  }
+
+  &__form {
+    font-family: "Roboto", sans-serif; /* ou autre police */
+    color: #333;
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 0.75rem;
+    /* Légère ombre de carte */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    .MuiAutocomplete-root {
+      width: 100% !important; /* Forcer l'auto-complétion à prendre la même largeur */
+    }
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.25rem; /* Meilleure lisibilité */
+    }
+
+    &-group {
+      margin-top: 1.5rem;
+    }
+  }
+}

@@ -5,11 +5,30 @@ import { User } from "../../../types/common";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Input from "../../atoms/Input/Input";
 
 interface LoginResponse {
   user: User;
   token: string;
 }
+
+interface SubmitButtonProp {
+  children: React.ReactNode;
+  className?: string;
+  disabled?: boolean;
+}
+
+export const SubmitButton = ({
+  children,
+  className,
+  disabled,
+}: SubmitButtonProp) => {
+  return (
+    <button className={`Button ${className}`} disabled={disabled} type="submit">
+      {children}
+    </button>
+  );
+};
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -72,24 +91,20 @@ export default function LoginForm() {
             Crée-le maintenant
           </Link>
         </p>
-        <div className="LoginPage__form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            // type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="LoginPage__form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="LoginPage__form-group"
+        />
+        <Input
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="LoginPage__form-group"
+        />
         <div className="LoginPage__form-options">
           <label className="LoginPage__remember-me">
             <input
@@ -104,13 +119,12 @@ export default function LoginForm() {
           </a>
         </div>
         {JSON.stringify(error)}
-        <button
-          type="submit"
+        <SubmitButton
           disabled={loading || isErroneous}
           className="LoginPage__submit"
         >
           {loading ? "Chargement" : "Se connecter"}
-        </button>
+        </SubmitButton>
 
         {formError && <p className="formError">{formError}</p>}
         {error && <p>{error}</p>}

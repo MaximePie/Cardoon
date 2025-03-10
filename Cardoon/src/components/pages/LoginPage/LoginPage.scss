@@ -1,12 +1,4 @@
-$primary-color: #4c64ec;
-$secondary-color: #14b8a6;
-$background-gradient: linear-gradient(
-  to bottom,
-  $primary-color,
-  $secondary-color
-);
-$text-color: #4a5568;
-$link-color: #1a56db;
+@use "../../../styles//variables.scss" as *;
 .formError {
   color: red;
   font-size: 0.8em;
@@ -28,34 +20,6 @@ $link-color: #1a56db;
     max-width: 400px;
     width: 100%;
     text-align: center;
-  }
-
-  &__form-group {
-    margin-bottom: 1.5rem;
-    text-align: left;
-
-    label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-      color: $text-color;
-    }
-
-    input {
-      width: 100%;
-      padding: 0.75rem;
-      border: 1px solid #d2d6dc;
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      color: $text-color;
-
-      &:focus {
-        outline: none;
-        border-color: $primary-color;
-        box-shadow: 0 0 4px rgba(76, 100, 236, 0.4);
-      }
-    }
   }
 
   &__form-options {
@@ -103,22 +67,6 @@ $link-color: #1a56db;
     text-decoration: none;
     &:hover {
       text-decoration: underline;
-    }
-  }
-
-  &__submit {
-    background: $primary-color;
-    color: #ffffff;
-    padding: 0.75rem;
-    width: 100%;
-    border: none;
-    border-radius: 0.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background 0.3s;
-    &:hover {
-      background: darken($primary-color, 5%);
     }
   }
 }

@@ -1,7 +1,7 @@
 import axios from "axios";
 import "./styles/app.scss";
 import { PopulatedUserCard, User } from "./types/common";
-import CardForm from "./components/molecules/CardForm/CardForm";
+import CardForm from "./components/pages/CardFormPage/CardFormPage";
 import { ACTIONS, RESOURCES, useDelete, useFetch } from "./hooks/server";
 import Card from "./components/molecules/Card/Card";
 import { createContext, useContext, useEffect, useState } from "react";

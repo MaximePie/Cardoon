@@ -1,58 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
 import { Autocomplete, createFilterOptions, TextField } from "@mui/material";
+import { TokenErrorPage } from "../TokenErrorPage/TokenErrorPage";
+import Input from "../../atoms/Input/Input";
+import { SubmitButton } from "../LoginPage/LoginPage";
+import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
+
+// TODO - Fix submit button at bottom of form
+// TODO - Add a max height to form and a scrollbar
 
 const filter = createFilterOptions<String>();
-
-interface ImagePasterProp {
-  onUpload: (file: File) => void;
-  shouldReset?: boolean; // Used to reset the preview in a useEffect
-}
-export const ImagePaster = ({ onUpload, shouldReset }: ImagePasterProp) => {
-  const [preview, setPreview] = useState("");
-
-  useEffect(() => {
-    if (shouldReset) {
-      setPreview("");
-    }
-  }, [shouldReset]);
-
-  const handlePaste = async () => {
-    try {
-      const items = await navigator.clipboard.read();
-      for (const item of items) {
-        const imageTypes = item.types.filter((type) =>
-          type.startsWith("image/")
-        );
-        if (imageTypes.length > 0) {
-          const blob = await item.getType(imageTypes[0]);
-          const extension = blob.type.split("/")[1]; // 'png', 'jpeg'...
-          const filename = `pasted-image-${Date.now()}.${extension}`;
-          const file = new File([blob], filename, { type: blob.type });
-
-          // Générer l'aperçu
-          setPreview(URL.createObjectURL(blob));
-
-          // Envoyer le fichier au parent
-          onUpload(file);
-        }
-      }
-    } catch (err) {
-      console.error("Erreur de collage:", err);
-    }
-  };
-
-  return (
-    <div onPaste={handlePaste} className="ImagePaster">
-      {preview ? (
-        <img src={preview} alt="Aperçu collé" />
-      ) : (
-        <p>Cliquez ici puis appuyez sur Ctrl+V pour coller une image</p>
-      )}
-    </div>
-  );
-};
 
 /**
  * question: String
@@ -121,27 +79,30 @@ export default () => {
     setImage(null);
     setShouldResetPaster(!shouldResetPaster);
   };
+
+  if (error === "Invalid token") {
+    return <TokenErrorPage />;
+  }
+
   return (
-    <div className="CardForm">
-      <form onSubmit={onSubmit}>
-        <label>
-          Question:
-          <input
-            type="text"
-            name="question"
-            value={newCard.question}
-            onChange={onChange}
-          />
-        </label>
-        <label>
-          Réponse:
-          <input
-            type="text"
-            name="answer"
-            value={newCard.answer}
-            onChange={onChange}
-          />
-        </label>
+    <div className="CardFormPage">
+      <form onSubmit={onSubmit} className="CardFormPage__form">
+        <h1 className="CardFormPage__header">Ajouter une carte</h1>
+        <Input
+          label="Question"
+          type="text"
+          value={newCard.question || ""} // Prevents 'controlled to uncontrolled' warning
+          onChange={(e) => setNewCard({ ...newCard, question: e.target.value })}
+          className="CardFormPage__form-group"
+        />
+        <Input
+          label="Réponse"
+          type="text"
+          name="answer"
+          value={newCard.answer || ""} // Prevents 'controlled to uncontrolled' warning
+          onChange={onChange}
+          className="CardFormPage__form-group"
+        />
         <Autocomplete
           id="card-category"
           options={formatedCategories || []}
@@ -170,24 +131,25 @@ export default () => {
             return filtered;
           }}
         />
-        <label>
-          Image:
+        <label className="CardFormPage__form-group">
+          Uploader une image:
           <input type="file" onChange={onFileChange} />
         </label>
-        <label>
-          Image link:
-          <input
-            type="text"
-            name="imageLink"
-            value={newCard.imageLink}
-            onChange={onChange}
-          />
-        </label>
+        <Input
+          label="Lien d'une image"
+          type="text"
+          name="imageLink"
+          value={newCard.imageLink || ""}
+          onChange={onChange}
+          className="CardFormPage__form-group"
+        />
         <ImagePaster
           onUpload={(file) => setImage(file)}
           shouldReset={shouldResetPaster}
         />
-        <button type="submit">Ajouter</button>
+        <SubmitButton disabled={false} className="CardFormPage__submit">
+          Ajouter la carte
+        </SubmitButton>
       </form>
       <div>{error}</div>
     </div>

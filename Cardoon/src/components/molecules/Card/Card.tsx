@@ -12,12 +12,18 @@ interface CardProps {
   card: PopulatedUserCard;
   onDelete: (id: string) => void;
   onUpdate: (id: string) => void;
+  isFlashModeOn: boolean;
 }
 
 interface PutResult {
   user: User;
 }
-export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
+export default ({
+  card,
+  onDelete,
+  onUpdate: onAnswer,
+  isFlashModeOn,
+}: CardProps) => {
   const {
     card: { question, answer, imageLink, _id: cardId },
     _id: userCardId,
@@ -43,12 +49,16 @@ export default ({ card, onDelete, onUpdate: onAnswer }: CardProps) => {
   // If recto, set to false, else do nothing
   const onCardClick = () => {
     if (isRecto) {
-      setIsFlipping(true);
-      flipCard(false);
-      setTimeout(() => {
-        setShowAnswer(true);
-        setIsFlipping(false);
-      }, 200);
+      if (isFlashModeOn) {
+        succeed();
+      } else {
+        setIsFlipping(true);
+        flipCard(false);
+        setTimeout(() => {
+          setShowAnswer(true);
+          setIsFlipping(false);
+        }, 200);
+      }
     }
   };
 

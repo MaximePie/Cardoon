@@ -49,23 +49,15 @@ export const uploadImage = (file) => {
       Key: path,
       Body: fileStream,
       ContentType: fileStream.mimetype,
+      ACL: "public-read",
     };
 
     s3.upload(params, (err) => {
       if (err) {
         reject(err);
       }
-
-      s3.getSignedUrl(
-        "getObject",
-        { Bucket: bucketName, Key: path },
-        (err, url) => {
-          if (err) {
-            reject(err);
-          }
-          resolve(url);
-        }
-      );
+      const publicUrl = `https://${bucketName}.s3.eu-west-2.amazonaws.com/${Key}`;
+      resolve(publicUrl);
     });
   });
 };

@@ -44,9 +44,9 @@ export const ImagePaster = ({ onUpload, shouldReset }: ImagePasterProp) => {
   };
 
   return (
-    <div onPaste={handlePaste}>
+    <div onPaste={handlePaste} className="ImagePaster">
       {preview ? (
-        <img src={preview} alt="Aperçu collé" className="max-h-48 mx-auto" />
+        <img src={preview} alt="Aperçu collé" />
       ) : (
         <p>Cliquez ici puis appuyez sur Ctrl+V pour coller une image</p>
       )}
@@ -112,10 +112,10 @@ export default () => {
 
     await post(formData, "multipart/form-data");
     setNewCard({
+      ...newCard,
       question: "",
       answer: "",
       imageLink: "",
-      category: "",
     });
 
     setImage(null);

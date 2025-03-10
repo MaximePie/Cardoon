@@ -1,4 +1,4 @@
-$cardSizeMobile: 210px;
+$cardSizeMobile: 180px;
 .Card {
   position: relative;
   background: linear-gradient(135deg, #d4f1ff, #a8e0ff);
@@ -11,6 +11,7 @@ $cardSizeMobile: 210px;
     padding: 8px;
     margin: 8px;
     max-width: $cardSizeMobile;
+    height: 250px;
   }
 
   max-width: 300px;

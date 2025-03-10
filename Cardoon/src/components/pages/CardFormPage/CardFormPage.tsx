@@ -88,68 +88,78 @@ export default () => {
     <div className="CardFormPage">
       <form onSubmit={onSubmit} className="CardFormPage__form">
         <h1 className="CardFormPage__header">Ajouter une carte</h1>
-        <Input
-          label="Question"
-          type="text"
-          value={newCard.question || ""} // Prevents 'controlled to uncontrolled' warning
-          onChange={(e) => setNewCard({ ...newCard, question: e.target.value })}
-          className="CardFormPage__form-group"
-        />
-        <Input
-          label="Réponse"
-          type="text"
-          name="answer"
-          value={newCard.answer || ""} // Prevents 'controlled to uncontrolled' warning
-          onChange={onChange}
-          className="CardFormPage__form-group"
-        />
-        <Autocomplete
-          id="card-category"
-          options={formatedCategories || []}
-          sx={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} label="Catégorie" />}
-          value={newCard.category}
-          onChange={(_, newValue) => {
-            if (typeof newValue === "string") {
-              if (newValue.includes("Créer: ")) {
-                const newCategory = newValue.replace("Créer: ", "");
-                setNewCard({ ...newCard, category: newCategory });
-              } else {
-                setNewCard({ ...newCard, category: newValue });
+        <div className="CardFormPage__body">
+          <Input
+            label="Question"
+            type="text"
+            value={newCard.question || ""} // Prevents 'controlled to uncontrolled' warning
+            onChange={(e) =>
+              setNewCard({ ...newCard, question: e.target.value })
+            }
+            className="CardFormPage__form-group"
+          />
+          <Input
+            label="Réponse"
+            type="text"
+            name="answer"
+            value={newCard.answer || ""} // Prevents 'controlled to uncontrolled' warning
+            onChange={onChange}
+            className="CardFormPage__form-group"
+          />
+          <Autocomplete
+            id="card-category"
+            options={formatedCategories || []}
+            sx={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Catégorie" />
+            )}
+            value={newCard.category}
+            onChange={(_, newValue) => {
+              if (typeof newValue === "string") {
+                if (newValue.includes("Créer: ")) {
+                  const newCategory = newValue.replace("Créer: ", "");
+                  setNewCard({ ...newCard, category: newCategory });
+                } else {
+                  setNewCard({ ...newCard, category: newValue });
+                }
               }
-            }
-          }}
-          filterOptions={(options, params) => {
-            const filtered = filter(options, params);
+            }}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
 
-            const { inputValue } = params;
-            // Suggest the creation of a new value
-            const isExisting = options.some((option) => inputValue === option);
-            if (inputValue !== "" && !isExisting) {
-              filtered.push(`Créer: ${inputValue}`);
-            }
-            return filtered;
-          }}
-        />
-        <label className="CardFormPage__form-group">
-          Uploader une image:
-          <input type="file" onChange={onFileChange} />
-        </label>
-        <Input
-          label="Lien d'une image"
-          type="text"
-          name="imageLink"
-          value={newCard.imageLink || ""}
-          onChange={onChange}
-          className="CardFormPage__form-group"
-        />
-        <ImagePaster
-          onUpload={(file) => setImage(file)}
-          shouldReset={shouldResetPaster}
-        />
-        <SubmitButton disabled={false} className="CardFormPage__submit">
-          Ajouter la carte
-        </SubmitButton>
+              const { inputValue } = params;
+              // Suggest the creation of a new value
+              const isExisting = options.some(
+                (option) => inputValue === option
+              );
+              if (inputValue !== "" && !isExisting) {
+                filtered.push(`Créer: ${inputValue}`);
+              }
+              return filtered;
+            }}
+          />
+          <label className="CardFormPage__form-group">
+            Uploader une image:
+            <input type="file" onChange={onFileChange} />
+          </label>
+          <Input
+            label="Lien d'une image"
+            type="text"
+            name="imageLink"
+            value={newCard.imageLink || ""}
+            onChange={onChange}
+            className="CardFormPage__form-group"
+          />
+          <ImagePaster
+            onUpload={(file) => setImage(file)}
+            shouldReset={shouldResetPaster}
+          />
+        </div>
+        <div className="CardFormPage__footer">
+          <SubmitButton disabled={false} className="CardFormPage__submit">
+            Ajouter la carte
+          </SubmitButton>
+        </div>
       </form>
       <div>{error}</div>
     </div>

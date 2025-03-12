@@ -144,6 +144,14 @@ export default ({
         showAnswer && (
           <>
             <Chip className="Card__score" label={`🧠 ${interval}`} />
+            <IconButton
+              color="error"
+              onClick={(e) => handleDeleteClick(cardId, e)}
+              className="Card__delete"
+              size="small"
+            >
+              <DeleteIcon />
+            </IconButton>
             <p>{answer}</p>
             <Stack spacing={1} direction="row">
               <Button color="success" onClick={succeed}>
@@ -152,14 +160,6 @@ export default ({
               <Button color="secondary" onClick={fail}>
                 pas ok
               </Button>
-              <IconButton
-                color="error"
-                onClick={(e) => handleDeleteClick(cardId, e)}
-                className="Card__delete"
-                size="small"
-              >
-                <DeleteIcon />
-              </IconButton>
             </Stack>
           </>
         )

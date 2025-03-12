@@ -1,4 +1,4 @@
-$cardSizeMobile: 180px;
+$cardSizeMobile: 92vw;
 .Card {
   position: relative;
   background: linear-gradient(135deg, #d4f1ff, #a8e0ff);
@@ -10,8 +10,9 @@ $cardSizeMobile: 180px;
   @media (max-width: 768px) {
     padding: 8px;
     margin: 8px;
-    max-width: $cardSizeMobile;
+    width: $cardSizeMobile;
     height: 250px;
+    max-width: $cardSizeMobile;
   }
 
   max-width: 300px;
@@ -49,11 +50,16 @@ $cardSizeMobile: 180px;
     font-size: 0.8em;
     color: rgba(0, 0, 0, 0.767);
   }
+  &__delete {
+    position: absolute !important;
+    top: 1em;
+    left: 1em;
+  }
 
   &--verso {
     /* Ajout de l'animation de spin */
     background: linear-gradient(135deg, #d9ffc8, #afff9f);
-    grid-template-rows: 1fr 80px;
+    grid-template-rows: 1fr 40px;
     align-items: center;
   }
 
@@ -63,12 +69,6 @@ $cardSizeMobile: 180px;
     transform: none; /* Ignore l'effet hover */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     pointer-events: none; /* Empêche d'autres interactions pendant l'animation */
-  }
-
-  &__delete {
-    position: absolute !important;
-    top: 1em;
-    left: 1em;
   }
 }
 @keyframes card-spin {

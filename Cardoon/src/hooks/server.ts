@@ -98,7 +98,7 @@ export const useDelete = (resource: string) => {
 export const usePost = <T>(resource: string) => {
   const url = `${backUrl}/api/` + resource;
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
 
   const post = async (

@@ -6,29 +6,12 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Input from "../../atoms/Input/Input";
+import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 
 interface LoginResponse {
   user: User;
   token: string;
 }
-
-interface SubmitButtonProp {
-  children: React.ReactNode;
-  className?: string;
-  disabled?: boolean;
-}
-
-export const SubmitButton = ({
-  children,
-  className,
-  disabled,
-}: SubmitButtonProp) => {
-  return (
-    <button className={`Button ${className}`} disabled={disabled} type="submit">
-      {children}
-    </button>
-  );
-};
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");

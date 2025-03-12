@@ -1,6 +1,7 @@
 @use "../components/molecules/Card/Card" as Card;
 @use "../components/atoms/Input/Input" as Input;
 @use "../components/atoms/ImagePaster/ImagePaster" as ImagePaster;
+@use "../components/atoms/Button/Button" as Button;
 @use "../components/atoms/SubmitButton/SubmitButton" as SubmitButton;
 @use "../components/pages/LoginPage/LoginPage" as LoginPage;
 @use "../components/pages/TokenErrorPage/TokenErrorPage" as NotFoundPage;

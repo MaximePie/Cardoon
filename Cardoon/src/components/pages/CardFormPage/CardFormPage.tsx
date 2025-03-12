@@ -1,16 +1,78 @@
 import { useState } from "react";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
-import { Autocomplete, createFilterOptions, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  createFilterOptions,
+  Modal,
+  TextField,
+} from "@mui/material";
 import { TokenErrorPage } from "../TokenErrorPage/TokenErrorPage";
 import Input from "../../atoms/Input/Input";
-import { SubmitButton } from "../LoginPage/LoginPage";
 import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
-
-// TODO - Fix submit button at bottom of form
-// TODO - Add a max height to form and a scrollbar
+import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
+import Button from "../../atoms/Button/Button";
 
 const filter = createFilterOptions<String>();
+
+interface CardFormModalProps {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+const CardFormModal = ({ open, onClose, children }: CardFormModalProps) => {
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <div className="CardFormPage__modal">{children}</div>
+    </Modal>
+  );
+};
+
+interface QuestionLineProps {
+  question: string;
+  answer: string;
+  category?: string;
+}
+/**
+ * Appears on the multiple questions modal
+ */
+export const QuestionLine = ({
+  question,
+  answer,
+  category,
+}: QuestionLineProps) => {
+  const { post, loading } = usePost(RESOURCES.CARDS);
+  const [isCreated, setIsCreated] = useState(false);
+  const createCard = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("question", question);
+    formData.append("answer", answer);
+    if (category) {
+      formData.append("category", category);
+    }
+    await post(formData, "multipart/form-data");
+    setIsCreated(true);
+  };
+
+  return (
+    <div className="CardFormPage__modal-question">
+      <div>
+        <p>{question}</p>
+        <p>{answer}</p>
+      </div>
+      <button onClick={createCard} disabled={isCreated}>
+        {loading ? "..." : "Créer"}
+      </button>
+    </div>
+  );
+};
 
 /**
  * question: String
@@ -31,8 +93,14 @@ export default () => {
     category: "",
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [image, setImage] = useState<File | null>(null);
   const [shouldResetPaster, setShouldResetPaster] = useState(false);
+  const [jsonFileData, setJsonFileData] = useState<string>("");
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCard({
@@ -84,8 +152,75 @@ export default () => {
     return <TokenErrorPage />;
   }
 
+  console.log(jsonFileData);
   return (
     <div className="CardFormPage">
+      <CardFormModal
+        open={isModalOpen}
+        onClose={closeModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className="CardFormPage__modal">
+          <form>
+            <input
+              type="file"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  const reader = new FileReader();
+                  reader.onload = (e) => {
+                    setJsonFileData(e.target?.result as string);
+                  };
+                  reader.readAsText(e.target.files[0]);
+                }
+              }}
+            />
+            <Autocomplete
+              id="card-category"
+              options={formatedCategories || []}
+              sx={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField {...params} label="Catégorie" />
+              )}
+              value={newCard.category}
+              onChange={(_, newValue) => {
+                if (typeof newValue === "string") {
+                  if (newValue.includes("Créer: ")) {
+                    const newCategory = newValue.replace("Créer: ", "");
+                    setNewCard({ ...newCard, category: newCategory });
+                  } else {
+                    setNewCard({ ...newCard, category: newValue });
+                  }
+                }
+              }}
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+
+                const { inputValue } = params;
+                // Suggest the creation of a new value
+                const isExisting = options.some(
+                  (option) => inputValue === option
+                );
+                if (inputValue !== "" && !isExisting) {
+                  filtered.push(`Créer: ${inputValue}`);
+                }
+                return filtered;
+              }}
+            />
+            <div className="CardFormPage__modal-questions">
+              {jsonFileData &&
+                JSON.parse(jsonFileData).map((card: Card) => (
+                  <QuestionLine
+                    key={card.question}
+                    question={card.question}
+                    answer={card.answer}
+                    category={newCard.category}
+                  />
+                ))}
+            </div>
+          </form>
+        </div>
+      </CardFormModal>
       <form onSubmit={onSubmit} className="CardFormPage__form">
         <h1 className="CardFormPage__header">Ajouter une carte</h1>
         <div className="CardFormPage__body">
@@ -138,6 +273,10 @@ export default () => {
               return filtered;
             }}
           />
+
+          <Button onClick={openModal} className="CardFormPage__modal-button">
+            Import multiple
+          </Button>
           <label className="CardFormPage__form-group">
             Uploader une image:
             <input type="file" onChange={onFileChange} />

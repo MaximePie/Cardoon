@@ -30,7 +30,6 @@ export const parsefile = async (req) => {
 
 export const uploadImage = (file) => {
   const fileStream = fs.createReadStream(file.filepath);
-  console.log("Bucket Name", process.env.AWS_BUCKET_NAME);
 
   const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,

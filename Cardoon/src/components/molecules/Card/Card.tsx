@@ -8,6 +8,29 @@ import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Chip, IconButton } from "@mui/material";
 
+const stringToRgb = (text: String) => {
+  let hash = 0;
+
+  // Calcule un hash simple basé sur le code ASCII de chaque caractère
+  for (let i = 0; i < text.length; i++) {
+    hash = (hash << 5) - hash + text.charCodeAt(i);
+    hash |= 0; // Assure une conversion à un entier 32 bits
+  }
+
+  // Décompose le hash en trois valeurs (0–255)
+  let r = (hash >> 16) & 255;
+  let g = (hash >> 8) & 255;
+  let b = hash & 255;
+
+  // On "éclaircit" un peu la couleur en la décalant vers le blanc
+  const ratio = 0.6; // Ajustez pour éclaircir plus ou moins
+  r = Math.round(r + (255 - r) * ratio);
+  g = Math.round(g + (255 - g) * ratio);
+  b = Math.round(b + (255 - b) * ratio);
+
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 interface CardProps {
   card: PopulatedUserCard;
   onDelete: (id: string) => void;
@@ -25,7 +48,7 @@ export default ({
   isFlashModeOn,
 }: CardProps) => {
   const {
-    card: { question, answer, imageLink, _id: cardId },
+    card: { question, answer, imageLink, _id: cardId, category },
     _id: userCardId,
     interval,
   } = card;
@@ -45,6 +68,11 @@ export default ({
     "Card--verso": !isRecto,
     "Card--isFlipping": isFlipping,
   });
+  const cardBackground = `linear-gradient(  
+  130deg,  
+  ${stringToRgb(category || "")},  
+  #ffffff  
+)`;
 
   // If recto, set to false, else do nothing
   const onCardClick = () => {
@@ -84,6 +112,7 @@ export default ({
   return (
     <div
       className={cardClassNames}
+      style={{ background: cardBackground }}
       onClick={onCardClick}
       onContextMenu={(e) => {
         e.preventDefault();

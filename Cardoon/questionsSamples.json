@@ -1,0 +1,606 @@
+[
+  {
+    "question": "Qu'est-ce qu'un 'maquilleur théâtral'?",
+    "answer": "Un professionnel chargé de transformer ou de souligner les traits des acteurs via le maquillage scénique."
+  },
+  {
+    "question": "Pourquoi un maquillage peut-il être plus marqué sur scène?",
+    "answer": "Pour compenser l'intensité des projecteurs et être visible de loin par les spectateurs."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'silence' au théâtre?",
+    "answer": "Une pause volontaire dans les répliques, chargée de tension ou d'émotion, faisant partie intégrante du jeu."
+  },
+  {
+    "question": "Comment appelle-t-on un spectacle en plein air le soir, souvent en été?",
+    "answer": "Une représentation en 'nocturne' ou un 'spectacle nocturne'."
+  },
+  {
+    "question": "Qu'est-ce que l'Avanscène?",
+    "answer": "La partie de la scène la plus proche du public, devant le cadre de scène."
+  },
+  {
+    "question": "Qu'est-ce que l'illusion théâtrale?",
+    "answer": "Le fait que le public accepte de croire à l’histoire et aux personnages joués sur scène."
+  },
+  {
+    "question": "Qu'appelle-t-on un comédien 'en pleine forme'?",
+    "answer": "Un acteur dont l'énergie et la présence scénique sont particulièrement fortes et convaincantes."
+  },
+  {
+    "question": "Qu'est-ce que le théâtre 'pour enfants'?",
+    "answer": "Une forme de spectacle adapté aux jeunes publics, avec un contenu, un langage et une mise en scène appropriés."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'festival de théâtre'?",
+    "answer": "Un événement culturel rassemblant plusieurs compagnies ou troupes pour des représentations multiples sur une période donnée."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'archétype théâtral'?",
+    "answer": "Un personnage type (le avare, le héros naïf, le valet rusé, etc.) qui se retrouve dans plusieurs œuvres."
+  },
+  {
+    "question": "Qui est Lope de Vega?",
+    "answer": "Un dramaturge espagnol (1562-1635), figure majeure du Siècle d'Or, auteur de nombreuses comédies."
+  },
+  {
+    "question": "Qu'est-ce que le 'côté cour' et le 'côté jardin'?",
+    "answer": "Le côté cour est à la droite de la scène vu du public, le côté jardin à la gauche."
+  },
+  {
+    "question": "À quoi sert un micro HF en théâtre?",
+    "answer": "À amplifier la voix d'un comédien sans fil, assurant mobilité sur scène."
+  },
+  {
+    "question": "Qu'est-ce qu'une 'servante' dans un théâtre?",
+    "answer": "Une lampe sur pied laissée allumée sur scène dans un théâtre vide, pour sécurité et superstition."
+  },
+  {
+    "question": "Qu'est-ce que 'le baisser de rideau'?",
+    "answer": "Le moment où le rideau se ferme, généralement à la fin de la représentation."
+  },
+  {
+    "question": "Qu'est-ce que l'improvisation collective?",
+    "answer": "Quand plusieurs acteurs construisent ensemble une scène sans texte préalable, en réagissant spontanément."
+  },
+  {
+    "question": "Qu'est-ce que la dramaturgie musicale?",
+    "answer": "L’intégration d’éléments musicaux dans la trame dramatique pour renforcer l’impact et l’atmosphère."
+  },
+  {
+    "question": "Qu'appelle-t-on un 'dramaturge engagé'?",
+    "answer": "Un auteur qui exprime des positions politiques, sociales ou morales fortes dans ses pièces."
+  },
+  {
+    "question": "Qu'est-ce que la surimpression vidéo sur scène?",
+    "answer": "Une projection d’images ou de vidéos intégrées au décor scénique pour créer des effets ou des ambiances."
+  },
+  {
+    "question": "Qui était Antonin Artaud?",
+    "answer": "Un poète, dramaturge français (1896-1948), fondateur du 'Théâtre de la Cruauté'."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'comique de répétition'?",
+    "answer": "Un effet humoristique basé sur la reprise multiple d'une même réplique ou situation."
+  },
+  {
+    "question": "Qu'est-ce que le 'Masque de tragédie et de comédie'?",
+    "answer": "Les symboles traditionnels du théâtre, représentant la double nature (tragique et comique) des spectacles."
+  },
+  {
+    "question": "Qu’appelle-t-on 'accessoires' au théâtre?",
+    "answer": "Les objets manipulés par les acteurs sur scène (verre, épée, lettre...)."
+  },
+  {
+    "question": "Quel est le rôle du 'brigadier' en début de représentation?",
+    "answer": "Il frappe le sol avec le brigadier (bâton) pour annoncer symboliquement le début du spectacle."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'revival' d'une pièce?",
+    "answer": "Une reprise d’une ancienne production théâtrale, parfois après plusieurs années."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'monologue délibératif'?",
+    "answer": "Un monologue où le personnage pèse le pour et le contre d’une décision cruciale."
+  },
+  {
+    "question": "Qu'est-ce que la 'bouffonnerie'?",
+    "answer": "Un registre comique outrancier basé sur la farce, la grimace et le grotesque."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'conte théâtralisé'?",
+    "answer": "Une adaptation scénique d'un conte, avec costumes, décors et jeu d’acteur."
+  },
+  {
+    "question": "Qu'est-ce que le 'stand-up'?",
+    "answer": "Une forme de one-man-show humoristique, proche de la performance théâtrale, avec interaction directe avec le public."
+  },
+  {
+    "question": "Qu'est-ce que l'actualité théâtrale?",
+    "answer": "L'ensemble des informations sur les nouvelles pièces, festivals, créations et événements liés au théâtre."
+  },
+  {
+    "question": "Qui était Constantin Stanislavski?",
+    "answer": "Un metteur en scène russe (1863-1938) ayant développé la méthode Stanislavski, axée sur la sincérité du jeu."
+  },
+  {
+    "question": "Qu'est-ce qu'un simple 'récitant'?",
+    "answer": "Un intervenant lisant ou racontant un texte au public, sans mise en scène élaborée."
+  },
+  {
+    "question": "Qu'est-ce que l'expression 'faire un four'?",
+    "answer": "Subir un échec public, quand la salle reste vide ou l'accueil est froid."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'sociétaire' à la Comédie-Française?",
+    "answer": "Un acteur membre permanent et associé de la troupe, après plusieurs années de service."
+  },
+  {
+    "question": "Comment appelle-t-on le fait de se déplacer sur scène?",
+    "answer": "Le déplacement scénique ou la circulation scénique."
+  },
+  {
+    "question": "Qui était Henrik Ibsen?",
+    "answer": "Un dramaturge norvégien (1828-1906) considéré comme l'un des pionniers du théâtre moderne (ex: 'Une maison de poupée')."
+  },
+  {
+    "question": "Qu'appelle-t-on 'un décor tournant'?",
+    "answer": "Un décor monté sur plateau pivotant, facilitant les changements rapides de scène."
+  },
+  {
+    "question": "Qu'est-ce que la 'mise en espace'?",
+    "answer": "Une forme de mise en scène réduite, valorisant surtout le texte et le positionnement des acteurs."
+  },
+  {
+    "question": "Qu'est-ce que 'le poulailler' dans un théâtre à l'italienne?",
+    "answer": "La galerie supérieure où les places sont les moins chères et la visibilité pas toujours optimale."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'cabaret-théâtre'?",
+    "answer": "Un lieu avec tables et restauration, proposant des numéros, des sketchs ou des spectacles variés."
+  },
+  {
+    "question": "Qu'appelle-t-on un 'huis clos'?",
+    "answer": "Une pièce où l'action se déroule dans un espace fermé dont personne ne peut sortir."
+  },
+  {
+    "question": "Qu'est-ce que 'Ubu Roi'?",
+    "answer": "Une pièce d’Alfred Jarry (1896) représentant un univers absurde et satirique."
+  },
+  {
+    "question": "Qu'appelle-t-on 'la double énonciation'?",
+    "answer": "Le fait qu'un personnage s'adresse à un autre tout en communiquant simultanément avec le public."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'feuilleton théâtral'?",
+    "answer": "Une série de courtes pièces ou épisodes présentés successivement, parfois sur plusieurs jours."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'éclairagiste'?",
+    "answer": "Un professionnel chargé de concevoir et d'opérer le plan lumière pendant la représentation."
+  },
+  {
+    "question": "Pourquoi utilise-t-on le noir sur scène?",
+    "answer": "Pour effectuer un changement de décor rapide ou pour conclure une scène en marquant une coupure."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'stock costumes'?",
+    "answer": "Le lieu où sont conservés les costumes pour d’autres productions futures."
+  },
+  {
+    "question": "Qu'entend-on par 'jeu réaliste'?",
+    "answer": "Une interprétation proche de la vie quotidienne, basée sur l’authenticité et la psychologie des personnages."
+  },
+  {
+    "question": "Quelle est la caractéristique d’un 'théâtre en rond'?",
+    "answer": "Le public entoure la scène sur plusieurs côtés, voire totalement."
+  },
+  {
+    "question": "Qui est August Strindberg?",
+    "answer": "Un dramaturge suédois (1849-1912) pionnier du drame naturaliste ('Mademoiselle Julie')."
+  },
+  {
+    "question": "À quoi renvoie 'la scène internationale'?",
+    "answer": "L’ensemble des théâtres et compagnies de différents pays, participant à des échanges ou festivals mondiaux."
+  },
+  {
+    "question": "Qu'est-ce que 'Bunraku'?",
+    "answer": "Le théâtre de marionnettes traditionnel japonais, manipulées à vue et accompagnées de récit et shamisen."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'chuchoteur' au théâtre?",
+    "answer": "Une personne qui souffle discrètement le texte aux comédiens, similaire au souffleur."
+  },
+  {
+    "question": "Qu'appelle-t-on un 'running gag'?",
+    "answer": "Une blague ou situation comique répétée tout au long de la pièce, gagnant en effet."
+  },
+  {
+    "question": "Qui était Jean Anouilh?",
+    "answer": "Un dramaturge français du XXe siècle (auteur d'Antigone, La Sauvage...)."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'comedy club'?",
+    "answer": "Un lieu dédié à l'humour en format stand-up, parfois associé à un style théâtral minimaliste."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'avant-scène'?",
+    "answer": "La partie de la scène située entre le rideau et le bord face au public."
+  },
+  {
+    "question": "Qu’est-ce que le 'théâtre classique' en France?",
+    "answer": "Le théâtre du XVIIe siècle sous Louis XIV, régi par des règles strictes (trois unités, vraisemblance, bienséance)."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'voix off'?",
+    "answer": "Une voix enregistrée ou émise hors scène, de personne non visible, parfois une narration."
+  },
+  {
+    "question": "Pourquoi fait-on un 'salut' à la fin?",
+    "answer": "Pour présenter les acteurs et remercier le public, souvent accompagné des applaudissements."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'théâtre universitaire'?",
+    "answer": "Un ensemble d'activités théâtrales dans le cadre d’une université, souvent animées par des étudiants et professeurs."
+  },
+  {
+    "question": "Qu’est-ce que le 'proscenium'?",
+    "answer": "La partie de la scène en avant du rideau, parfois appelée avant-scène."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'drame romantique'?",
+    "answer": "Un genre du XIXe siècle, rejetant les règles classiques, privilégiant la passion et la liberté d'écriture (ex: Victor Hugo)."
+  },
+  {
+    "question": "Pourquoi l’acoustique est-elle importante?",
+    "answer": "Pour que les paroles et la musique soient clairement audibles, sans distorsion ou écho gênant."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'one-man-show'?",
+    "answer": "Un spectacle avec un seul performeur, souvent humoristique, tenant tout le show."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'rentrée théâtrale'?",
+    "answer": "La période où débute la nouvelle saison culturelle, souvent à l’automne, avec de nouvelles créations."
+  },
+  {
+    "question": "Qui était Alfred de Musset?",
+    "answer": "Un écrivain et dramaturge romantique français (1810-1857), auteur de 'Les Caprices de Marianne', 'Lorenzaccio'."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'rideau rouge' symbolise?",
+    "answer": "La tradition théâtrale occidentale, évoquant un sentiment de solennité et de mystère avant le début de la pièce."
+  },
+  {
+    "question": "Qu’est-ce que 'le comique de gestes'?",
+    "answer": "Un type d’humour reposant sur la gestuelle, la pantomime, les chutes ou la maladresse."
+  },
+  {
+    "question": "Qui était Georges Courteline?",
+    "answer": "Un auteur français (1858-1929), célèbre pour ses pièces courtes satiriques (Messieurs les ronds-de-cuir...)."
+  },
+  {
+    "question": "Pourquoi la maintien corporel est-il essentiel?",
+    "answer": "Parce qu'il exprime des intentions, des émotions et renforce la crédibilité du personnage."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'captation' de spectacle?",
+    "answer": "Un enregistrement vidéo ou audio d’une représentation théâtrale."
+  },
+  {
+    "question": "Qui est Luigi Pirandello?",
+    "answer": "Un dramaturge italien (1867-1936), auteur de 'Six personnages en quête d'auteur'."
+  },
+  {
+    "question": "Qu’est-ce que 'l’effet Koulechov' adapté au théâtre?",
+    "answer": "La façon dont le public interprète différemment la même expression faciale selon le contexte scénique environnant."
+  },
+  {
+    "question": "En quoi consiste le 'théâtre documentaire'?",
+    "answer": "Une forme qui s'appuie sur des documents et témoignages réels, pour un propos authentique."
+  },
+  {
+    "question": "Qu’est-ce que 'le salut final'?",
+    "answer": "Le moment où tous les acteurs reviennent pour remercier le public, souvent accompagné d’applaudissements."
+  },
+  {
+    "question": "Qu’est-ce que 'l’improvisation dirigée'?",
+    "answer": "Une forme d’impro où le metteur en scène donne des consignes ou objectifs précis aux acteurs."
+  },
+  {
+    "question": "Qu’appelle-t-on 'la coulisse inverse'?",
+    "answer": "Une coulisse côté public non utilisable pour le cache, concept employé dans certaines mises en scène originales."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'accessoiriste'? (forme féminisée)",
+    "answer": "Une professionnelle qui s’occupe des accessoires scéniques, de leur préparation et de leur mise en place."
+  },
+  {
+    "question": "Comment appelle-t-on un spectacle mêlant théâtre, danse et chant?",
+    "answer": "Une comédie musicale ou un spectacle pluridisciplinaire."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'jeu burlesque'?",
+    "answer": "Un style de jeu excentrique et farcesque, accentuant le ridicule et la caricature."
+  },
+  {
+    "question": "Qu'est-ce que le 'quelconque' dans le théâtre post-moderne?",
+    "answer": "Un concept où la banalité et l’ordinaire deviennent matière à la mise en scène (théâtre du quotidien)."
+  },
+  {
+    "question": "Qu'est-ce que la 'scène pivotante'?",
+    "answer": "Un dispositif permettant de faire tourner un plateau circulaire pour changer rapidement de décor."
+  },
+  {
+    "question": "Qu’est-ce que 'le rappel'?",
+    "answer": "Lorsque le public applaudit fortement, forçant les acteurs ou le metteur en scène à revenir saluer."
+  },
+  {
+    "question": "Qu'est-ce qu'un 'acte unique'?",
+    "answer": "Une pièce de théâtre courte ne comportant qu'un seul acte."
+  },
+  {
+    "question": "Quel est le rôle d'un 'pupitre de conduite'?",
+    "answer": "Centraliser la gestion lumière, son et effets pour coordonner le déroulement du spectacle."
+  },
+  {
+    "question": "Quels sont les signes d’une bonne 'mise en espace'?",
+    "answer": "Un placement clair, une bonne circulation scénique et une cohérence visuelle pour le public."
+  },
+  {
+    "question": "Qu’est-ce que l'illusion comique?",
+    "answer": "Le plaisir pour le spectateur de se laisser prendre au jeu de la fiction scénique."
+  },
+  {
+    "question": "Qu’appelle-t-on 'faire des alexandrins'?",
+    "answer": "Écrire ou réciter des vers de douze syllabes, comme dans le théâtre classique français."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'personnage-type'?",
+    "answer": "Un rôle correspondant à un archétype (jeune premier, traître, valet rusé...) se retrouvant dans plusieurs pièces."
+  },
+  {
+    "question": "Qu’est-ce que 'la tirade'?",
+    "answer": "Un long développement prononcé par un personnage au sein d’un échange."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'extrait' au théâtre?",
+    "answer": "Un passage choisi d'une pièce, présenté isolément."
+  },
+  {
+    "question": "Qui est Marivaux?",
+    "answer": "Un dramaturge français du XVIIIe siècle, auteur de comédies subtiles comme 'Le Jeu de l'amour et du hasard'."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'générale publique'?",
+    "answer": "La dernière répétition jouée comme un spectacle complet, avec un public invité."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'hollywood flats' en décor?",
+    "answer": "Des panneaux légers, souvent en bois et toile, utilisés pour construire rapidement des parois décoratives."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'comédien tragique'?",
+    "answer": "Un acteur spécialisé dans les rôles dramatiques et les émotions fortes."
+  },
+  {
+    "question": "Qu’est-ce que la 'mime corporel' d’Étienne Decroux?",
+    "answer": "Une technique privilégiant le mouvement isolé du corps comme langage principal, sans parole."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'éclairage à contre-jour'?",
+    "answer": "Une lumière placée derrière les acteurs pour souligner leurs silhouettes et créer de la profondeur."
+  },
+  {
+    "question": "Quién era Lope de Rueda? (petit clin d'œil)",
+    "answer": "Un dramaturge espagnol du XVIe siècle, précurseur du théâtre professionnel en Espagne."
+  },
+  {
+    "question": "Qu’est-ce que l’improvisation 'long form'?",
+    "answer": "Une improvisation théâtrale de longue durée, développant personnages et intrigue plus en profondeur."
+  },
+  {
+    "question": "Comment appelle-t-on la séparation du public en 'orchestre', 'balcon', 'loges'?",
+    "answer": "La division de la salle en différents gradins ou niveaux d'emplacement."
+  },
+  {
+    "question": "Qu’est-ce que 'l’atelier théâtre'?",
+    "answer": "Un espace de formation et de création où l’on apprend les techniques théâtrales."
+  },
+  {
+    "question": "Quel est le but du 'théâtre d'entreprise'?",
+    "answer": "Former ou sensibiliser des salariés à travers des saynètes ou ateliers, souvent ludiques ou pédagogiques."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'décors en trompe-l'œil'?",
+    "answer": "Un décor peint ou conçu pour donner l’illusion d’une profondeur ou d’un espace plus grand."
+  },
+  {
+    "question": "Qui est Jean-Paul Sartre en lien avec le théâtre?",
+    "answer": "Un philosophe et écrivain français, auteur de pièces existentialistes comme 'Huis Clos'."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'retour plateau' en sonorisation?",
+    "answer": "Un haut-parleur orienté vers la scène, permettant aux acteurs d’entendre mieux l’ambiance ou la musique."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'solo' au théâtre?",
+    "answer": "Une représentation avec un seul acteur, pouvant être un monologue ou une performance unique."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'réécriture'?",
+    "answer": "Un travail de modification d’une pièce existante pour une nouvelle version ou adaptation."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'circus drama'?",
+    "answer": "Un spectacle mêlant cirque et éléments dramatiques (comédie, récit, personnages)."
+  },
+  {
+    "question": "Qu’est-ce que 'la tireuse de bière' dans un théâtre-cabaret?",
+    "answer": "L’appareil permettant de servir les boissons au bar du lieu, parfois géré par l’équipe du théâtre."
+  },
+  {
+    "question": "Qu’est-ce que 'la dramaturgie féministe'?",
+    "answer": "Une approche dramatique qui met en avant des enjeux d’égalité, de représentation et de voix féminines."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'noir rapide'?",
+    "answer": "Une extinction soudaine des lumières pour effectuer un changement de scène ou marquer une rupture."
+  },
+  {
+    "question": "Qu’est-ce que 'la scène exiguë'?",
+    "answer": "Une scène de petite taille, obligeant à une mise en scène adaptée avec moins de décors."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'dialogue esprit–corps'?",
+    "answer": "Une forme scénique où le personnage exprime ses pensées tout en jouant physiquement d'autres actions."
+  },
+  {
+    "question": "Qu'appelle-t-on 'théâtre en appartement'?",
+    "answer": "Des représentations intimes jouées dans un salon ou un lieu privé, avec un petit public."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'costume d’époque'?",
+    "answer": "Un vêtement reconstituant une mode passée pour une pièce historique ou classique."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'critique théâtrale'?",
+    "answer": "Un article ou un commentaire évaluant la mise en scène, le jeu d'acteur et l'intérêt de la pièce."
+  },
+  {
+    "question": "Pourquoi faire un 'baiser technique' sur scène?",
+    "answer": "Pour simuler un baiser avec réalisme, tout en respectant la pudeur et le confort des acteurs."
+  },
+  {
+    "question": "Qu’est-ce que le 'théâtre-action'?",
+    "answer": "Une démarche collective et militante, où la pièce est conçue pour faire réagir le public sur un sujet social."
+  },
+  {
+    "question": "Qu’est-ce que la 'sur-titrage' au théâtre?",
+    "answer": "Une projection de texte, par exemple pour traduire une pièce jouée dans une autre langue."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'relâche'?",
+    "answer": "Un jour de pause sans représentation pour les comédiens ou la salle."
+  },
+  {
+    "question": "Qu’est-ce que 'l'option théâtre' au lycée?",
+    "answer": "Un enseignement artistique permettant d’étudier et de pratiquer le théâtre dans le cadre scolaire."
+  },
+  {
+    "question": "Qu’est-ce que 'le bruitage'?",
+    "answer": "La création de sons spécifiques (pas, portes, pluie) pour accompagner ou illustrer l'action scénique."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'théâtre de proximité'?",
+    "answer": "Une petite structure souvent ancrée localement, visant à toucher la communauté environnante."
+  },
+  {
+    "question": "Qu’est-ce que le 'Recueil de textes'?",
+    "answer": "Un ensemble de courtes pièces ou extraits d’œuvres destinés à être joués successivement dans la même soirée."
+  },
+  {
+    "question": "Qu’est-ce qu'un 'trac'?",
+    "answer": "La peur ou l’anxiété ressentie par l’acteur avant d’entrer en scène."
+  },
+  {
+    "question": "Qu'est-ce que l'expression 'aller dans le décor'?",
+    "answer": "Tomber ou se cogner en coulisse ou sur scène, par accident, parfois en pleine représentation."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'voix de tête'?",
+    "answer": "Une technique vocale plus aiguë et légère, souvent utilisée pour projeter sans forcer."
+  },
+  {
+    "question": "Qu’est-ce que la 'commedia dell’arte' implique pour les acteurs?",
+    "answer": "Beaucoup d’improvisation, un jeu physique expressif et l’utilisation de masques stéréotypés."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'changement à vue'?",
+    "answer": "Un changement de décor effectif sous les yeux du public, souvent intégré à l'action."
+  },
+  {
+    "question": "Qu’est-ce que 'le rideau de fer'?",
+    "answer": "Un dispositif de sécurité coupe-feu installé entre la scène et la salle, pouvant se baisser rapidement."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'flashback' scénique?",
+    "answer": "Une scène montrant des événements antérieurs, comme un retour en arrière dans l’histoire."
+  },
+  {
+    "question": "Qu'est-ce que la 'mémorisation' pour un comédien?",
+    "answer": "L'apprentissage par cœur du texte et des déplacements, indispensable au jeu sur scène."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'dramaturge contemporain'?",
+    "answer": "Un auteur vivant ou récent, qui crée des pièces en résonance avec les enjeux d’aujourd’hui."
+  },
+  {
+    "question": "Qu’est-ce que la technique du 'Uta-monogatari'?",
+    "answer": "Dans le théâtre japonais, un style narratif chanté, souvent lié au Nô ou au Kabuki."
+  },
+  {
+    "question": "Qui sont les 'comédiens'?",
+    "answer": "Les interprètes qui jouent les rôles sur scène, masculins ou féminins."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'silence révélateur'?",
+    "answer": "Un instant de mutisme volontaire où l’absence de mots exprime une forte intensité dramatique."
+  },
+  {
+    "question": "Qu’est-ce que 'la ligne de force' dans une mise en scène?",
+    "answer": "Le concept ou la vision directrice autour de laquelle s’articulent tous les choix scéniques."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'masque neutre'?",
+    "answer": "Un masque uni permettant à l’acteur de travailler sa posture, ses attitudes, sans expression faciale."
+  },
+  {
+    "question": "Qu’est-ce que la 'calligraphie scénique'?",
+    "answer": "L'organisation méthodique des déplacements, presque chorégraphique, sur le plateau."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'cri primal' dans le jeu d’acteur?",
+    "answer": "Une technique d’explosion vocale et émotionnelle, libérant l'acteur et exprimant une tension forte."
+  },
+  {
+    "question": "Qu’est-ce qu’une 'tournée'?",
+    "answer": "Un ensemble de représentations données successivement dans plusieurs lieux ou villes."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'éclairage rasant'?",
+    "answer": "Un éclairage à faible angle, venant frôler le sol ou un décor pour accentuer les reliefs et les ombres."
+  },
+  {
+    "question": "Qu’est-ce que 'l’appel des techniciens'?",
+    "answer": "Le moment où l’équipe technique est demandée sur scène pour installer le décor, les lumières, etc."
+  },
+  {
+    "question": "Qu’appelle-t-on 'la tragédie shakespearienne'?",
+    "answer": "Une forme de tragédie élaborée par Shakespeare (Hamlet, Macbeth, Othello...) mêlant passion, puissance et fatalité."
+  },
+  {
+    "question": "Qu’est-ce que le 'modernisme' au théâtre?",
+    "answer": "Une rupture avec la tradition, privilégiant de nouvelles formes esthétiques et narratives (début XXe)."
+  },
+  {
+    "question": "Qu’est-ce qu’un 'dramaturge romantique' français?",
+    "answer": "Un auteur du XIXe siècle comme Victor Hugo ou Alfred de Vigny, prônant la liberté créatrice et l’émotion."
+  },
+  {
+    "question": "Qu’est-ce que 'la double contrainte' en improvisation?",
+    "answer": "Deux obligations scéniques contradictoires imposées à l’acteur pour stimuler la créativité."
+  },
+  {
+    "question": "Qu’est-ce qu'un 'bandeau lumineux' en décor?",
+    "answer": "Une frise éclaireuse ou un écran LED discret intégré au décor pour des effets visuels."
+  },
+  {
+    "question": "Qu’est-ce que 'l’adresse au public'?",
+    "answer": "L'action d'un comédien qui s’exprime directement face aux spectateurs, brisant le quatrième mur."
+  },
+  {
+    "question": "Pourquoi l'échauffement corporel est-il important?",
+    "answer": "Pour préparer le corps et la voix, prévenir les blessures et être disponible dans le jeu."
+  }
+]

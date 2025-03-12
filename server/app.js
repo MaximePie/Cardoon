@@ -9,10 +9,17 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
-app.use(cors({ origin: true, credentials: true }));
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://cardoon-front.onrender.com",
+];
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use((req, res, next) => {
+  console.log("Requête entrante :", req.method, req.url);
+  next();
+});
 app.use("/api/cards", cardsRoutes);
 app.use("/api/userCards", userCardsRoutes);
 app.use("/api/users", usersRoutes);

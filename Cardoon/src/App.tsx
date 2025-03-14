@@ -109,25 +109,6 @@ const Game = () => {
     return <p>Erreur: {error}</p>;
   }
 
-  // Make a prompt to generate new questions
-  // The prompt asks the LLM API to generate new questions from the existing ones.
-  // For each existing question, we pair it with the answer like this : [{
-  //   "question": "What is the capital of France?", "answer": "Paris"}]
-  // const generateLLMQuestions = async () => {
-  //   console.log("Incoming");
-  // };
-
-  // Display a confirm modal
-  // const generateQuestions = () => {
-  //   const answer = window.confirm(
-  //     "Êtes-vous sûr de vouloir générer de nouvelles questions?"
-  //   );
-
-  //   if (answer) {
-  //     generateLLMQuestions();
-  //   }
-  // };
-
   return (
     <div>
       <div className="BrainCell">
@@ -142,14 +123,6 @@ const Game = () => {
         </div>
       </div>
       <div className="Cards">
-        {/* <Fab
-          color="primary"
-          aria-label="add"
-          className="Cards__magic-wand-button"
-          onClick={generateQuestions}
-        >
-          <AutoFixHighIcon />
-        </Fab> */}
         <Fab
           color={flash ? "warning" : "primary"}
           aria-label="flash"

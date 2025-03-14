@@ -14,7 +14,10 @@ import UserCard from "../../models/UserCard.js";
 router.get("/test", (req, res) => res.send("Card route testing!"));
 
 router.get("/categories", async (req, res) => {
-  const categories = await Card.distinct("category");
+  const categories = await Card.aggregate([
+    { $group: { _id: "$category", count: { $sum: 1 } } },
+    { $project: { _id: 0, category: "$_id", count: 1 } },
+  ]);
   res.json(categories);
 });
 

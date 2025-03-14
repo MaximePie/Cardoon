@@ -81,11 +81,12 @@ export const QuestionLine = ({
  */
 export default () => {
   const { post, error } = usePost(RESOURCES.CARDS);
-  const { data: categoriesData } = useFetch<String[]>(RESOURCES.CATEGORIES);
-  const formatedCategories = categoriesData?.filter(
-    (category) => category !== null
-  );
-
+  const { data: categoriesData } = useFetch<
+    { category: String; count: Number }[]
+  >(RESOURCES.CATEGORIES);
+  const formatedCategories: String[] = categoriesData
+    ?.filter((category) => category !== null)
+    .map(({ category, count }) => `${category} (${count})`) as String[];
   const [newCard, setNewCard] = useState<Partial<Card>>({
     question: "",
     answer: "",
@@ -151,8 +152,6 @@ export default () => {
   if (error === "Invalid token") {
     return <TokenErrorPage />;
   }
-
-  console.log(jsonFileData);
   return (
     <div className="CardFormPage">
       <CardFormModal

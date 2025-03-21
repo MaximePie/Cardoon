@@ -127,6 +127,8 @@ const Game = () => {
         open={snackbarStatus.open}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        sx={{ right: "auto" }}
       >
         <Alert onClose={handleCloseSnackbar} severity="success">
           Score + {snackbarStatus.interval}!

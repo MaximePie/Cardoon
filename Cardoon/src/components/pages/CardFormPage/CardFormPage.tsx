@@ -13,7 +13,7 @@ import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 
-const filter = createFilterOptions<String>();
+const filter = createFilterOptions<string>();
 
 interface CardFormModalProps {
   open: boolean;
@@ -51,6 +51,10 @@ export const QuestionLine = ({
   const [isCreated, setIsCreated] = useState(false);
   const createCard = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    if (!category) {
+      const confirm = window.confirm("Y a pas de catégorie, êtes-vous sûr.e ?");
+      if (!confirm) return;
+    }
     const formData = new FormData();
     formData.append("question", question);
     formData.append("answer", answer);
@@ -82,17 +86,28 @@ export const QuestionLine = ({
 export default () => {
   const { post, error } = usePost(RESOURCES.CARDS);
   const { data: categoriesData } = useFetch<
-    { category: String; count: Number }[]
+    { category: string; count: Number }[]
   >(RESOURCES.CATEGORIES);
-  const formatedCategories: String[] = categoriesData
-    ?.filter((category) => category !== null)
-    .map(({ category, count }) => `${category} (${count})`) as String[];
+  const formatedCategories: string[] =
+    categoriesData
+      ?.filter((category) => category !== null)
+      ?.map((category) => category.category) || [];
+  const categoriesWithCount = formatedCategories.map(
+    (category) =>
+      `${category} (${
+        categoriesData?.find((c) => c.category === category)?.count
+      })`
+  );
   const [newCard, setNewCard] = useState<Partial<Card>>({
     question: "",
     answer: "",
     imageLink: "",
     category: "",
   });
+
+  // Only used for generated questions, it's not supposed to become a category
+  const [subcategory, setSubcategory] = useState("");
+  const [difficulty, setDifficulty] = useState("normal");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -149,6 +164,27 @@ export default () => {
     setShouldResetPaster(!shouldResetPaster);
   };
 
+  const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!newCard.category || !subcategory) return;
+    await fetch(
+      "https://api-inference.huggingface.co/models/google/flan-t5-base",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          parameters: { max_new_tokens: 200 },
+          inputs: `Je veux apprendre ${newCard.category}, plus particulièrement sur ${subcategory}, de difficulté ${difficulty} 
+        Génère 10 flashcard. Forme JSON Q/R.
+  { "question": "...", "answer": "..."} \n\n`,
+        }),
+      }
+    );
+  };
+
   if (error === "Invalid token") {
     return <TokenErrorPage />;
   }
@@ -176,7 +212,7 @@ export default () => {
             />
             <Autocomplete
               id="card-category"
-              options={formatedCategories || []}
+              options={categoriesWithCount || []}
               sx={{ width: 300 }}
               renderInput={(params) => (
                 <TextField {...params} label="Catégorie" />
@@ -203,9 +239,45 @@ export default () => {
                 if (inputValue !== "" && !isExisting) {
                   filtered.push(`Créer: ${inputValue}`);
                 }
-                return filtered;
+                return filtered as string[];
               }}
             />
+            <input
+              type="text"
+              onChange={(e) => setSubcategory(e.target.value)}
+              placeholder="Sous-catégorie"
+              value={subcategory}
+            />
+            <div className="CardFormPage__difficulty">
+              <label>
+                <input
+                  type="radio"
+                  name="difficulty"
+                  value="easy"
+                  onChange={(e) => setDifficulty(e.target.value)}
+                />
+                Facile
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="difficulty"
+                  value="normal"
+                  onChange={(e) => setDifficulty(e.target.value)}
+                />
+                Normal
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="difficulty"
+                  value="hard"
+                  onChange={(e) => setDifficulty(e.target.value)}
+                />
+                Difficile
+              </label>
+            </div>
+            <Button onClick={generateQuestions}>Générer</Button>
             <div className="CardFormPage__modal-questions">
               {jsonFileData &&
                 JSON.parse(jsonFileData).map((card: Card) => (
@@ -242,7 +314,7 @@ export default () => {
           />
           <Autocomplete
             id="card-category"
-            options={formatedCategories || []}
+            options={categoriesWithCount || []}
             sx={{ width: 300 }}
             renderInput={(params) => (
               <TextField {...params} label="Catégorie" />

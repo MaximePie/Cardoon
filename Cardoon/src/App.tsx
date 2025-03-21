@@ -8,7 +8,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage";
-import { Fab } from "@mui/material";
+import { Alert, Fab, Snackbar } from "@mui/material";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { TokenErrorPage } from "./components/pages/TokenErrorPage/TokenErrorPage";
 
@@ -50,18 +50,28 @@ const Game = () => {
 
   const [flash, setFlash] = useState(false);
 
+  const [snackbarStatus, setSnackbarStatus] = useState({
+    open: false,
+    interval: 0,
+  });
+
   useEffect(() => {
     if (data) {
       setUserCards(shuffleArray(data));
-      console.log(
-        data
-          .filter(({ card }) => !card.imageLink && !!card.category)
-          .map(({ card }) => `${card.question};${card.answer};${card.category}`)
-      );
+      // console.log(
+      //   data
+      //     .filter(({ card }) => !card.imageLink && !!card.category)
+      //     .map(({ card }) => `${card.question};${card.answer};${card.category}`)
+      // );
     }
   }, [data]);
 
   const { deleteResource } = useDelete(RESOURCES.CARDS);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarStatus({ ...snackbarStatus, open: false });
+  };
+
   if (loading)
     return (
       <div>
@@ -75,10 +85,12 @@ const Game = () => {
     fetch();
   };
 
-  const onUpdate = async (id: string) => {
-    // Remove the card from the list, then fetch the new list
+  const onUpdate = async (id: string, interval: number, isCorrect: boolean) => {
+    // Remove the card from the list
     setUserCards(userCards.filter((card) => card._id !== id));
-
+    if (isCorrect) {
+      setSnackbarStatus({ open: true, interval });
+    }
     if (userCards.length <= 0) {
       // We intentionally wait 2 seconds before fetching the new list to wait for the card to be
       // updated
@@ -111,6 +123,15 @@ const Game = () => {
 
   return (
     <div>
+      <Snackbar
+        open={snackbarStatus.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          Score + {snackbarStatus.interval}!
+        </Alert>
+      </Snackbar>
       <div className="BrainCell">
         <h1>Obtenez des synapses!</h1>
         <div className="BrainCell__score">

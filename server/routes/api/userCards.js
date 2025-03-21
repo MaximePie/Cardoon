@@ -25,7 +25,7 @@ router.put("/updateInterval/:id", async (req, res) => {
 
     await user.addScore(userCard.interval);
     await userCard.updateInterval(
-      parseInt(userCard.interval * 1.618) + Math.max(1, userCard.answerStreak)
+      parseInt(userCard.interval * (1.618 + userCard.answerStreak)) + 1
     );
     await userCard.save();
   } else {
@@ -34,7 +34,7 @@ router.put("/updateInterval/:id", async (req, res) => {
     await userCard.updateInterval(parseInt(userCard.interval / 2));
   }
 
-  res.json({ user });
+  res.json({ user, userCard });
 });
 
 export default router;

@@ -53,7 +53,6 @@ export const usePut = <T>(resource: string) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
-
   const put = async (id: string, payload: any) => {
     setLoading(true);
     try {

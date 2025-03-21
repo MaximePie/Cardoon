@@ -34,12 +34,13 @@ const stringToRgb = (text: String) => {
 interface CardProps {
   card: PopulatedUserCard;
   onDelete: (id: string) => void;
-  onUpdate: (id: string) => void;
+  onUpdate: (id: string, interval: number, isCorrect: boolean) => void;
   isFlashModeOn: boolean;
 }
 
 interface PutResult {
   user: User;
+  userCard: PopulatedUserCard;
 }
 export default ({
   card,
@@ -90,15 +91,37 @@ export default ({
     }
   };
 
-  const succeed = async () => {
-    put(userCardId, { isCorrectAnswer: true });
+  const succeed = async (difficulty: string = "hard") => {
+    put(userCardId, { isCorrectAnswer: true, difficulty });
+    onAnswer(userCardId, interval, true);
     addScore(card.interval);
-    onAnswer(userCardId);
   };
+
+  // const succeed = async (difficulty: string = "hard") => {
+  //   try {
+  //     console.log("Calling put...");
+  //     await put(userCardId, { isCorrectAnswer: true, difficulty });
+  //     console.log("Put called successfully");
+
+  //     console.log("Calling addScore...");
+  //     addScore(card.interval);
+  //     console.log("addScore called successfully");
+
+  //     console.log("Setting openSnackbar...");
+  //     setOpenSnackbar(true);
+  //     console.log("Snackbar set successfully");
+
+  //     console.log("Calling onAnswer...");
+  //     onAnswer(userCardId);
+  //     console.log("onAnswer called successfully");
+  //   } catch (error) {
+  //     console.error("Error in succeed function:", error);
+  //   }
+  // };
 
   const fail = () => {
     put(userCardId, { isCorrectAnswer: false });
-    onAnswer(userCardId);
+    onAnswer(userCardId, 0, false);
   };
 
   const handleDeleteClick = async (id: string, e: React.MouseEvent) => {
@@ -110,60 +133,62 @@ export default ({
   };
 
   return (
-    <div
-      className={cardClassNames}
-      style={{ background: cardBackground }}
-      onClick={onCardClick}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        succeed();
-      }}
-    >
-      {isRecto ? (
-        <>
-          <Stack
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <p>{question}</p>
-            {imageLink && (
-              <>
-                <img
-                  src={imageLink}
-                  alt="Card image"
-                  style={{ width: "100%", borderRadius: "8px" }}
-                />
-              </>
-            )}
-          </Stack>
-        </>
-      ) : (
-        showAnswer && (
+    <>
+      <div
+        className={cardClassNames}
+        style={{ background: cardBackground }}
+        onClick={onCardClick}
+        onContextMenu={(e) => {
+          e.preventDefault();
+          succeed();
+        }}
+      >
+        {isRecto ? (
           <>
-            <Chip className="Card__score" label={`🧠 ${interval}`} />
-            <IconButton
-              color="error"
-              onClick={(e) => handleDeleteClick(cardId, e)}
-              className="Card__delete"
-              size="small"
+            <Stack
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <DeleteIcon />
-            </IconButton>
-            <p>{answer}</p>
-            <Stack spacing={1} direction="row">
-              <Button color="success" onClick={succeed}>
-                ok
-              </Button>
-              <Button color="secondary" onClick={fail}>
-                pas ok
-              </Button>
+              <p>{question}</p>
+              {imageLink && (
+                <>
+                  <img
+                    src={imageLink}
+                    alt="Card image"
+                    style={{ width: "100%", borderRadius: "8px" }}
+                  />
+                </>
+              )}
             </Stack>
           </>
-        )
-      )}
-    </div>
+        ) : (
+          showAnswer && (
+            <>
+              <Chip className="Card__score" label={`🧠 ${interval}`} />
+              <IconButton
+                color="error"
+                onClick={(e) => handleDeleteClick(cardId, e)}
+                className="Card__delete"
+                size="small"
+              >
+                <DeleteIcon />
+              </IconButton>
+              <p>{answer}</p>
+              <Stack spacing={1} direction="row">
+                <Button color="success" onClick={() => succeed("hard")}>
+                  ok
+                </Button>
+                <Button color="secondary" onClick={fail}>
+                  pas ok
+                </Button>
+              </Stack>
+            </>
+          )
+        )}
+      </div>
+    </>
   );
 };

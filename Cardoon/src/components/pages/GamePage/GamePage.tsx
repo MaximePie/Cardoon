@@ -1,5 +1,5 @@
 import Card from "../../molecules/Card/Card";
-import { Alert, Fab, Snackbar } from "@mui/material";
+import { Fab } from "@mui/material";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
 import { RESOURCES, useFetch } from "../../../hooks/server";
@@ -95,6 +95,7 @@ export default () => {
   if (error) {
     return <p>Erreur: {error}</p>;
   }
+  console.log(userCards);
 
   return (
     <div>

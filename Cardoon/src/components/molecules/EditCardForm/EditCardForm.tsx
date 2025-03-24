@@ -106,7 +106,7 @@ export default ({
             type="text"
             value={question}
             onChange={function (e: React.ChangeEvent<HTMLInputElement>): void {
-              throw new Error("Function not implemented.");
+              setNewCard({ ...newCard, question: e.target.value });
             }}
           />
           <Input

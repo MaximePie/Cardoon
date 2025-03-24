@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { ACTIONS, usePost } from "../../hooks/server";
 import { User } from "../../types/common";
-import { UserContext } from "../../App";
+import { UserContext } from "../../context/UserContext";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");

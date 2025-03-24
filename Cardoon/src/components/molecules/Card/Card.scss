@@ -4,8 +4,8 @@ $cardSizeMobile: 92vw;
   background: linear-gradient(135deg, #d4f1ff, #a8e0ff);
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  padding: 20px;
-  margin: 20px;
+  padding: 8px;
+  margin: 8px;
 
   @media (max-width: 768px) {
     padding: 8px;
@@ -50,7 +50,7 @@ $cardSizeMobile: 92vw;
     font-size: 0.8em;
     color: rgba(0, 0, 0, 0.767);
   }
-  &__delete {
+  &__edit {
     position: absolute !important;
     top: 1em;
     left: 1em;

@@ -1,19 +1,13 @@
 import { useState } from "react";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
-import {
-  Autocomplete,
-  createFilterOptions,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Modal } from "@mui/material";
 import { TokenErrorPage } from "../TokenErrorPage/TokenErrorPage";
 import Input from "../../atoms/Input/Input";
 import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
-
-const filter = createFilterOptions<string>();
+import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 
 interface CardFormModalProps {
   open: boolean;
@@ -21,7 +15,11 @@ interface CardFormModalProps {
   children: React.ReactNode;
 }
 
-const CardFormModal = ({ open, onClose, children }: CardFormModalProps) => {
+const MultiCardFormModal = ({
+  open,
+  onClose,
+  children,
+}: CardFormModalProps) => {
   return (
     <Modal
       open={open}
@@ -78,6 +76,11 @@ export const QuestionLine = ({
   );
 };
 
+export interface FetchedCategory {
+  category: string;
+  count: number;
+}
+
 /**
  * question: String
  * answer: String
@@ -85,19 +88,13 @@ export const QuestionLine = ({
  */
 export default () => {
   const { post, error } = usePost(RESOURCES.CARDS);
-  const { data: categoriesData } = useFetch<
-    { category: string; count: Number }[]
-  >(RESOURCES.CATEGORIES);
-  const formatedCategories: string[] =
-    categoriesData
-      ?.filter((category) => category !== null)
-      ?.map((category) => category.category) || [];
-  const categoriesWithCount = formatedCategories.map(
-    (category) =>
-      `${category} (${
-        categoriesData?.find((c) => c.category === category)?.count
-      })`
+  const { data: categoriesData } = useFetch<FetchedCategory[]>(
+    RESOURCES.CATEGORIES
   );
+  const categoriesWithCount =
+    categoriesData?.map(
+      ({ category: category, count }) => `${category} (${count})`
+    ) || [];
   const [newCard, setNewCard] = useState<Partial<Card>>({
     question: "",
     answer: "",
@@ -190,7 +187,7 @@ export default () => {
   }
   return (
     <div className="CardFormPage">
-      <CardFormModal
+      <MultiCardFormModal
         open={isModalOpen}
         onClose={closeModal}
         aria-labelledby="modal-modal-title"
@@ -210,37 +207,10 @@ export default () => {
                 }
               }}
             />
-            <Autocomplete
-              id="card-category"
-              options={categoriesWithCount || []}
-              sx={{ width: 300 }}
-              renderInput={(params) => (
-                <TextField {...params} label="Catégorie" />
-              )}
-              value={newCard.category}
-              onChange={(_, newValue) => {
-                if (typeof newValue === "string") {
-                  if (newValue.includes("Créer: ")) {
-                    const newCategory = newValue.replace("Créer: ", "");
-                    setNewCard({ ...newCard, category: newCategory });
-                  } else {
-                    setNewCard({ ...newCard, category: newValue });
-                  }
-                }
-              }}
-              filterOptions={(options, params) => {
-                const filtered = filter(options, params);
-
-                const { inputValue } = params;
-                // Suggest the creation of a new value
-                const isExisting = options.some(
-                  (option) => inputValue === option
-                );
-                if (inputValue !== "" && !isExisting) {
-                  filtered.push(`Créer: ${inputValue}`);
-                }
-                return filtered as string[];
-              }}
+            <CategoryInput
+              categoriesWithCount={categoriesWithCount}
+              newCard={newCard}
+              setNewCard={setNewCard}
             />
             <input
               type="text"
@@ -291,7 +261,7 @@ export default () => {
             </div>
           </form>
         </div>
-      </CardFormModal>
+      </MultiCardFormModal>
       <form onSubmit={onSubmit} className="CardFormPage__form">
         <h1 className="CardFormPage__header">Ajouter une carte</h1>
         <div className="CardFormPage__body">
@@ -312,37 +282,10 @@ export default () => {
             onChange={onChange}
             className="CardFormPage__form-group"
           />
-          <Autocomplete
-            id="card-category"
-            options={categoriesWithCount || []}
-            sx={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField {...params} label="Catégorie" />
-            )}
-            value={newCard.category}
-            onChange={(_, newValue) => {
-              if (typeof newValue === "string") {
-                if (newValue.includes("Créer: ")) {
-                  const newCategory = newValue.replace("Créer: ", "");
-                  setNewCard({ ...newCard, category: newCategory });
-                } else {
-                  setNewCard({ ...newCard, category: newValue });
-                }
-              }
-            }}
-            filterOptions={(options, params) => {
-              const filtered = filter(options, params);
-
-              const { inputValue } = params;
-              // Suggest the creation of a new value
-              const isExisting = options.some(
-                (option) => inputValue === option
-              );
-              if (inputValue !== "" && !isExisting) {
-                filtered.push(`Créer: ${inputValue}`);
-              }
-              return filtered;
-            }}
+          <CategoryInput
+            categoriesWithCount={categoriesWithCount}
+            newCard={newCard}
+            setNewCard={setNewCard}
           />
 
           <Button onClick={openModal} className="CardFormPage__modal-button">

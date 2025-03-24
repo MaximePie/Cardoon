@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../App";
+import { UserContext } from "../../../context/UserContext";
 import { ACTIONS, usePost } from "../../../hooks/server";
 import { User } from "../../../types/common";
 import axios from "axios";

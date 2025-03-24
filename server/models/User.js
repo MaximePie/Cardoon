@@ -73,6 +73,12 @@ UserSchema.methods.addScore = async function (interval) {
   await this.save();
 };
 
+UserSchema.methods.getCategories = async function () {
+  const cards = await this.getCards();
+  const categories = cards.map((card) => card.card.category);
+  return [...new Set(categories)];
+};
+
 const User = mongoose.model("User", UserSchema);
 
 export default User;

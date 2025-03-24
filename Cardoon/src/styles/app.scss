@@ -6,6 +6,7 @@
 @use "../components/pages/LoginPage/LoginPage" as LoginPage;
 @use "../components/pages/TokenErrorPage/TokenErrorPage" as NotFoundPage;
 @use "../components/pages/CardFormPage/CardFormPage" as CardFormPage;
+@use "../components/molecules/EditCardForm/EditCardForm" as EditCardForm;
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&family=Roboto+Slab:wght@300;400&display=swap");
 /* Reset some default styles */
 body,

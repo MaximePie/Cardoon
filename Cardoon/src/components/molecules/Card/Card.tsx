@@ -2,10 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import { PopulatedUserCard, User } from "../../../types/common";
 import classNames from "classnames";
 import { ACTIONS, usePut } from "../../../hooks/server";
-import { UserContext } from "../../../App";
+import { UserContext } from "../../../context/UserContext";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import DeleteIcon from "@mui/icons-material/Delete";
+import Edit from "@mui/icons-material/Edit";
 import { Chip, IconButton } from "@mui/material";
 
 const stringToRgb = (text: String) => {
@@ -33,8 +33,8 @@ const stringToRgb = (text: String) => {
 
 interface CardProps {
   card: PopulatedUserCard;
-  onDelete: (id: string) => void;
   onUpdate: (id: string, interval: number, isCorrect: boolean) => void;
+  onEditClick: () => void;
   isFlashModeOn: boolean;
 }
 
@@ -44,12 +44,12 @@ interface PutResult {
 }
 export default ({
   card,
-  onDelete,
   onUpdate: onAnswer,
+  onEditClick,
   isFlashModeOn,
 }: CardProps) => {
   const {
-    card: { question, answer, imageLink, _id: cardId, category },
+    card: { question, answer, imageLink, category },
     _id: userCardId,
     interval,
   } = card;
@@ -97,39 +97,9 @@ export default ({
     addScore(card.interval);
   };
 
-  // const succeed = async (difficulty: string = "hard") => {
-  //   try {
-  //     console.log("Calling put...");
-  //     await put(userCardId, { isCorrectAnswer: true, difficulty });
-  //     console.log("Put called successfully");
-
-  //     console.log("Calling addScore...");
-  //     addScore(card.interval);
-  //     console.log("addScore called successfully");
-
-  //     console.log("Setting openSnackbar...");
-  //     setOpenSnackbar(true);
-  //     console.log("Snackbar set successfully");
-
-  //     console.log("Calling onAnswer...");
-  //     onAnswer(userCardId);
-  //     console.log("onAnswer called successfully");
-  //   } catch (error) {
-  //     console.error("Error in succeed function:", error);
-  //   }
-  // };
-
   const fail = () => {
     put(userCardId, { isCorrectAnswer: false });
     onAnswer(userCardId, 0, false);
-  };
-
-  const handleDeleteClick = async (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const confirm = window.confirm(
-      "Are you sure you want to delete this card?"
-    );
-    if (confirm) onDelete(id);
   };
 
   return (
@@ -152,7 +122,9 @@ export default ({
                 alignItems: "center",
               }}
             >
-              <p>{question}</p>
+              <p>
+                {category} -{question}
+              </p>
               {imageLink && (
                 <>
                   <img
@@ -169,12 +141,12 @@ export default ({
             <>
               <Chip className="Card__score" label={`🧠 ${interval}`} />
               <IconButton
-                color="error"
-                onClick={(e) => handleDeleteClick(cardId, e)}
-                className="Card__delete"
+                color="primary"
+                onClick={onEditClick}
+                className="Card__edit"
                 size="small"
               >
-                <DeleteIcon />
+                <Edit />
               </IconButton>
               <p>{answer}</p>
               <Stack spacing={1} direction="row">

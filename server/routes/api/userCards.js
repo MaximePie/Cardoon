@@ -2,6 +2,7 @@
 import express from "express";
 const router = express.Router();
 import User from "../../models/User.js";
+import Card from "../../models/Card.js";
 import UserCard from "../../models/UserCard.js";
 import authMiddleware from "../../middleware/auth.js";
 
@@ -11,7 +12,11 @@ import authMiddleware from "../../middleware/auth.js";
 router.get("/", authMiddleware, async (req, res) => {
   const user = await User.findById(req.user.id);
   const cards = await user.getOutdatedCards();
-  res.json(cards);
+  const categories = await Card.getCategories();
+  res.json({
+    cards,
+    categories,
+  });
 });
 
 router.put("/updateInterval/:id", async (req, res) => {

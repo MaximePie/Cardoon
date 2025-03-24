@@ -22,6 +22,14 @@ const CardSchema = new mongoose.Schema({
   },
 });
 
+CardSchema.statics.getCategories = async function () {
+  const categories = await Card.aggregate([
+    { $group: { _id: "$category", count: { $sum: 1 } } },
+    { $project: { _id: 0, category: "$_id", count: 1 } },
+  ]);
+  return categories;
+};
+
 const Card = mongoose.model("Card", CardSchema);
 
 export default Card;

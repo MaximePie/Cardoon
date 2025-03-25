@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
 import { Modal } from "@mui/material";
@@ -8,6 +8,7 @@ import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
+import { SnackbarContext } from "../../../context/SnackbarContext";
 
 interface CardFormModalProps {
   open: boolean;
@@ -95,6 +96,9 @@ export default () => {
     categoriesData?.map(
       ({ category: category, count }) => `${category} (${count})`
     ) || [];
+
+  const { openSnackbarWithMessage } = useContext(SnackbarContext);
+
   const [newCard, setNewCard] = useState<Partial<Card>>({
     question: "",
     answer: "",
@@ -159,6 +163,8 @@ export default () => {
 
     setImage(null);
     setShouldResetPaster(!shouldResetPaster);
+
+    openSnackbarWithMessage("La carte a été ajoutée");
   };
 
   const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -288,7 +294,10 @@ export default () => {
             setNewCard={setNewCard}
           />
 
-          <Button onClick={openModal} className="CardFormPage__modal-button">
+          <Button
+            onClick={openModal}
+            customClassName="CardFormPage__modal-button"
+          >
             Import multiple
           </Button>
           <label className="CardFormPage__form-group">

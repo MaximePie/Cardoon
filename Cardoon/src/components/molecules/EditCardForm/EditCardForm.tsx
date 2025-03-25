@@ -8,6 +8,7 @@ import Delete from "@mui/icons-material/Delete";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
+import Button from "../../atoms/Button/Button";
 
 interface EditCardFormProps {
   isOpen: boolean;
@@ -96,15 +97,15 @@ export default ({
   return (
     <Modal open={isOpen} onClose={close}>
       <div className="EditCardForm">
-        <h1>Edit card</h1>
-        <IconButton color="primary" onClick={handleDeleteClick} size="small">
-          <Delete />
+        <h1>Modifier la carte</h1>
+        <IconButton className="EditCardForm__close" onClick={close}>
+          X
         </IconButton>
         <form onSubmit={submit}>
           <Input
             label="Question"
             type="text"
-            value={question}
+            value={newCard.question}
             onChange={function (e: React.ChangeEvent<HTMLInputElement>): void {
               setNewCard({ ...newCard, question: e.target.value });
             }}
@@ -112,7 +113,7 @@ export default ({
           <Input
             label="Answer"
             type="text"
-            value={answer}
+            value={newCard.answer}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNewCard({ ...newCard, answer: e.target.value })
             }
@@ -120,7 +121,7 @@ export default ({
           <Input
             label="Image link"
             type="text"
-            value={imageLink}
+            value={newCard.imageLink}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNewCard({ ...newCard, imageLink: e.target.value })
             }
@@ -131,6 +132,13 @@ export default ({
             setNewCard={onCategoryChange}
           />
           <SubmitButton disabled={false}>Ajouter la carte</SubmitButton>
+          <Button
+            variant="danger"
+            onClick={handleDeleteClick}
+            customClassName="EditCardForm__delete"
+          >
+            <Delete /> Supprimer la carte
+          </Button>
         </form>
       </div>
     </Modal>

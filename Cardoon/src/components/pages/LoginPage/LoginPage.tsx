@@ -61,7 +61,7 @@ export default function LoginForm() {
       return;
     }
     // TODO - add remember me functionality
-    post({ email, password });
+    post({ email, password, rememberMe });
   };
 
   return (
@@ -82,7 +82,7 @@ export default function LoginForm() {
           className="LoginPage__form-group"
         />
         <Input
-          label="Password"
+          label="Mot de passe"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -95,10 +95,10 @@ export default function LoginForm() {
               checked={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
             />
-            Remember Me
+            Rester connecté
           </label>
           <a href="#" className="link">
-            Forgot Password?
+            Mot de passe oublié ?
           </a>
         </div>
         {JSON.stringify(error)}

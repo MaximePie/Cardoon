@@ -1,6 +1,7 @@
 @use "../../../styles//variables.scss" as *;
 
 .Button {
+  margin: 1rem 0;
   background: $primary-color;
   color: #ffffff;
   padding: 0.75rem;

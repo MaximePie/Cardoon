@@ -11,7 +11,19 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   &:hover {
     background: darken($primary-color, 5%);
+  }
+
+  &--danger {
+    background: $danger-color !important;
+    &:hover {
+      background: darken($danger-color, 5%);
+    }
   }
 }

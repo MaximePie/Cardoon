@@ -18,7 +18,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
   const jwtSecret = process.env.JWT_SECRET;
 
   if (!email || !password) {
@@ -40,7 +40,9 @@ router.post("/login", async (req, res) => {
 
   if (isMatch) {
     // Generate a JWT token
-    const token = jwt.sign({ id: user.id }, jwtSecret, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.id }, jwtSecret, {
+      expiresIn: rememberMe ? "90d" : "1d",
+    });
     res.json({ token, user });
   } else {
     res.status(401).json({ error: "Invalid credentials" });

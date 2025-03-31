@@ -94,6 +94,16 @@ UserSchema.methods.getCategories = async function () {
 };
 
 UserSchema.methods.updateAnswerRatio = async function (isCorrectAnswer) {
+  if (this.correctAnswers === undefined) {
+    this.correctAnswers = 0;
+  }
+  if (this.wrongAnswers === undefined) {
+    this.wrongAnswers = 0;
+  }
+  if (this.answersRatio === undefined) {
+    this.answersRatio = 0.5;
+  }
+
   if (isCorrectAnswer) {
     this.correctAnswers++;
   } else {
@@ -102,6 +112,8 @@ UserSchema.methods.updateAnswerRatio = async function (isCorrectAnswer) {
   this.answersRatio =
     this.correctAnswers / (this.correctAnswers + this.wrongAnswers);
   await this.save();
+
+  return this.answersRatio;
 };
 
 const User = mongoose.model("User", UserSchema);

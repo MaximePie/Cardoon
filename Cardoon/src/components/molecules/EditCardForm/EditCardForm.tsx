@@ -131,7 +131,7 @@ export default ({
             newCard={newCard}
             setNewCard={onCategoryChange}
           />
-          <SubmitButton disabled={false}>Modifier la carte</SubmitButton>
+          <SubmitButton disabled={false}>Enregistrer</SubmitButton>
           <Button
             variant="danger"
             onClick={handleDeleteClick}

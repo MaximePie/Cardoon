@@ -9,6 +9,8 @@ import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import { InferenceClient } from "@huggingface/inference";
+const hf = new InferenceClient(import.meta.env.VITE_HUGGINGFACE_TOKEN);
 
 interface CardFormModalProps {
   open: boolean;
@@ -108,7 +110,6 @@ export default () => {
 
   // Only used for generated questions, it's not supposed to become a category
   const [subcategory, setSubcategory] = useState("");
-  const [difficulty, setDifficulty] = useState("normal");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -116,7 +117,6 @@ export default () => {
   const [shouldResetPaster, setShouldResetPaster] = useState(false);
   const [jsonFileData, setJsonFileData] = useState<string>("");
 
-  const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,23 +169,26 @@ export default () => {
 
   const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (!newCard.category || !subcategory) return;
-    await fetch(
-      "https://api-inference.huggingface.co/models/google/flan-t5-base",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_HUGGINGFACE_TOKEN}`,
-          "Content-Type": "application/json",
+    // if (!newCard.category || !subcategory) return;
+    // const prompt = `Je veux apprendre ${newCard.category}, plus particulièrement sur ${subcategory}, de difficulté ${difficulty}
+    // Génère 10 flashcard. Forme JSON Q/R.
+    // { "question": "...", "answer": "..."} \n\n`;
+
+    // const testPrompt =
+    //   "Je veux apprendre la biologie, plus particulièrement la géologie, et j’aimerais 10 flashcards sous forme JSON (Q/R).";
+    const testPrompt = `Tu es un assistant qui génère 10 flashcards sur la géologie, uniquement au format JSON. Chaque flashcard doit prendre la forme d’un objet avec 'question' et 'answer'. Ne fournis aucune explication, aucun texte supplémentaire, ni aucune introduction. Seul du JSON, comme ceci :
+[{ "question": "...", "answer": "..." }, ... ]`;
+    const response = await hf.chatCompletion({
+      model: "Qwen/QwQ-32B",
+      messages: [
+        {
+          role: "user",
+          content: testPrompt,
         },
-        body: JSON.stringify({
-          parameters: { max_new_tokens: 200 },
-          inputs: `Je veux apprendre ${newCard.category}, plus particulièrement sur ${subcategory}, de difficulté ${difficulty} 
-        Génère 10 flashcard. Forme JSON Q/R.
-  { "question": "...", "answer": "..."} \n\n`,
-        }),
-      }
-    );
+      ],
+      max_tokens: 100,
+    });
+    console.log(response);
   };
 
   if (error === "Invalid token") {
@@ -224,35 +227,6 @@ export default () => {
               placeholder="Sous-catégorie"
               value={subcategory}
             />
-            <div className="CardFormPage__difficulty">
-              <label>
-                <input
-                  type="radio"
-                  name="difficulty"
-                  value="easy"
-                  onChange={(e) => setDifficulty(e.target.value)}
-                />
-                Facile
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="difficulty"
-                  value="normal"
-                  onChange={(e) => setDifficulty(e.target.value)}
-                />
-                Normal
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="difficulty"
-                  value="hard"
-                  onChange={(e) => setDifficulty(e.target.value)}
-                />
-                Difficile
-              </label>
-            </div>
             <Button onClick={generateQuestions}>Générer</Button>
             <div className="CardFormPage__modal-questions">
               {jsonFileData &&
@@ -294,12 +268,12 @@ export default () => {
             setNewCard={setNewCard}
           />
 
-          <Button
+          {/* <Button
             onClick={openModal}
             customClassName="CardFormPage__modal-button"
           >
             Import multiple
-          </Button>
+          </Button> */}
           <label className="CardFormPage__form-group">
             Uploader une image:
             <input type="file" onChange={onFileChange} />

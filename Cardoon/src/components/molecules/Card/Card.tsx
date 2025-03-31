@@ -122,7 +122,9 @@ export default ({
                 alignItems: "center",
               }}
             >
-              <p>{question}</p>
+              <p>
+                {category} - {question}
+              </p>
               {imageLink && (
                 <>
                   <img

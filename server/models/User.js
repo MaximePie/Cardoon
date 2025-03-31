@@ -25,6 +25,20 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+
+  correctAnswers: {
+    type: Number,
+    default: 0,
+  },
+  wrongAnswers: {
+    type: Number,
+    default: 0,
+  },
+
+  answersRatio: {
+    type: Number,
+    default: 0,
+  },
 });
 
 UserSchema.methods.attachCard = async function (cardId) {
@@ -77,6 +91,17 @@ UserSchema.methods.getCategories = async function () {
   const cards = await this.getCards();
   const categories = cards.map((card) => card.card.category);
   return [...new Set(categories)];
+};
+
+UserSchema.methods.updateAnswerRatio = async function (isCorrectAnswer) {
+  if (isCorrectAnswer) {
+    this.correctAnswers++;
+  } else {
+    this.wrongAnswers++;
+  }
+  this.answersRatio =
+    this.correctAnswers / (this.correctAnswers + this.wrongAnswers);
+  await this.save();
 };
 
 const User = mongoose.model("User", UserSchema);

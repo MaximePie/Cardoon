@@ -22,6 +22,8 @@ router.get("/", authMiddleware, async (req, res) => {
 router.put("/updateInterval/:id", async (req, res) => {
   const userCard = await UserCard.findById(req.params.id);
   const user = await User.findById(userCard.user);
+  const newRatio = await user.updateAnswerRatio(req.body.isCorrectAnswer);
+  const ratioMultiplier = 0.5 + newRatio;
   if (req.body.isCorrectAnswer) {
     if (!userCard.answerStreak) {
       userCard.answerStreak = 0;
@@ -29,14 +31,18 @@ router.put("/updateInterval/:id", async (req, res) => {
     userCard.answerStreak++;
 
     await user.addScore(userCard.interval);
-    await userCard.updateInterval(
-      parseInt(userCard.interval * (1.618 + userCard.answerStreak)) + 1
-    );
+    const newInterval =
+      parseInt(
+        userCard.interval * ratioMultiplier * (1.618 + userCard.answerStreak)
+      ) + 1;
+    await userCard.updateInterval(newInterval);
     await userCard.save();
   } else {
     userCard.answerStreak = 0;
     await userCard.save();
-    await userCard.updateInterval(parseInt(userCard.interval / 2));
+    (await userCard.updateInterval(
+      parseInt(userCard.interval / 2) * ratioMultiplier
+    )) + 1;
   }
 
   res.json({ user, userCard });

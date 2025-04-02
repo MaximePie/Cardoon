@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "install-server": "cd server && yarn",
-    "start-server": "cd server && yarn app",
+    "start-server": "cd server && yarn build && yarn start",
     "install-client": "cd Cardoon && yarn",
     "build-client": "cd Cardoon && yarn build",
     "start-client": "cd Cardoon && yarn start"

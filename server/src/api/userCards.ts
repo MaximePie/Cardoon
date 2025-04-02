@@ -1,10 +1,10 @@
 // routes/api/books.js
 import express from "express";
 const router = express.Router();
-import User from "../../models/User.js";
-import Card from "../../models/Card.js";
-import UserCard from "../../models/UserCard.js";
-import authMiddleware from "../../middleware/auth.js";
+import User from "../models/User.js";
+import Card from "../models/Card.js";
+import UserCard from "../models/UserCard.js";
+import authMiddleware from "../middleware/auth.js";
 
 // @route   GET api/books
 // @desc    Get all books

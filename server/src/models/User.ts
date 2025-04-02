@@ -1,5 +1,5 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
-import UserCard from "./UserCard";
+import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
 
 // Define an interface for the User document

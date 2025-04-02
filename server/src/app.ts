@@ -1,12 +1,12 @@
 // app.js
 import express from "express";
 import connectDB from "./config/db.js";
-import cardsRoutes from "./routes/api/cards.js";
+import cardsRoutes from "./api/cards.js";
 
 import { Request, Response } from "express";
 
-import usersRoutes from "./routes/api/users";
-import userCardsRoutes from "./routes/api/userCards.js";
+import usersRoutes from "./api/users.js";
+import userCardsRoutes from "./api/userCards.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";

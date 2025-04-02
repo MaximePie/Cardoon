@@ -1,12 +1,12 @@
 // routes/api/books.js
 import express from "express";
 const router = express.Router();
-import Card from "../../models/Card";
-import authMiddleware from "../../middleware/auth";
-import User from "../../models/User.js";
-import { uploadImage } from "../../utils/imagesManager.js";
+import Card from "../models/Card.js";
+import authMiddleware from "../middleware/auth.js";
+import User from "../models/User.js";
+import { uploadImage } from "../utils/imagesManager.js";
 import { IncomingForm } from "formidable";
-import UserCard from "../../models/UserCard";
+import UserCard from "../models/UserCard.js";
 import { ObjectId } from "mongoose";
 import { Request, Response } from "express";
 

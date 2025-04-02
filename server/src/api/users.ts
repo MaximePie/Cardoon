@@ -1,11 +1,11 @@
 // routes/api/books.js
 import express from "express";
 const router = express.Router();
-import { clearDBAndSeed } from "../../controllers/database.js";
-import User from "../../models/User.js";
+import { clearDBAndSeed } from "../controllers/database.js";
+import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import authMiddleware from "../../middleware/auth.js";
+import authMiddleware from "../middleware/auth.js";
 
 // @route   GET api/users/seed
 // @desc    Seed the database

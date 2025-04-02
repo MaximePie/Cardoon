@@ -119,6 +119,11 @@ export default () => {
 
   const closeModal = () => setIsModalOpen(false);
 
+  const openModal = () => {
+    setJsonFileData("");
+    setIsModalOpen(true);
+  };
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCard({
       ...newCard,
@@ -268,12 +273,12 @@ export default () => {
             setNewCard={setNewCard}
           />
 
-          {/* <Button
+          <Button
             onClick={openModal}
             customClassName="CardFormPage__modal-button"
           >
             Import multiple
-          </Button> */}
+          </Button>
           <label className="CardFormPage__form-group">
             Uploader une image:
             <input type="file" onChange={onFileChange} />

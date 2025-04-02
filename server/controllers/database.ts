@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import Card from "../models/Card.js";
 import User from "../models/User.js";
 import UserCard from "../models/UserCard.js";
@@ -12,7 +13,9 @@ import UserCard from "../models/UserCard.js";
  * "Get Married" => "Tie the knot"
  * "Lazy" => "Couch-potato"
  */
-export const clearDBAndSeed = async (req, res) => {
+import { Request, Response } from "express";
+
+export const clearDBAndSeed = async (req: Request, res: Response) => {
   await Card.deleteMany({});
   const cards = await Card.insertMany([
     {
@@ -38,12 +41,12 @@ export const clearDBAndSeed = async (req, res) => {
   ]);
 
   await User.deleteMany({});
-  const user = await User.createUser("john", "doe");
+  const user = await User.createUser("john", "doe", "Superbanane");
 
   await UserCard.deleteMany({});
 
   cards.forEach(async (card) => {
-    await user.attachCard(card._id);
+    await user.attachCard(card._id as ObjectId);
   });
 
   const userCards = await user.getCards();

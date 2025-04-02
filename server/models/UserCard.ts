@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Schema } from "mongoose";
 
 /**
  * A user card has the following properties:
@@ -7,16 +7,29 @@ import mongoose from "mongoose";
  * An interval in second (Number)
  * A last reviewed date (Date)
  * A next review date (Date)
+ * An answer streak (Number)
  */
 
-const UserCardSchema = new mongoose.Schema({
+export interface IUserCard extends Document {
+  user: mongoose.Types.ObjectId;
+  card: mongoose.Types.ObjectId;
+  interval: number;
+  lastReviewed: Date;
+  nextReview: Date;
+  answerStreak: number;
+  updateInterval(newInterval: number): Promise<void>;
+}
+
+const UserCardSchema = new Schema<IUserCard>({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   card: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Card",
+    required: true,
   },
   interval: {
     type: Number,
@@ -31,20 +44,18 @@ const UserCardSchema = new mongoose.Schema({
     required: true,
   },
   answerStreak: {
-    // Number of consecutive correct answers
-    // Resets to 0 if the user gets an answer wrong
     type: Number,
     default: 0,
   },
 });
 
-UserCardSchema.methods.updateInterval = async function (newInterval) {
+UserCardSchema.methods.updateInterval = async function (newInterval: number) {
   this.interval = newInterval;
   this.lastReviewed = new Date();
   this.nextReview = new Date(Date.now() + newInterval * 1000);
   await this.save();
 };
 
-const UserCard = mongoose.model("UserCard", UserCardSchema);
+const UserCard = mongoose.model<IUserCard>("UserCard", UserCardSchema);
 
 export default UserCard;

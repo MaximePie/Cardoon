@@ -1,319 +1,83 @@
 [
   {
-    "question": "Pourquoi l’injection intramusculaire est-elle rapide à agir ?",
-    "answer": "Parce que le réseau capillaire des muscles permet une absorption rapide du médicament."
+    "question": "Qu’est-ce que le phosphore ?",
+    "answer": "Un élément chimique essentiel (symbole P) présent dans de nombreux minéraux et indispensable au vivant."
   },
   {
-    "question": "Qu’est-ce que la sclérose en plaques ?",
-    "answer": "Une maladie auto-immune qui altère la gaine de myéline des neurones dans le système nerveux central."
+    "question": "Pourquoi le phosphore est-il important pour le corps humain ?",
+    "answer": "Il participe à la formation des os, des dents et intervient dans la production d’énergie dans les cellules."
   },
   {
-    "question": "Qu’est-ce que la migraine ?",
-    "answer": "Un type de mal de tête récurrent, souvent accompagné de nausées ou d’une sensibilité à la lumière."
+    "question": "Où trouve-t-on principalement le phosphore dans l’organisme ?",
+    "answer": "En grande partie dans les os et les dents, associé au calcium."
   },
   {
-    "question": "Qu’est-ce que la fièvre ?",
-    "answer": "Une élévation de la température corporelle au-dessus de la normale (généralement > 38 °C)."
+    "question": "Quel lien existe-t-il entre le phosphore et l’ATP (adénosine triphosphate) ?",
+    "answer": "L’ATP est une molécule qui stocke l’énergie et contient des groupements phosphate issus du phosphore."
   },
   {
-    "question": "Qu’est-ce qu’une angine ?",
-    "answer": "Une inflammation de la gorge (amygdales, pharynx), d’origine virale ou bactérienne."
+    "question": "Comment obtient-on du phosphore dans l’alimentation ?",
+    "answer": "En consommant des aliments riches en protéines comme la viande, le poisson, les produits laitiers ou les légumineuses."
   },
   {
-    "question": "Qu’est-ce que l’appendicite ?",
-    "answer": "Une inflammation de l’appendice, pouvant nécessiter une intervention chirurgicale."
+    "question": "Pourquoi le phosphore est-il utilisé en agriculture ?",
+    "answer": "Il est un composant important des engrais, favorisant la croissance des plantes et la formation des racines."
   },
   {
-    "question": "Qu’est-ce qu’un ulcère gastrique ?",
-    "answer": "Une lésion de la muqueuse de l’estomac, souvent causée par la bactérie Helicobacter pylori ou des anti-inflammatoires."
+    "question": "Quelle est la couleur du phosphore blanc pur ?",
+    "answer": "Il est généralement blanc cireux ou teinté de jaune."
   },
   {
-    "question": "Qu’est-ce que l’hépatite ?",
-    "answer": "Une inflammation du foie, pouvant être virale (hépatite A, B, C...) ou toxique."
+    "question": "Pourquoi doit-on manipuler le phosphore blanc avec précaution ?",
+    "answer": "Il est très réactif avec l’air et peut s’enflammer spontanément, d’où le risque d’incendie."
   },
   {
-    "question": "Qu’est-ce qu’une épidémie ?",
-    "answer": "Une augmentation subite du nombre de cas d’une maladie dans une zone géographique donnée."
+    "question": "Quel est le rôle du phosphore dans la photosynthèse ?",
+    "answer": "Il est nécessaire à la formation d’ATP et d’autres composés essentiels à la conversion de l’énergie lumineuse en sucres."
   },
   {
-    "question": "À quoi sert une auscultation pulmonaire ?",
-    "answer": "À écouter les bruits respiratoires pour détecter d’éventuelles anomalies (râles, sibilants...)."
+    "question": "Quelle forme de phosphore est la plus stable ?",
+    "answer": "Le phosphore rouge, beaucoup moins réactif que le phosphore blanc."
   },
   {
-    "question": "Qu’est-ce qu’une carie dentaire ?",
-    "answer": "Une destruction progressive de l’émail et de la dentine, causée notamment par les bactéries buccales."
+    "question": "Que se passe-t-il en cas de carence en phosphore dans l’organisme ?",
+    "answer": "Des problèmes osseux, de la fatigue et des troubles de la croissance peuvent survenir."
   },
   {
-    "question": "Qu’est-ce qu’une crise d’épilepsie ?",
-    "answer": "Une décharge électrique anormale dans le cerveau, provoquant des convulsions ou des pertes de conscience."
+    "question": "Comment s’appelle le processus d’extraction du phosphore à partir de minéraux ?",
+    "answer": "On l’obtient principalement en traitant les roches phosphatées via divers procédés chimiques."
   },
   {
-    "question": "Qu’est-ce que l’obésité ?",
-    "answer": "Un excès de masse grasse dans le corps, souvent associé à un IMC ≥ 30."
+    "question": "Pourquoi le phosphore est-il important dans l’ADN et l’ARN ?",
+    "answer": "Il forme la colonne vertébrale des molécules d’ADN et d’ARN grâce aux groupements phosphate."
   },
   {
-    "question": "Qu’est-ce que la nutrition clinique ?",
-    "answer": "La science qui s’intéresse à l’alimentation des patients pour soutenir leur santé ou traiter certaines pathologies."
+    "question": "Quel compound (composé) courant contient le phosphore pour les allumettes ?",
+    "answer": "Le phosphore rouge, utilisé sur la surface de frottement ou dans la tête des allumettes de sûreté."
   },
   {
-    "question": "À quoi sert un antidépresseur ?",
-    "answer": "À traiter les symptômes de la dépression en modulant certains neurotransmetteurs cérébraux."
+    "question": "Dans quel secteur industriel le phosphore est-il massivement employé hormis l’agriculture ?",
+    "answer": "Dans l’industrie chimique et pharmaceutique, pour produire divers composés comme les phosphates et les additifs."
   },
   {
-    "question": "Qu’est-ce que la bronchite ?",
-    "answer": "Une inflammation des bronches, souvent liée à une infection virale ou bactérienne."
+    "question": "Comment le phosphore contribue-t-il au métabolisme énergétique du muscle ?",
+    "answer": "Il aide à la production d’ATP, source d’énergie essentielle pour la contraction musculaire."
   },
   {
-    "question": "Qu’est-ce que l’insuffisance respiratoire ?",
-    "answer": "Une incapacité des poumons à oxygéner correctement le sang ou à éliminer suffisamment le CO2."
+    "question": "Quelle est la conséquence d’un excès de phosphore dans les plans d’eau ?",
+    "answer": "Il provoque l’eutrophisation, c’est-à-dire la prolifération d’algues nocives pour la faune et la flore aquatiques."
   },
   {
-    "question": "Pourquoi boit-on des solutions de réhydratation en cas de diarrhée aiguë ?",
-    "answer": "Pour compenser la perte d’eau et d’électrolytes, et éviter la déshydratation."
+    "question": "Quels sont les principaux aliments riches en phosphore ?",
+    "answer": "Les viandes, les poissons, les œufs, les fromages, les légumineuses et les fruits oléagineux (amandes)."
   },
   {
-    "question": "Qu’est-ce que l’hypothyroïdie ?",
-    "answer": "Une diminution de la production d’hormones thyroïdiennes, entraînant fatigue, prise de poids, etc."
+    "question": "Quelle est la particularité du phosphore noir ?",
+    "answer": "C’est une forme allotropique plus stable et moins réactive, aux propriétés semi-conductrices prometteuses."
   },
   {
-    "question": "Qu’est-ce qu’un inhibiteur de la pompe à protons (IPP) ?",
-    "answer": "Un médicament réduisant la sécrétion d’acide gastrique, utilisé dans le traitement des ulcères et du reflux."
-  },
-  {
-    "question": "Qu’est-ce qu’une allergie alimentaire ?",
-    "answer": "Une réaction immunitaire anormale à un aliment (ex: arachides, fruits de mer...)."
-  },
-  {
-    "question": "Qu’est-ce que l’asthme ?",
-    "answer": "Une maladie respiratoire chronique caractérisée par une inflammation et une constriction des bronches."
-  },
-  {
-    "question": "Quel est le rôle du système immunitaire ?",
-    "answer": "Protéger le corps contre les infections et les substances étrangères."
-  },
-  {
-    "question": "Qu’est-ce qu’une prise de tension artérielle manuelle ?",
-    "answer": "Utiliser un brassard et un stéthoscope pour mesurer la pression systolique et diastolique."
-  },
-  {
-    "question": "Qu’est-ce que la stéatose hépatique ?",
-    "answer": "Une accumulation excessive de graisse dans les cellules du foie, parfois liée à l’alcool ou à l’obésité."
-  },
-  {
-    "question": "Qu’est-ce qu’un ulcère duodénal ?",
-    "answer": "Une plaie située dans la première partie de l’intestin grêle (duodénum)."
-  },
-  {
-    "question": "Qu’est-ce qu’un infactus du myocarde, communément appelé crise cardiaque ?",
-    "answer": "La nécrose d’une partie du muscle cardiaque due à une obstruction d’une artère coronarienne."
-  },
-  {
-    "question": "Pourquoi le tabagisme est-il nocif pour la santé ?",
-    "answer": "Il génère des substances toxiques qui endommagent les voies respiratoires et augmentent le risque de cancer."
-  },
-  {
-    "question": "Qu’est-ce que la toxémie gravidique (prééclampsie) ?",
-    "answer": "Une complication de la grossesse associant hypertension et protéinurie, dangereuse pour la mère et le fœtus."
-  },
-  {
-    "question": "Qu’est-ce que la radiologie ?",
-    "answer": "La branche de la médecine qui utilise les rayons X et autres techniques d’imagerie pour diagnostiquer."
-  },
-  {
-    "question": "Qu’est-ce qu’un scanner (TDM) ?",
-    "answer": "Un examen d’imagerie médicale utilisant des rayons X pour obtenir des coupes transversales du corps."
-  },
-  {
-    "question": "Qu’est-ce que l’IRM (Imagerie par Résonance Magnétique) ?",
-    "answer": "Un examen d’imagerie qui utilise un champ magnétique et des ondes radio pour visualiser les tissus du corps."
-  },
-  {
-    "question": "Qu’est-ce que le cholestérol ?",
-    "answer": "Une molécule lipidique nécessaire au corps, mais dont l’excès peut boucher les artères."
-  },
-  {
-    "question": "Qu’est-ce que l’hygiène de vie ?",
-    "answer": "L’ensemble des règles visant à maintenir un mode de vie sain (alimentation, activité physique, sommeil...)."
-  },
-  {
-    "question": "Qu’est-ce que la glycémie à jeun ?",
-    "answer": "Le taux de sucre dans le sang après plusieurs heures sans manger, indicateur pour dépister le diabète."
-  },
-  {
-    "question": "Qu’est-ce que la médecine du travail ?",
-    "answer": "Une spécialité qui veille à la santé des travailleurs et à la prévention des risques professionnels."
-  },
-  {
-    "question": "Qu’est-ce qu’une suture chirurgicale ?",
-    "answer": "Une fermeture d’une plaie ou d’une incision à l’aide de fils ou d’agrafes."
-  },
-  {
-    "question": "Qu’est-ce que la cicatrisation ?",
-    "answer": "Le processus de guérison d’une plaie, où les tissus se régénèrent progressivement."
-  },
-  {
-    "question": "Qu’est-ce que la transplantation d’organe ?",
-    "answer": "Le remplacement d’un organe défaillant par un organe sain provenant d'un donneur."
-  },
-  {
-    "question": "Qu’est-ce que la rate ?",
-    "answer": "Un organe impliqué dans la production et la destruction de certaines cellules sanguines et la réponse immunitaire."
-  },
-  {
-    "question": "Qu’est-ce que la thyroïde ?",
-    "answer": "Une glande endocrine située dans le cou, produisant des hormones régulant le métabolisme."
-  },
-  {
-    "question": "À quoi sert un antitussif ?",
-    "answer": "À soulager ou stopper la toux en agissant sur le réflexe tussigène."
-  },
-  {
-    "question": "Qu’est-ce que le système lymphatique ?",
-    "answer": "Un réseau de vaisseaux et de ganglions transportant la lymphe et jouant un rôle dans l’immunité."
-  },
-  {
-    "question": "Qu’est-ce que l’ulcération ?",
-    "answer": "Une perte de substance de la peau ou d’une muqueuse, formant une plaie profonde."
-  },
-  {
-    "question": "Qu’est-ce qu’une hémorragie ?",
-    "answer": "Une perte abondante de sang en peu de temps, pouvant être interne ou externe."
-  },
-  {
-    "question": "À quoi sert la consultation prénatale ?",
-    "answer": "À assurer le suivi médical de la grossesse et la bonne santé de la mère et du fœtus."
-  },
-  {
-    "question": "Qu’est-ce que l’accouchement par césarienne ?",
-    "answer": "Une intervention chirurgicale pour extraire le bébé et le placenta par incision de l’abdomen et de l’utérus."
-  },
-  {
-    "question": "Qu’est-ce que la puériculture ?",
-    "answer": "L’ensemble des soins apportés aux nourrissons et la science qui s’y rapporte."
-  },
-  {
-    "question": "Qu’est-ce que la colonne vertébrale ?",
-    "answer": "Un ensemble d’os (vertèbres) protégeant la moelle épinière et soutenant le tronc."
-  },
-  {
-    "question": "Qu’est-ce qu’une entorse ?",
-    "answer": "Une lésion ligamentaire due à un mouvement forcé d’une articulation."
-  },
-  {
-    "question": "Qu’est-ce que la chirurgie esthétique ?",
-    "answer": "Une branche de la chirurgie visant à améliorer ou modifier l’apparence physique."
-  },
-  {
-    "question": "Qu’est-ce que l’hygiène dentaire ?",
-    "answer": "L’ensemble des soins et pratiques pour maintenir une bonne santé bucco-dentaire (brossage, détartrage...)."
-  },
-  {
-    "question": "Qu’entend-on par 'infarctus cérébral' ?",
-    "answer": "Communément appelé AVC ischémique, c’est la mort d’une zone du cerveau par manque de sang (obstruction)."
-  },
-  {
-    "question": "Qu’est-ce qu’une endoscopie ?",
-    "answer": "Un examen visuel de l’intérieur du corps à l’aide d’un tube muni d’une caméra."
-  },
-  {
-    "question": "Qu’est-ce que la bronchopneumopathie chronique obstructive (BPCO) ?",
-    "answer": "Une maladie pulmonaire progressive rendant la respiration difficile, souvent liée au tabagisme."
-  },
-  {
-    "question": "Qu’est-ce que le choléra ?",
-    "answer": "Une infection digestive grave causée par la bactérie Vibrio cholerae, associée à de fortes diarrhées."
-  },
-  {
-    "question": "Quelle est la fonction d’un gynécologue ?",
-    "answer": "S’occuper de la santé de l’appareil génital féminin et du suivi de la grossesse."
-  },
-  {
-    "question": "Qu’est-ce que la néphrologie ?",
-    "answer": "La spécialité médicale consacrée aux maladies des reins (insuffisance rénale, calculs, etc.)."
-  },
-  {
-    "question": "À quoi sert une échographie ?",
-    "answer": "À visualiser les organes internes grâce à des ultrasons, sans utiliser de rayons X."
-  },
-  {
-    "question": "Qu’est-ce que la cytologie ?",
-    "answer": "L’étude des cellules, souvent à partir d’échantillons biologiques, pour détecter des anomalies ou cancers."
-  },
-  {
-    "question": "Qu’est-ce que la coloscopie ?",
-    "answer": "Un examen endoscopique pour explorer l’intérieur du côlon et rechercher des lésions ou polypes."
-  },
-  {
-    "question": "Qu’est-ce que la maladie cœliaque ?",
-    "answer": "Une intolérance permanente au gluten, provoquant une inflammation de l’intestin grêle."
-  },
-  {
-    "question": "Qu’est-ce que l’hypothermie ?",
-    "answer": "Une baisse anormale de la température corporelle en dessous de 35 °C."
-  },
-  {
-    "question": "Qu’est-ce que l’hyperthermie ?",
-    "answer": "Une élévation de la température corporelle au-delà de la normale, par exemple due à un coup de chaleur."
-  },
-  {
-    "question": "Qu’est-ce qu’un sédatif ?",
-    "answer": "Un médicament qui diminue l’excitation ou l’anxiété, provoquant un effet calmant ou somnolent."
-  },
-  {
-    "question": "Qu’est-ce que l’utérus ?",
-    "answer": "Un organe féminin où s’implante l’embryon et se développe le fœtus pendant la grossesse."
-  },
-  {
-    "question": "Qu’est-ce qu’un fibrome utérin ?",
-    "answer": "Une tumeur bénigne (non cancéreuse) de l’utérus, pouvant causer des saignements ou des douleurs."
-  },
-  {
-    "question": "Pourquoi l’hydratation est-elle importante ?",
-    "answer": "Elle maintient l’équilibre hydrique, régule la température et permet le bon fonctionnement cellulaire."
-  },
-  {
-    "question": "Qu’est-ce qu’une ponction lombaire ?",
-    "answer": "Un prélèvement de liquide céphalo-rachidien dans la région lombaire, pour diagnostiquer des pathologies du système nerveux."
-  },
-  {
-    "question": "Qu’est-ce que la biologie médicale ?",
-    "answer": "L’analyse de prélèvements (sang, urine, etc.) afin de fournir des données utiles au diagnostic médical."
-  },
-  {
-    "question": "Qu’est-ce que la variole (smallpox) ?",
-    "answer": "Une maladie virale éradiquée, autrefois très contagieuse, caractérisée par des pustules sur la peau."
-  },
-  {
-    "question": "Qu’est-ce que la maladie d’Alzheimer ?",
-    "answer": "Une forme de démence provoquant une perte progressive de la mémoire et des fonctions cognitives."
-  },
-  {
-    "question": "Qu’est-ce que le TDAH (Trouble de l’Attention avec Hyperactivité) ?",
-    "answer": "Un trouble neurodéveloppemental touchant l’attention, la concentration et le contrôle de l’impulsivité."
-  },
-  {
-    "question": "Qu’est-ce qu’un psychotrope ?",
-    "answer": "Un médicament agissant sur l’activité cérébrale (antidépresseurs, anxiolytiques, antipsychotiques...)."
-  },
-  {
-    "question": "Qu’appelle-t-on le sevrage tabagique ?",
-    "answer": "Le processus d’arrêt du tabac et de lutte contre la dépendance à la nicotine."
-  },
-  {
-    "question": "Pourquoi une bonne posture est-elle importante ?",
-    "answer": "Pour éviter les douleurs musculo-squelettiques et maintenir un alignement correct de la colonne vertébrale."
-  },
-  {
-    "question": "Qu’est-ce qu’un pédiatre spécialiste en néonatalogie ?",
-    "answer": "Un pédiatre qui s’occupe spécifiquement des nouveau-nés, en particulier ceux prématurés ou malades."
-  },
-  {
-    "question": "Quels sont les cinq sens principaux ?",
-    "answer": "La vue, l’ouïe, l’odorat, le goût et le toucher."
-  },
-  {
-    "question": "Qu’est-ce qu’un vaccin ?",
-    "answer": "Une préparation biologique qui stimule la production d’anticorps pour immuniser contre une maladie spécifique."
+    "question": "Comment le phosphore est-il découvert historiquement ?",
+    "answer": "Il a été isolé au XVIIe siècle par l’alchimiste Brand, qui cherchait à extraire l’or de l’urine."
   },
   {
     "question": "Qu’est-ce que le métabolisme de base ?",

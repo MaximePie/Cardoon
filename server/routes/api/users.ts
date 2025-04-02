@@ -13,27 +13,31 @@ import authMiddleware from "../../middleware/auth.js";
 router.get("/seed", clearDBAndSeed);
 
 router.get("/me", authMiddleware, async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById((req as any).user.id);
   res.json(user);
 });
 
 router.post("/login", async (req, res) => {
   const { email, password, rememberMe } = req.body;
-  const jwtSecret = process.env.JWT_SECRET;
+  const jwtSecret = process.env.JWT_SECRET as string;
+
+  if (!jwtSecret) {
+    res.status(500).json({
+      error: "JWT_SECRET is not defined in the environment variables",
+    });
+    return;
+  }
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ errorMessage: "Please provide email and password" });
+    res.status(400).json({ errorMessage: "Please provide email and password" });
   }
 
   // Replace this with your actual user authentication logic
   const user = await User.getUserByEmail(email.trim().toLowerCase());
 
   if (!user) {
-    return res
-      .status(401)
-      .json({ error: "Invalid credentials", email, password });
+    res.status(401).json({ error: "Invalid credentials", email, password });
+    return;
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
@@ -55,7 +59,7 @@ router.post("/register", async (req, res) => {
   const user = await User.getUserByEmail(email);
 
   if (user) {
-    return res.status(400).json({ error: "User already exists" });
+    res.status(400).json({ error: "User already exists" });
   }
 
   const newUser = await User.createUser(email, password, username);

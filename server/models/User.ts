@@ -1,13 +1,33 @@
-import mongoose from "mongoose";
-import UserCard from "./UserCard.js";
+import mongoose, { Document, Model, ObjectId } from "mongoose";
+import UserCard from "./UserCard";
 import bcrypt from "bcrypt";
 
-// The model user has the following properties:
-// A username (String)
-// A password (String)
-// A user has many user cards
+// Define an interface for the User document
+interface IUser extends Document {
+  username: string;
+  password: string;
+  email: string;
+  score: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  answersRatio: number;
 
-const UserSchema = new mongoose.Schema({
+  attachCard(cardId: ObjectId): Promise<typeof UserCard>;
+  getCards(): Promise<any[]>;
+  getOutdatedCards(): Promise<any[]>;
+  addScore(interval: number): Promise<void>;
+  getCategories(): Promise<string[]>;
+  updateAnswerRatio(isCorrectAnswer: boolean): Promise<number>;
+}
+
+// Define an interface for the User model (static methods)
+interface IUserModel extends Model<IUser> {
+  createUser(email: string, password: string, username: string): Promise<IUser>;
+  getUserByUsername(username: string): Promise<IUser | null>;
+  getUserByEmail(email: string): Promise<IUser | null>;
+}
+
+const UserSchema = new mongoose.Schema<IUser>({
   username: {
     type: String,
     required: true,
@@ -20,12 +40,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
   score: {
     type: Number,
     default: 0,
   },
-
   correctAnswers: {
     type: Number,
     default: 0,
@@ -34,21 +52,20 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-
   answersRatio: {
     type: Number,
     default: 0,
   },
 });
 
-UserSchema.methods.attachCard = async function (cardId) {
+UserSchema.methods.attachCard = async function (cardId: ObjectId) {
   const now = new Date();
   const userCard = new UserCard({
     user: this._id,
     card: cardId,
     interval: 5,
     lastReviewed: now,
-    nextReview: now + 5 * 1000,
+    nextReview: now.getTime() + 5 * 1000,
   });
   await userCard.save();
   return userCard;
@@ -58,7 +75,6 @@ UserSchema.methods.getCards = async function () {
   return UserCard.find({ user: this._id }).populate("card");
 };
 
-// Get all the UserCards with nextReview less than now
 UserSchema.methods.getOutdatedCards = async function () {
   const now = new Date();
   return UserCard.find({
@@ -67,33 +83,32 @@ UserSchema.methods.getOutdatedCards = async function () {
   }).populate("card");
 };
 
-UserSchema.statics.createUser = async function (email, password, username) {
+UserSchema.statics.createUser = async function (
+  email: string,
+  password: string,
+  username: string
+) {
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   return this.create({ username, password: hashedPassword, email });
 };
 
-UserSchema.statics.getUserByUsername = async function (username) {
+UserSchema.statics.getUserByUsername = async function (username: string) {
   return this.findOne({ username });
 };
 
-UserSchema.statics.getUserByEmail = async function (email) {
+UserSchema.statics.getUserByEmail = async function (email: string) {
   return this.findOne({ email });
 };
 
-UserSchema.methods.addScore = async function (interval) {
+UserSchema.methods.addScore = async function (interval: number) {
   const newScore = this.score + interval;
   this.score = newScore;
   await this.save();
 };
-
-UserSchema.methods.getCategories = async function () {
-  const cards = await this.getCards();
-  const categories = cards.map((card) => card.card.category);
-  return [...new Set(categories)];
-};
-
-UserSchema.methods.updateAnswerRatio = async function (isCorrectAnswer) {
+UserSchema.methods.updateAnswerRatio = async function (
+  isCorrectAnswer: boolean
+) {
   if (this.correctAnswers === undefined) {
     this.correctAnswers = 0;
   }
@@ -116,6 +131,6 @@ UserSchema.methods.updateAnswerRatio = async function (isCorrectAnswer) {
   return this.answersRatio;
 };
 
-const User = mongoose.model("User", UserSchema);
+const User = mongoose.model<IUser, IUserModel>("User", UserSchema);
 
 export default User;

@@ -2,7 +2,10 @@
 import express from "express";
 import connectDB from "./config/db.js";
 import cardsRoutes from "./routes/api/cards.js";
-import usersRoutes from "./routes/api/users.js";
+
+import { Request, Response } from "express";
+
+import usersRoutes from "./routes/api/users";
 import userCardsRoutes from "./routes/api/userCards.js";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -22,6 +25,12 @@ app.use((req, res, next) => {
 app.use("/api/cards", cardsRoutes);
 app.use("/api/userCards", userCardsRoutes);
 app.use("/api/users", usersRoutes);
+
+export const errorHandler = (err: Error, req: Request, res: Response) => {
+  console.error(err.stack);
+  res.json({ message: "An error occurred", error: err.message });
+};
+app.use(errorHandler);
 connectDB();
 
 const port = process.env.PORT || 8082;

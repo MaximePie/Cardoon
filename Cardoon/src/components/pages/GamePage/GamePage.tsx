@@ -11,6 +11,7 @@ import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { shuffleArray } from "../../../hooks/usercards";
+import goldIcon from "../../../images/coin.png";
 
 export default () => {
   const { data, loading, fetch, error } = useFetch<{
@@ -121,7 +122,10 @@ export default () => {
         ))}
       </div>
       <div className="GamePage__footer">
-        <span>Gold{user.gold}</span>
+        <span>
+          <img className="GamePage__icon" src={goldIcon} alt="Gold" />{" "}
+          {user.gold}
+        </span>
       </div>
     </div>
   );

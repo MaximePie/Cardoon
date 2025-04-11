@@ -1,16 +1,10 @@
 // routes/api/books.js
 import express from "express";
 const router = express.Router();
-import { clearDBAndSeed } from "../controllers/database.js";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import authMiddleware from "../middleware/auth.js";
-
-// @route   GET api/users/seed
-// @desc    Seed the database
-// @access  Public
-router.get("/seed", clearDBAndSeed);
 
 router.get("/me", authMiddleware, async (req, res) => {
   const user = await User.findById((req as any).user.id);

@@ -8,7 +8,7 @@
     "app": "nodemon app.js",
     "start": "node ./dist/app.js",
     "build": "tsc",
-    "dev": "nodemon -x npx tsx app.ts"
+    "dev": "nodemon -x npx tsx ./src/app.ts"
   },
   "keywords": [],
   "author": "",

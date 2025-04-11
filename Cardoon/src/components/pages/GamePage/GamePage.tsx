@@ -110,7 +110,7 @@ export default () => {
       <div className="BrainCell">
         <h1>Obtenez des synapses!</h1>
         <div className="BrainCell__score">
-          <span>{user.score} </span>
+          <span>{Math.floor(user.score).toLocaleString("fr-FR")}</span>
           <img
             className="BrainCell__image"
             src="https://imgs.search.brave.com/oL7lKgy4g446DksbsavhaGdOZll1gDcOT_KLS5r0SXk/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/dmVjdG9yc3RvY2su/Y29tL2kvcHJldmll/dy0xeC82OS8wNS9i/cmFpbi1jZWxsLWlj/b24tdmVjdG9yLTQ4/MTU2OTA1LmpwZw"

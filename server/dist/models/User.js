@@ -30,6 +30,11 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    gold: {
+        // Possession of gold coins
+        type: Number,
+        default: 0,
+    },
 });
 UserSchema.methods.attachCard = async function (cardId) {
     const now = new Date();
@@ -89,6 +94,15 @@ UserSchema.methods.updateAnswerRatio = async function (isCorrectAnswer) {
         this.correctAnswers / (this.correctAnswers + this.wrongAnswers);
     await this.save();
     return this.answersRatio;
+};
+UserSchema.methods.spendGold = async function (gold) {
+    this.gold -= gold;
+    await this.save();
+};
+UserSchema.methods.earnGold = async function (gold) {
+    this.gold += gold;
+    console.log("Gold earned:", this.gold);
+    await this.save();
 };
 const User = mongoose.model("User", UserSchema);
 export default User;

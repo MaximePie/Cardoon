@@ -11,6 +11,7 @@ interface IUser extends Document {
   correctAnswers: number;
   wrongAnswers: number;
   answersRatio: number;
+  gold: number;
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;
@@ -18,6 +19,8 @@ interface IUser extends Document {
   addScore(interval: number): Promise<void>;
   getCategories(): Promise<string[]>;
   updateAnswerRatio(isCorrectAnswer: boolean): Promise<number>;
+  spendGold(gold: number): Promise<void>;
+  earnGold(gold: number): Promise<void>;
 }
 
 // Define an interface for the User model (static methods)
@@ -53,6 +56,11 @@ const UserSchema = new mongoose.Schema<IUser>({
     default: 0,
   },
   answersRatio: {
+    type: Number,
+    default: 0,
+  },
+  gold: {
+    // Possession of gold coins
     type: Number,
     default: 0,
   },
@@ -129,6 +137,17 @@ UserSchema.methods.updateAnswerRatio = async function (
   await this.save();
 
   return this.answersRatio;
+};
+
+UserSchema.methods.spendGold = async function (gold: number) {
+  this.gold -= gold;
+  await this.save();
+};
+
+UserSchema.methods.earnGold = async function (gold: number) {
+  this.gold += gold;
+  console.log("Gold earned:", this.gold);
+  await this.save();
 };
 
 const User = mongoose.model<IUser, IUserModel>("User", UserSchema);

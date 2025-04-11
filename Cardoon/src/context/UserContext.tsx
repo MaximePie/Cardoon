@@ -9,12 +9,16 @@ interface UserContextType {
   logout: () => void;
   addScore: (score: number) => void;
 }
+
+const emptyUser: User = {
+  _id: "",
+  username: "",
+  score: 0,
+  gold: 0,
+};
+
 export const UserContext = createContext<UserContextType>({
-  user: {
-    _id: "",
-    username: "",
-    score: 0,
-  },
+  user: emptyUser,
   setUser: () => {},
   logout: () => {},
   addScore: () => {},
@@ -27,11 +31,7 @@ export const UserContextProvider = ({
 }) => {
   const { fetch, data } = useFetch<User>(ACTIONS.ME);
 
-  const [user, setUser] = useState<User>({
-    _id: "",
-    username: "",
-    score: 0,
-  });
+  const [user, setUser] = useState<User>(emptyUser);
 
   useEffect(() => {
     // Check for user token in cookies
@@ -60,7 +60,7 @@ export const UserContextProvider = ({
   // Clear the cookie
   const logout = () => {
     document.cookie = "token=;max-age=0";
-    setUser({ _id: "", username: "", score: 0 });
+    setUser(emptyUser);
     // Redirect to /
     document.location.href = "/";
   };

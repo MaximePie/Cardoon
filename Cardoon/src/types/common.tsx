@@ -19,4 +19,5 @@ export interface User {
   _id: string;
   username: string;
   score: number;
+  gold: number;
 }

@@ -92,7 +92,7 @@ export default () => {
   }
 
   return (
-    <div>
+    <div className="GamePage">
       {editedCard && (
         <EditCardForm
           close={() => setEditModalActiveState(false)}
@@ -119,6 +119,9 @@ export default () => {
             isFlashModeOn={flash}
           />
         ))}
+      </div>
+      <div className="GamePage__footer">
+        <span>Gold{user.gold}</span>
       </div>
     </div>
   );

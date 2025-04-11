@@ -52,7 +52,6 @@ export default () => {
 
   const stopGame = () => {
     setGameState("stopped");
-    if (countdown) clearInterval(countdown);
   };
 
   const onUpdate = async (id: string, interval: number, isCorrect: boolean) => {

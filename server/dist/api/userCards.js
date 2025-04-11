@@ -40,6 +40,7 @@ router.put("/updateInterval/:id", async (req, res) => {
         }
         userCard.answerStreak++;
         await user.addScore(userCard.interval);
+        await user.earnGold(1);
         const newInterval = Math.floor(userCard.interval * ratioMultiplier * (1.618 + userCard.answerStreak)) + 1;
         await userCard.updateInterval(newInterval);
         await userCard.save();

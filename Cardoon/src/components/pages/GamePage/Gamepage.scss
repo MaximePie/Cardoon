@@ -1,0 +1,38 @@
+.GamePage {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+
+  .Cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+
+    @media (max-width: 768px) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &__magic-wand-button,
+    &__flash-button {
+      // Float bottom right
+      position: fixed !important;
+      bottom: 1rem;
+      right: 1rem;
+    }
+  }
+
+  &__footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+  }
+}

@@ -9,7 +9,8 @@ type GameState = "started" | "stopped";
 export default () => {
   const [gameState, setGameState] = useState<GameState>("started");
   const [timer, setTimer] = useState<number>(60);
-  const [healthPoints, setHealthPoints] = useState<number>(350);
+  const initialHealthPoints = 350;
+  const [healthPoints, setHealthPoints] = useState<number>(initialHealthPoints);
   const { userCards, removeCard } = useUserCards();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
@@ -30,7 +31,7 @@ export default () => {
         `Score + ${Math.floor(interval).toLocaleString("fr-FR")} !`
       );
 
-      setHealthPoints((prev) => prev - 1);
+      setHealthPoints((prev) => prev - 10);
       if (healthPoints <= 0) {
         openSnackbarWithMessage("Boss defeated !");
         setGameState("stopped");
@@ -60,7 +61,9 @@ export default () => {
               <div className="BossPage__healthbar-background"></div>
               <div
                 className="BossPage__healthbar"
-                style={{ width: `${healthPoints}%` }}
+                style={{
+                  width: `${(healthPoints / initialHealthPoints) * 100}%`,
+                }}
               ></div>
             </div>
 

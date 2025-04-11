@@ -10,14 +10,7 @@ import { Link } from "react-router-dom";
 import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-
-const shuffleArray = (array: any[]) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-};
+import { shuffleArray } from "../../../hooks/usercards";
 
 export default () => {
   const { data, loading, fetch, error } = useFetch<{
@@ -59,7 +52,9 @@ export default () => {
     // Remove the card from the list
     setUserCards(userCards.filter((card) => card._id !== id));
     if (isCorrect) {
-      openSnackbarWithMessage(`Score + ${interval}!`);
+      openSnackbarWithMessage(
+        `Score + ${Math.floor(interval).toLocaleString("fr-FR")} !`
+      );
     }
     if (userCards.length <= 0) {
       // We intentionally wait 2 seconds before fetching the new list to wait for the card to be

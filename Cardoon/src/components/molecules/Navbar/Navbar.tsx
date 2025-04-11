@@ -16,6 +16,8 @@ export default () => {
         <>
           <Link to="/">Jeu</Link>
           <Link to="/character">Personnage</Link>
+          <Link to="/shop">Magasin</Link>
+          <Link to="/boss">Boss</Link>
           <Link to="/add-card">Ajouter une carte</Link>
           <Link to="/" onClick={logout}>
             Logout

@@ -6,7 +6,10 @@
   background: linear-gradient(to right, #22d3ee, #2dd4bf, #3b82f6);
   color: white;
   flex-direction: row;
-  position: absolute;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+
   width: 100%;
   a {
     padding: 0.5rem 1rem;

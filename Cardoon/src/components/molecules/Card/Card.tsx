@@ -56,7 +56,7 @@ export default ({
   const [isRecto, flipCard] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
   const { put, data } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
-  const { setUser, addScore } = useContext(UserContext);
+  const { setUser, addScore, earnGold } = useContext(UserContext);
   const [isFlipping, setIsFlipping] = useState(false);
 
   useEffect(() => {
@@ -95,6 +95,7 @@ export default ({
     put(userCardId, { isCorrectAnswer: true, difficulty });
     onAnswer(userCardId, interval, true);
     addScore(card.interval);
+    earnGold(1);
   };
 
   const fail = () => {

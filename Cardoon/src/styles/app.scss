@@ -7,6 +7,7 @@
 @use "../components/pages/TokenErrorPage/TokenErrorPage" as NotFoundPage;
 @use "../components/pages/CardFormPage/CardFormPage" as CardFormPage;
 @use "../components/molecules/EditCardForm/EditCardForm" as EditCardForm;
+@use "../components/molecules/Navbar/Navbar" as Navbar;
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&family=Roboto+Slab:wght@300;400&display=swap");
 /* Reset some default styles */
 body,
@@ -66,32 +67,5 @@ html {
   }
   50% {
     transform: scale(1);
-  }
-}
-
-.Navbar {
-  display: flex !important;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: linear-gradient(to right, #22d3ee, #2dd4bf, #3b82f6);
-  color: white;
-  flex-direction: row;
-  position: absolute;
-  width: 100%;
-  a {
-    padding: 0.5rem 1rem;
-    background-color: white;
-    border-radius: 6px;
-    color: #007bff;
-    font-weight: bold;
-    transition: transform 0.2s, background-color 0.2s;
-    text-decoration: none;
-
-    &:hover {
-      background-color: #007bff;
-      color: white;
-      transform: scale(1.05);
-    }
   }
 }

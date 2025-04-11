@@ -4,9 +4,15 @@
   width: 100%;
   height: 100vh;
 
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
   &__Cards-part {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 4px;
   }
 
   &__Boss-part {

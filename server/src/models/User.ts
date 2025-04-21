@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
 import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
-
+import { Item } from "./Item.js";
 // Define an interface for the User document
 interface IUser extends Document {
   username: string;
@@ -12,6 +12,8 @@ interface IUser extends Document {
   wrongAnswers: number;
   answersRatio: number;
   gold: number;
+  items: Item[]; // Array of items owned by the user
+  role: "admin" | "user"; // User role
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;
@@ -21,6 +23,7 @@ interface IUser extends Document {
   updateAnswerRatio(isCorrectAnswer: boolean): Promise<number>;
   spendGold(gold: number): Promise<void>;
   earnGold(gold: number): Promise<void>;
+  buyItem(itemId: ObjectId): Promise<void>;
 }
 
 // Define an interface for the User model (static methods)
@@ -63,6 +66,17 @@ const UserSchema = new mongoose.Schema<IUser>({
     // Possession of gold coins
     type: Number,
     default: 0,
+  },
+  items: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Item",
+    },
+  ],
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
   },
 });
 
@@ -146,7 +160,6 @@ UserSchema.methods.spendGold = async function (gold: number) {
 
 UserSchema.methods.earnGold = async function (gold: number) {
   this.gold += gold;
-  console.log("Gold earned:", this.gold);
   await this.save();
 };
 

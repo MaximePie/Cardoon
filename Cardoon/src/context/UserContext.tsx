@@ -16,6 +16,7 @@ const emptyUser: User = {
   username: "",
   score: 0,
   gold: 0,
+  role: "user",
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -60,7 +61,6 @@ export const UserContextProvider = ({
   };
 
   const earnGold = (gold: number) => {
-    console.log("Gold earned: ", gold);
     setUser({ ...user, gold: user.gold + gold });
   };
 

@@ -3,7 +3,7 @@ import { PopulatedUserCard } from "../../../types/common";
 import { useContext, useEffect, useState } from "react";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { FetchedCategory } from "../../pages/CardFormPage/CardFormPage";
-import { RESOURCES, useDelete, usePut } from "../../../hooks/server";
+import { RESOURCES, useDelete, usePost, usePut } from "../../../hooks/server";
 import Delete from "@mui/icons-material/Delete";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import Input from "../../atoms/Input/Input";
@@ -30,6 +30,7 @@ export default ({
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const { put } = usePut(RESOURCES.CARDS);
+  const { post } = usePost(RESOURCES.CARDS);
   const { deleteResource } = useDelete(RESOURCES.CARDS);
 
   const [newCard, setNewCard] = useState({
@@ -38,6 +39,9 @@ export default ({
     imageLink,
     category,
   });
+
+  const [subquestion, setNewSubquestion] = useState<string | undefined>();
+  const [subanswer, setNewSubanswer] = useState<string | undefined>();
 
   useEffect(() => {
     setNewCard({
@@ -94,6 +98,25 @@ export default ({
     openSnackbarWithMessage("La carte a été mise à jour");
   };
 
+  const saveSubquestion = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    const formData = new FormData();
+
+    if (!subquestion || !subanswer) {
+      return;
+    }
+
+    formData.append("question", subquestion);
+    formData.append("answer", subanswer);
+    formData.append("parentId", editedCard.card._id);
+    formData.append("category", newCard.category || "");
+
+    await post(formData);
+    setNewSubquestion("");
+    setNewSubanswer("");
+    openSnackbarWithMessage("La carte a été mise à jour");
+  };
+
   return (
     <Modal open={isOpen} onClose={close}>
       <div className="EditCardForm">
@@ -138,6 +161,26 @@ export default ({
             customClassName="EditCardForm__delete"
           >
             <Delete /> Supprimer la carte
+          </Button>
+          <Input
+            label="Question alternative"
+            type="text"
+            value={subquestion || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNewSubquestion(e.target.value)
+            }
+          />
+          <Input
+            label="Réponse alternative"
+            type="text"
+            value={subanswer || ""}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNewSubanswer(e.target.value)
+            }
+          />
+
+          <Button onClick={(e) => saveSubquestion(e)}>
+            Enregistrer la question alternative
           </Button>
         </form>
       </div>

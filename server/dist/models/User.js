@@ -35,6 +35,17 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    items: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Item",
+        },
+    ],
+    role: {
+        type: String,
+        enum: ["admin", "user"],
+        default: "user",
+    },
 });
 UserSchema.methods.attachCard = async function (cardId) {
     const now = new Date();
@@ -101,7 +112,6 @@ UserSchema.methods.spendGold = async function (gold) {
 };
 UserSchema.methods.earnGold = async function (gold) {
     this.gold += gold;
-    console.log("Gold earned:", this.gold);
     await this.save();
 };
 const User = mongoose.model("User", UserSchema);

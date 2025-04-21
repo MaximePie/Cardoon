@@ -122,7 +122,7 @@ export default () => {
         ))}
       </div>
       <div className="GamePage__footer">
-        <span>
+        <span className="GamePage__footer__text">
           <img className="GamePage__icon" src={goldIcon} alt="Gold" />{" "}
           {user.gold}
         </span>

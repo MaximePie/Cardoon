@@ -8,6 +8,7 @@ export interface ICard extends Document {
   answer: string;
   imageLink?: string;
   category?: string;
+  parentId?: string;
 }
 
 /**
@@ -17,11 +18,6 @@ export interface ICardModel extends Model<ICard> {
   getCategories(): CountedCategory[];
 }
 
-/**
- * A card has the following properties:
- * A question (String)
- * An answer (String)
- */
 const CardSchema = new mongoose.Schema<ICard>({
   question: {
     type: String,
@@ -35,6 +31,9 @@ const CardSchema = new mongoose.Schema<ICard>({
     type: String,
   },
   category: {
+    type: String,
+  },
+  parentId: {
     type: String,
   },
 });
@@ -51,6 +50,11 @@ CardSchema.statics.getCategories = async function (): Promise<
     { $project: { _id: 0, category: "$_id", count: 1 } },
   ]);
   return categories;
+};
+
+CardSchema.methods.getChildren = async function (): Promise<ICard[]> {
+  const children = await this.model("Card").find({ parentId: this._id });
+  return children;
 };
 
 const Card: ICardModel = mongoose.model<ICard, ICardModel>("Card", CardSchema);

@@ -43,6 +43,7 @@ router.post("/", authMiddleware, async (req, res) => {
       const question = fields.question?.[0];
       const image = files.image ? files.image[0] : null;
       const category = fields.category ? fields.category[0] : null;
+      const parentId = fields.parentId ? fields.parentId[0] : null;
       let imageLink =
         ((fields.imageLink ?? []) as string[]).length > 0
           ? (fields.imageLink as string[])[0]
@@ -83,6 +84,7 @@ router.post("/", authMiddleware, async (req, res) => {
         answer,
         imageLink,
         category,
+        parentId,
       };
 
       const createdCard = await Card.create(newCard);

@@ -3,6 +3,10 @@
   margin-bottom: 1.5rem;
   text-align: left;
 
+  @media screen and (max-width: 600px) {
+    margin-bottom: 0.75rem;
+  }
+
   label {
     display: block;
     font-size: 0.875rem;

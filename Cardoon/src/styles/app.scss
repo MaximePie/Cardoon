@@ -26,7 +26,14 @@ html {
 }
 
 .Page {
-  margin-top: 3rem;
+  margin-top: 60px;
+}
+
+@media screen and (max-width: 600px) {
+  h1 {
+    font-size: 2rem;
+    margin: 0.5rem 0;
+  }
 }
 
 .BrainCell {

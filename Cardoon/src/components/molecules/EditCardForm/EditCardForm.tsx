@@ -134,7 +134,7 @@ export default ({
             }}
           />
           <Input
-            label="Answer"
+            label="Réponse"
             type="text"
             value={newCard.answer}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -142,7 +142,7 @@ export default ({
             }
           />
           <Input
-            label="Image link"
+            label="URL d'image"
             type="text"
             value={newCard.imageLink}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

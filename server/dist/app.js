@@ -11,6 +11,7 @@ dotenv.config();
 const app = express();
 const allowedOrigins = [
     "http://localhost:5173",
+    "http://192.168.1.137:5173",
     "https://cardoon-front.onrender.com",
 ];
 app.use(cors({ origin: allowedOrigins, credentials: true }));

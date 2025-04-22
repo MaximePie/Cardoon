@@ -10,8 +10,8 @@ import { Link } from "react-router-dom";
 import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { shuffleArray } from "../../../hooks/usercards";
 import goldIcon from "../../../images/coin.png";
+import { shuffleArray } from "../../../utils";
 
 export default () => {
   const { data, loading, fetch, error } = useFetch<{
@@ -31,7 +31,11 @@ export default () => {
 
   useEffect(() => {
     if (data) {
-      setUserCards(shuffleArray(data.cards));
+      setUserCards(
+        shuffleArray(data.cards).sort((a: PopulatedUserCard) =>
+          a.card.parentId ? -1 : 1
+        )
+      );
       setCategories(data.categories);
       // console.log(
       //   data

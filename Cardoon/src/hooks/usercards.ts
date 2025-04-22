@@ -4,15 +4,6 @@ import { useEffect, useState } from "react";
 import { FetchedCategory } from "../components/pages/CardFormPage/CardFormPage";
 import { PopulatedUserCard } from "../types/common";
 import { RESOURCES, useFetch } from "./server";
-
-export const shuffleArray = (array: any[]) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-};
-
 type UserCardHookReturnType = {
   loading: boolean;
   userCards: PopulatedUserCard[];
@@ -37,7 +28,13 @@ export const useUserCards = (): UserCardHookReturnType => {
 
   useEffect(() => {
     if (data) {
-      setUserCards(shuffleArray(data.cards));
+      setUserCards(
+        data.cards.sort((a, b) => {
+          if (a.card.parentId && !b.card.parentId) return -1;
+          if (!a.card.parentId && b.card.parentId) return 1;
+          return 0;
+        })
+      );
       // console.log(
       //   data
       //     .filter(({ card }) => !card.imageLink && !!card.category)

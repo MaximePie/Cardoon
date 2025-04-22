@@ -13,6 +13,7 @@ export interface Card {
   interval: number;
   imageLink: string;
   category: string;
+  parentId?: string;
 }
 
 export interface User {

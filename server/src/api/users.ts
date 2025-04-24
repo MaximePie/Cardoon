@@ -8,6 +8,13 @@ import authMiddleware from "../middleware/auth.js";
 
 router.get("/me", authMiddleware, async (req, res) => {
   const user = await User.findById((req as any).user.id);
+  if (!user) {
+    res.status(404).json({ error: "User not found" });
+    return;
+  }
+
+  await user.populate("items"); // Assuming "items" is a reference field in the User schema
+
   res.json(user);
 });
 
@@ -60,6 +67,51 @@ router.post("/register", async (req, res) => {
 
   res.json(newUser);
 });
+
+router.post("/buyItem", authMiddleware, async (req, res) => {
+  const { itemId } = req.body;
+  const userId = (req as any).user.id;
+
+  // Assuming you have a method to handle the purchase logic
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    user.buyItem(itemId); // Assuming this method handles the purchase logic
+    res.status(200).json({ message: "Item purchased successfully" });
+    return;
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing the purchase" });
+    return;
+  }
+});
+
+router.post("/removeItem", authMiddleware, async (req, res) => {
+  const { itemId } = req.body;
+  const userId = (req as any).user.id;
+
+  // Assuming you have a method to handle the removal logic
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    user.removeItem(itemId); // Assuming this method handles the removal logic
+    res.status(200).json({ message: "Item removed successfully" });
+    return;
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing the removal" });
+    return;
+  }
+});
+
 // Route to verify token
 router.get("/verify-token", authMiddleware, (req, res) => {
   res.json({ valid: true });

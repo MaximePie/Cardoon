@@ -17,6 +17,7 @@ const emptyUser: User = {
   score: 0,
   gold: 0,
   role: "user",
+  items: [],
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -61,7 +62,10 @@ export const UserContextProvider = ({
   };
 
   const earnGold = (gold: number) => {
-    setUser({ ...user, gold: user.gold + gold });
+    const items = user.items.filter((item) => item.effect.type === "gold");
+    const goldEffect = items.reduce((acc, item) => acc + item.effect.value, 0);
+    const totalGold = gold + goldEffect;
+    setUser({ ...user, gold: user.gold + totalGold });
   };
 
   // Clear the cookie

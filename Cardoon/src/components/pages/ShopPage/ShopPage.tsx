@@ -1,26 +1,30 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/UserContext";
-import glasses1 from "../../../images/glasses1.png";
+import { useFetch, RESOURCES } from "../../../hooks/server";
+import { Item as ItemType } from "../../../types/common";
+import Item from "../../molecules/Item/Item";
 
 export default () => {
   const { user } = useContext(UserContext);
+  const { fetch, data } = useFetch<ItemType[]>(RESOURCES.ITEMS);
+  const [items, setItems] = useState<ItemType[]>(data || []);
+  useEffect(() => {
+    fetch();
+    document.title = "Page de la boutique";
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setItems(data);
+    }
+  }, [data]);
   return (
-    <div>
+    <div className="Page ShopPage">
       <p>Vous avez {user.gold} pièces. Que voulez-vous acheter ?</p>
       <p>Voici les articles disponibles :</p>
-      <div className="shop-items">
-        <div className="Item">
-          Lunettes de soleil
-          <img
-            src={glasses1}
-            onClick={() => console.log("Lunettes de soleil achetées")}
-            alt="Lunettes de soleil"
-            className="Item__image"
-          />
-          <p></p>
-          <p>Prix : 5000 pièces</p>
-        </div>
-      </div>
+      {items.map((item) => (
+        <Item key={item._id} item={item} /> // Assuming you have an Item component to display each item
+      ))}
     </div>
   );
 };

@@ -9,6 +9,7 @@ export const RESOURCES = {
   CARDS: "cards",
   USER: "user",
   CATEGORIES: "cards/categories",
+  ITEMS: "items",
   // PLAYERS: "players",
 };
 export const ACTIONS = {
@@ -16,6 +17,8 @@ export const ACTIONS = {
   LOGIN: "users/login",
   REGISTER: "users/register",
   ME: "users/me",
+  BUY_ITEM: "users/buyItem",
+  REMOVE_ITEM: "users/removeItem",
 };
 
 // Custom hook to get data

@@ -1,0 +1,16 @@
+.Item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-background);
+  box-shadow: var(--shadow);
+
+  width: 300px;
+  border: 1px solid;
+  img {
+    width: 200px;
+    border-radius: 0.25rem;
+  }
+}

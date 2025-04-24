@@ -6,9 +6,11 @@
 @use "../components/pages/LoginPage/LoginPage" as LoginPage;
 @use "../components/pages/BossPage/BossPage" as BossPage;
 @use "../components/pages/GamePage/GamePageStyle" as GamePage;
+@use "../components/pages/CharacterPage/CharacterPage" as CharacterPage;
 @use "../components/pages/TokenErrorPage/TokenErrorPage" as NotFoundPage;
 @use "../components/pages/CardFormPage/CardFormPage" as CardFormPage;
 @use "../components/molecules/EditCardForm/EditCardForm" as EditCardForm;
+@use "../components/molecules/Item/Item" as Item;
 @use "../components/molecules/Navbar/Navbar" as Navbar;
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&family=Roboto+Slab:wght@300;400&display=swap");
 /* Reset some default styles */
@@ -27,6 +29,12 @@ html {
 
 .Page {
   margin-top: 60px;
+}
+.Admin {
+  img {
+    width: 200px;
+    height: 200px;
+  }
 }
 
 @media screen and (max-width: 600px) {

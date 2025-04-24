@@ -2,8 +2,7 @@
 
 import mongoose from "mongoose";
 
-type Item = {
-  id: number;
+export type Item = {
   name: string;
   description: string;
   price: number;
@@ -16,7 +15,6 @@ type Item = {
 };
 
 const ItemSchema = new mongoose.Schema<Item>({
-  id: { type: Number, required: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
@@ -35,4 +33,4 @@ const ItemSchema = new mongoose.Schema<Item>({
 const ItemModel = mongoose.model<Item>("Item", ItemSchema);
 
 export default ItemModel;
-export type { Item };
+export type { Item as ItemType };

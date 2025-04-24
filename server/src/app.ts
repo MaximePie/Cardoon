@@ -7,6 +7,7 @@ import { Request, Response } from "express";
 
 import usersRoutes from "./api/users.js";
 import userCardsRoutes from "./api/userCards.js";
+import itemsRoutes from "./api/items.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -26,10 +27,18 @@ app.use((req, res, next) => {
 app.use("/api/cards", cardsRoutes);
 app.use("/api/userCards", userCardsRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api/items", itemsRoutes);
 
-export const errorHandler = (err: Error, req: Request, res: Response) => {
+export const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: any
+) => {
   console.error(err.stack);
-  res.json({ message: "An error occurred", error: err.message });
+  res
+    .status(err.name === "ValidationError" ? 400 : 500)
+    .json({ message: "An error occurred", error: err.message });
 };
 app.use(errorHandler);
 connectDB();

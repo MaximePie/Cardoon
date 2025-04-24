@@ -16,10 +16,24 @@ export interface Card {
   parentId?: string;
 }
 
+export type Item = {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  type: "head" | "weapon" | "armor" | "accessory";
+  effect: {
+    type: "gold";
+    value: number;
+  };
+};
+
 export interface User {
   _id: string;
   username: string;
   score: number;
   role: "admin" | "user";
   gold: number;
+  items: Item[];
 }

@@ -111,8 +111,39 @@ UserSchema.methods.spendGold = async function (gold) {
     await this.save();
 };
 UserSchema.methods.earnGold = async function (gold) {
-    this.gold += gold;
+    const goldEffect = this.items.reduce((acc, item) => {
+        if (item.effect?.type === "gold") {
+            return acc + item.effect?.value || 0;
+        }
+        return acc;
+    }, 0);
+    this.gold += gold + goldEffect;
     await this.save();
+};
+UserSchema.methods.buyItem = async function (itemId) {
+    const item = await mongoose.model("Item").findById(itemId);
+    if (!item) {
+        throw new Error("Item not found");
+    }
+    if (this.gold < item.price) {
+        throw new Error("Not enough gold");
+    }
+    this.items.push(itemId);
+    this.gold -= item.price;
+    await this.save();
+};
+UserSchema.methods.removeItem = async function (itemId) {
+    const itemIndex = this.items.indexOf(itemId);
+    if (itemIndex > -1) {
+        this.items.splice(itemIndex, 1);
+        await this.save();
+    }
+    else {
+        throw new Error("Item not found in user's items");
+    }
+};
+UserSchema.statics.onItemRemoved = async function (itemId) {
+    await this.updateMany({ items: itemId }, { $pull: { items: itemId } });
 };
 const User = mongoose.model("User", UserSchema);
 export default User;

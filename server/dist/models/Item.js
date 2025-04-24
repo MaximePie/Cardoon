@@ -1,7 +1,6 @@
 // Users can buy items in the shop and use them in the game
 import mongoose from "mongoose";
 const ItemSchema = new mongoose.Schema({
-    id: { type: Number, required: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },

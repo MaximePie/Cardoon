@@ -24,6 +24,7 @@ interface IUser extends Document {
   spendGold(gold: number): Promise<void>;
   earnGold(gold: number): Promise<void>;
   buyItem(itemId: ObjectId): Promise<void>;
+  removeItem(itemId: ObjectId): Promise<void>;
 }
 
 // Define an interface for the User model (static methods)
@@ -31,6 +32,7 @@ interface IUserModel extends Model<IUser> {
   createUser(email: string, password: string, username: string): Promise<IUser>;
   getUserByUsername(username: string): Promise<IUser | null>;
   getUserByEmail(email: string): Promise<IUser | null>;
+  onItemRemoved(itemId: ObjectId): Promise<void>;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -159,8 +161,41 @@ UserSchema.methods.spendGold = async function (gold: number) {
 };
 
 UserSchema.methods.earnGold = async function (gold: number) {
-  this.gold += gold;
+  const goldEffect = this.items.reduce((acc: number, item: Item) => {
+    if (item.effect?.type === "gold") {
+      return acc + item.effect?.value || 0;
+    }
+    return acc;
+  }, 0);
+  this.gold += gold + goldEffect;
   await this.save();
+};
+
+UserSchema.methods.buyItem = async function (itemId: ObjectId) {
+  const item = await mongoose.model<Item>("Item").findById(itemId);
+  if (!item) {
+    throw new Error("Item not found");
+  }
+  if (this.gold < item.price) {
+    throw new Error("Not enough gold");
+  }
+  this.items.push(itemId);
+  this.gold -= item.price;
+  await this.save();
+};
+
+UserSchema.methods.removeItem = async function (itemId: ObjectId) {
+  const itemIndex = this.items.indexOf(itemId);
+  if (itemIndex > -1) {
+    this.items.splice(itemIndex, 1);
+    await this.save();
+  } else {
+    throw new Error("Item not found in user's items");
+  }
+};
+
+UserSchema.statics.onItemRemoved = async function (itemId: ObjectId) {
+  await this.updateMany({ items: itemId }, { $pull: { items: itemId } });
 };
 
 const User = mongoose.model<IUser, IUserModel>("User", UserSchema);

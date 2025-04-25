@@ -96,7 +96,7 @@ export default () => {
       const cardElement = document.querySelector(`[data-card-id="${id}"]`);
       if (cardElement) {
         const cardRect = cardElement.getBoundingClientRect();
-        for (let i = 0; i < getGoldMultiplier(); i++) {
+        for (let i = 0; i < getGoldMultiplier() + 1; i++) {
           setTimeout(() => {
             addCoinsAnimation(cardRect);
           }, i * 200);

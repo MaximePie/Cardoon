@@ -72,8 +72,7 @@ export const UserContextProvider = ({
   const getGoldMultiplier = () => {
     const items = user.items.filter((item) => item.effect.type === "gold");
     const goldEffect = items.reduce((acc, item) => acc + item.effect.value, 0);
-    console.log("Gold effect:", goldEffect);
-    return goldEffect + 1; // +1 because the user always has a gold multiplier of 1
+    return goldEffect;
   };
 
   // Clear the cookie

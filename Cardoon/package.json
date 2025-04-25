@@ -26,6 +26,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.5",
     "react-swipeable": "^7.0.2",
+    "react-tooltip": "^5.28.1",
     "sass": "^1.83.4",
     "zod": "^3.24.3"
   },

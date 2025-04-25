@@ -1,19 +1,14 @@
 import { useEffect } from "react";
-import { ACTIONS, useFetch, usePost } from "../../../hooks/server";
+import { ACTIONS, useFetch } from "../../../hooks/server";
 import { Item, User } from "../../../types/common";
 
 export default () => {
   const { fetch, data } = useFetch<User>(ACTIONS.ME);
-  const { post } = usePost<Item>(ACTIONS.REMOVE_ITEM);
 
   useEffect(() => {
     fetch();
   }, []);
 
-  const removeItem = (itemId: string) => {
-    post({ itemId });
-    fetch(); // Refresh the data after removing the item
-  };
   return (
     <div className="Page CharacterPage">
       <div className="Items">

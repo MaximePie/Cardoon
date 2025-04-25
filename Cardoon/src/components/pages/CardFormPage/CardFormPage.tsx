@@ -2,15 +2,12 @@ import { useContext, useState } from "react";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
 import { Modal } from "@mui/material";
-import { TokenErrorPage } from "../TokenErrorPage/TokenErrorPage";
 import Input from "../../atoms/Input/Input";
 import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { InferenceClient } from "@huggingface/inference";
-const hf = new InferenceClient(import.meta.env.VITE_HUGGINGFACE_TOKEN);
 
 interface CardFormModalProps {
   open: boolean;
@@ -181,23 +178,9 @@ export default () => {
 
     // const testPrompt =
     //   "Je veux apprendre la biologie, plus particulièrement la géologie, et j’aimerais 10 flashcards sous forme JSON (Q/R).";
-    const testPrompt = `Tu es un assistant qui génère 10 flashcards sur la géologie, uniquement au format JSON. Chaque flashcard doit prendre la forme d’un objet avec 'question' et 'answer'. Ne fournis aucune explication, aucun texte supplémentaire, ni aucune introduction. Seul du JSON, comme ceci :
-[{ "question": "...", "answer": "..." }, ... ]`;
-    const response = await hf.chatCompletion({
-      model: "Qwen/QwQ-32B",
-      messages: [
-        {
-          role: "user",
-          content: testPrompt,
-        },
-      ],
-      max_tokens: 100,
-    });
+    // const testPrompt = `Tu es un assistant qui génère 10 flashcards sur la géologie, uniquement au format JSON. Chaque flashcard doit prendre la forme d’un objet avec 'question' et 'answer'. Ne fournis aucune explication, aucun texte supplémentaire, ni aucune introduction. Seul du JSON, comme ceci :
+    // [{ "question": "...", "answer": "..." }, ... ]`;
   };
-
-  if (error === "Invalid token") {
-    return <TokenErrorPage />;
-  }
   return (
     <div className="CardFormPage">
       <MultiCardFormModal

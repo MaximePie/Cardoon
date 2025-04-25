@@ -9,6 +9,7 @@ interface UserContextType {
   logout: () => void;
   addScore: (score: number) => void;
   earnGold: (gold: number) => void;
+  getGoldMultiplier: () => number;
 }
 
 const emptyUser: User = {
@@ -26,6 +27,7 @@ export const UserContext = createContext<UserContextType>({
   logout: () => {},
   addScore: () => {},
   earnGold: () => {},
+  getGoldMultiplier: () => 1,
 });
 
 export const UserContextProvider = ({
@@ -62,10 +64,16 @@ export const UserContextProvider = ({
   };
 
   const earnGold = (gold: number) => {
+    const totalGold = gold + getGoldMultiplier();
+    setUser({ ...user, gold: user.gold + totalGold });
+  };
+
+  // Get the gold multiplier from the items
+  const getGoldMultiplier = () => {
     const items = user.items.filter((item) => item.effect.type === "gold");
     const goldEffect = items.reduce((acc, item) => acc + item.effect.value, 0);
-    const totalGold = gold + goldEffect;
-    setUser({ ...user, gold: user.gold + totalGold });
+    console.log("Gold effect:", goldEffect);
+    return goldEffect + 1; // +1 because the user always has a gold multiplier of 1
   };
 
   // Clear the cookie
@@ -84,6 +92,7 @@ export const UserContextProvider = ({
         logout,
         addScore,
         earnGold,
+        getGoldMultiplier,
       }}
     >
       {children}

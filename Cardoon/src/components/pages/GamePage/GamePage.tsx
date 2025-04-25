@@ -19,7 +19,7 @@ export default () => {
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
-  const { user } = useContext(UserContext);
+  const { user, getGoldMultiplier } = useContext(UserContext);
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );
@@ -53,27 +53,34 @@ export default () => {
       </div>
     );
 
-  const addCoinsAnimation = (cardId: string) => {
-    const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
+  const addCoinsAnimation = (cardRect: DOMRect) => {
     const footerElement = document.querySelector("#GamePage__footer__coins");
 
-    if (cardElement && footerElement) {
-      const cardRect = cardElement.getBoundingClientRect();
+    if (footerElement) {
       const footerRect = footerElement.getBoundingClientRect();
 
       const coin = document.createElement("img");
       coin.src = goldIcon;
       coin.className = "floating-coin";
       coin.style.position = "fixed";
-      coin.style.left = `${cardRect.left + cardRect.width / 2}px`;
-      coin.style.top = `${cardRect.top + cardRect.height / 2}px`;
+      const randomOffset = () => Math.random() * 10 - 5;
+      coin.style.left = `${
+        cardRect.left + cardRect.width / 2 + randomOffset()
+      }px`;
+      coin.style.top = `${
+        cardRect.top + cardRect.height / 2 + randomOffset()
+      }px`;
       document.body.appendChild(coin);
 
       // Trigger the CSS transition by adding a class
       requestAnimationFrame(() => {
         coin.classList.add("floating-coin--move");
-        coin.style.left = `${footerRect.left + footerRect.width / 2}px`;
-        coin.style.top = `${footerRect.top + footerRect.height / 2}px`;
+        coin.style.left = `${
+          footerRect.left + footerRect.width / 2 + randomOffset()
+        }px`;
+        coin.style.top = `${
+          footerRect.top + footerRect.height / 2 + randomOffset()
+        }px`;
       });
 
       setTimeout(() => {
@@ -83,14 +90,23 @@ export default () => {
   };
 
   const onUpdate = async (id: string, interval: number, isCorrect: boolean) => {
-    addCoinsAnimation(id);
     // Remove the card from the list
-    setUserCards(userCards.filter((card) => card._id !== id));
     if (isCorrect) {
+      // Coin animation
+      const cardElement = document.querySelector(`[data-card-id="${id}"]`);
+      if (cardElement) {
+        const cardRect = cardElement.getBoundingClientRect();
+        for (let i = 0; i < getGoldMultiplier(); i++) {
+          setTimeout(() => {
+            addCoinsAnimation(cardRect);
+          }, i * 200);
+        }
+      }
       openSnackbarWithMessage(
         `Score + ${Math.floor(interval).toLocaleString("fr-FR")} !`
       );
     }
+    setUserCards(userCards.filter((card) => card._id !== id));
     if (userCards.length <= 0) {
       // We intentionally wait 2 seconds before fetching the new list to wait for the card to be
       // updated

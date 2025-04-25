@@ -15,6 +15,7 @@
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto": "^5.1.1",
     "@huggingface/inference": "^3.6.1",
+    "@mistralai/mistralai": "^1.6.0",
     "@mui/icons-material": "^6.4.3",
     "@mui/material": "^6.4.3",
     "axios": "^1.7.9",
@@ -25,7 +26,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.5",
     "react-swipeable": "^7.0.2",
-    "sass": "^1.83.4"
+    "sass": "^1.83.4",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

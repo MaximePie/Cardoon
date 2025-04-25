@@ -193,7 +193,6 @@ export default () => {
       ],
       max_tokens: 100,
     });
-    console.log(response);
   };
 
   if (error === "Invalid token") {

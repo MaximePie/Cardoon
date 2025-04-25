@@ -53,7 +53,37 @@ export default () => {
       </div>
     );
 
+  const addCoinsAnimation = (cardId: string) => {
+    const cardElement = document.querySelector(`[data-card-id="${cardId}"]`);
+    const footerElement = document.querySelector("#GamePage__footer__coins");
+
+    if (cardElement && footerElement) {
+      const cardRect = cardElement.getBoundingClientRect();
+      const footerRect = footerElement.getBoundingClientRect();
+
+      const coin = document.createElement("img");
+      coin.src = goldIcon;
+      coin.className = "floating-coin";
+      coin.style.position = "fixed";
+      coin.style.left = `${cardRect.left + cardRect.width / 2}px`;
+      coin.style.top = `${cardRect.top + cardRect.height / 2}px`;
+      document.body.appendChild(coin);
+
+      // Trigger the CSS transition by adding a class
+      requestAnimationFrame(() => {
+        coin.classList.add("floating-coin--move");
+        coin.style.left = `${footerRect.left + footerRect.width / 2}px`;
+        coin.style.top = `${footerRect.top + footerRect.height / 2}px`;
+      });
+
+      setTimeout(() => {
+        document.body.removeChild(coin);
+      }, 2000);
+    }
+  };
+
   const onUpdate = async (id: string, interval: number, isCorrect: boolean) => {
+    addCoinsAnimation(id);
     // Remove the card from the list
     setUserCards(userCards.filter((card) => card._id !== id));
     if (isCorrect) {
@@ -126,7 +156,10 @@ export default () => {
         ))}
       </div>
       <div className="GamePage__footer">
-        <span className="GamePage__footer__text">
+        <span
+          className="GamePage__footer__element"
+          id="GamePage__footer__coins"
+        >
           <img className="GamePage__icon" src={goldIcon} alt="Gold" />{" "}
           {user.gold}
         </span>

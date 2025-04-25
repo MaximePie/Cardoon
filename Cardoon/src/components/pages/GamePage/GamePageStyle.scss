@@ -35,7 +35,7 @@
     background-color: #f8f9fa;
     border-top: 1px solid #dee2e6;
 
-    &__text {
+    &__element {
       display: flex;
       align-items: center;
       font-size: 1.2rem;
@@ -45,7 +45,13 @@
     .GamePage__icon {
       width: 24px;
       height: 24px;
-      margin-right: 0.5rem;
+      margin-right: 0.25rem;
     }
   }
+}
+.floating-coin {
+  width: 24px;
+  height: 24px;
+  transition: all 1s ease-in-out; /* Smooth transition for position */
+  z-index: 1000; /* Ensure the coin is above other elements */
 }

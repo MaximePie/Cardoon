@@ -161,6 +161,7 @@ UserSchema.methods.spendGold = async function (gold: number) {
 };
 
 UserSchema.methods.earnGold = async function (gold: number) {
+  await this.populate("items");
   const goldEffect = this.items.reduce((acc: number, item: Item) => {
     if (item.effect?.type === "gold") {
       return acc + item.effect?.value || 0;

@@ -5,7 +5,6 @@
   color: #ffffff;
   padding: 1rem;
   margin: 0.5rem 0;
-  width: 100%;
   border: none;
   border-radius: 0.5rem;
   font-size: 1rem;
@@ -36,7 +35,7 @@
   &--secondary {
     background: $secondary-color !important;
     &:hover {
-      background: darken($secondary-color, 5%);
+      background: darken($secondary-color, 5%) !important;
     }
   }
 

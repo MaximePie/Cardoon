@@ -7,6 +7,7 @@ import Input from "../../atoms/Input/Input";
 import Button from "../../atoms/Button/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Loader from "../../atoms/Loader/Loader";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
 
 const client = new Mistral({ apiKey: apiKey });
@@ -80,6 +81,7 @@ const GeneratedSubquestions = ({
 
 interface SubQuestionsTabProps {
   editedCard: PopulatedUserCard;
+  goBack: () => void;
   newCard: {
     question: string;
     answer: string;
@@ -87,7 +89,7 @@ interface SubQuestionsTabProps {
     category: string | undefined;
   };
 }
-export default ({ editedCard, newCard }: SubQuestionsTabProps) => {
+export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   const { post } = usePost(RESOURCES.CARDS);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
@@ -158,7 +160,13 @@ export default ({ editedCard, newCard }: SubQuestionsTabProps) => {
   return (
     <div className="SubQuestionsTab">
       <>
-        <h2>Ajouter une sous-question</h2>
+        <h2>
+          <ArrowBackIcon
+            className="SubQuestionsTab__back-button"
+            onClick={goBack}
+          />{" "}
+          Ajouter une sous-question
+        </h2>
 
         <Input
           label="Question alternative"
@@ -182,7 +190,7 @@ export default ({ editedCard, newCard }: SubQuestionsTabProps) => {
             tooltip="Si la question est trop difficile, créer d'autres questions alternatives
                     peut ajouter du contexte et aider à la compréhension."
             onClick={generateSubQuestions}
-            variant="danger"
+            variant="secondary"
             icon={<AutoAwesomeIcon />}
           >
             Générer avec IA

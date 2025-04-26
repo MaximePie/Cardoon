@@ -12,6 +12,7 @@ import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
+import Loader from "../../atoms/Loader/Loader";
 
 export default () => {
   const { data, loading, fetch, error } = useFetch<{
@@ -45,13 +46,7 @@ export default () => {
     }
   }, [data]);
 
-  if (loading)
-    return (
-      <div>
-        Chargement... (Oui, c'est un fournisseur gratuit, 'faut qu'il démarre
-        tahi, ça peut prendre une bonne minute. Au délà, appelez Geoffrey.)
-      </div>
-    );
+  if (loading) return <Loader />;
 
   // BLACK MAGIC
   const addCoinsAnimation = (cardRect: DOMRect) => {

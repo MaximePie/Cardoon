@@ -108,7 +108,11 @@ export default ({
     <Modal open={isOpen} onClose={handleClose}>
       <div className="EditCardForm">
         {activeTab === "subquestions" && (
-          <SubQuestionsTab editedCard={editedCard} newCard={newCard} />
+          <SubQuestionsTab
+            editedCard={editedCard}
+            newCard={newCard}
+            goBack={() => setActiveTab("question")}
+          />
         )}
         {activeTab === "question" && (
           <>

@@ -70,8 +70,11 @@ export const UserContextProvider = ({
 
   // Get the gold multiplier from the items
   const getGoldMultiplier = () => {
-    const items = user.items.filter((item) => item.effect.type === "gold");
-    const goldEffect = items.reduce((acc, item) => acc + item.effect.value, 0);
+    const items = user.items.filter((item) => item.base.effect.type === "gold");
+    const goldEffect = items.reduce(
+      (acc, item) => acc + item.base.effect.value,
+      0
+    );
     return goldEffect;
   };
 

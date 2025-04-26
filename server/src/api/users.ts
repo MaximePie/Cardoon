@@ -13,8 +13,7 @@ router.get("/me", authMiddleware, async (req, res) => {
     return;
   }
 
-  await user.populate("items"); // Assuming "items" is a reference field in the User schema
-
+  await user.populate("items.base"); // Assuming "items.base" is a reference field in the User schema
   res.json(user);
 });
 

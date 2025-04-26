@@ -54,14 +54,10 @@ export default () => {
     setGameState("stopped");
   };
 
-  const onUpdate = async (id: string, interval: number, isCorrect: boolean) => {
+  const onUpdate = async (id: string, isCorrect: boolean) => {
     // Remove the card from the list
     removeCard(id);
     if (isCorrect) {
-      openSnackbarWithMessage(
-        `Score + ${Math.floor(interval).toLocaleString("fr-FR")} !`
-      );
-
       setHealthPoints((prev) => prev - 10);
       if (healthPoints <= 0) {
         openSnackbarWithMessage("Boss defeated !");

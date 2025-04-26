@@ -69,4 +69,11 @@
       text-decoration: underline;
     }
   }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
 }

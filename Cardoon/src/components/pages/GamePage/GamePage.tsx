@@ -9,7 +9,6 @@ import { PopulatedUserCard } from "../../../types/common";
 import { Link } from "react-router-dom";
 import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { FetchedCategory } from "../CardFormPage/CardFormPage";
-import { SnackbarContext } from "../../../context/SnackbarContext";
 import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
@@ -19,7 +18,6 @@ export default () => {
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);
-  const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { user, getGoldMultiplier } = useContext(UserContext);
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
@@ -59,24 +57,15 @@ export default () => {
       coin.src = goldIcon;
       coin.className = "floating-coin";
       coin.style.position = "fixed";
-      const randomOffset = () => Math.random() * 10 - 5;
-      coin.style.left = `${
-        cardRect.left + cardRect.width / 2 + randomOffset()
-      }px`;
-      coin.style.top = `${
-        cardRect.top + cardRect.height / 2 + randomOffset()
-      }px`;
+      coin.style.left = `${cardRect.left + cardRect.width / 2}px`;
+      coin.style.top = `${cardRect.top + cardRect.height / 2}px`;
       document.body.appendChild(coin);
 
       // Trigger the CSS transition by adding a class
       requestAnimationFrame(() => {
         coin.classList.add("floating-coin--move");
-        coin.style.left = `${
-          footerRect.left + footerRect.width / 2 + randomOffset()
-        }px`;
-        coin.style.top = `${
-          footerRect.top + footerRect.height / 2 + randomOffset()
-        }px`;
+        coin.style.left = `${footerRect.left + footerRect.width / 2}px`;
+        coin.style.top = `${footerRect.top + footerRect.height / 2}px`;
       });
 
       setTimeout(() => {
@@ -85,7 +74,7 @@ export default () => {
     }
   };
 
-  const onUpdate = async (id: string, interval: number, isCorrect: boolean) => {
+  const onUpdate = async (id: string, isCorrect: boolean) => {
     // Remove the card from the list
     if (isCorrect) {
       // Coin animation
@@ -98,9 +87,6 @@ export default () => {
           }, i * 200);
         }
       }
-      openSnackbarWithMessage(
-        `Score + ${Math.floor(interval).toLocaleString("fr-FR")} !`
-      );
     }
     setUserCards(userCards.filter((card) => card._id !== id));
     if (userCards.length <= 0) {
@@ -168,11 +154,13 @@ export default () => {
         ))}
       </div>
       <div className="GamePage__footer">
-        <span
-          className="GamePage__footer__element"
-          id="GamePage__footer__coins"
-        >
-          <img className="GamePage__icon" src={goldIcon} alt="Gold" />{" "}
+        <span className="GamePage__footer__element">
+          <img
+            className="GamePage__icon"
+            src={goldIcon}
+            alt="Gold"
+            id="GamePage__footer__coins"
+          />{" "}
           {user.gold}
         </span>
       </div>

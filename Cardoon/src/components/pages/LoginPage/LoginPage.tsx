@@ -102,13 +102,16 @@ export default function LoginForm() {
             Mot de passe oublié ?
           </a>
         </div>
-        {JSON.stringify(error)}
-        <SubmitButton
-          disabled={loading || isErroneous}
-          className="LoginPage__submit"
-        >
-          {loading ? <Loader /> : "Se connecter"}
-        </SubmitButton>
+        {error && <p className="LoginPage__error">{error}</p>}
+        <div className="LoginPage__actions">
+          {loading && <Loader className="LoginPage__loader" />}
+          <SubmitButton
+            disabled={loading || isErroneous}
+            className="LoginPage__submit"
+          >
+            Se connecter
+          </SubmitButton>
+        </div>
 
         {formError && <p className="formError">{formError}</p>}
         {error && <p>{error}</p>}

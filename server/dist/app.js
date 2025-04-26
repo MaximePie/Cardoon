@@ -30,6 +30,7 @@ export const errorHandler = (err, req, res, next) => {
     res
         .status(err.name === "ValidationError" ? 400 : 500)
         .json({ message: "An error occurred", error: err.message });
+    return;
 };
 app.use(errorHandler);
 connectDB();

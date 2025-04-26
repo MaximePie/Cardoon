@@ -11,7 +11,7 @@ router.get("/me", authMiddleware, async (req, res) => {
         res.status(404).json({ error: "User not found" });
         return;
     }
-    await user.populate("items"); // Assuming "items" is a reference field in the User schema
+    await user.populate("items.base"); // Assuming "items" is a reference field in the User schema
     res.json(user);
 });
 router.post("/login", async (req, res) => {

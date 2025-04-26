@@ -37,8 +37,14 @@ const UserSchema = new mongoose.Schema({
     },
     items: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Item",
+            base: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Item",
+            },
+            level: {
+                type: Number,
+                default: 1,
+            },
         },
     ],
     role: {
@@ -111,6 +117,7 @@ UserSchema.methods.spendGold = async function (gold) {
     await this.save();
 };
 UserSchema.methods.earnGold = async function (gold) {
+    await this.populate("items.base");
     const goldEffect = this.items.reduce((acc, item) => {
         if (item.effect?.type === "gold") {
             return acc + item.effect?.value || 0;

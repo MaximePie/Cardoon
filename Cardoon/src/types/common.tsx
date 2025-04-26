@@ -1,3 +1,7 @@
+export interface UserItem {
+  base: Item;
+  level: number;
+}
 export interface PopulatedUserCard {
   card: Card;
   interval: number;
@@ -35,5 +39,5 @@ export interface User {
   score: number;
   role: "admin" | "user";
   gold: number;
-  items: Item[];
+  items: UserItem[];
 }

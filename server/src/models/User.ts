@@ -71,8 +71,15 @@ const UserSchema = new mongoose.Schema<IUser>({
   },
   items: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Item",
+      base: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Item",
+        required: true,
+      },
+      level: {
+        type: Number,
+        default: 1,
+      },
     },
   ],
   role: {
@@ -161,7 +168,7 @@ UserSchema.methods.spendGold = async function (gold: number) {
 };
 
 UserSchema.methods.earnGold = async function (gold: number) {
-  await this.populate("items");
+  await this.populate("items.base");
   const goldEffect = this.items.reduce((acc: number, item: Item) => {
     if (item.effect?.type === "gold") {
       return acc + item.effect?.value || 0;
@@ -180,13 +187,19 @@ UserSchema.methods.buyItem = async function (itemId: ObjectId) {
   if (this.gold < item.price) {
     throw new Error("Not enough gold");
   }
-  this.items.push(itemId);
+  this.items.push({
+    base: itemId,
+    level: 1,
+  });
   this.gold -= item.price;
   await this.save();
 };
 
 UserSchema.methods.removeItem = async function (itemId: ObjectId) {
-  const itemIndex = this.items.indexOf(itemId);
+  const itemIndex = this.items.findIndex(
+    (item: { base: ObjectId; level: number }) =>
+      item.base.toString() === itemId.toString()
+  );
   if (itemIndex > -1) {
     this.items.splice(itemIndex, 1);
     await this.save();

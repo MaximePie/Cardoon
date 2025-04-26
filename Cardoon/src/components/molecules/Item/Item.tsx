@@ -1,23 +1,36 @@
 import { useContext } from "react";
 import { UserContext } from "../../../context/UserContext";
 import { ACTIONS, usePost } from "../../../hooks/server";
-import { Item } from "../../../types/common";
+import { Item, UserItem } from "../../../types/common";
+import { SnackbarContext } from "../../../context/SnackbarContext";
 
 interface ItemProps {
   item: Item;
 }
 export default ({ item }: ItemProps) => {
-  const { post } = usePost<Item>(ACTIONS.BUY_ITEM);
+  const { post } = usePost<UserItem>(ACTIONS.BUY_ITEM);
   const { user } = useContext(UserContext);
+  const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const buyItem = async () => {
     // Logic to handle item purchase
     await post({ itemId: item._id });
+    openSnackbarWithMessage("Objet acheté !");
   };
+  console.log("Item", item);
 
   const isItemInUserItems = user.items.some(
-    (userItem) => userItem._id === item._id
+    (userItem) => userItem.base._id === item._id
   );
   const isItemAffordable = user.gold >= item.price;
+  const getBuyButtonText = () => {
+    if (isItemInUserItems) {
+      return "Vous possédez déjà cet objet";
+    }
+    if (!isItemAffordable) {
+      return "Pas assez d'argent";
+    }
+    return "Acheter";
+  };
   return (
     <div key={item._id} className="Item">
       <img src={item.image} alt={item.name} />
@@ -28,9 +41,7 @@ export default ({ item }: ItemProps) => {
         onClick={buyItem}
         disabled={isItemInUserItems || !isItemAffordable}
       >
-        {isItemInUserItems
-          ? "Vous possédez déjà cet objet"
-          : "Pas assez d'argent"}
+        {getBuyButtonText()}
       </button>
     </div>
   );

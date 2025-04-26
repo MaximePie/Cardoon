@@ -33,7 +33,7 @@ const stringToRgb = (text: String) => {
 
 interface CardProps {
   card: PopulatedUserCard;
-  onUpdate: (id: string, interval: number, isCorrect: boolean) => void;
+  onUpdate: (id: string, isCorrect: boolean) => void;
   onEditClick: () => void;
   isFlashModeOn: boolean;
 }
@@ -93,14 +93,14 @@ export default ({
 
   const succeed = async (difficulty: string = "hard") => {
     put(userCardId, { isCorrectAnswer: true, difficulty });
-    onAnswer(userCardId, interval, true);
+    onAnswer(userCardId, true);
     addScore(card.interval);
     earnGold(1);
   };
 
   const fail = () => {
     put(userCardId, { isCorrectAnswer: false });
-    onAnswer(userCardId, 0, false);
+    onAnswer(userCardId, false);
   };
 
   return (

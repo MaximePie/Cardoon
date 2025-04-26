@@ -14,6 +14,8 @@ interface ButtonProps {
 }
 
 const makeTooltipIdFromContent = (content: string) => {
+  if (!content) return undefined;
+  console.log("content", content);
   return content
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0)
@@ -26,6 +28,7 @@ export default ({
   disabled,
   onClick,
   variant,
+  icon,
   tooltip,
 }: ButtonProps) => {
   const className = classnames("Button", customClassName, {
@@ -37,17 +40,18 @@ export default ({
       <button
         data-tooltip-content={tooltip}
         data-tooltip-id={
-          tooltip ? makeTooltipIdFromContent(children as string) : undefined
+          tooltip ? makeTooltipIdFromContent(tooltip as string) : undefined
         }
         className={className}
         disabled={disabled}
         onClick={onClick}
         type="submit"
       >
+        {icon && <span className="Button__icon">{icon}</span>}
         {children}
       </button>
       <Tooltip
-        id={tooltip ? makeTooltipIdFromContent(children as string) : undefined}
+        id={tooltip ? makeTooltipIdFromContent(tooltip as string) : undefined}
       />
     </>
   );

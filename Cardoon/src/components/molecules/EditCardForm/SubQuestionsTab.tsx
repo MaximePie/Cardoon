@@ -5,7 +5,8 @@ import { PopulatedUserCard } from "../../../types/common";
 import { Mistral } from "@mistralai/mistralai";
 import Input from "../../atoms/Input/Input";
 import Button from "../../atoms/Button/Button";
-
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import Loader from "../../atoms/Loader/Loader";
 const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
 
 const client = new Mistral({ apiKey: apiKey });
@@ -13,14 +14,22 @@ const client = new Mistral({ apiKey: apiKey });
 interface GeneratedSubquestionsProps {
   subquestions: { question: string; answer: string }[] | null;
   addQuestion: (question: string, answer: string) => void;
+  isLoading: boolean;
 }
 const GeneratedSubquestions = ({
   subquestions,
   addQuestion,
+  isLoading,
 }: GeneratedSubquestionsProps) => {
   return (
     <div className="GeneratedSubquestions">
       <h2>Questions générées</h2>
+      {isLoading && (
+        <div className="GeneratedSubquestions__loader">
+          <Loader />
+        </div>
+      )}
+      {!isLoading && !subquestions?.length && <p>Aucune question générée.</p>}
       <ul>
         {subquestions?.map((subquestion, index) => (
           <li key={index}>
@@ -57,6 +66,7 @@ export default ({ editedCard, newCard }: SubQuestionsTabProps) => {
   const [generatedSubquestions, setGeneratedSubquestions] = useState<
     { question: string; answer: string }[] | null
   >(null);
+  const [isLoading, setIsLoading] = useState(false);
   const saveSubquestion = async () => {
     const formData = new FormData();
 
@@ -90,6 +100,7 @@ export default ({ editedCard, newCard }: SubQuestionsTabProps) => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
+    setIsLoading(true);
     const prompt = `J'ai la question suivante : "${newCard.question} (réponse : ${newCard.answer})". Peux-tu me donner 10 sous-questions qui pourraient être posées à partir de cette question ? Inclus d'autres connaissances en rapport avec ${newCard.category} liées à cette question
       Je veux des questions courtes. Je veux les questions au format JSON, avec le nom de la question et la réponse. Par exemple : { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }`;
     const chatResponse = await client.chat.complete({
@@ -111,12 +122,13 @@ export default ({ editedCard, newCard }: SubQuestionsTabProps) => {
     } else {
       console.error("Unexpected response format:", response);
     }
+    setIsLoading(false);
   };
 
   return (
     <div className="SubQuestionsTab">
       <>
-        <h2>Sous questions</h2>
+        <h2>Ajouter une sous-question</h2>
 
         <Input
           label="Question alternative"
@@ -134,22 +146,22 @@ export default ({ editedCard, newCard }: SubQuestionsTabProps) => {
             setNewSubanswer(e.target.value)
           }
         />
-        <div>
-          <Button onClick={handleSaveSubquestionClick}>
-            Enregistrer la question alternative
+        <div className="SubQuestionsTab__buttons">
+          <Button onClick={handleSaveSubquestionClick}>Enregistrer</Button>
+          <Button
+            tooltip="Si la question est trop difficile, créer d'autres questions alternatives
+                    peut ajouter du contexte et aider à la compréhension."
+            onClick={generateSubQuestions}
+            variant="danger"
+            icon={<AutoAwesomeIcon />}
+          >
+            Générer avec IA
           </Button>
         </div>
-        <Button
-          tooltip="Si la question est trop difficile, créer d'autres questions alternatives
-                peut ajouter du contexte et aider à la compréhension."
-          onClick={generateSubQuestions}
-          variant="danger"
-        >
-          Générer les sous-questions
-        </Button>
         <GeneratedSubquestions
           subquestions={generatedSubquestions}
           addQuestion={createGeneratedSubquestion}
+          isLoading={isLoading}
         />
       </>
     </div>

@@ -26,4 +26,8 @@
       background: darken($danger-color, 5%);
     }
   }
+
+  &__icon {
+    margin-right: 0.5rem;
+  }
 }

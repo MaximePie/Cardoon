@@ -34,3 +34,25 @@
     }
   }
 }
+
+.GeneratedSubquestions {
+  overflow-y: auto;
+  max-height: 400px; /* Limite la hauteur de la liste */
+
+  &__loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.SubQuestionsTab {
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+}

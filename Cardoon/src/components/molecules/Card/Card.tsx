@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Edit from "@mui/icons-material/Edit";
 import { Chip, IconButton } from "@mui/material";
+import Loader from "../../atoms/Loader/Loader";
 
 const stringToRgb = (text: String) => {
   let hash = 0;

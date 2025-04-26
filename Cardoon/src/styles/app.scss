@@ -2,6 +2,7 @@
 @use "../components/atoms/Input/Input" as Input;
 @use "../components/atoms/ImagePaster/ImagePaster" as ImagePaster;
 @use "../components/atoms/Button/Button" as Button;
+@use "../components/atoms/Loader/Loader" as Loader;
 @use "../components/atoms/SubmitButton/SubmitButton" as SubmitButton;
 @use "../components/pages/LoginPage/LoginPage" as LoginPage;
 @use "../components/pages/BossPage/BossPage" as BossPage;

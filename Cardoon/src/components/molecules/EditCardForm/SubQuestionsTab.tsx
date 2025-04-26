@@ -16,6 +16,42 @@ interface GeneratedSubquestionsProps {
   addQuestion: (question: string, answer: string) => void;
   isLoading: boolean;
 }
+
+interface SubQuestionProps {
+  question: string;
+  answer: string;
+  addQuestion: (question: string, answer: string) => void;
+}
+
+const SubQuestion = ({ question, answer, addQuestion }: SubQuestionProps) => {
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAddQuestion = () => {
+    addQuestion(question, answer);
+    setIsAdded(true);
+  };
+
+  return (
+    <p className="GeneratedSubquestions__subquestion">
+      <span className="GeneratedSubquestions__subquestion__text">
+        <span className="GeneratedSubquestions__subquestion__text__question">
+          {question}
+        </span>
+        <span className="GeneratedSubquestions__subquestion__text__answer">
+          {answer}
+        </span>
+      </span>
+      <Button
+        variant="secondary"
+        onClick={handleAddQuestion}
+        disabled={isAdded}
+      >
+        {isAdded ? "✅ Ajouté" : "Ajouter"}
+      </Button>
+    </p>
+  );
+};
+
 const GeneratedSubquestions = ({
   subquestions,
   addQuestion,
@@ -30,20 +66,14 @@ const GeneratedSubquestions = ({
         </div>
       )}
       {!isLoading && !subquestions?.length && <p>Aucune question générée.</p>}
-      <ul>
-        {subquestions?.map((subquestion, index) => (
-          <li key={index}>
-            <strong>{subquestion.question}</strong>: {subquestion.answer}
-            <button
-              onClick={() =>
-                addQuestion(subquestion.question, subquestion.answer)
-              }
-            >
-              Ajouter
-            </button>
-          </li>
-        ))}
-      </ul>
+      {subquestions?.map((subquestion, index) => (
+        <SubQuestion
+          key={index}
+          question={subquestion.question}
+          answer={subquestion.answer}
+          addQuestion={addQuestion}
+        />
+      ))}
     </div>
   );
 };

@@ -15,7 +15,6 @@ interface ButtonProps {
 
 const makeTooltipIdFromContent = (content: string) => {
   if (!content) return undefined;
-  console.log("content", content);
   return content
     .split("")
     .reduce((acc, char) => acc + char.charCodeAt(0), 0)
@@ -34,6 +33,7 @@ export default ({
   const className = classnames("Button", customClassName, {
     "Button--disabled": disabled,
     "Button--danger": variant === "danger",
+    "Button--secondary": variant === "secondary",
   });
   return (
     <>

@@ -5,10 +5,14 @@
   max-width: 500px;
   margin: 2rem auto;
   padding: 2rem;
+  padding-top: 1rem;
   background: #fff;
   border-radius: 0.75rem;
   /* Légère ombre de carte */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  h2 {
+    margin: 1rem 0;
+  }
   .MuiAutocomplete-root {
     width: 100% !important; /* Forcer l'auto-complétion à prendre la même largeur */
   }
@@ -33,6 +37,13 @@
       color: #f44336;
     }
   }
+
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
 }
 
 .GeneratedSubquestions {
@@ -46,13 +57,33 @@
     height: 100%;
     width: 100%;
   }
+
+  &__subquestion {
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      &__question {
+        margin-bottom: 0.5rem;
+      }
+      &__answer {
+        font-size: 0.875rem; /* Taille de police plus petite pour la réponse */
+        color: #555; /* Couleur légèrement plus claire pour la réponse */
+      }
+    }
+  }
 }
 
 .SubQuestionsTab {
   &__buttons {
     display: flex;
     justify-content: space-between;
-    margin-top: 1rem;
     gap: 1rem;
   }
 }

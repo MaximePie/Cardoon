@@ -3,7 +3,8 @@
 .Button {
   background: $primary-color;
   color: #ffffff;
-  padding: 0.75rem;
+  padding: 1rem;
+  margin: 0.5rem 0;
   width: 100%;
   border: none;
   border-radius: 0.5rem;
@@ -11,6 +12,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.3s;
+  max-width: 250px;
 
   display: flex;
   justify-content: center;
@@ -29,5 +31,23 @@
 
   &__icon {
     margin-right: 0.5rem;
+  }
+
+  &--secondary {
+    background: $secondary-color !important;
+    &:hover {
+      background: darken($secondary-color, 5%);
+    }
+  }
+
+  &--disabled {
+    background: $disabled-color;
+    color: $disabled-text-color;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+
+    &:hover {
+      background: $disabled-color;
+    }
   }
 }

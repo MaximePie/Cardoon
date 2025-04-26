@@ -16,7 +16,7 @@ export default ({
   name,
 }: InputProps) => {
   return (
-    <div className={`${className} Input`}>
+    <div className={`${className || ""} Input`}>
       <label htmlFor={label}>{label}</label>
       <input
         placeholder={label}

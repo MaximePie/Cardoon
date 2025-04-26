@@ -44,6 +44,11 @@ export default ({
     "question"
   );
 
+  const handleClose = () => {
+    setActiveTab("question");
+    close();
+  };
+
   useEffect(() => {
     setNewCard({
       question,
@@ -100,7 +105,7 @@ export default ({
   };
 
   return (
-    <Modal open={isOpen} onClose={close}>
+    <Modal open={isOpen} onClose={handleClose}>
       <div className="EditCardForm">
         {activeTab === "subquestions" && (
           <SubQuestionsTab editedCard={editedCard} newCard={newCard} />
@@ -151,14 +156,16 @@ export default ({
                 newCard={newCard}
                 setNewCard={onCategoryChange}
               />
-              <SubmitButton disabled={false}>Enregistrer</SubmitButton>
-              <Button
-                variant="danger"
-                onClick={handleDeleteClick}
-                customClassName="EditCardForm__delete"
-              >
-                <Delete /> Supprimer la carte
-              </Button>
+              <div className="EditCardForm__buttons">
+                <SubmitButton disabled={false}>Enregistrer</SubmitButton>
+                <Button
+                  variant="danger"
+                  onClick={handleDeleteClick}
+                  customClassName="EditCardForm__delete"
+                >
+                  <Delete /> Supprimer la carte
+                </Button>
+              </div>
             </form>
           </>
         )}

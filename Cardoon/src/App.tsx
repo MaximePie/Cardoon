@@ -4,7 +4,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage";
 import GamePage from "./components/pages/GamePage/GamePage";
-import ShopPage from "./components/pages/ShopPage/ShopPage";
+import ShopPage from "./components/pages/UpgradePage/UpgradePage";
 import BossPage from "./components/pages/BossPage/BossPage";
 import { SnackbarProvider } from "./context/SnackbarContext";
 import { UserContext, UserContextProvider } from "./context/UserContext";

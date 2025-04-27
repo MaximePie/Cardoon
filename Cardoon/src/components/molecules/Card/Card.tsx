@@ -91,8 +91,11 @@ export default ({
     }
   };
 
-  const succeed = async (difficulty: string = "hard") => {
-    put(userCardId, { isCorrectAnswer: true, difficulty });
+  const succeed = (event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault();
+    }
+    put(userCardId, { isCorrectAnswer: true });
     onAnswer(userCardId, true);
     addScore(card.interval);
     earnGold(1);
@@ -150,7 +153,7 @@ export default ({
               </IconButton>
               <p>{answer}</p>
               <Stack spacing={1} direction="row">
-                <Button color="success" onClick={() => succeed("hard")}>
+                <Button color="success" onClick={succeed}>
                   ok
                 </Button>
                 <Button color="secondary" onClick={fail}>

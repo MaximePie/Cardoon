@@ -12,6 +12,7 @@ import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
+import { SnackbarContext } from "../../../context/SnackbarContext";
 
 export const GameFooter = () => {
   const { user } = useContext(UserContext);
@@ -40,6 +41,7 @@ export default () => {
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );
+  const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const [editedCard, setEditedCard] = useState<PopulatedUserCard | null>(null);
   const [isEditModalActive, setEditModalActiveState] = useState(false);
   const [categories, setCategories] = useState<FetchedCategory[]>([]);
@@ -81,9 +83,8 @@ export default () => {
 
       // Trigger the CSS transition by adding a class
       requestAnimationFrame(() => {
-        coin.classList.add("floating-coin--move");
-        coin.style.left = `${footerRect.left + footerRect.width / 2}px`;
-        coin.style.top = `${footerRect.top + footerRect.height / 2}px`;
+        coin.style.left = `${footerRect.left + footerRect.width / 2 - 10}px`;
+        coin.style.top = `${footerRect.top + footerRect.height / 2 - 10}px`;
       });
 
       setTimeout(() => {
@@ -142,6 +143,14 @@ export default () => {
     return <p>Erreur: {error}</p>;
   }
 
+  const handleFlashClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    openSnackbarWithMessage(
+      "Flash mode, touchez les cartes pour les valider directement !"
+    );
+    setFlash(!flash);
+  };
+
   return (
     <div className="GamePage">
       {editedCard && (
@@ -157,7 +166,7 @@ export default () => {
           color={flash ? "warning" : "primary"}
           aria-label="flash"
           className="Cards__flash-button"
-          onClick={() => setFlash(!flash)}
+          onClick={handleFlashClick}
         >
           <ElectricBoltIcon />
         </Fab>

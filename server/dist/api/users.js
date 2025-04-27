@@ -11,8 +11,12 @@ router.get("/me", authMiddleware, async (req, res) => {
         res.status(404).json({ error: "User not found" });
         return;
     }
-    await user.populate("items.base"); // Assuming "items" is a reference field in the User schema
-    res.json(user);
+    await user.populate("items.base"); // Assuming "items.base" is a reference field in the User schema
+    const formattedUser = {
+        ...user.toObject(),
+        goldMultiplier: await user.getGoldMultiplier(),
+    };
+    res.json(formattedUser);
 });
 router.post("/login", async (req, res) => {
     const { email, password, rememberMe } = req.body;
@@ -92,6 +96,28 @@ router.post("/removeItem", authMiddleware, async (req, res) => {
         res
             .status(500)
             .json({ error: "An error occurred while processing the removal" });
+        return;
+    }
+});
+router.post("/upgradeItem", authMiddleware, async (req, res) => {
+    const { itemId } = req.body;
+    const userId = req.user.id;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+        const upgradedItem = await user.upgradeItem(itemId);
+        res
+            .status(200)
+            .json({ message: "Item upgraded successfully", upgradedItem });
+        return;
+    }
+    catch (error) {
+        res
+            .status(500)
+            .json({ error: "An error occurred while upgrading the item " + error });
         return;
     }
 });

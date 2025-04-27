@@ -40,10 +40,15 @@ const UserSchema = new mongoose.Schema({
             base: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Item",
+                required: true,
             },
             level: {
                 type: Number,
                 default: 1,
+            },
+            currentCost: {
+                type: Number,
+                default: 0,
             },
         },
     ],
@@ -53,6 +58,35 @@ const UserSchema = new mongoose.Schema({
         default: "user",
     },
 });
+UserSchema.methods = {
+    getGoldMultiplier: async function () {
+        await this.populate("items.base");
+        return this.items.reduce((acc, item) => {
+            if (item.base.effect.type === "gold") {
+                return acc + item.base.effect.value * item.level || 0;
+            }
+            return acc;
+        }, 1);
+    },
+    upgradeItem: async function (itemId) {
+        const userItem = this.items.find((item) => item.base.toString() === itemId.toString());
+        if (!userItem) {
+            throw new Error("Item not found in user's items");
+        }
+        if (this.gold < userItem.currentCost) {
+            throw new Error("Not enough gold to upgrade item");
+        }
+        const item = await mongoose.model("Item").findById(userItem.base);
+        if (!item) {
+            throw new Error("Item not found");
+        }
+        userItem.level += 1;
+        this.gold -= userItem.currentCost;
+        userItem.currentCost *= item.upgradeCostMultiplier || 2;
+        await this.save();
+        return userItem;
+    },
+};
 UserSchema.methods.attachCard = async function (cardId) {
     const now = new Date();
     const userCard = new UserCard({
@@ -119,10 +153,10 @@ UserSchema.methods.spendGold = async function (gold) {
 UserSchema.methods.earnGold = async function (gold) {
     await this.populate("items.base");
     const goldEffect = this.items.reduce((acc, item) => {
-        if (item.effect?.type === "gold") {
-            return acc + item.effect?.value || 0;
-        }
-        return acc;
+        return (acc +
+            (item.base.effect?.type === "gold"
+                ? item.base.effect?.value * item.level || 0
+                : 0));
     }, 0);
     this.gold += gold + goldEffect;
     await this.save();
@@ -135,12 +169,16 @@ UserSchema.methods.buyItem = async function (itemId) {
     if (this.gold < item.price) {
         throw new Error("Not enough gold");
     }
-    this.items.push(itemId);
+    this.items.push({
+        base: itemId,
+        level: 1,
+        currentCost: item.price * (item.upgradeCostMultiplier || 2),
+    });
     this.gold -= item.price;
     await this.save();
 };
 UserSchema.methods.removeItem = async function (itemId) {
-    const itemIndex = this.items.indexOf(itemId);
+    const itemIndex = this.items.findIndex((item) => item.base.toString() === itemId.toString());
     if (itemIndex > -1) {
         this.items.splice(itemIndex, 1);
         await this.save();

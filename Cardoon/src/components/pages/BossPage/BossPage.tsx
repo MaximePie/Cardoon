@@ -6,6 +6,17 @@ import { SnackbarContext } from "../../../context/SnackbarContext";
 import Card from "../../molecules/Card/Card";
 type GameState = "started" | "stopped";
 
+const BossCard = () => {
+  return (
+    <div className="BossCard">
+      <h2>Chouettix le malicieux</h2>
+      <img src={bossImage} alt="Boss" />
+      <p>Armor: 20</p>
+      <p>Health Points: 350</p>
+    </div>
+  );
+};
+
 export default () => {
   const [gameState, setGameState] = useState<GameState>("stopped");
   const [timer, setTimer] = useState<number>(60);
@@ -70,12 +81,7 @@ export default () => {
     <div>
       {gameState === "stopped" && (
         <div>
-          <p>
-            To defeat the boss Inflict damage to the boss by playing you cards
-            Boss has armor and health points And there is a timer
-            <br />
-            You can increase timer by buying gears in the shop
-          </p>
+          <BossCard />
           <button onClick={startGame}>Start</button>
         </div>
       )}

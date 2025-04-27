@@ -109,7 +109,7 @@ UserSchema.methods = {
         return acc + item.base.effect.value * item.level || 0;
       }
       return acc;
-    }, 0);
+    }, 1);
   },
 
   upgradeItem: async function (itemId: ObjectId) {

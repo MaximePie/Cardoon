@@ -14,6 +14,7 @@ const ItemSchema = new mongoose.Schema({
         type: { type: String, enum: ["gold"], required: true },
         value: { type: Number, required: true },
     },
+    upgradeCostMultiplier: { type: Number, default: 2 },
 });
 const ItemModel = mongoose.model("Item", ItemSchema);
 export default ItemModel;

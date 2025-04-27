@@ -1,7 +1,3 @@
-export interface UserItem {
-  base: Item;
-  level: number;
-}
 export interface PopulatedUserCard {
   card: Card;
   interval: number;
@@ -19,7 +15,11 @@ export interface Card {
   category: string;
   parentId?: string;
 }
-
+export interface UserItem {
+  base: Item;
+  level: number;
+  currentCost: number;
+}
 export type Item = {
   _id: string;
   name: string;
@@ -40,4 +40,5 @@ export interface User {
   role: "admin" | "user";
   gold: number;
   items: UserItem[];
+  goldMultiplier: number;
 }

@@ -2,8 +2,14 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
 import { Item } from "./Item.js";
+
+interface PopulatedUserItem {
+  base: Item;
+  level: number;
+  currentCost: number;
+}
 // Define an interface for the User document
-interface IUser extends Document {
+export interface IUser extends Document {
   username: string;
   password: string;
   email: string;
@@ -25,6 +31,8 @@ interface IUser extends Document {
   earnGold(gold: number): Promise<void>;
   buyItem(itemId: ObjectId): Promise<void>;
   removeItem(itemId: ObjectId): Promise<void>;
+  upgradeItem(itemId: ObjectId): Promise<Item>;
+  getGoldMultiplier(): number;
 }
 
 // Define an interface for the User model (static methods)
@@ -80,6 +88,10 @@ const UserSchema = new mongoose.Schema<IUser>({
         type: Number,
         default: 1,
       },
+      currentCost: {
+        type: Number,
+        default: 0,
+      },
     },
   ],
   role: {
@@ -88,6 +100,40 @@ const UserSchema = new mongoose.Schema<IUser>({
     default: "user",
   },
 });
+
+UserSchema.methods = {
+  getGoldMultiplier: async function () {
+    await this.populate("items.base");
+    return this.items.reduce((acc: number, item: PopulatedUserItem) => {
+      if (item.base.effect.type === "gold") {
+        return acc + item.base.effect.value * item.level || 0;
+      }
+      return acc;
+    }, 0);
+  },
+
+  upgradeItem: async function (itemId: ObjectId) {
+    const userItem = this.items.find(
+      (item: { base: ObjectId }) => item.base.toString() === itemId.toString()
+    );
+    if (!userItem) {
+      throw new Error("Item not found in user's items");
+    }
+
+    if (this.gold < userItem.currentCost) {
+      throw new Error("Not enough gold to upgrade item");
+    }
+    const item = await mongoose.model<Item>("Item").findById(userItem.base);
+    if (!item) {
+      throw new Error("Item not found");
+    }
+    userItem.level += 1;
+    this.gold -= userItem.currentCost;
+    userItem.currentCost *= item.upgradeCostMultiplier || 2;
+    await this.save();
+    return userItem;
+  },
+};
 
 UserSchema.methods.attachCard = async function (cardId: ObjectId) {
   const now = new Date();
@@ -169,12 +215,17 @@ UserSchema.methods.spendGold = async function (gold: number) {
 
 UserSchema.methods.earnGold = async function (gold: number) {
   await this.populate("items.base");
-  const goldEffect = this.items.reduce((acc: number, item: Item) => {
-    if (item.effect?.type === "gold") {
-      return acc + item.effect?.value || 0;
-    }
-    return acc;
-  }, 0);
+  const goldEffect = this.items.reduce(
+    (acc: number, item: PopulatedUserItem) => {
+      return (
+        acc +
+        (item.base.effect?.type === "gold"
+          ? item.base.effect?.value * item.level || 0
+          : 0)
+      );
+    },
+    0
+  );
   this.gold += gold + goldEffect;
   await this.save();
 };
@@ -190,6 +241,7 @@ UserSchema.methods.buyItem = async function (itemId: ObjectId) {
   this.items.push({
     base: itemId,
     level: 1,
+    currentCost: item.price * (item.upgradeCostMultiplier || 2),
   });
   this.gold -= item.price;
   await this.save();

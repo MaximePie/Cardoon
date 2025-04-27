@@ -1,16 +1,18 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/UserContext";
 import { useFetch, RESOURCES } from "../../../hooks/server";
-import { Item as ItemType } from "../../../types/common";
+import { Item as ItemType, UserItem } from "../../../types/common";
 import Item from "../../molecules/Item/Item";
+import { GameFooter } from "../GamePage/GamePage";
 
 export default () => {
-  const { user } = useContext(UserContext);
+  const { user, hasItem } = useContext(UserContext);
+
   const { fetch, data } = useFetch<ItemType[]>(RESOURCES.ITEMS);
   const [items, setItems] = useState<ItemType[]>(data || []);
+
   useEffect(() => {
     fetch();
-    document.title = "Page de la boutique";
   }, []);
 
   useEffect(() => {
@@ -18,13 +20,31 @@ export default () => {
       setItems(data);
     }
   }, [data]);
+
+  const userItems: UserItem[] = user.items.map((item) => ({
+    ...item,
+    base: items.find((baseItem) => baseItem._id === item.base._id) || item.base,
+  }));
+  const unownedItems: ItemType[] = items.filter((item) => !hasItem(item._id));
   return (
     <div className="Page ShopPage">
-      <p>Vous avez {user.gold} pièces. Que voulez-vous acheter ?</p>
-      <p>Voici les articles disponibles :</p>
-      {items.map((item) => (
-        <Item key={item._id} item={item} /> // Assuming you have an Item component to display each item
-      ))}
+      <div className="ShopPage__items">
+        {userItems.map((item: UserItem) => (
+          <Item
+            key={item.base._id}
+            item={item}
+            type={hasItem(item.base._id) ? "UserItem" : "Item"}
+          /> // Corrected to pass the current item instead of userItems
+        ))}
+        {unownedItems.map((item: ItemType) => (
+          <Item
+            key={item._id}
+            item={item}
+            type="Item" // Corrected to pass the current item instead of userItems
+          />
+        ))}
+        <GameFooter />
+      </div>
     </div>
   );
 };

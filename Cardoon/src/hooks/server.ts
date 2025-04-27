@@ -19,6 +19,7 @@ export const ACTIONS = {
   ME: "users/me",
   BUY_ITEM: "users/buyItem",
   REMOVE_ITEM: "users/removeItem",
+  UPGRADE_ITEM: "users/upgradeItem",
 };
 
 // Custom hook to get data

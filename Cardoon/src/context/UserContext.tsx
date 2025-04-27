@@ -9,7 +9,7 @@ interface UserContextType {
   logout: () => void;
   addScore: (score: number) => void;
   earnGold: (gold: number) => void;
-  getGoldMultiplier: () => number;
+  hasItem: (itemId: string) => boolean;
 }
 
 const emptyUser: User = {
@@ -19,6 +19,7 @@ const emptyUser: User = {
   gold: 0,
   role: "user",
   items: [],
+  goldMultiplier: 1,
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -27,7 +28,7 @@ export const UserContext = createContext<UserContextType>({
   logout: () => {},
   addScore: () => {},
   earnGold: () => {},
-  getGoldMultiplier: () => 1,
+  hasItem: () => false,
 });
 
 export const UserContextProvider = ({
@@ -64,18 +65,8 @@ export const UserContextProvider = ({
   };
 
   const earnGold = (gold: number) => {
-    const totalGold = gold + getGoldMultiplier();
+    const totalGold = gold * user.goldMultiplier;
     setUser({ ...user, gold: user.gold + totalGold });
-  };
-
-  // Get the gold multiplier from the items
-  const getGoldMultiplier = () => {
-    const items = user.items.filter((item) => item.base.effect.type === "gold");
-    const goldEffect = items.reduce(
-      (acc, item) => acc + item.base.effect.value,
-      0
-    );
-    return goldEffect;
   };
 
   // Clear the cookie
@@ -86,15 +77,19 @@ export const UserContextProvider = ({
     document.location.href = "/";
   };
 
+  const hasItem = (itemId: string) => {
+    return user.items.some((item) => item.base._id === itemId);
+  };
+
   return (
     <UserContext.Provider
       value={{
         user,
+        hasItem,
         setUser,
         logout,
         addScore,
         earnGold,
-        getGoldMultiplier,
       }}
     >
       {children}

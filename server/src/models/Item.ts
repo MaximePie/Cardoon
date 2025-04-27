@@ -12,6 +12,7 @@ export type Item = {
     type: "gold";
     value: number;
   };
+  upgradeCostMultiplier?: number;
 };
 
 const ItemSchema = new mongoose.Schema<Item>({
@@ -28,6 +29,7 @@ const ItemSchema = new mongoose.Schema<Item>({
     type: { type: String, enum: ["gold"], required: true },
     value: { type: Number, required: true },
   },
+  upgradeCostMultiplier: { type: Number, default: 2 },
 });
 
 const ItemModel = mongoose.model<Item>("Item", ItemSchema);

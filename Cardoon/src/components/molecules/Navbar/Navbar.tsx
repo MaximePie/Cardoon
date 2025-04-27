@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/UserContext";
 import { Link } from "react-router-dom";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import PersonIcon from "@mui/icons-material/Person";
 import NorthIcon from "@mui/icons-material/North";
 import StarIcon from "@mui/icons-material/Star";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -17,9 +16,8 @@ export default () => {
   const { user, logout } = useContext(UserContext);
   const [isMobile, setIsMobile] = useState(false);
   const links: NavbarLink[] = [
-    { to: "/", label: "Jeu", icon: <SportsEsportsIcon /> },
-    { to: "/character", label: "Personnage", icon: <PersonIcon /> },
-    { to: "/shop", label: "Magasin", icon: <NorthIcon /> },
+    { to: "/", label: "Entraînement", icon: <SportsEsportsIcon /> },
+    { to: "/shop", label: "Amélioration", icon: <NorthIcon /> },
     { to: "/boss", label: "Boss", icon: <StarIcon /> },
     { to: "/add-card", label: "Ajouter une carte", icon: <AddIcon /> },
   ];
@@ -51,7 +49,7 @@ export default () => {
         <>
           <div className="Navbar__links">
             {links.map((link: NavbarLink) => (
-              <Link key={link.label} to={link.to}>
+              <Link key={link.label} to={link.to} className="Navbar__link">
                 {link.icon}
                 {!isMobile && link.label}
               </Link>

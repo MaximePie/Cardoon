@@ -25,6 +25,12 @@
     }
   }
 
+  &__link {
+    svg {
+      margin-right: 0.25rem;
+    }
+  }
+
   a,
   &__logout {
     padding: 0.25rem 0.75rem;

@@ -13,12 +13,30 @@ import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
 
+export const GameFooter = () => {
+  const { user } = useContext(UserContext);
+
+  return (
+    <div className="GamePage__footer">
+      <span className="GamePage__footer__element">
+        <img
+          className="GamePage__icon"
+          src={goldIcon}
+          alt="Gold"
+          id="GamePage__footer__coins"
+        />{" "}
+        {user.gold}
+      </span>
+    </div>
+  );
+};
+
 export default () => {
   const { data, loading, fetch, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);
-  const { user, getGoldMultiplier } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );
@@ -81,7 +99,7 @@ export default () => {
       const cardElement = document.querySelector(`[data-card-id="${id}"]`);
       if (cardElement) {
         const cardRect = cardElement.getBoundingClientRect();
-        for (let i = 0; i < getGoldMultiplier() + 1; i++) {
+        for (let i = 0; i < user.goldMultiplier + 1; i++) {
           setTimeout(() => {
             addCoinsAnimation(cardRect);
           }, i * 200);
@@ -153,17 +171,7 @@ export default () => {
           />
         ))}
       </div>
-      <div className="GamePage__footer">
-        <span className="GamePage__footer__element">
-          <img
-            className="GamePage__icon"
-            src={goldIcon}
-            alt="Gold"
-            id="GamePage__footer__coins"
-          />{" "}
-          {user.gold}
-        </span>
-      </div>
+      <GameFooter />
     </div>
   );
 };

@@ -1,11 +1,14 @@
 // routes/api/books.js
 import express from "express";
 const router = express.Router();
-import User from "../models/User.js";
+import User, { IUser } from "../models/User.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import authMiddleware from "../middleware/auth.js";
 
+interface FormattedUser extends IUser {
+  goldMultiplier: number;
+}
 router.get("/me", authMiddleware, async (req, res) => {
   const user = await User.findById((req as any).user.id);
   if (!user) {
@@ -14,7 +17,13 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 
   await user.populate("items.base"); // Assuming "items.base" is a reference field in the User schema
-  res.json(user);
+
+  const formattedUser = {
+    ...user.toObject(),
+    goldMultiplier: await user.getGoldMultiplier(),
+  };
+
+  res.json(formattedUser);
 });
 
 router.post("/login", async (req, res) => {
@@ -107,6 +116,29 @@ router.post("/removeItem", authMiddleware, async (req, res) => {
     res
       .status(500)
       .json({ error: "An error occurred while processing the removal" });
+    return;
+  }
+});
+
+router.post("/upgradeItem", authMiddleware, async (req, res) => {
+  const { itemId } = req.body;
+  const userId = (req as any).user.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+    const upgradedItem = await user.upgradeItem(itemId);
+    res
+      .status(200)
+      .json({ message: "Item upgraded successfully", upgradedItem });
+    return;
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while upgrading the item " + error });
     return;
   }
 });

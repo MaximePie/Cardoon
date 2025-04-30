@@ -39,7 +39,7 @@
     }
   }
 
-  &--disabled {
+  &:disabled {
     background: $disabled-color;
     color: $disabled-text-color;
     cursor: not-allowed !important;
@@ -48,5 +48,12 @@
     &:hover {
       background: $disabled-color;
     }
+  }
+
+  &__loader {
+    margin-left: 0.5rem;
+    width: 24px !important;
+    height: 24px !important;
+    transform: translate(-50%, -50%);
   }
 }

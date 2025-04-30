@@ -34,4 +34,6 @@ This is a MERN stack
 
 - Created an upgrade page to earn coins while reviewing
 - Open BETA
+- Card Form is not more user friendly
+- Disabled IA generation for new questions for the moment
   > TODO : Adjust card creation option

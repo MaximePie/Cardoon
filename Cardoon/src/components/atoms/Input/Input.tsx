@@ -5,6 +5,7 @@ interface InputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   name?: string;
+  placeholder?: string;
 }
 
 export default ({
@@ -14,12 +15,13 @@ export default ({
   onChange,
   className,
   name,
+  placeholder,
 }: InputProps) => {
   return (
     <div className={`${className || ""} Input`}>
       <label htmlFor={label}>{label}</label>
       <input
-        placeholder={label}
+        placeholder={placeholder || label || ""}
         type={type}
         value={value}
         onChange={onChange}

@@ -112,14 +112,14 @@ export default () => {
 
   const [image, setImage] = useState<File | null>(null);
   const [shouldResetPaster, setShouldResetPaster] = useState(false);
-  const [jsonFileData, setJsonFileData] = useState<string>("");
+  // const [jsonFileData, setJsonFileData] = useState<string>("");
 
   const closeModal = () => setIsModalOpen(false);
 
-  const openModal = () => {
-    setJsonFileData("");
-    setIsModalOpen(true);
-  };
+  // const openModal = () => {
+  //   setJsonFileData("");
+  //   setIsModalOpen(true);
+  // };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCard({
@@ -208,7 +208,7 @@ export default () => {
               value={subcategory}
             />
             <Button onClick={generateQuestions}>Générer</Button>
-            <div className="CardFormPage__modal-questions">
+            {/* <div className="CardFormPage__modal-questions">
               {jsonFileData &&
                 JSON.parse(jsonFileData).map((card: Card) => (
                   <QuestionLine
@@ -218,7 +218,7 @@ export default () => {
                     category={newCard.category}
                   />
                 ))}
-            </div>
+            </div> */}
           </form>
         </div>
       </MultiCardFormModal>

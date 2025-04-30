@@ -9,6 +9,7 @@ interface ItemProps {
   item: UserItem | Item;
   type: "UserItem" | "Item";
 }
+
 export default ({ item, type }: ItemProps) => {
   const { post: postBuyItem } = usePost<UserItem>(ACTIONS.BUY_ITEM);
   const { user } = useContext(UserContext);
@@ -22,12 +23,6 @@ export default ({ item, type }: ItemProps) => {
     if (type === "Item") {
       return user.gold >= (item as Item).price;
     }
-    console.log(
-      "UserItem currentCost:",
-      (item as UserItem).currentCost,
-      "User gold:",
-      user.gold
-    );
     return user.gold >= (item as UserItem).currentCost;
   };
   const handleItemClick = async () => {
@@ -56,6 +51,10 @@ export default ({ item, type }: ItemProps) => {
           className="Item__image"
         />
         <h3>{formattedItem.name}</h3>
+        <p>{formattedItem.type}</p>
+        <p>
+          {formattedItem.effect.type} +{formattedItem.effect.value}
+        </p>
         <p>{formattedItem.description}</p>
         <Button
           onClick={handleItemClick}

@@ -2,6 +2,7 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
 import { Item } from "./Item.js";
+import { DailyGoal } from "./DailyGoal.js";
 
 interface PopulatedUserItem {
   base: Item;
@@ -20,6 +21,9 @@ export interface IUser extends Document {
   gold: number;
   items: Item[]; // Array of items owned by the user
   role: "admin" | "user"; // User role
+  streak: number; // Streak of daily goals completed
+  dailyGoalSize: number; // Number of good answers required to complete the daily goal
+  currentDailyGoal: DailyGoal; // Current daily goal
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;

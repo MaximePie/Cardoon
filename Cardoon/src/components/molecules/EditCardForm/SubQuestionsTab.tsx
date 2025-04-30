@@ -134,7 +134,7 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
     e.preventDefault();
     setIsLoading(true);
     const prompt = `J'ai la question suivante : "${newCard.question} (réponse : ${newCard.answer})". Peux-tu me donner 10 sous-questions qui pourraient être posées à partir de cette question ? Inclus d'autres connaissances en rapport avec ${newCard.category} liées à cette question
-      Je veux des questions courtes. Je veux les questions au format JSON, avec le nom de la question et la réponse. Par exemple : { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }`;
+      Je veux des questions courtes. Je veux les questions au format JSON, avec le nom de la question et la réponse. Par exemple : { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }. Si la catégorie est une langue, je veux des questions de vocabulaire en rapport avec le mot de la question, ou des mots fréquemnt utilisés avec ce mot.`;
     const chatResponse = await client.chat.complete({
       model: "mistral-large-latest",
       messages: [{ role: "user", content: prompt }],

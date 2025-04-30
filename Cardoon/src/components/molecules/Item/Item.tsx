@@ -8,9 +8,10 @@ import coinImage from "../../../images/coin.png";
 interface ItemProps {
   item: UserItem | Item;
   type: "UserItem" | "Item";
+  afterPurchase: () => void;
 }
 
-export default ({ item, type }: ItemProps) => {
+export default ({ item, type, afterPurchase }: ItemProps) => {
   const { post: postBuyItem } = usePost<UserItem>(ACTIONS.BUY_ITEM);
   const { user } = useContext(UserContext);
   const { post: postUpgradeItem } = usePost<UserItem>(ACTIONS.UPGRADE_ITEM);
@@ -39,50 +40,53 @@ export default ({ item, type }: ItemProps) => {
         openSnackbarWithMessage("Pas assez d'or pour améliorer !");
       }
     }
+    afterPurchase();
   };
 
   if (type === "Item") {
-    const formattedItem = item as Item;
+    const { _id, name, description, price, image, effect } = item as Item;
     return (
-      <div key={formattedItem._id} className="Item">
-        <img
-          src={formattedItem.image}
-          alt={formattedItem.name}
-          className="Item__image"
-        />
-        <h3>{formattedItem.name}</h3>
-        <p>{formattedItem.type}</p>
+      <div key={_id} className="Item">
+        <img src={image} alt={name} className="Item__image" />
+        <h3>{name}</h3>
         <p>
-          {formattedItem.effect.type} +{formattedItem.effect.value}
+          {effect.type} +{effect.value}
         </p>
-        <p>{formattedItem.description}</p>
+        <p>{description}</p>
         <Button
           onClick={handleItemClick}
-          disabled={!canUpgradeItem(formattedItem)}
+          disabled={!canUpgradeItem(item as Item)}
         >
-          <span>{formattedItem.price}</span>
+          <span>{price}</span>
           <img src={coinImage} alt="coin" className="Item__coin" />
         </Button>
       </div>
     );
   } else {
-    const formattedItem = item as UserItem;
+    const {
+      base,
+      currentCost,
+      level,
+      base: {
+        effect: { type, value },
+      },
+    } = item as UserItem;
     return (
-      <div key={formattedItem.base._id} className="Item">
+      <div key={base._id} className="Item">
         <div className="Item__image-container">
-          <img
-            src={formattedItem.base.image}
-            alt={formattedItem.base.name}
-            className="Item__image"
-          />
+          <img src={base.image} alt={base.name} className="Item__image" />
         </div>
-        <h3>{formattedItem.base.name}</h3>
-        <p>{formattedItem.base.description}</p>
+        <h3>{base.name}</h3>
+        <p>
+          {type} +{value}
+        </p>
+        <p>Level: {level}</p>
+        <p>{base.description}</p>
         <Button
           onClick={handleItemClick}
-          disabled={!canUpgradeItem(formattedItem)}
+          disabled={!canUpgradeItem(item as UserItem)}
         >
-          <span>{formattedItem.currentCost}</span>{" "}
+          <span>{currentCost}</span>{" "}
           <img className="Item__coin" src={coinImage} alt="coin" />
         </Button>
       </div>

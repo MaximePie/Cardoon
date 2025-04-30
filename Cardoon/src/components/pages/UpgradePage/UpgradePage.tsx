@@ -34,6 +34,7 @@ export default () => {
             key={item.base._id}
             item={item}
             type={hasItem(item.base._id) ? "UserItem" : "Item"}
+            afterPurchase={fetch}
           /> // Corrected to pass the current item instead of userItems
         ))}
         {unownedItems.map((item: ItemType) => (
@@ -41,6 +42,7 @@ export default () => {
             key={item._id}
             item={item}
             type="Item" // Corrected to pass the current item instead of userItems
+            afterPurchase={fetch}
           />
         ))}
         <GameFooter />

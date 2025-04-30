@@ -29,3 +29,9 @@ This is a MERN stack
 - Added basic crud
 
 > TODO : Use Increment to filter the cards
+
+### 30/04/2025
+
+- Created an upgrade page to earn coins while reviewing
+- Open BETA
+  > TODO : Adjust card creation option

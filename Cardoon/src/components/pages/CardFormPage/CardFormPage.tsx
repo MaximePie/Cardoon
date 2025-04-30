@@ -190,19 +190,12 @@ export default () => {
         aria-describedby="modal-modal-description"
       >
         <div className="CardFormPage__modal">
+          <h2>Création par IA</h2>
+          <p>
+            Demander à l'IA de générer des questions pour vous. Entrez une
+            catégorie, et une sous catégorie
+          </p>
           <form>
-            <input
-              type="file"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  const reader = new FileReader();
-                  reader.onload = (e) => {
-                    setJsonFileData(e.target?.result as string);
-                  };
-                  reader.readAsText(e.target.files[0]);
-                }
-              }}
-            />
             <CategoryInput
               categoriesWithCount={categoriesWithCount}
               newCard={newCard}
@@ -255,12 +248,12 @@ export default () => {
             setNewCard={setNewCard}
           />
 
-          <Button
+          {/* <Button
             onClick={openModal}
             customClassName="CardFormPage__modal-button"
           >
             Import multiple
-          </Button>
+          </Button> */}
           <label className="CardFormPage__form-group">
             Uploader une image:
             <input type="file" onChange={onFileChange} />

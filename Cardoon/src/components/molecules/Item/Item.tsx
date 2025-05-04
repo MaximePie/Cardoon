@@ -63,14 +63,7 @@ export default ({ item, type, afterPurchase }: ItemProps) => {
       </div>
     );
   } else {
-    const {
-      base,
-      currentCost,
-      level,
-      base: {
-        effect: { type, value },
-      },
-    } = item as UserItem;
+    const { base, currentCost, level } = item as UserItem;
     return (
       <div key={base._id} className="Item">
         <div className="Item__image-container">
@@ -78,7 +71,7 @@ export default ({ item, type, afterPurchase }: ItemProps) => {
         </div>
         <h3>{base.name}</h3>
         <p>
-          {type} +{value}
+          {base.type} +{base?.effect?.value} {base?.effect?.type}
         </p>
         <p>Level: {level}</p>
         <p>{base.description}</p>

@@ -8,6 +8,7 @@ import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import { Hint } from "../../atoms/Hint/Hint";
 
 interface CardFormModalProps {
   open: boolean;
@@ -87,7 +88,7 @@ export interface FetchedCategory {
  * @returns
  */
 export default () => {
-  const { post, error } = usePost(RESOURCES.CARDS);
+  const { post, error, loading } = usePost(RESOURCES.CARDS);
   const { data: categoriesData } = useFetch<FetchedCategory[]>(
     RESOURCES.CATEGORIES
   );
@@ -242,6 +243,7 @@ export default () => {
             onChange={onChange}
             className="CardFormPage__form-group"
           />
+          <Hint text="Cherchez une catégorie dans la liste, ou créez-en une nouvelle" />
           <CategoryInput
             categoriesWithCount={categoriesWithCount}
             newCard={newCard}
@@ -254,10 +256,7 @@ export default () => {
           >
             Import multiple
           </Button> */}
-          <label className="CardFormPage__form-group">
-            Uploader une image:
-            <input type="file" onChange={onFileChange} />
-          </label>
+
           <Input
             label="Lien d'une image"
             type="text"
@@ -265,15 +264,24 @@ export default () => {
             value={newCard.imageLink || ""}
             onChange={onChange}
             className="CardFormPage__form-group"
+            placeholder="Collez le lien d'une image"
           />
           <ImagePaster
             onUpload={(file) => setImage(file)}
             shouldReset={shouldResetPaster}
           />
+          <label className="CardFormPage__form-group">
+            Ajouter une image
+            <input type="file" onChange={onFileChange} />
+          </label>
         </div>
         <div className="CardFormPage__footer">
-          <SubmitButton disabled={false} className="CardFormPage__submit">
-            Ajouter la carte
+          <SubmitButton
+            disabled={false}
+            className="CardFormPage__submit"
+            isLoading={loading}
+          >
+            Enregistrer
           </SubmitButton>
         </div>
       </form>

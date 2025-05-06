@@ -13,7 +13,7 @@ interface ItemProps {
 
 export default ({ item, type, afterPurchase }: ItemProps) => {
   const { post: postBuyItem } = usePost<UserItem>(ACTIONS.BUY_ITEM);
-  const { user } = useContext(UserContext);
+  const { user, removeGold } = useContext(UserContext);
   const { post: postUpgradeItem } = usePost<UserItem>(ACTIONS.UPGRADE_ITEM);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const upgradeItem = async (itemId: string) => {
@@ -31,11 +31,13 @@ export default ({ item, type, afterPurchase }: ItemProps) => {
       // Logic to handle item purchase
       await postBuyItem({ itemId: (item as Item)._id });
       openSnackbarWithMessage("Objet acheté !");
+      removeGold((item as Item).price);
     } else {
       // Logic to handle item upgrade
       if (canUpgradeItem(item)) {
         await upgradeItem((item as UserItem).base._id);
         openSnackbarWithMessage("Objet amélioré !");
+        removeGold((item as UserItem).currentCost);
       } else {
         openSnackbarWithMessage("Pas assez d'or pour améliorer !");
       }

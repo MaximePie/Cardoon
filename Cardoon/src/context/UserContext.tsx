@@ -9,6 +9,7 @@ interface UserContextType {
   logout: () => void;
   addScore: (score: number) => void;
   earnGold: (gold: number) => void;
+  removeGold: (gold: number) => void;
   hasItem: (itemId: string) => boolean;
 }
 
@@ -28,6 +29,7 @@ export const UserContext = createContext<UserContextType>({
   logout: () => {},
   addScore: () => {},
   earnGold: () => {},
+  removeGold: () => {},
   hasItem: () => false,
 });
 
@@ -69,6 +71,9 @@ export const UserContextProvider = ({
     setUser({ ...user, gold: user.gold + totalGold });
   };
 
+  const removeGold = (gold: number) => {
+    setUser({ ...user, gold: user.gold - gold });
+  };
   // Clear the cookie
   const logout = () => {
     document.cookie = "token=;max-age=0";
@@ -90,6 +95,7 @@ export const UserContextProvider = ({
         logout,
         addScore,
         earnGold,
+        removeGold,
       }}
     >
       {children}

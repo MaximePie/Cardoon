@@ -26,7 +26,7 @@ export const GameFooter = () => {
           alt="Gold"
           id="GamePage__footer__coins"
         />{" "}
-        {user.gold}
+        {user.gold || 0}
       </span>
     </div>
   );

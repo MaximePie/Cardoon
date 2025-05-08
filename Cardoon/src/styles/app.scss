@@ -1,6 +1,7 @@
 @use "../components/molecules/Card/Card" as Card;
 @use "../components/atoms/Input/Input" as Input;
 @use "../components/atoms/Hint/Hint" as Hint;
+@use "../components/atoms/Input/CategoryInput/CategoryInput" as CategoryInput;
 @use "../components/atoms/ImagePaster/ImagePaster" as ImagePaster;
 @use "../components/atoms/Button/Button" as Button;
 @use "../components/atoms/Loader/Loader" as Loader;

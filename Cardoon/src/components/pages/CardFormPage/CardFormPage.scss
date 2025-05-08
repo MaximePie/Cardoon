@@ -44,7 +44,21 @@
 
     &-group {
       margin-top: 1.5rem;
+
+      @media screen and (max-width: 768px) {
+        margin-top: 1rem;
+      }
     }
+  }
+  &__footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+  &__submit {
+    width: 100%;
   }
 
   &__body {
@@ -54,6 +68,10 @@
 
   &__modal-button {
     margin-top: 1.5rem;
+
+    @media screen and (max-width: 768px) {
+      margin: 0.5rem 0 0 0;
+    }
   }
   &__modal {
     background-color: white;

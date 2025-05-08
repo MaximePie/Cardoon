@@ -6,6 +6,8 @@ interface InputProps {
   className?: string;
   name?: string;
   placeholder?: string;
+  isRequired?: boolean;
+  hint?: string;
 }
 
 export default ({
@@ -16,10 +18,14 @@ export default ({
   className,
   name,
   placeholder,
+  isRequired = false,
 }: InputProps) => {
   return (
     <div className={`${className || ""} Input`}>
-      <label htmlFor={label}>{label}</label>
+      <label htmlFor={label}>
+        {label}
+        {isRequired && <span className="Input__required">*</span>}
+      </label>
       <input
         placeholder={placeholder || label || ""}
         type={type}

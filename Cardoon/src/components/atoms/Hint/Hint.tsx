@@ -6,13 +6,13 @@ interface HintProps {
 }
 export const Hint = ({ text, customClassName }: HintProps) => {
   return (
-    <div className={`Hint ${customClassName}`}>
+    <span className={`Hint ${customClassName || ""}`}>
       <Tooltip id="hint-tooltip" content={text} className="Hint__tooltip" />
       <HelpOutlineIcon
         className="Hint__icon"
         data-tooltip-id="hint-tooltip"
         data-tooltip-content={text}
       />
-    </div>
+    </span>
   );
 };

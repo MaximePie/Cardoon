@@ -1,5 +1,6 @@
 import { Autocomplete, createFilterOptions, TextField } from "@mui/material";
 import { Card } from "../../../../types/common";
+import { Hint } from "../../Hint/Hint";
 const filter = createFilterOptions<string>();
 
 interface CategoryInputProps {
@@ -7,16 +8,22 @@ interface CategoryInputProps {
   newCard: Partial<Card>;
   setNewCard: (newCard: Partial<Card>) => void;
   label?: string;
+  isRequired?: boolean;
 }
 export default ({
   categoriesWithCount,
   newCard,
   setNewCard,
   label = "Catégorie",
+  isRequired = false,
 }: CategoryInputProps) => {
   return (
     <>
-      <div className="CategoryInput__label">{label}</div>
+      <div className="CategoryInput__label">
+        {label}
+        {isRequired && <span className="CategoryInput__required">*</span>}
+        <Hint text="Cherchez une catégorie dans la liste, ou créez-en une nouvelle" />
+      </div>
       <Autocomplete
         id="card-category"
         options={categoriesWithCount || []}

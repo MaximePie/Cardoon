@@ -8,12 +8,11 @@ import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { Hint } from "../../atoms/Hint/Hint";
 import { makeQuestionsPrompt } from "../../molecules/EditCardForm/llmprompt";
 import { Mistral } from "@mistralai/mistralai";
 import Loader from "../../atoms/Loader/Loader";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-
 const client = new Mistral({ apiKey: apiKey });
 
 interface CardFormModalProps {
@@ -226,6 +225,7 @@ export default () => {
                 categoriesWithCount={categoriesWithCount}
                 newCard={newCard}
                 setNewCard={setNewCard}
+                isRequired={true}
               />
             </div>
             <div>
@@ -266,6 +266,7 @@ export default () => {
               setNewCard({ ...newCard, question: e.target.value })
             }
             className="CardFormPage__form-group"
+            isRequired={true}
           />
           <Input
             label="Réponse"
@@ -274,19 +275,22 @@ export default () => {
             value={newCard.answer || ""} // Prevents 'controlled to uncontrolled' warning
             onChange={onChange}
             className="CardFormPage__form-group"
+            isRequired={true}
           />
-          <Hint text="Cherchez une catégorie dans la liste, ou créez-en une nouvelle" />
           <CategoryInput
             categoriesWithCount={categoriesWithCount}
             newCard={newCard}
             setNewCard={setNewCard}
+            isRequired={true}
           />
 
           <Button
             onClick={openModal}
             customClassName="CardFormPage__modal-button"
+            variant="secondary"
+            icon={<AutoAwesomeIcon />}
           >
-            Import multiple
+            Générer des questions
           </Button>
 
           <Input
@@ -298,18 +302,22 @@ export default () => {
             className="CardFormPage__form-group"
             placeholder="Collez le lien d'une image"
           />
-          <ImagePaster
-            onUpload={(file) => setImage(file)}
-            shouldReset={shouldResetPaster}
-          />
-          <label className="CardFormPage__form-group">
-            Ajouter une image
-            <input type="file" onChange={onFileChange} />
-          </label>
+          {!newCard.imageLink && (
+            <ImagePaster
+              onUpload={(file) => setImage(file)}
+              shouldReset={shouldResetPaster}
+            />
+          )}
+          {!newCard.imageLink && (
+            <label className="CardFormPage__form-group">
+              Ajouter une image
+              <input type="file" onChange={onFileChange} />
+            </label>
+          )}
         </div>
         <div className="CardFormPage__footer">
           <SubmitButton
-            disabled={false}
+            disabled={!newCard.question || !newCard.answer || !newCard.category}
             className="CardFormPage__submit"
             isLoading={loading}
           >

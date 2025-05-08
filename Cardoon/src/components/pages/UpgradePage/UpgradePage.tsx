@@ -45,7 +45,11 @@ export default () => {
             afterPurchase={fetch}
           />
         ))}
-        <GameFooter />
+        <GameFooter
+          currentPage="shop"
+          isFlashModeOn={false}
+          setFlash={() => {}}
+        />
       </div>
     </div>
   );

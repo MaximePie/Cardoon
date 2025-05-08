@@ -8,6 +8,7 @@ import Button from "../../atoms/Button/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Loader from "../../atoms/Loader/Loader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { generatePrompt } from "./llmprompt";
 const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
 
 const client = new Mistral({ apiKey: apiKey });
@@ -133,11 +134,11 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   ) => {
     e.preventDefault();
     setIsLoading(true);
-    const prompt = `J'ai la question suivante : "${newCard.question} (réponse : ${newCard.answer})". Peux-tu me donner 10 sous-questions qui pourraient être posées à partir de cette question ? Inclus d'autres connaissances en rapport avec ${newCard.category} liées à cette question
-      Je veux des questions courtes. Je veux les questions au format JSON, avec le nom de la question et la réponse. Par exemple : { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }. 
-      Si la catégorie est une langue, je veux apprendre d'autres mots qui appartiennent au chant lexical sous la forme {"question": "le mot", "answer": "la traduction", le but étant d'apprendre de nouveaux mots.
-      
-      `;
+    const prompt = generatePrompt({
+      question: newCard.question,
+      answer: newCard.answer,
+      category: newCard.category || "",
+    });
     const chatResponse = await client.chat.complete({
       model: "mistral-large-latest",
       messages: [{ role: "user", content: prompt }],

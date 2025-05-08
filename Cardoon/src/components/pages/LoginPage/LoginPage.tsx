@@ -104,7 +104,6 @@ export default function LoginForm() {
         </div>
         {error && <p className="LoginPage__error">{error}</p>}
         <div className="LoginPage__actions">
-          {loading && <Loader className="LoginPage__loader" />}
           <SubmitButton className="LoginPage__submit" isLoading={loading}>
             Se connecter
           </SubmitButton>

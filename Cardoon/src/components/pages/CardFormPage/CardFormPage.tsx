@@ -9,6 +9,12 @@ import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { Hint } from "../../atoms/Hint/Hint";
+import { makeQuestionsPrompt } from "../../molecules/EditCardForm/llmprompt";
+import { Mistral } from "@mistralai/mistralai";
+import Loader from "../../atoms/Loader/Loader";
+const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
+
+const client = new Mistral({ apiKey: apiKey });
 
 interface CardFormModalProps {
   open: boolean;
@@ -70,9 +76,9 @@ export const QuestionLine = ({
         <p>{question}</p>
         <p>{answer}</p>
       </div>
-      <button onClick={createCard} disabled={isCreated}>
-        {loading ? "..." : "Créer"}
-      </button>
+      <Button onClick={createCard} disabled={isCreated} isLoading={loading}>
+        Créer
+      </Button>
     </div>
   );
 };
@@ -113,14 +119,17 @@ export default () => {
 
   const [image, setImage] = useState<File | null>(null);
   const [shouldResetPaster, setShouldResetPaster] = useState(false);
-  // const [jsonFileData, setJsonFileData] = useState<string>("");
+  const [subQuestions, setSubQuestions] = useState<
+    { question: string; answer: string }[] | null
+  >(null);
+  const [isGenerationLoading, setIsLoading] = useState(false);
 
   const closeModal = () => setIsModalOpen(false);
 
-  // const openModal = () => {
-  //   setJsonFileData("");
-  //   setIsModalOpen(true);
-  // };
+  const openModal = () => {
+    setSubQuestions(null);
+    setIsModalOpen(true);
+  };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCard({
@@ -172,15 +181,33 @@ export default () => {
 
   const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    // if (!newCard.category || !subcategory) return;
-    // const prompt = `Je veux apprendre ${newCard.category}, plus particulièrement sur ${subcategory}, de difficulté ${difficulty}
-    // Génère 10 flashcard. Forme JSON Q/R.
-    // { "question": "...", "answer": "..."} \n\n`;
+    setIsLoading(true);
+    const prompt = makeQuestionsPrompt({
+      category: newCard?.category || "",
+      subcategory: subcategory,
+    });
+    if (prompt !== "") {
+      const chatResponse = await client.chat.complete({
+        model: "mistral-large-latest",
+        messages: [{ role: "user", content: prompt }],
+      });
 
-    // const testPrompt =
-    //   "Je veux apprendre la biologie, plus particulièrement la géologie, et j’aimerais 10 flashcards sous forme JSON (Q/R).";
-    // const testPrompt = `Tu es un assistant qui génère 10 flashcards sur la géologie, uniquement au format JSON. Chaque flashcard doit prendre la forme d’un objet avec 'question' et 'answer'. Ne fournis aucune explication, aucun texte supplémentaire, ni aucune introduction. Seul du JSON, comme ceci :
-    // [{ "question": "...", "answer": "..." }, ... ]`;
+      let response =
+        chatResponse.choices?.[0]?.message?.content ?? "No content available";
+      if (typeof response === "string") {
+        const jsonStartIndex = response.indexOf("[");
+        const jsonEndIndex = response.lastIndexOf("]");
+        if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
+          response = response.substring(jsonStartIndex, jsonEndIndex + 1);
+        }
+        setSubQuestions(
+          JSON.parse(response) as { question: string; answer: string }[]
+        );
+      } else {
+        console.error("Unexpected response format:", response);
+      }
+      setIsLoading(false);
+    }
   };
   return (
     <div className="CardFormPage">
@@ -191,36 +218,41 @@ export default () => {
         aria-describedby="modal-modal-description"
       >
         <div className="CardFormPage__modal">
-          <h2>Création par IA</h2>
-          <p>
-            Demander à l'IA de générer des questions pour vous. Entrez une
-            catégorie, et une sous catégorie
-          </p>
+          <h2>Création de questions par IA</h2>
           <form>
-            <CategoryInput
-              categoriesWithCount={categoriesWithCount}
-              newCard={newCard}
-              setNewCard={setNewCard}
-            />
-            <input
-              type="text"
-              onChange={(e) => setSubcategory(e.target.value)}
-              placeholder="Sous-catégorie"
-              value={subcategory}
-            />
-            <Button onClick={generateQuestions}>Générer</Button>
-            {/* <div className="CardFormPage__modal-questions">
-              {jsonFileData &&
-                JSON.parse(jsonFileData).map((card: Card) => (
-                  <QuestionLine
-                    key={card.question}
-                    question={card.question}
-                    answer={card.answer}
-                    category={newCard.category}
-                  />
-                ))}
-            </div> */}
+            <div>
+              <CategoryInput
+                label="Je veux apprendre ..."
+                categoriesWithCount={categoriesWithCount}
+                newCard={newCard}
+                setNewCard={setNewCard}
+              />
+            </div>
+            <div>
+              <Input
+                label="Plus particulièrement"
+                type="text"
+                onChange={(e) => setSubcategory(e.target.value)}
+                placeholder="Sous-catégorie"
+                value={subcategory}
+              />
+            </div>
+            <Button onClick={generateQuestions} disabled={!newCard.category}>
+              Générer
+            </Button>
           </form>
+          <div className="CardFormPage__modal-questions">
+            {isGenerationLoading && <Loader />}
+            {subQuestions &&
+              subQuestions.map(({ question, answer }, index) => (
+                <QuestionLine
+                  key={index}
+                  question={question}
+                  answer={answer}
+                  category={newCard.category}
+                />
+              ))}
+          </div>
         </div>
       </MultiCardFormModal>
       <form onSubmit={onSubmit} className="CardFormPage__form">
@@ -250,12 +282,12 @@ export default () => {
             setNewCard={setNewCard}
           />
 
-          {/* <Button
+          <Button
             onClick={openModal}
             customClassName="CardFormPage__modal-button"
           >
             Import multiple
-          </Button> */}
+          </Button>
 
           <Input
             label="Lien d'une image"

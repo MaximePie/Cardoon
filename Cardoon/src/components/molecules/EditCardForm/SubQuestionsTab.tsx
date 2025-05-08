@@ -8,7 +8,7 @@ import Button from "../../atoms/Button/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Loader from "../../atoms/Loader/Loader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { generatePrompt } from "./llmprompt";
+import { generateSubquestions } from "./llmprompt";
 const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
 
 const client = new Mistral({ apiKey: apiKey });
@@ -134,7 +134,7 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   ) => {
     e.preventDefault();
     setIsLoading(true);
-    const prompt = generatePrompt({
+    const prompt = generateSubquestions({
       question: newCard.question,
       answer: newCard.answer,
       category: newCard.category || "",

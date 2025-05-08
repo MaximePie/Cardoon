@@ -11,6 +11,7 @@ interface ButtonProps {
   icon?: React.ReactNode;
   tooltip?: string;
   tooltipId?: string;
+  isLoading?: boolean;
 }
 
 const makeTooltipIdFromContent = (content: string) => {
@@ -29,6 +30,7 @@ export default ({
   variant,
   icon,
   tooltip,
+  isLoading,
 }: ButtonProps) => {
   const className = classnames("Button", customClassName, {
     "Button--disabled": disabled,
@@ -47,6 +49,7 @@ export default ({
         onClick={onClick}
         type="submit"
       >
+        {isLoading && <span className="Button__loader" />}
         {icon && <span className="Button__icon">{icon}</span>}
         {children}
       </button>

@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
-import Loader from "../../atoms/Loader/Loader";
 
 interface LoginResponse {
   user: User;
@@ -104,7 +103,11 @@ export default function LoginForm() {
         </div>
         {error && <p className="LoginPage__error">{error}</p>}
         <div className="LoginPage__actions">
-          <SubmitButton className="LoginPage__submit" isLoading={loading}>
+          <SubmitButton
+            className="LoginPage__submit"
+            isLoading={loading}
+            disabled={isErroneous}
+          >
             Se connecter
           </SubmitButton>
         </div>

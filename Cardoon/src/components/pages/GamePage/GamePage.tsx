@@ -14,12 +14,13 @@ import Loader from "../../atoms/Loader/Loader";
 import Button from "../../atoms/Button/Button";
 
 interface GamePageProps {
-  setFlash: (flash: boolean) => void;
-  isFlashModeOn: boolean;
+  setFlash?: (flash: boolean) => void;
+  isFlashModeOn?: boolean;
+  currentPage: "shop" | "game";
 }
 export const GameFooter = (props: GamePageProps) => {
   const { user } = useContext(UserContext);
-  const { setFlash, isFlashModeOn } = props;
+  const { setFlash, isFlashModeOn, currentPage } = props;
 
   return (
     <div className="GamePage__footer">
@@ -32,16 +33,22 @@ export const GameFooter = (props: GamePageProps) => {
         />{" "}
         {user.gold || 0}
       </span>
-      <span className="GamePage__footer__element">
-        <Button
-          customClassName="GamePage__footer__flashmode"
-          onClick={() => {
-            setFlash(!isFlashModeOn);
-          }}
-        >
-          <ElectricBoltIcon />
-        </Button>
-      </span>
+      {currentPage !== "shop" && (
+        <span className="GamePage__footer__element">
+          <Button
+            customClassName="GamePage__footer__flashmode"
+            onClick={() => {
+              if (setFlash) {
+                setFlash(!isFlashModeOn);
+              } else {
+                console.error("setFlash function is not provided.");
+              }
+            }}
+          >
+            <ElectricBoltIcon />
+          </Button>
+        </span>
+      )}
     </div>
   );
 };
@@ -177,7 +184,11 @@ export default () => {
           />
         ))}
       </div>
-      <GameFooter isFlashModeOn={flash} setFlash={setFlash} />
+      <GameFooter
+        isFlashModeOn={flash}
+        setFlash={setFlash}
+        currentPage="game"
+      />
     </div>
   );
 };

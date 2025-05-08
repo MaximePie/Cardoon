@@ -1,5 +1,4 @@
 import Card from "../../molecules/Card/Card";
-import { Fab } from "@mui/material";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
 import { RESOURCES, useFetch } from "../../../hooks/server";
@@ -12,10 +11,15 @@ import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
-import { SnackbarContext } from "../../../context/SnackbarContext";
+import Button from "../../atoms/Button/Button";
 
-export const GameFooter = () => {
+interface GamePageProps {
+  setFlash: (flash: boolean) => void;
+  isFlashModeOn: boolean;
+}
+export const GameFooter = (props: GamePageProps) => {
   const { user } = useContext(UserContext);
+  const { setFlash, isFlashModeOn } = props;
 
   return (
     <div className="GamePage__footer">
@@ -26,7 +30,17 @@ export const GameFooter = () => {
           alt="Gold"
           id="GamePage__footer__coins"
         />{" "}
-        {user.gold}
+        {user.gold || 0}
+      </span>
+      <span className="GamePage__footer__element">
+        <Button
+          customClassName="GamePage__footer__flashmode"
+          onClick={() => {
+            setFlash(!isFlashModeOn);
+          }}
+        >
+          <ElectricBoltIcon />
+        </Button>
       </span>
     </div>
   );
@@ -41,7 +55,6 @@ export default () => {
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );
-  const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const [editedCard, setEditedCard] = useState<PopulatedUserCard | null>(null);
   const [isEditModalActive, setEditModalActiveState] = useState(false);
   const [categories, setCategories] = useState<FetchedCategory[]>([]);
@@ -143,14 +156,6 @@ export default () => {
     return <p>Erreur: {error}</p>;
   }
 
-  const handleFlashClick = (event: React.MouseEvent) => {
-    event.preventDefault();
-    openSnackbarWithMessage(
-      "Flash mode, touchez les cartes pour les valider directement !"
-    );
-    setFlash(!flash);
-  };
-
   return (
     <div className="GamePage">
       {editedCard && (
@@ -162,14 +167,6 @@ export default () => {
         />
       )}
       <div className="Cards">
-        <Fab
-          color={flash ? "warning" : "primary"}
-          aria-label="flash"
-          className="Cards__flash-button"
-          onClick={handleFlashClick}
-        >
-          <ElectricBoltIcon />
-        </Fab>
         {userCards.map((userCard: PopulatedUserCard) => (
           <Card
             key={userCard._id}
@@ -180,7 +177,7 @@ export default () => {
           />
         ))}
       </div>
-      <GameFooter />
+      <GameFooter isFlashModeOn={flash} setFlash={setFlash} />
     </div>
   );
 };

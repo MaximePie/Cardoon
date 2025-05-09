@@ -57,9 +57,15 @@ app.post("/api/mistral", async (req, res) => {
 
     res.json({ content: response });
     return;
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+  } catch (error: any) {
+    console.error("Mistral API Error:", error);
+    const statusCode = error.response?.status || 500;
+    const errorMessage =
+      error.response?.data?.error?.message || "Error calling Mistral API";
+    res.status(500).json({
+      error: errorMessage,
+      statusCode: statusCode,
+    });
     return;
   }
 });

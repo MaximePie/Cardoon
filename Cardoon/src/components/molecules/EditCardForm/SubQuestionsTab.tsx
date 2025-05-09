@@ -156,17 +156,25 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
       .replace(/```json/, "")
       .replace(/```/, "")
       .trim();
-    const parsedResponse = JSON.parse(jsonResponse);
+    try {
+      const parsedResponse = JSON.parse(jsonResponse);
+      if (!Array.isArray(parsedResponse)) {
+        throw new Error("Invalid response format");
+      }
+      const subquestions = parsedResponse.map((subquestion: any) => {
+        return {
+          question: subquestion.question,
+          answer: subquestion.answer,
+        };
+      });
 
-    const subquestions = parsedResponse.map((subquestion: any) => {
-      return {
-        question: subquestion.question,
-        answer: subquestion.answer,
-      };
-    });
-
-    setGeneratedSubquestions(subquestions);
-    setIsLoading(false);
+      setGeneratedSubquestions(subquestions);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error parsing response:", error);
+      openSnackbarWithMessage("Erreur lors de la génération des questions");
+      setIsLoading(false);
+    }
   };
 
   return (

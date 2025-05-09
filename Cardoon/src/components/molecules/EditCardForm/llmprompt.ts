@@ -1,13 +1,14 @@
+interface SubQuestionsParameters {
+  question: string;
+  answer: string;
+  category: string;
+}
 // Used when reviewing a card and wanting to generate subquestions
 export const generateSubquestions = ({
   question,
   answer,
   category,
-}: {
-  question: string;
-  answer: string;
-  category: string;
-}) => {
+}: SubQuestionsParameters) => {
   const prompt = `Vous recevez :
 
     • une question principale : ${question}
@@ -24,7 +25,7 @@ export const generateSubquestions = ({
        Exemple :
        { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }
     4. Si "\${category}" désigne une langue, remplacez les questions par 10 mots du même champ lexical :
-       { "question": "le mot", "answer": "sa traduction" }
+       { "question": "le mot dans la langue", "answer": "sa traduction en français" }. La question doit être courte. Exemple : Hello -> Bonjour
     5. Aucune question ne doit dupliquer ni reformuler la question principale.
     6. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
     7. Fais attention à ne pas générer de questions trop similaires entre elles.
@@ -33,14 +34,15 @@ export const generateSubquestions = ({
   return prompt;
 };
 
+interface QuestionParameters {
+  category: string;
+  subcategory: string;
+}
 // Used to create a set of new cards based on a category (and a subcategory)
 export const makeQuestionsPrompt = ({
   category,
   subcategory,
-}: {
-  category: string;
-  subcategory: string;
-}) => {
+}: QuestionParameters) => {
   if (category === "") {
     return "";
   }
@@ -59,7 +61,9 @@ export const makeQuestionsPrompt = ({
          { "question": "Quel est le nom de l'auteur de Salembo?", "answer": "Gustave Flaubert" }
         3. Aucune question ne doit dupliquer ni reformuler la question principale.
         4. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
-        5. Si "\${category}" désigne une langue, générer 10 mots de vocabulaire de la langue demandée. Ces mots doivent être communs et utiles dans la vie quotidienne, et en rapport avec la sous-catégorie. Le format de sortie doit être "{"question": "le mot", "answer": "sa traduction" }".
+        5. Si "\${category}" désigne une langue, générer 10 mots de vocabulaire de la langue demandée. Ces mots doivent être communs et utiles dans la vie quotidienne, et en rapport avec la sous-catégorie. Le format de sortie doit être "{"question": "le mot dans la langue", "answer": "sa traduction en français" }".
+        Bon Exemple : Hello -> Bonjour
+        Mauvais exemple : "Comment dit-on 'Bonjour' en anglais ?" -> "Hello"
         6. Fais attention à ne pas générer de questions trop similaires entre elles.
         `;
 

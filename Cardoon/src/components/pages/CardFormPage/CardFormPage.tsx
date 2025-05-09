@@ -194,7 +194,10 @@ export default () => {
       let response = await postMistral({ prompt });
 
       if (!response) {
-        openSnackbarWithMessage("Erreur lors de la génération des questions");
+        openSnackbarWithMessage(
+          "Erreur lors de la génération des questions",
+          "error"
+        );
         setIsLoading(false);
         return;
       }

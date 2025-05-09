@@ -127,24 +127,23 @@ export const usePost = <T>(resource: string) => {
     }
   };
 
-  const asyncPost = async (
-    payload: any,
-    contentType: "multipart/form-data" | null = null
-  ): Promise<T | undefined> => {
+  const asyncPost = async (payload: any): Promise<T | undefined> => {
     setLoading(true);
     try {
       axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
         "token"
       )}`;
-
-      if (contentType) {
-        axios.defaults.headers.post["Content-Type"] = contentType;
-      }
-      const response = await axios.post(url, payload);
+      const response = await axios.post(url, payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       setLoading(false);
       return response.data;
     } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
+      setError(
+        err.message + " " + err.response?.data?.errorMessage || "Unknown error"
+      );
       setLoading(false);
     }
   };

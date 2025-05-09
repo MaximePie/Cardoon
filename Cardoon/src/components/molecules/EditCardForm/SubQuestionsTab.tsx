@@ -143,7 +143,10 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
     let response = await postMistral({ prompt });
 
     if (!response) {
-      openSnackbarWithMessage("Erreur lors de la génération des questions");
+      openSnackbarWithMessage(
+        "Erreur lors de la génération des questions",
+        "error"
+      );
       setIsLoading(false);
       return;
     }
@@ -172,7 +175,10 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
       setIsLoading(false);
     } catch (error) {
       console.error("Error parsing response:", error);
-      openSnackbarWithMessage("Erreur lors de la génération des questions");
+      openSnackbarWithMessage(
+        "Erreur lors de la génération des questions",
+        "error"
+      );
       setIsLoading(false);
     }
   };

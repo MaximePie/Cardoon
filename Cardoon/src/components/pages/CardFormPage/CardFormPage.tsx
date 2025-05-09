@@ -8,7 +8,9 @@ import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { Hint } from "../../atoms/Hint/Hint";
+import { makeQuestionsPrompt } from "../../molecules/EditCardForm/llmprompt";
+import Loader from "../../atoms/Loader/Loader";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 interface CardFormModalProps {
   open: boolean;
@@ -70,9 +72,9 @@ export const QuestionLine = ({
         <p>{question}</p>
         <p>{answer}</p>
       </div>
-      <button onClick={createCard} disabled={isCreated}>
-        {loading ? "..." : "Créer"}
-      </button>
+      <Button onClick={createCard} disabled={isCreated} isLoading={loading}>
+        Créer
+      </Button>
     </div>
   );
 };
@@ -82,6 +84,10 @@ export interface FetchedCategory {
   count: number;
 }
 
+export type MistralResponse = {
+  content: string;
+};
+
 /**
  * question: String
  * answer: String
@@ -89,6 +95,10 @@ export interface FetchedCategory {
  */
 export default () => {
   const { post, error, loading } = usePost(RESOURCES.CARDS);
+  const { asyncPost: postMistral } = usePost<MistralResponse>(
+    RESOURCES.MISTRAL
+  );
+
   const { data: categoriesData } = useFetch<FetchedCategory[]>(
     RESOURCES.CATEGORIES
   );
@@ -113,14 +123,17 @@ export default () => {
 
   const [image, setImage] = useState<File | null>(null);
   const [shouldResetPaster, setShouldResetPaster] = useState(false);
-  // const [jsonFileData, setJsonFileData] = useState<string>("");
+  const [subQuestions, setSubQuestions] = useState<
+    { question: string; answer: string }[] | null
+  >(null);
+  const [isGenerationLoading, setIsLoading] = useState(false);
 
   const closeModal = () => setIsModalOpen(false);
 
-  // const openModal = () => {
-  //   setJsonFileData("");
-  //   setIsModalOpen(true);
-  // };
+  const openModal = () => {
+    setSubQuestions(null);
+    setIsModalOpen(true);
+  };
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewCard({
@@ -172,15 +185,34 @@ export default () => {
 
   const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    // if (!newCard.category || !subcategory) return;
-    // const prompt = `Je veux apprendre ${newCard.category}, plus particulièrement sur ${subcategory}, de difficulté ${difficulty}
-    // Génère 10 flashcard. Forme JSON Q/R.
-    // { "question": "...", "answer": "..."} \n\n`;
+    setIsLoading(true);
+    const prompt = makeQuestionsPrompt({
+      category: newCard?.category || "",
+      subcategory: subcategory,
+    });
+    if (prompt !== "") {
+      let response = await postMistral({ prompt });
 
-    // const testPrompt =
-    //   "Je veux apprendre la biologie, plus particulièrement la géologie, et j’aimerais 10 flashcards sous forme JSON (Q/R).";
-    // const testPrompt = `Tu es un assistant qui génère 10 flashcards sur la géologie, uniquement au format JSON. Chaque flashcard doit prendre la forme d’un objet avec 'question' et 'answer'. Ne fournis aucune explication, aucun texte supplémentaire, ni aucune introduction. Seul du JSON, comme ceci :
-    // [{ "question": "...", "answer": "..." }, ... ]`;
+      if (!response) {
+        openSnackbarWithMessage("Erreur lors de la génération des questions");
+        setIsLoading(false);
+        return;
+      }
+
+      /**
+       * Response looks like this :
+       * "```json\n[\n  { \"question\": \"Quel est le nom italien pour 'cochon'?\", \"answer\": \"Maiale\" },\n  { \"question\": \"Quel est le nom italien pour 'vache'?\", \"answer\": \"Mucca\" },\n  { \"question\": \"Quel est le nom italien pour 'cheval'?\", \"answer\": \"Cavallo\" },\n  { \"question\": \"Quel est le nom italien pour 'poule'?\", \"answer\": \"Gallina\" },\n  { \"question\": \"Quel est le nom italien pour 'mouton'?\", \"answer\": \"Pecora\" },\n  { \"question\": \"Quel est le nom italien pour 'canard'?\", \"answer\": \"Anatra\" },\n  { \"question\": \"Quel est le nom italien pour 'chèvre'?\", \"answer\": \"Capra\" },\n  { \"question\": \"Quel est le nom italien pour 'oie'?\", \"answer\": \"Oca\" },\n  { \"question\": \"Quel est le nom italien pour 'âne'?\", \"answer\": \"Asino\" },\n  { \"question\": \"Quel est le nom italien pour 'lapin'?\", \"answer\": \"Coniglio\" },\n  { \"question\": \"Quel est le nom italien pour 'coq'?\", \"answer\": \"Gallo\" },\n  { \"question\": \"Quel est le nom italien pour 'taureau'?\", \"answer\": \"Toro\" },\n  { \"question\": \"Quel est le nom italien pour 'poulet'?\", \"answer\": \"Pollo\" },\n  { \"question\": \"Quel est le nom italien pour 'agneau'?\", \"answer\": \"Agnello\" },\n  { \"question\": \"Quel est le nom italien pour 'poussin'?\", \"answer\": \"Pulcino\" },\n  { \"question\": \"Quel est le nom italien pour 'veau'?\", \"answer\": \"Vitello\" },\n  { \"question\": \"Quel est le nom italien pour 'chevreau'?\", \"answer\": \"Capretto\" },\n  { \"question\": \"Quel est le nom italien pour 'jument'?\", \"answer\": \"Giumenta\" },\n  { \"question\": \"Quel est le nom italien pour 'poulain'?\", \"answer\": \"Puledro\" },\n  { \"question\": \"Quel est le nom italien pour 'brebis'?\", \"answer\": \"Pecora\" }\n]\n```"
+       */
+      const jsonResponse = response.content
+        .replace(/```json/, "")
+        .replace(/```/, "")
+        .trim();
+      const parsedResponse = JSON.parse(jsonResponse);
+      setSubQuestions(parsedResponse);
+      setSubcategory("");
+    }
+
+    setIsLoading(false);
   };
   return (
     <div className="CardFormPage">
@@ -191,36 +223,44 @@ export default () => {
         aria-describedby="modal-modal-description"
       >
         <div className="CardFormPage__modal">
-          <h2>Création par IA</h2>
-          <p>
-            Demander à l'IA de générer des questions pour vous. Entrez une
-            catégorie, et une sous catégorie
-          </p>
+          <h2>Création de questions par IA</h2>
           <form>
-            <CategoryInput
-              categoriesWithCount={categoriesWithCount}
-              newCard={newCard}
-              setNewCard={setNewCard}
-            />
-            <input
-              type="text"
-              onChange={(e) => setSubcategory(e.target.value)}
-              placeholder="Sous-catégorie"
-              value={subcategory}
-            />
-            <Button onClick={generateQuestions}>Générer</Button>
-            {/* <div className="CardFormPage__modal-questions">
-              {jsonFileData &&
-                JSON.parse(jsonFileData).map((card: Card) => (
-                  <QuestionLine
-                    key={card.question}
-                    question={card.question}
-                    answer={card.answer}
-                    category={newCard.category}
-                  />
-                ))}
-            </div> */}
+            <div>
+              <CategoryInput
+                label="Je veux apprendre ..."
+                categoriesWithCount={categoriesWithCount}
+                newCard={newCard}
+                setNewCard={setNewCard}
+                isRequired={true}
+              />
+            </div>
+            <div>
+              <Input
+                label="Plus particulièrement"
+                type="text"
+                onChange={(e) => setSubcategory(e.target.value)}
+                placeholder="Sous-catégorie"
+                value={subcategory}
+              />
+            </div>
+            <Button
+              onClick={generateQuestions}
+              disabled={!newCard.category || isGenerationLoading}
+            >
+              Générer
+            </Button>
           </form>
+          <div className="CardFormPage__modal-questions">
+            {isGenerationLoading && <Loader />}
+            {subQuestions?.map(({ question, answer }, index) => (
+              <QuestionLine
+                key={index + question + answer}
+                question={question}
+                answer={answer}
+                category={newCard.category}
+              />
+            ))}
+          </div>
         </div>
       </MultiCardFormModal>
       <form onSubmit={onSubmit} className="CardFormPage__form">
@@ -234,6 +274,7 @@ export default () => {
               setNewCard({ ...newCard, question: e.target.value })
             }
             className="CardFormPage__form-group"
+            isRequired={true}
           />
           <Input
             label="Réponse"
@@ -242,20 +283,23 @@ export default () => {
             value={newCard.answer || ""} // Prevents 'controlled to uncontrolled' warning
             onChange={onChange}
             className="CardFormPage__form-group"
+            isRequired={true}
           />
-          <Hint text="Cherchez une catégorie dans la liste, ou créez-en une nouvelle" />
           <CategoryInput
             categoriesWithCount={categoriesWithCount}
             newCard={newCard}
             setNewCard={setNewCard}
+            isRequired={true}
           />
 
-          {/* <Button
+          <Button
             onClick={openModal}
             customClassName="CardFormPage__modal-button"
+            variant="secondary"
+            icon={<AutoAwesomeIcon />}
           >
-            Import multiple
-          </Button> */}
+            Générer des questions
+          </Button>
 
           <Input
             label="Lien d'une image"
@@ -266,18 +310,22 @@ export default () => {
             className="CardFormPage__form-group"
             placeholder="Collez le lien d'une image"
           />
-          <ImagePaster
-            onUpload={(file) => setImage(file)}
-            shouldReset={shouldResetPaster}
-          />
-          <label className="CardFormPage__form-group">
-            Ajouter une image
-            <input type="file" onChange={onFileChange} />
-          </label>
+          {!newCard.imageLink && (
+            <ImagePaster
+              onUpload={(file) => setImage(file)}
+              shouldReset={shouldResetPaster}
+            />
+          )}
+          {!newCard.imageLink && (
+            <label className="CardFormPage__form-group">
+              Ajouter une image
+              <input type="file" onChange={onFileChange} />
+            </label>
+          )}
         </div>
         <div className="CardFormPage__footer">
           <SubmitButton
-            disabled={false}
+            disabled={!newCard.question || !newCard.answer || !newCard.category}
             className="CardFormPage__submit"
             isLoading={loading}
           >

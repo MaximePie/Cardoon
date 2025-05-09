@@ -2,16 +2,13 @@ import { useContext, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { usePost, RESOURCES } from "../../../hooks/server";
 import { PopulatedUserCard } from "../../../types/common";
-import { Mistral } from "@mistralai/mistralai";
 import Input from "../../atoms/Input/Input";
 import Button from "../../atoms/Button/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Loader from "../../atoms/Loader/Loader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { generatePrompt } from "./llmprompt";
-const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-
-const client = new Mistral({ apiKey: apiKey });
+import { generateSubquestions } from "./llmprompt";
+import { MistralResponse } from "../../pages/CardFormPage/CardFormPage";
 
 interface GeneratedSubquestionsProps {
   subquestions: { question: string; answer: string }[] | null;
@@ -92,6 +89,9 @@ interface SubQuestionsTabProps {
 }
 export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   const { post } = usePost(RESOURCES.CARDS);
+  const { asyncPost: postMistral } = usePost<MistralResponse>(
+    RESOURCES.MISTRAL
+  );
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const [subquestion, setNewSubquestion] = useState<string | undefined>();
@@ -99,6 +99,7 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   const [generatedSubquestions, setGeneratedSubquestions] = useState<
     { question: string; answer: string }[] | null
   >(null);
+
   const [isLoading, setIsLoading] = useState(false);
   const saveSubquestion = async () => {
     const formData = new FormData();
@@ -134,31 +135,46 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   ) => {
     e.preventDefault();
     setIsLoading(true);
-    const prompt = generatePrompt({
+    const prompt = generateSubquestions({
       question: newCard.question,
       answer: newCard.answer,
       category: newCard.category || "",
     });
-    const chatResponse = await client.chat.complete({
-      model: "mistral-large-latest",
-      messages: [{ role: "user", content: prompt }],
-    });
+    let response = await postMistral({ prompt });
 
-    let response =
-      chatResponse.choices?.[0]?.message?.content ?? "No content available";
-    if (typeof response === "string") {
-      const jsonStartIndex = response.indexOf("[");
-      const jsonEndIndex = response.lastIndexOf("]");
-      if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
-        response = response.substring(jsonStartIndex, jsonEndIndex + 1);
-      }
-      setGeneratedSubquestions(
-        JSON.parse(response) as { question: string; answer: string }[]
-      );
-    } else {
-      console.error("Unexpected response format:", response);
+    if (!response) {
+      openSnackbarWithMessage("Erreur lors de la génération des questions");
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    /**
+     * Response looks like this :
+     * "```json\n[\n  { \"question\": \"Quel est le nom italien pour 'cochon'?\", \"answer\": \"Maiale\" },\n  { \"question\": \"Quel est le nom italien pour 'vache'?\", \"answer\": \"Mucca\" },\n  { \"question\": \"Quel est le nom italien pour 'cheval'?\", \"answer\": \"Cavallo\" },\n  { \"question\": \"Quel est le nom italien pour 'poule'?\", \"answer\": \"Gallina\" },\n  { \"question\": \"Quel est le nom italien pour 'mouton'?\", \"answer\": \"Pecora\" },\n  { \"question\": \"Quel est le nom italien pour 'canard'?\", \"answer\": \"Anatra\" },\n  { \"question\": \"Quel est le nom italien pour 'chèvre'?\", \"answer\": \"Capra\" },\n  { \"question\": \"Quel est le nom italien pour 'oie'?\", \"answer\": \"Oca\" },\n  { \"question\": \"Quel est le nom italien pour 'âne'?\", \"answer\": \"Asino\" },\n  { \"question\": \"Quel est le nom italien pour 'lapin'?\", \"answer\": \"Coniglio\" },\n  { \"question\": \"Quel est le nom italien pour 'coq'?\", \"answer\": \"Gallo\" },\n  { \"question\": \"Quel est le nom italien pour 'taureau'?\", \"answer\": \"Toro\" },\n  { \"question\": \"Quel est le nom italien pour 'poulet'?\", \"answer\": \"Pollo\" },\n  { \"question\": \"Quel est le nom italien pour 'agneau'?\", \"answer\": \"Agnello\" },\n  { \"question\": \"Quel est le nom italien pour 'poussin'?\", \"answer\": \"Pulcino\" },\n  { \"question\": \"Quel est le nom italien pour 'veau'?\", \"answer\": \"Vitello\" },\n  { \"question\": \"Quel est le nom italien pour 'chevreau'?\", \"answer\": \"Capretto\" },\n  { \"question\": \"Quel est le nom italien pour 'jument'?\", \"answer\": \"Giumenta\" },\n  { \"question\": \"Quel est le nom italien pour 'poulain'?\", \"answer\": \"Puledro\" },\n  { \"question\": \"Quel est le nom italien pour 'brebis'?\", \"answer\": \"Pecora\" }\n]\n```"
+     */
+    const jsonResponse = response.content
+      .replace(/```json/, "")
+      .replace(/```/, "")
+      .trim();
+    try {
+      const parsedResponse = JSON.parse(jsonResponse);
+      if (!Array.isArray(parsedResponse)) {
+        throw new Error("Invalid response format");
+      }
+      const subquestions = parsedResponse.map((subquestion: any) => {
+        return {
+          question: subquestion.question,
+          answer: subquestion.answer,
+        };
+      });
+
+      setGeneratedSubquestions(subquestions);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error parsing response:", error);
+      openSnackbarWithMessage("Erreur lors de la génération des questions");
+      setIsLoading(false);
+    }
   };
 
   return (

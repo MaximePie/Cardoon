@@ -1,4 +1,5 @@
-export const generatePrompt = ({
+// Used when reviewing a card and wanting to generate subquestions
+export const generateSubquestions = ({
   question,
   answer,
   category,
@@ -13,7 +14,7 @@ export const generatePrompt = ({
     • sa réponse : ${answer}
     • une catégorie associée : ${category}
     
-    Votre tâche : générer 10 sous-questions inédites qui enrichissent l’apprentissage.
+    Votre tâche : générer 20 sous-questions inédites qui enrichissent l’apprentissage.
     
     Contraintes :
     
@@ -25,7 +26,42 @@ export const generatePrompt = ({
     4. Si "\${category}" désigne une langue, remplacez les questions par 10 mots du même champ lexical :
        { "question": "le mot", "answer": "sa traduction" }
     5. Aucune question ne doit dupliquer ni reformuler la question principale.
-    6. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.`;
+    6. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
+    7. Fais attention à ne pas générer de questions trop similaires entre elles.
+    `;
+
+  return prompt;
+};
+
+// Used to create a set of new cards based on a category (and a subcategory)
+export const makeQuestionsPrompt = ({
+  category,
+  subcategory,
+}: {
+  category: string;
+  subcategory: string;
+}) => {
+  if (category === "") {
+    return "";
+  }
+  const prompt = `Vous recevez :
+    
+        • une catégorie : ${category}
+        • une sous-catégorie : ${subcategory}
+        
+        Votre tâche : générer 20 questions inédites sur le thème de la catégorie et de la sous-catégorie.
+        
+        Contraintes :
+        
+        1. Les questions doivent être courtes, pertinentes et variées (faits, contexte historique, applications, définitions, comparaisons, etc.).
+        2. Format de sortie : une liste JSON d’objets ; chaque objet contient exactement "question" et "answer".
+         Exemple :
+         { "question": "Quel est le nom de l'auteur de Salembo?", "answer": "Gustave Flaubert" }
+        3. Aucune question ne doit dupliquer ni reformuler la question principale.
+        4. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
+        5. Si "\${category}" désigne une langue, générer 10 mots de vocabulaire de la langue demandée. Ces mots doivent être communs et utiles dans la vie quotidienne, et en rapport avec la sous-catégorie. Le format de sortie doit être "{"question": "le mot", "answer": "sa traduction" }".
+        6. Fais attention à ne pas générer de questions trop similaires entre elles.
+        `;
 
   return prompt;
 };

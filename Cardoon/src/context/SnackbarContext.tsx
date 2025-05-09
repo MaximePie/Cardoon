@@ -2,24 +2,37 @@ import { Alert, Snackbar } from "@mui/material";
 import { createContext, useState } from "react";
 
 export const SnackbarContext = createContext({
-  openSnackbarWithMessage: (message: string) => {
-    console.log(message);
+  openSnackbarWithMessage: (
+    message: string,
+    variant: "success" | "error" = "success"
+  ) => {
+    console.log(message, variant);
   },
   handleCloseSnackbar: () => {},
 });
+
+interface snackbarStatus {
+  open: boolean;
+  message: string;
+  variant: "success" | "error";
+}
 
 export const SnackbarProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [snackbarStatus, setSnackbarStatus] = useState({
+  const [snackbarStatus, setSnackbarStatus] = useState<snackbarStatus>({
     open: false,
     message: "",
+    variant: "success",
   });
 
-  const openSnackbarWithMessage = (message: string) => {
-    setSnackbarStatus({ open: true, message });
+  const openSnackbarWithMessage = (
+    message: string = "",
+    variant: "success" | "error" = "success"
+  ) => {
+    setSnackbarStatus({ open: true, message, variant });
   };
 
   const handleCloseSnackbar = () => {
@@ -38,7 +51,10 @@ export const SnackbarProvider = ({
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         sx={{ right: "auto" }}
       >
-        <Alert onClose={handleCloseSnackbar} severity="success">
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarStatus.variant || "success"}
+        >
           {snackbarStatus.message}
         </Alert>
       </Snackbar>

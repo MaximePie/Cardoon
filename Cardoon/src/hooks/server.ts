@@ -10,7 +10,7 @@ export const RESOURCES = {
   USER: "user",
   CATEGORIES: "cards/categories",
   ITEMS: "items",
-  // PLAYERS: "players",
+  MISTRAL: "mistral",
 };
 export const ACTIONS = {
   UPDATE_INTERVAL: "userCards/updateInterval",
@@ -127,5 +127,27 @@ export const usePost = <T>(resource: string) => {
     }
   };
 
-  return { data, loading, error, post };
+  const asyncPost = async (
+    payload: any,
+    contentType: "multipart/form-data" | null = null
+  ): Promise<T | undefined> => {
+    setLoading(true);
+    try {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
+        "token"
+      )}`;
+
+      if (contentType) {
+        axios.defaults.headers.post["Content-Type"] = contentType;
+      }
+      const response = await axios.post(url, payload);
+      setLoading(false);
+      return response.data;
+    } catch (err: any) {
+      setError(err.message + " " + err.response.data.errorMessage);
+      setLoading(false);
+    }
+  };
+
+  return { data, loading, error, post, asyncPost };
 };

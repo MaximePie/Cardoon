@@ -1,0 +1,15 @@
+@use "../../../../styles/variables.scss" as *;
+
+.CategoryInput {
+  &__label {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  &__required {
+    color: $danger-color;
+    font-size: 0.875rem;
+    margin-left: 0.25rem;
+  }
+}

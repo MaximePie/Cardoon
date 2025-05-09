@@ -210,8 +210,6 @@ export default () => {
       const parsedResponse = JSON.parse(jsonResponse);
       setSubQuestions(parsedResponse);
       setSubcategory("");
-
-      setIsLoading(false);
     }
 
     setIsLoading(false);

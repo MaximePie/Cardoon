@@ -8,18 +8,10 @@ import { Request, Response } from "express";
 import usersRoutes from "./api/users.js";
 import userCardsRoutes from "./api/userCards.js";
 import itemsRoutes from "./api/items.js";
+import mistralRoutes from "./api/mistral.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import { Mistral } from "@mistralai/mistralai";
-
-const apiKey = process.env.MISTRAL_API_KEY || "";
-
-if (!apiKey) {
-  console.error("MISTRAL_API_KEY is not set in the environment variables.");
-}
-
-const client = new Mistral({ apiKey: apiKey });
 
 dotenv.config();
 const app = express();
@@ -37,38 +29,8 @@ app.use((req, res, next) => {
 app.use("/api/cards", cardsRoutes);
 app.use("/api/userCards", userCardsRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api/mistral", mistralRoutes);
 app.use("/api/items", itemsRoutes);
-app.post("/api/mistral", async (req, res) => {
-  const { prompt } = req.body;
-
-  if (!prompt) {
-    res.status(400).json({ error: "Prompt is required" });
-    return;
-  }
-
-  try {
-    const chatResponse = await client.chat.complete({
-      model: "mistral-large-latest",
-      messages: [{ role: "user", content: prompt }],
-    });
-
-    let response =
-      chatResponse.choices?.[0]?.message?.content ?? "No content available";
-
-    res.json({ content: response });
-    return;
-  } catch (error: any) {
-    console.error("Mistral API Error:", error);
-    const statusCode = error.response?.status || 500;
-    const errorMessage =
-      error.response?.data?.error?.message || "Error calling Mistral API";
-    res.status(500).json({
-      error: errorMessage,
-      statusCode: statusCode,
-    });
-    return;
-  }
-});
 
 export const errorHandler = (
   err: Error,

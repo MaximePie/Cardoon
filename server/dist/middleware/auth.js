@@ -6,18 +6,17 @@ const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         res.status(401).json({ message: "Authorization header missing" });
-        const error = new Error("Authorization header missing");
-        next("Authorization header missing");
+        return;
     }
     const token = authHeader?.split(" ")[1];
     if (!token) {
         res.status(401).json({ message: "Token missing" });
-        return next("Token missing");
+        return;
     }
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
         res.status(500).json({ message: "JWT secret not configured" });
-        next("JWT secret not configured");
+        return;
     }
     try {
         if (!jwtSecret) {
@@ -26,10 +25,11 @@ const authMiddleware = (req, res, next) => {
         const decodedToken = jwt.verify(token, jwtSecret);
         req.user = decodedToken;
         next();
+        return;
     }
     catch (err) {
         res.status(401).json({ message: "Invalid token" });
-        next("Invalid token");
+        return;
     }
 };
 const router = Router();

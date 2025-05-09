@@ -1,3 +1,5 @@
+import { Hint } from "../Hint/Hint";
+
 interface InputProps {
   label: string;
   type: string;
@@ -19,12 +21,14 @@ export default ({
   name,
   placeholder,
   isRequired = false,
+  hint,
 }: InputProps) => {
   return (
     <div className={`${className || ""} Input`}>
       <label htmlFor={label}>
         {label}
         {isRequired && <span className="Input__required">*</span>}
+        {hint && <Hint text={hint} customClassName="Input__hint" />}
       </label>
       <input
         placeholder={placeholder || label || ""}

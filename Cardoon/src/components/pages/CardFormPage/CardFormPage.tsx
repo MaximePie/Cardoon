@@ -246,7 +246,7 @@ export default () => {
             {subQuestions &&
               subQuestions.map(({ question, answer }, index) => (
                 <QuestionLine
-                  key={index}
+                  key={index + question + answer}
                   question={question}
                   answer={answer}
                   category={newCard.category}

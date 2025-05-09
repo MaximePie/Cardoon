@@ -44,6 +44,7 @@ export const GameFooter = (props: GamePageProps) => {
                 console.error("setFlash function is not provided.");
               }
             }}
+            variant={isFlashModeOn ? "secondary" : "primary"}
           >
             <ElectricBoltIcon />
           </Button>
@@ -76,11 +77,6 @@ export default () => {
         )
       );
       setCategories(data.categories);
-      // console.log(
-      //   data
-      //     .filter(({ card }) => !card.imageLink && !!card.category)
-      //     .map(({ card }) => `${card.question};${card.answer};${card.category}`)
-      // );
     }
   }, [data]);
 

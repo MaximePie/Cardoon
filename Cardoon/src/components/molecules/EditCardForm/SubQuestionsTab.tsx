@@ -2,7 +2,6 @@ import { useContext, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { usePost, RESOURCES } from "../../../hooks/server";
 import { PopulatedUserCard } from "../../../types/common";
-import { Mistral } from "@mistralai/mistralai";
 import Input from "../../atoms/Input/Input";
 import Button from "../../atoms/Button/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
@@ -10,9 +9,6 @@ import Loader from "../../atoms/Loader/Loader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { generateSubquestions } from "./llmprompt";
 import { MistralResponse } from "../../pages/CardFormPage/CardFormPage";
-const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-
-const client = new Mistral({ apiKey: apiKey });
 
 interface GeneratedSubquestionsProps {
   subquestions: { question: string; answer: string }[] | null;

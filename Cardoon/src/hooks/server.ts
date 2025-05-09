@@ -141,6 +141,7 @@ export const usePost = <T>(resource: string) => {
         axios.defaults.headers.post["Content-Type"] = contentType;
       }
       const response = await axios.post(url, payload);
+      setLoading(false);
       return response.data;
     } catch (err: any) {
       setError(err.message + " " + err.response.data.errorMessage);

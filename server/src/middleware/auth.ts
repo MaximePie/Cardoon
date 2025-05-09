@@ -8,24 +8,23 @@ interface AuthenticatedRequest extends Request {
   user?: string | JwtPayload;
 }
 
-const authMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Response | void => {
+const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    return res.status(401).json({ message: "Authorization header missing" });
+    res.status(401).json({ message: "Authorization header missing" });
+    return;
   }
 
   const token = authHeader?.split(" ")[1];
   if (!token) {
-    return res.status(401).json({ message: "Token missing" });
+    res.status(401).json({ message: "Token missing" });
+    return;
   }
 
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
-    return res.status(500).json({ message: "JWT secret not configured" });
+    res.status(500).json({ message: "JWT secret not configured" });
+    return;
   }
 
   try {
@@ -34,9 +33,11 @@ const authMiddleware = (
     }
     const decodedToken = jwt.verify(token, jwtSecret);
     (req as AuthenticatedRequest).user = decodedToken;
-    return next();
+    next();
+    return;
   } catch (err) {
-    return res.status(401).json({ message: "Invalid token" });
+    res.status(401).json({ message: "Invalid token" });
+    return;
   }
 };
 const router = Router();

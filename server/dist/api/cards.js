@@ -78,7 +78,7 @@ router.post("/", authMiddleware, async (req, res) => {
             res.json({ ...createdCard.toObject(), imageLink });
         }
         catch (err) {
-            console.error(err);
+            console.error("Error creating card:", err);
             res.status(500).json({
                 errorMessage: "Error while creating card: " +
                     (err instanceof Error ? err.message : "Unknown error"),

@@ -5,6 +5,7 @@ import cardsRoutes from "./api/cards.js";
 import usersRoutes from "./api/users.js";
 import userCardsRoutes from "./api/userCards.js";
 import itemsRoutes from "./api/items.js";
+import mistralRoutes from "./api/mistral.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
@@ -24,6 +25,7 @@ app.use((req, res, next) => {
 app.use("/api/cards", cardsRoutes);
 app.use("/api/userCards", userCardsRoutes);
 app.use("/api/users", usersRoutes);
+app.use("/api/mistral", mistralRoutes);
 app.use("/api/items", itemsRoutes);
 export const errorHandler = (err, req, res, next) => {
     console.error(err.stack);

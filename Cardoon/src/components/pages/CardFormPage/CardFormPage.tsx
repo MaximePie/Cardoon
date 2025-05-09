@@ -9,11 +9,8 @@ import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { makeQuestionsPrompt } from "../../molecules/EditCardForm/llmprompt";
-import { Mistral } from "@mistralai/mistralai";
 import Loader from "../../atoms/Loader/Loader";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-const apiKey = import.meta.env.VITE_MISTRAL_API_KEY;
-const client = new Mistral({ apiKey: apiKey });
 
 interface CardFormModalProps {
   open: boolean;
@@ -87,6 +84,10 @@ export interface FetchedCategory {
   count: number;
 }
 
+export type MistralResponse = {
+  content: string;
+};
+
 /**
  * question: String
  * answer: String
@@ -94,6 +95,10 @@ export interface FetchedCategory {
  */
 export default () => {
   const { post, error, loading } = usePost(RESOURCES.CARDS);
+  const { asyncPost: postMistral } = usePost<MistralResponse>(
+    RESOURCES.MISTRAL
+  );
+
   const { data: categoriesData } = useFetch<FetchedCategory[]>(
     RESOURCES.CATEGORIES
   );
@@ -186,27 +191,30 @@ export default () => {
       subcategory: subcategory,
     });
     if (prompt !== "") {
-      const chatResponse = await client.chat.complete({
-        model: "mistral-large-latest",
-        messages: [{ role: "user", content: prompt }],
-      });
+      let response = await postMistral({ prompt });
 
-      let response =
-        chatResponse.choices?.[0]?.message?.content ?? "No content available";
-      if (typeof response === "string") {
-        const jsonStartIndex = response.indexOf("[");
-        const jsonEndIndex = response.lastIndexOf("]");
-        if (jsonStartIndex !== -1 && jsonEndIndex !== -1) {
-          response = response.substring(jsonStartIndex, jsonEndIndex + 1);
-        }
-        setSubQuestions(
-          JSON.parse(response) as { question: string; answer: string }[]
-        );
-      } else {
-        console.error("Unexpected response format:", response);
+      if (!response) {
+        openSnackbarWithMessage("Erreur lors de la génération des questions");
+        setIsLoading(false);
+        return;
       }
+
+      /**
+       * Response looks like this :
+       * "```json\n[\n  { \"question\": \"Quel est le nom italien pour 'cochon'?\", \"answer\": \"Maiale\" },\n  { \"question\": \"Quel est le nom italien pour 'vache'?\", \"answer\": \"Mucca\" },\n  { \"question\": \"Quel est le nom italien pour 'cheval'?\", \"answer\": \"Cavallo\" },\n  { \"question\": \"Quel est le nom italien pour 'poule'?\", \"answer\": \"Gallina\" },\n  { \"question\": \"Quel est le nom italien pour 'mouton'?\", \"answer\": \"Pecora\" },\n  { \"question\": \"Quel est le nom italien pour 'canard'?\", \"answer\": \"Anatra\" },\n  { \"question\": \"Quel est le nom italien pour 'chèvre'?\", \"answer\": \"Capra\" },\n  { \"question\": \"Quel est le nom italien pour 'oie'?\", \"answer\": \"Oca\" },\n  { \"question\": \"Quel est le nom italien pour 'âne'?\", \"answer\": \"Asino\" },\n  { \"question\": \"Quel est le nom italien pour 'lapin'?\", \"answer\": \"Coniglio\" },\n  { \"question\": \"Quel est le nom italien pour 'coq'?\", \"answer\": \"Gallo\" },\n  { \"question\": \"Quel est le nom italien pour 'taureau'?\", \"answer\": \"Toro\" },\n  { \"question\": \"Quel est le nom italien pour 'poulet'?\", \"answer\": \"Pollo\" },\n  { \"question\": \"Quel est le nom italien pour 'agneau'?\", \"answer\": \"Agnello\" },\n  { \"question\": \"Quel est le nom italien pour 'poussin'?\", \"answer\": \"Pulcino\" },\n  { \"question\": \"Quel est le nom italien pour 'veau'?\", \"answer\": \"Vitello\" },\n  { \"question\": \"Quel est le nom italien pour 'chevreau'?\", \"answer\": \"Capretto\" },\n  { \"question\": \"Quel est le nom italien pour 'jument'?\", \"answer\": \"Giumenta\" },\n  { \"question\": \"Quel est le nom italien pour 'poulain'?\", \"answer\": \"Puledro\" },\n  { \"question\": \"Quel est le nom italien pour 'brebis'?\", \"answer\": \"Pecora\" }\n]\n```"
+       */
+      const jsonResponse = response.content
+        .replace(/```json/, "")
+        .replace(/```/, "")
+        .trim();
+      const parsedResponse = JSON.parse(jsonResponse);
+      setSubQuestions(parsedResponse);
+      setSubcategory("");
+
       setIsLoading(false);
     }
+
+    setIsLoading(false);
   };
   return (
     <div className="CardFormPage">

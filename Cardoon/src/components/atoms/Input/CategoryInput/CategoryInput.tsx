@@ -25,10 +25,10 @@ export default ({
         <Hint text="Cherchez une catégorie dans la liste, ou créez-en une nouvelle" />
       </div>
       <Autocomplete
-        id="card-category"
+        id={`card-category-${Math.random().toString(36).slice(2)}`}
         options={categoriesWithCount || []}
         sx={{ width: 300 }}
-        renderInput={(params) => <TextField {...params} label="Catégorie" />}
+        renderInput={(params) => <TextField {...params} label={label} />}
         value={newCard.category}
         onChange={(_, newValue) => {
           if (typeof newValue === "string") {

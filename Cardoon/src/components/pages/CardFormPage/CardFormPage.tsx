@@ -243,21 +243,23 @@ export default () => {
                 value={subcategory}
               />
             </div>
-            <Button onClick={generateQuestions} disabled={!newCard.category}>
+            <Button
+              onClick={generateQuestions}
+              disabled={!newCard.category || isGenerationLoading}
+            >
               Générer
             </Button>
           </form>
           <div className="CardFormPage__modal-questions">
             {isGenerationLoading && <Loader />}
-            {subQuestions &&
-              subQuestions.map(({ question, answer }, index) => (
-                <QuestionLine
-                  key={index + question + answer}
-                  question={question}
-                  answer={answer}
-                  category={newCard.category}
-                />
-              ))}
+            {subQuestions?.map(({ question, answer }, index) => (
+              <QuestionLine
+                key={index + question + answer}
+                question={question}
+                answer={answer}
+                category={newCard.category}
+              />
+            ))}
           </div>
         </div>
       </MultiCardFormModal>

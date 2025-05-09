@@ -24,7 +24,7 @@ export const generateSubquestions = ({
        Exemple :
        { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }
     4. Si "\${category}" désigne une langue, remplacez les questions par 10 mots du même champ lexical :
-       { "question": "le mot", "answer": "sa traduction" }
+       { "question": "le mot dans la langue", "answer": "sa traduction en français" }. La question doit être courte. Exemple : Hello -> Bonjour
     5. Aucune question ne doit dupliquer ni reformuler la question principale.
     6. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
     7. Fais attention à ne pas générer de questions trop similaires entre elles.

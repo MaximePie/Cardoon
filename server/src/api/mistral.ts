@@ -2,6 +2,7 @@ import express from "express";
 import { Mistral } from "@mistralai/mistralai";
 import authMiddleware from "../middleware/auth.js";
 
+
 const router = express.Router();
 
 const apiKey = process.env.MISTRAL_API_KEY || "";

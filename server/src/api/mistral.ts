@@ -12,18 +12,33 @@ if (!apiKey) {
 
 const client = new Mistral({ apiKey: apiKey });
 
+const sanitizeInput = (input: string) => {
+  // Remove any unwanted characters or patterns
+  return input
+    .replace(/[\\'\`]/g, "")
+    .replace(/\n/g, " ")
+    .replace(/[^a-zA-Z0-9\s.,!?]/g, "");
+};
+
 router.post("/", authMiddleware, async (req, res) => {
   const { promptType } = req.body;
 
   let prompt = "";
 
+  // promptType is either "generatedQuestions" or "Subquestions"
+  if (!promptType) {
+    res.status(400).json({ error: "Prompt type is required" });
+    return;
+  }
   if (promptType === "generatedQuestions") {
     const { category, subcategory } = req.body;
+    const sanitizedCategory = sanitizeInput(category);
+    const sanitizedSubcategory = sanitizeInput(subcategory);
     prompt = `Vous recevez :
-    
-        • une catégorie : ${category}
-        • une sous-catégorie : ${subcategory}
-        
+
+        • une catégorie : ${sanitizedCategory}
+        • une sous-catégorie : ${sanitizedSubcategory}
+
         Votre tâche : générer 20 questions inédites sur le thème de la catégorie et de la sous-catégorie.
         
         Contraintes :
@@ -33,12 +48,15 @@ router.post("/", authMiddleware, async (req, res) => {
         `;
   } else if (promptType === "Subquestions") {
     const { question, answer, category } = req.body;
+    const sanitizedQuestion = sanitizeInput(question);
+    const sanitizedAnswer = sanitizeInput(answer);
+    const sanitizedCategory = sanitizeInput(category);
     prompt = `Vous recevez :
 
-    • une question principale : ${question}
-    • sa réponse : ${answer}
-    • une catégorie associée : ${category}
-    
+    • une question principale : ${sanitizedQuestion}
+    • sa réponse : ${sanitizedAnswer}
+    • une catégorie associée : ${sanitizedCategory}
+
     Votre tâche : générer 20 sous-questions inédites qui enrichissent l’apprentissage.
     
     Contraintes :
@@ -55,12 +73,6 @@ router.post("/", authMiddleware, async (req, res) => {
     6. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
     7. Fais attention à ne pas générer de questions trop similaires entre elles.
     `;
-  }
-
-  // promptType is either "generatedQuestions" or "Subquestions"
-  if (!promptType) {
-    res.status(400).json({ error: "Prompt type is required" });
-    return;
   }
 
   if (!prompt) {

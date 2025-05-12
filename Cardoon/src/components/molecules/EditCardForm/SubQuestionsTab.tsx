@@ -7,7 +7,6 @@ import Button from "../../atoms/Button/Button";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import Loader from "../../atoms/Loader/Loader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { generateSubquestions } from "./llmprompt";
 import { MistralResponse } from "../../pages/CardFormPage/CardFormPage";
 
 interface GeneratedSubquestionsProps {

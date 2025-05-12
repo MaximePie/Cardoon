@@ -135,12 +135,12 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   ) => {
     e.preventDefault();
     setIsLoading(true);
-    const prompt = generateSubquestions({
+    let response = await postMistral({
       question: newCard.question,
       answer: newCard.answer,
       category: newCard.category || "",
+      promptType: "Subquestions",
     });
-    let response = await postMistral({ prompt });
 
     if (!response) {
       openSnackbarWithMessage(

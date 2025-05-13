@@ -8,7 +8,6 @@ import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { makeQuestionsPrompt } from "../../molecules/EditCardForm/llmprompt";
 import Loader from "../../atoms/Loader/Loader";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 

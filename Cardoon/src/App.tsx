@@ -13,6 +13,8 @@ import { useContext, useEffect, useState } from "react";
 import { RESOURCES, useFetch, usePost } from "./hooks/server";
 import { Item } from "./types/common";
 
+const isDev = import.meta.env.MODE === "development";
+
 const ShopAdminPage = () => {
   const { user } = useContext(UserContext);
   const [newItem, setNewItem] = useState<Item>({
@@ -63,6 +65,10 @@ const ShopAdminPage = () => {
       },
     });
   };
+
+  if (!isDev) {
+    return <p>Cette page est réservée aux administrateurs.</p>;
+  }
 
   return (
     <div className="Admin">

@@ -85,7 +85,7 @@ router.post("/buyItem", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Error purchasing item: (users.buyItem)", error);
     res.status(500).json({
-      error: "An error occurred while processing the purchase, " + error,
+      error: "An error occurred while processing the purchase",
     });
     return;
   }

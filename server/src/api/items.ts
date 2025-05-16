@@ -114,11 +114,24 @@ router.post("/", authMiddleware, async (req, res) => {
         res.status(400).json({ msg: "Invalid image file" });
         return;
       }
-      const imageLink = await uploadImage({
-        filepath: imageFile.filepath,
-        originalFilename: imageFile.originalFilename,
-      });
-
+form.parse(req, async (err, fields, files) => {
+  if (err) {
+    console.error("Error parsing form:", err);
+    res.status(500).json({ msg: "Server error" });
+    return;
+  }
+  try {
+    // … your existing validations …
+    const imageLink = await uploadImage({
+      filepath: imageFile.filepath,
+      originalFilename: imageFile.originalFilename,
+    });
+    // … continue saving item and sending response …
+  } catch (error) {
+    console.error("Error creating item:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
       const newItem = new Item({
         name,
         description,

@@ -145,21 +145,26 @@ UserSchema.methods = {
   },
 
   buyItem: async function (itemId: ObjectId) {
-    const item = await mongoose.model<Item>("Item").findById(itemId);
-    if (!item) {
-      throw new Error("Item not found");
+    try {
+      const item = await mongoose.model<Item>("Item").findById(itemId);
+      if (!item) {
+        throw new Error("Item not found");
+      }
+      if (this.gold < item.price) {
+        throw new Error("Not enough gold");
+      }
+      this.items.push({
+        base: itemId,
+        level: 1,
+        currentCost: item.price * (item.upgradeCostMultiplier || 2),
+      });
+      this.gold -= item.price;
+      this.currentGoldMultiplier = await this.getGoldMultiplier();
+      await this.save();
+    } catch (error) {
+      console.error("Error buying item:", error);
+      throw error;
     }
-    if (this.gold < item.price) {
-      throw new Error("Not enough gold");
-    }
-    this.items.push({
-      base: itemId,
-      level: 1,
-      currentCost: item.price * (item.upgradeCostMultiplier || 2),
-    });
-    this.gold -= item.price;
-    this.currentGoldMultiplier = await this.getGoldMultiplier();
-    await this.save();
   },
 };
 

@@ -6,9 +6,6 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import authMiddleware from "../middleware/auth.js";
 
-interface FormattedUser extends IUser {
-  goldMultiplier: number;
-}
 router.get("/me", authMiddleware, async (req, res) => {
   const user = await User.findById((req as any).user.id);
   if (!user) {
@@ -18,12 +15,7 @@ router.get("/me", authMiddleware, async (req, res) => {
 
   await user.populate("items.base"); // Assuming "items.base" is a reference field in the User schema
 
-  const formattedUser = {
-    ...user.toObject(),
-    goldMultiplier: await user.getGoldMultiplier(),
-  };
-
-  res.json(formattedUser);
+  res.json(user);
 });
 
 router.post("/login", async (req, res) => {

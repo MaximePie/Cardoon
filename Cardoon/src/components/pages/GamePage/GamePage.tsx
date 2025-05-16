@@ -116,7 +116,7 @@ export default () => {
       const cardElement = document.querySelector(`[data-card-id="${id}"]`);
       if (cardElement) {
         const cardRect = cardElement.getBoundingClientRect();
-        for (let i = 0; i < user.goldMultiplier + 1; i++) {
+        for (let i = 0; i < user.currentGoldMultiplier + 1; i++) {
           setTimeout(() => {
             addCoinsAnimation(cardRect);
           }, i * 200);
@@ -124,18 +124,16 @@ export default () => {
       }
     }
     setUserCards(userCards.filter((card) => card._id !== id));
-    if (userCards.length <= 0) {
-      // We intentionally wait 2 seconds before fetching the new list to wait for the card to be
-      // updated
-      setTimeout(() => {
-        fetch();
-      }, 2000);
-    }
   };
 
   const openEditCardForm = (card: PopulatedUserCard) => {
     setEditedCard(card);
     setEditModalActiveState(true);
+  };
+
+  // Remove from the list
+  const removeCard = (id: string) => {
+    setUserCards([...userCards.filter((card) => card._id !== id)]);
   };
 
   if (!user) {
@@ -166,6 +164,7 @@ export default () => {
           close={() => setEditModalActiveState(false)}
           isOpen={isEditModalActive}
           editedCard={editedCard}
+          afterDelete={() => removeCard(editedCard._id)}
           categories={categories}
         />
       )}

@@ -16,6 +16,7 @@ interface EditCardFormProps {
   close: () => void;
   editedCard: PopulatedUserCard;
   categories: FetchedCategory[];
+  afterDelete: () => void;
 }
 
 export default ({
@@ -23,6 +24,7 @@ export default ({
   close,
   editedCard,
   categories,
+  afterDelete,
 }: EditCardFormProps) => {
   const {
     card: { question, answer, imageLink, category },
@@ -69,11 +71,13 @@ export default ({
   const handleDeleteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const confirm = window.confirm(
-      "Are you sure you want to delete this card?"
+      "Êtes-vous sûr de vouloir supprimer cette carte ?" +
+        "\nCette action est irréversible."
     );
     if (!confirm) return;
     await deleteResource(editedCard._id);
     close();
+    afterDelete();
   };
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {

@@ -20,7 +20,7 @@ const emptyUser: User = {
   gold: 0,
   role: "user",
   items: [],
-  goldMultiplier: 1,
+  currentGoldMultiplier: 1,
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -67,7 +67,7 @@ export const UserContextProvider = ({
   };
 
   const earnGold = (gold: number) => {
-    const totalGold = gold * user.goldMultiplier;
+    const totalGold = gold * user.currentGoldMultiplier;
     setUser({ ...user, gold: user.gold + totalGold });
   };
 

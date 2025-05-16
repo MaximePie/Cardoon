@@ -4,6 +4,8 @@ import Item, { Item as ItemType } from "../models/Item.js";
 import authMiddleware from "../middleware/auth.js";
 import User from "../models/User.js";
 import { ObjectId } from "mongoose";
+import { uploadImage } from "../utils/imagesManager.js";
+import { IncomingForm } from "formidable";
 
 router.get("/", authMiddleware, async (req, res) => {
   const user = await User.findById((req as any).user.id);
@@ -36,31 +38,77 @@ router.post("/", authMiddleware, async (req, res) => {
     return;
   }
   try {
-    const { name, description, price, image } = req.body;
-    const existingItem = await Item.findOne({
-      name,
-    });
-    if (existingItem) {
-      res.status(400).json({ msg: "Item already exists" });
-    }
-    if (!name || !description || !price || !image) {
-      res.status(400).json({ msg: "Please fill in all fields" });
-    }
+    const form = new IncomingForm();
+    form.parse(req, async (err, fields, files) => {
+      if (err) {
+        console.error("Error parsing form:", err);
+        res.status(400).json({ msg: "Error parsing form" });
+        return;
+      }
+      const name = fields.name?.[0] ?? null;
+      const description = fields.description?.[0] ?? null;
+      const price = fields.price?.[0] ?? null;
+      const effect =
+        (fields.effect?.[0] as unknown as { type: string; value: string }) ??
+        null;
+      console.log(fields);
+      const type = fields.type?.[0] ?? null;
+      if (!name || !description || !price || !type || !effect) {
+        res.status(400).json({ msg: "Please fill in all fields" });
+        return;
+      }
+      if (
+        type !== "head" &&
+        type !== "weapon" &&
+        type !== "armor" &&
+        type !== "accessory"
+      ) {
+        res.status(400).json({ msg: "Invalid item type" });
+        return;
+      }
 
-    const newItem = new Item({
-      name,
-      description,
-      price,
-      image,
-      effect: {
-        type: "gold",
-        value: 1,
-      },
-      type: "accessory",
+      const imageFile = Array.isArray(files.imageFile)
+        ? files.imageFile[0]
+        : files.imageFile;
+
+      const existingItem = await Item.findOne({
+        name,
+      });
+      if (existingItem) {
+        res.status(400).json({ msg: "Item already exists" });
+        return;
+      }
+
+      if (!name || !description || !price) {
+        res.status(400).json({ msg: "Please fill in all fields" });
+        return;
+      }
+
+      if (!imageFile || !imageFile.filepath || !imageFile.originalFilename) {
+        res.status(400).json({ msg: "Invalid image file" });
+        return;
+      }
+      const imageLink = await uploadImage({
+        filepath: imageFile.filepath,
+        originalFilename: imageFile.originalFilename,
+      });
+
+      const newItem = new Item({
+        name,
+        description,
+        price,
+        image: imageLink,
+        effect: {
+          type: effect.type,
+          value: effect.value,
+        },
+        type: "accessory",
+      });
+      console.log(newItem);
+      await newItem.save();
+      res.status(200).json(newItem);
+      return;
     });
-    await newItem.save();
-    res.status(200).json(newItem);
-    return;
   } catch (error) {
     console.error("Error creating item:", error);
     res.status(500).json({ msg: "Server error" });

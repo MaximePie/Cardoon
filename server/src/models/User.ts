@@ -24,6 +24,7 @@ export interface IUser extends Document {
   streak: number; // Streak of daily goals completed
   dailyGoalSize: number; // Number of good answers required to complete the daily goal
   currentDailyGoal: DailyGoal; // Current daily goal
+  currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;
@@ -248,6 +249,7 @@ UserSchema.methods.buyItem = async function (itemId: ObjectId) {
     currentCost: item.price * (item.upgradeCostMultiplier || 2),
   });
   this.gold -= item.price;
+  this.currentGoldMultiplier = await this.getGoldMultiplier();
   await this.save();
 };
 

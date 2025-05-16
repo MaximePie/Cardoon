@@ -6,7 +6,7 @@ import Item from "../../molecules/Item/Item";
 import { GameFooter } from "../GamePage/GamePage";
 
 export default () => {
-  const { user, hasItem } = useContext(UserContext);
+  const { user, hasItem, refresh } = useContext(UserContext);
 
   const { fetch, data } = useFetch<ItemType[]>(RESOURCES.ITEMS);
   const [items, setItems] = useState<ItemType[]>(data || []);
@@ -34,7 +34,7 @@ export default () => {
             key={item.base._id}
             item={item}
             type={hasItem(item.base._id) ? "UserItem" : "Item"}
-            afterPurchase={fetch}
+            afterPurchase={refresh}
           /> // Corrected to pass the current item instead of userItems
         ))}
         {unownedItems.map((item: ItemType) => (
@@ -42,7 +42,7 @@ export default () => {
             key={item._id}
             item={item}
             type="Item" // Corrected to pass the current item instead of userItems
-            afterPurchase={fetch}
+            afterPurchase={refresh}
           />
         ))}
         <GameFooter

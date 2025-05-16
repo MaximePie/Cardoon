@@ -62,26 +62,10 @@ const ShopAdminPage = () => {
     formData.append("description", newItem.description);
     formData.append("price", newItem.price.toString());
     formData.append("type", newItem.type);
-    formData.append("effect[type]", newItem.effect.type);
-    formData.append("effect[value]", newItem.effect.value.toString());
-    if (newItem.effect.type === "gold") {
-      formData.append("effect[value]", newItem.effect.value.toString());
-    }
+    formData.append("effectType", newItem.effect.type);
+    formData.append("effectValue", newItem.effect.value.toString());
 
     await post(formData);
-
-    setNewItem({
-      _id: "",
-      name: "",
-      description: "",
-      price: 0,
-      image: "",
-      type: "accessory",
-      effect: {
-        type: "gold",
-        value: 1,
-      },
-    });
   };
 
   if (!isDev) {

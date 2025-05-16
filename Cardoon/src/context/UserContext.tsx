@@ -11,6 +11,7 @@ interface UserContextType {
   earnGold: (gold: number) => void;
   removeGold: (gold: number) => void;
   hasItem: (itemId: string) => boolean;
+  refresh: () => void;
 }
 
 const emptyUser: User = {
@@ -31,6 +32,7 @@ export const UserContext = createContext<UserContextType>({
   earnGold: () => {},
   removeGold: () => {},
   hasItem: () => false,
+  refresh: () => {},
 });
 
 export const UserContextProvider = ({
@@ -55,6 +57,10 @@ export const UserContextProvider = ({
       fetch();
     }
   }, []);
+
+  const refresh = () => {
+    fetch();
+  };
 
   useEffect(() => {
     if (data) {
@@ -96,6 +102,7 @@ export const UserContextProvider = ({
         addScore,
         earnGold,
         removeGold,
+        refresh,
       }}
     >
       {children}

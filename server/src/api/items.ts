@@ -45,24 +45,37 @@ router.post("/", authMiddleware, async (req, res) => {
         res.status(400).json({ msg: "Error parsing form" });
         return;
       }
-      const name = fields.name?.[0] ?? null;
-      const description = fields.description?.[0] ?? null;
-      const price = fields.price?.[0] ?? null;
-      const effect =
-        (fields.effect?.[0] as unknown as { type: string; value: string }) ??
-        null;
-      console.log(fields);
-      const type = fields.type?.[0] ?? null;
-      if (!name || !description || !price || !type || !effect) {
-        res.status(400).json({ msg: "Please fill in all fields" });
+
+      const requiredFields = [
+        "name",
+        "description",
+        "price",
+        "type",
+        "effectValue",
+        "effectType",
+      ];
+
+      const data = Object.fromEntries(
+        requiredFields.map((k) => [k, fields[k]?.[0] ?? null])
+      );
+
+      const missing = requiredFields.find((k) => !data[k]);
+      if (missing) {
+        res.status(400).json({ msg: `Missing field: ${missing}` });
         return;
       }
-      if (
-        type !== "head" &&
-        type !== "weapon" &&
-        type !== "armor" &&
-        type !== "accessory"
-      ) {
+      const { name, description, price, type, effectValue, effectType } =
+        data as {
+          name: string;
+          description: string;
+          price: string;
+          type: string;
+          effectValue: string;
+          effectType: string;
+        };
+
+      const validTypes = ["head", "weapon", "armor", "accessory"];
+      if (!validTypes.includes(type)) {
         res.status(400).json({ msg: "Invalid item type" });
         return;
       }
@@ -99,8 +112,8 @@ router.post("/", authMiddleware, async (req, res) => {
         price,
         image: imageLink,
         effect: {
-          type: effect.type,
-          value: effect.value,
+          type: effectType,
+          value: effectValue,
         },
         type: "accessory",
       });

@@ -55,7 +55,7 @@ export const GameFooter = (props: GamePageProps) => {
 };
 
 export default () => {
-  const { data, loading, fetch, error } = useFetch<{
+  const { data, loading, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);

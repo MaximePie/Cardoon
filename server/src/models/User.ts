@@ -24,6 +24,7 @@ export interface IUser extends Document {
   streak: number; // Streak of daily goals completed
   dailyGoalSize: number; // Number of good answers required to complete the daily goal
   currentDailyGoal: DailyGoal; // Current daily goal
+  currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;
@@ -81,6 +82,10 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: Number,
     default: 0,
   },
+  currentGoldMultiplier: {
+    type: Number,
+    default: 1,
+  },
   items: [
     {
       base: {
@@ -134,8 +139,32 @@ UserSchema.methods = {
     userItem.level += 1;
     this.gold -= userItem.currentCost;
     userItem.currentCost *= item.upgradeCostMultiplier || 2;
+    this.currentGoldMultiplier = await this.getGoldMultiplier();
     await this.save();
     return userItem;
+  },
+
+  buyItem: async function (itemId: ObjectId) {
+    try {
+      const item = await mongoose.model<Item>("Item").findById(itemId);
+      if (!item) {
+        throw new Error("Item not found");
+      }
+      if (this.gold < item.price) {
+        throw new Error("Not enough gold");
+      }
+      this.items.push({
+        base: itemId,
+        level: 1,
+        currentCost: item.price * (item.upgradeCostMultiplier || 2),
+      });
+      this.gold -= item.price;
+      this.currentGoldMultiplier = await this.getGoldMultiplier();
+      await this.save();
+    } catch (error) {
+      console.error("Error buying item:", error);
+      throw error;
+    }
   },
 };
 
@@ -231,23 +260,6 @@ UserSchema.methods.earnGold = async function (gold: number) {
     0
   );
   this.gold += gold + goldEffect;
-  await this.save();
-};
-
-UserSchema.methods.buyItem = async function (itemId: ObjectId) {
-  const item = await mongoose.model<Item>("Item").findById(itemId);
-  if (!item) {
-    throw new Error("Item not found");
-  }
-  if (this.gold < item.price) {
-    throw new Error("Not enough gold");
-  }
-  this.items.push({
-    base: itemId,
-    level: 1,
-    currentCost: item.price * (item.upgradeCostMultiplier || 2),
-  });
-  this.gold -= item.price;
   await this.save();
 };
 

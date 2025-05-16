@@ -19,17 +19,20 @@ const ShopAdminPage = () => {
   const { user } = useContext(UserContext);
   const [newItem, setNewItem] = useState<Item>({
     _id: "",
-    name: "Lunettes d'intello",
-    description: "Pour vous faire gagner plus de gold",
-    price: 100,
+    name: "Calculette Wish",
+    description: "Plus de gold, mais... êtes-vous sûr qu'elle fonctionne ?",
+    price: 500,
     image:
       "https://www.lissac.fr/media/catalog/product/0/3/03663234078213_ASH1907_NOIR_FACE_9131.png",
-    type: "accessory",
+    type: "weapon",
     effect: {
       type: "gold",
-      value: 1,
+      value: 5,
     },
   });
+  const [itemImageFile, setItemImageFile] = useState<File | string | null>(
+    null
+  );
   const { fetch, data } = useFetch<Item[]>(RESOURCES.ITEMS);
   const { post } = usePost<Item>(RESOURCES.ITEMS);
   const [items, setItems] = useState<Item[]>(data || []);
@@ -50,20 +53,19 @@ const ShopAdminPage = () => {
 
   const saveItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    await post(newItem);
+    const formData = new FormData();
+    if (itemImageFile) {
+      formData.append("imageFile", itemImageFile);
+    }
+    formData.append("image", newItem.image);
+    formData.append("name", newItem.name);
+    formData.append("description", newItem.description);
+    formData.append("price", newItem.price.toString());
+    formData.append("type", newItem.type);
+    formData.append("effectType", newItem.effect.type);
+    formData.append("effectValue", newItem.effect.value.toString());
 
-    setNewItem({
-      _id: "",
-      name: "",
-      description: "",
-      price: 0,
-      image: "",
-      type: "accessory",
-      effect: {
-        type: "gold",
-        value: 1,
-      },
-    });
+    await post(formData);
   };
 
   if (!isDev) {
@@ -103,6 +105,15 @@ const ShopAdminPage = () => {
           placeholder="Image de l'objet (URL)"
           value={newItem.image}
           onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              setItemImageFile(e.target.files[0]);
+            }
+          }}
         />
         <select
           value={newItem.type}

@@ -40,5 +40,5 @@ export interface User {
   role: "admin" | "user";
   gold: number;
   items: UserItem[];
-  goldMultiplier: number;
+  currentGoldMultiplier: number;
 }

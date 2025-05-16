@@ -115,7 +115,7 @@ router.post("/", authMiddleware, async (req, res) => {
           type: effectType,
           value: effectValue,
         },
-        type: "accessory",
+        type,
       });
       console.log(newItem);
       await newItem.save();

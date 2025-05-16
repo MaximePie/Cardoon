@@ -64,15 +64,28 @@ router.post("/", authMiddleware, async (req, res) => {
         res.status(400).json({ msg: `Missing field: ${missing}` });
         return;
       }
-      const { name, description, price, type, effectValue, effectType } =
-        data as {
-          name: string;
-          description: string;
-          price: string;
-          type: string;
-          effectValue: string;
-          effectType: string;
-        };
+      const {
+        name,
+        description,
+        price: priceRaw,
+        type,
+        effectValue: effectValueRaw,
+        effectType,
+      } = data as {
+        name: string;
+        description: string;
+        priceRaw: string;
+        type: string;
+        effectValueRaw: string;
+        effectType: string;
+      };
+
+      const price = Number(priceRaw);
+      const effectValue = Number(effectValueRaw);
+      if (Number.isNaN(price) || Number.isNaN(effectValue)) {
+        res.status(400).json({ msg: "Price and effectValue must be numbers" });
+        return;
+      }
 
       const validTypes = ["head", "weapon", "armor", "accessory"];
       if (!validTypes.includes(type)) {

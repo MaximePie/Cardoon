@@ -21,7 +21,6 @@ export default () => {
     }
   }, [data]);
 
-  console.log("User Items", user.items);
   const userItems: UserItem[] = user.items
     .map((userItem) => {
       const baseItem = items.find(

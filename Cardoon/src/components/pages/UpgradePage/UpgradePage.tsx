@@ -21,10 +21,20 @@ export default () => {
     }
   }, [data]);
 
-  const userItems: UserItem[] = user.items.map((item) => ({
-    ...item,
-    base: items.find((baseItem) => baseItem._id === item.base._id) || item.base,
-  }));
+  console.log("User Items", user.items);
+  const userItems: UserItem[] = user.items
+    .map((userItem) => {
+      const baseItem = items.find(
+        (baseItem) => baseItem._id === userItem.base._id
+      );
+      if (!baseItem) return null;
+      return {
+        ...userItem,
+        base: baseItem,
+      };
+    })
+    .filter((item): item is UserItem => item !== null);
+  console.log("User Items with base", userItems);
   const unownedItems: ItemType[] = items.filter((item) => !hasItem(item._id));
   return (
     <div className="Page ShopPage">

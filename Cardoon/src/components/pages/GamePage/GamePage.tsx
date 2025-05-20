@@ -80,8 +80,6 @@ export default () => {
     }
   }, [data]);
 
-  if (loading) return <Loader />;
-
   // BLACK MAGIC
   const addCoinsAnimation = (cardRect: DOMRect) => {
     const footerElement = document.querySelector("#GamePage__footer__coins");
@@ -135,6 +133,13 @@ export default () => {
   const removeCard = (id: string) => {
     setUserCards([...userCards.filter((card) => card._id !== id)]);
   };
+
+  if (loading)
+    return (
+      <div className="GamePage__loader">
+        <Loader />
+      </div>
+    );
 
   if (!user) {
     return (

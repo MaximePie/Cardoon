@@ -3,7 +3,6 @@ import { UserContext } from "../../../context/UserContext";
 import { Link } from "react-router-dom";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import NorthIcon from "@mui/icons-material/North";
-import StarIcon from "@mui/icons-material/Star";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddIcon from "@mui/icons-material/Add";
 interface NavbarLink {
@@ -18,7 +17,7 @@ export default () => {
   const links: NavbarLink[] = [
     { to: "/", label: "Entraînement", icon: <SportsEsportsIcon /> },
     { to: "/shop", label: "Amélioration", icon: <NorthIcon /> },
-    { to: "/boss", label: "Boss", icon: <StarIcon /> },
+    // { to: "/boss", label: "Boss", icon: <StarIcon /> },
     { to: "/add-card", label: "Ajouter une carte", icon: <AddIcon /> },
   ];
 

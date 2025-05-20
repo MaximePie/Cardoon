@@ -64,21 +64,15 @@ router.post("/", authMiddleware, async (req, res) => {
         res.status(400).json({ msg: `Missing field: ${missing}` });
         return;
       }
-      const {
-        name,
-        description,
-        price: priceRaw,
-        type,
-        effectValue: effectValueRaw,
-        effectType,
-      } = data as {
-        name: string;
-        description: string;
-        priceRaw: string;
-        type: string;
-        effectValueRaw: string;
-        effectType: string;
-      };
+      const { name, description, priceRaw, type, effectValueRaw, effectType } =
+        data as {
+          name: string;
+          description: string;
+          priceRaw: string;
+          type: string;
+          effectValueRaw: string;
+          effectType: string;
+        };
 
       const price = Number(priceRaw);
       const effectValue = Number(effectValueRaw);
@@ -114,29 +108,15 @@ router.post("/", authMiddleware, async (req, res) => {
         res.status(400).json({ msg: "Invalid image file" });
         return;
       }
-const imageLink = await uploadImage({
-  filepath: imageFile.filepath,
-  originalFilename: imageFile.originalFilename,
-});
+      const imageLink = await uploadImage({
+        filepath: imageFile.filepath,
+        originalFilename: imageFile.originalFilename,
+      });
 
-const newItem = new Item({
-  name,
-  description,
-  price,
-  image: imageLink,
-  effect: {
-    type: effectType,
-    value: effectValue,
-  },
-  type,
-});
-console.log(newItem);
-await newItem.save();
-res.status(200).json(newItem);
       const newItem = new Item({
         name,
         description,
-        price,
+        price: priceRaw,
         image: imageLink,
         effect: {
           type: effectType,
@@ -144,10 +124,8 @@ res.status(200).json(newItem);
         },
         type,
       });
-      console.log(newItem);
       await newItem.save();
       res.status(200).json(newItem);
-      return;
     });
   } catch (error) {
     console.error("Error creating item:", error);

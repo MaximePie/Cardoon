@@ -1,10 +1,10 @@
 import Card from "../../molecules/Card/Card";
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
-import { RESOURCES, useFetch } from "../../../hooks/server";
+import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../context/UserContext";
-import { PopulatedUserCard } from "../../../types/common";
+import { PopulatedUserCard, User } from "../../../types/common";
 import { Link } from "react-router-dom";
 import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { FetchedCategory } from "../CardFormPage/CardFormPage";
@@ -22,6 +22,10 @@ export const GameFooter = (props: GamePageProps) => {
   const { user } = useContext(UserContext);
   const { setFlash, isFlashModeOn, currentPage } = props;
 
+  useEffect(() => {
+    console.log("User changed", user);
+  }, [user]);
+
   return (
     <div className="GamePage__footer">
       <span className="GamePage__footer__element">
@@ -32,6 +36,10 @@ export const GameFooter = (props: GamePageProps) => {
           id="GamePage__footer__coins"
         />{" "}
         {user.gold || 0}
+      </span>
+      <span className="GamePage__footer__element">
+        {user.currentDailyGoal?.progress || 0} /{" "}
+        {user.currentDailyGoal?.target || 0}
       </span>
       {currentPage !== "shop" && (
         <span className="GamePage__footer__element">
@@ -53,13 +61,16 @@ export const GameFooter = (props: GamePageProps) => {
     </div>
   );
 };
-
+interface PutResult {
+  user: User;
+  userCard: PopulatedUserCard;
+}
 export default () => {
   const { data, loading, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );
@@ -68,6 +79,28 @@ export default () => {
   const [categories, setCategories] = useState<FetchedCategory[]>([]);
 
   const [flash, setFlash] = useState(false);
+  const { put, data: updateCardResponse } = usePut<PutResult>(
+    ACTIONS.UPDATE_INTERVAL
+  );
+
+  if (data) {
+    console.log("DATA", data);
+  }
+
+  useEffect(() => {
+    if (updateCardResponse) {
+      setUser(updateCardResponse.user);
+      console.log("User updated", updateCardResponse.user);
+      if (
+        updateCardResponse.user.currentDailyGoal.target ===
+        updateCardResponse.user.currentDailyGoal.progress
+      ) {
+        alert(
+          "Bravo ! Vous avez atteint votre objectif quotidien. Vous avez gagné 1 pièce d'or !"
+        );
+      }
+    }
+  }, [updateCardResponse]);
 
   useEffect(() => {
     if (data) {
@@ -108,6 +141,9 @@ export default () => {
   };
 
   const onUpdate = async (id: string, isCorrect: boolean) => {
+    put(id, {
+      isCorrectAnswer: isCorrect,
+    });
     // Remove the card from the list
     if (isCorrect) {
       // Coin animation

@@ -8,12 +8,15 @@ import authMiddleware from "../middleware/auth.js";
 
 router.get("/me", authMiddleware, async (req, res) => {
   const user = await User.findById((req as any).user.id);
+
   if (!user) {
     res.status(404).json({ error: "User not found" });
     return;
   }
+  await user.createDailyGoal(10, new Date());
 
   await user.populate("items.base"); // Assuming "items.base" is a reference field in the User schema
+  await user.populate("currentDailyGoal");
 
   res.json(user);
 });

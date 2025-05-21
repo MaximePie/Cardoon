@@ -41,4 +41,8 @@ export interface User {
   gold: number;
   items: UserItem[];
   currentGoldMultiplier: number;
+  currentDailyGoal: {
+    target: number;
+    progress: number;
+  };
 }

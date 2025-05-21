@@ -38,10 +38,6 @@ interface CardProps {
   isFlashModeOn: boolean;
 }
 
-interface PutResult {
-  user: User;
-  userCard: PopulatedUserCard;
-}
 export default ({
   card,
   onUpdate: onAnswer,
@@ -55,15 +51,8 @@ export default ({
   } = card;
   const [isRecto, flipCard] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { put, data } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
-  const { setUser, addScore, earnGold } = useContext(UserContext);
+  const { addScore, earnGold } = useContext(UserContext);
   const [isFlipping, setIsFlipping] = useState(false);
-
-  useEffect(() => {
-    if (data) {
-      setUser(data.user);
-    }
-  }, [data]);
 
   const cardClassNames = classNames("Card", {
     "Card--verso": !isRecto,
@@ -95,14 +84,12 @@ export default ({
     if (event) {
       event.preventDefault();
     }
-    put(userCardId, { isCorrectAnswer: true });
     onAnswer(userCardId, true);
     addScore(card.interval);
     earnGold(1);
   };
 
   const fail = () => {
-    put(userCardId, { isCorrectAnswer: false });
     onAnswer(userCardId, false);
   };
 

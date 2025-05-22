@@ -184,25 +184,26 @@ UserSchema.methods = {
     const endOfDay = new Date(date);
     endOfDay.setHours(23, 59, 59, 999);
 
-    // Check if a daily goal already exists for the given date and user
-    const existingGoal = await DailyGoal.findOne({
-      userId: this._id,
-      date: { $gte: startOfDay, $lte: endOfDay },
-    });
-    if (existingGoal) {
-      return "Daily goal already exists";
-    }
-    const dailyGoal = await DailyGoal.create({
-      userId: this._id,
-      target,
-      date,
-      progress: 0,
-      status: "PENDING",
-      closedAt: null,
-    });
+    // Upsert (find or create) a daily goal for the given date and user
+    const dailyGoal = await DailyGoal.findOneAndUpdate(
+      {
+        userId: this._id,
+        date: { $gte: startOfDay, $lte: endOfDay },
+      },
+      {
+        $setOnInsert: {
+          userId: this._id,
+          target,
+          date,
+          progress: 0,
+          status: "PENDING",
+          closedAt: null,
+        },
+      },
+      { new: true, upsert: true }
+    );
 
     this.currentDailyGoal = dailyGoal._id;
-    this.dailyGoalSize = target;
     await this.save();
     return dailyGoal;
   },

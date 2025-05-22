@@ -1,5 +1,4 @@
 import Card from "../../molecules/Card/Card";
-import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
 import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
 import { useContext, useState, useEffect } from "react";
@@ -11,56 +10,8 @@ import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
-import Button from "../../atoms/Button/Button";
+import { GameFooter } from "../../Footer/Footer";
 
-interface GamePageProps {
-  setFlash?: (flash: boolean) => void;
-  isFlashModeOn?: boolean;
-  currentPage: "shop" | "game";
-}
-export const GameFooter = (props: GamePageProps) => {
-  const { user } = useContext(UserContext);
-  const { setFlash, isFlashModeOn, currentPage } = props;
-
-  useEffect(() => {
-    console.log("User changed", user);
-  }, [user]);
-
-  return (
-    <div className="GamePage__footer">
-      <span className="GamePage__footer__element">
-        <img
-          className="GamePage__icon"
-          src={goldIcon}
-          alt="Gold"
-          id="GamePage__footer__coins"
-        />{" "}
-        {user.gold || 0}
-      </span>
-      <span className="GamePage__footer__element">
-        {user.currentDailyGoal?.progress || 0} /{" "}
-        {user.currentDailyGoal?.target || 0}
-      </span>
-      {currentPage !== "shop" && (
-        <span className="GamePage__footer__element">
-          <Button
-            customClassName="GamePage__footer__flashmode"
-            onClick={() => {
-              if (setFlash) {
-                setFlash(!isFlashModeOn);
-              } else {
-                console.error("setFlash function is not provided.");
-              }
-            }}
-            variant={isFlashModeOn ? "secondary" : "primary"}
-          >
-            <ElectricBoltIcon />
-          </Button>
-        </span>
-      )}
-    </div>
-  );
-};
 interface PutResult {
   user: User;
   userCard: PopulatedUserCard;
@@ -82,11 +33,6 @@ export default () => {
   const { put, data: updateCardResponse } = usePut<PutResult>(
     ACTIONS.UPDATE_INTERVAL
   );
-
-  if (data) {
-    console.log("DATA", data);
-  }
-
   useEffect(() => {
     if (updateCardResponse) {
       setUser(updateCardResponse.user);

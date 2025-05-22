@@ -3,7 +3,7 @@ import { UserContext } from "../../../context/UserContext";
 import { useFetch, RESOURCES } from "../../../hooks/server";
 import { Item as ItemType, UserItem } from "../../../types/common";
 import Item from "../../molecules/Item/Item";
-import { GameFooter } from "../GamePage/GamePage";
+import { GameFooter } from "../../Footer/Footer";
 
 export default () => {
   const { user, hasItem, refresh } = useContext(UserContext);

@@ -45,5 +45,6 @@ export interface User {
   currentDailyGoal: {
     target: number;
     progress: number;
+    closedAt: string;
   };
 }

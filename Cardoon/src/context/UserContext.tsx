@@ -25,6 +25,7 @@ const emptyUser: User = {
   currentDailyGoal: {
     target: 0,
     progress: 0,
+    closedAt: "",
   },
   streak: 0,
 };

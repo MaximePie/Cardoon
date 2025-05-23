@@ -1,8 +1,11 @@
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import Button from "../../atoms/Button/Button";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/UserContext";
 import goldIcon from "../../../images/coin.png";
+import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useWindowSize } from "@uidotdev/usehooks";
+import { ConfettiContext } from "../../../App";
 
 interface GameFooterProps {
   setFlash?: (flash: boolean) => void;
@@ -17,6 +20,30 @@ export const DailyGoalProgressBar = ({
   progress: number;
   target: number;
 }) => {
+  const { openSnackbarWithMessage } = useContext(SnackbarContext);
+  const { showConfetti } = useContext(ConfettiContext);
+  const { user, setUser } = useContext(UserContext);
+
+  useEffect(() => {
+    const todayDateString = new Date().toISOString().split("T")[0];
+    const isAlreadyCompletedToday =
+      user.currentDailyGoal &&
+      user.currentDailyGoal.closedAt.split("T")[0] === todayDateString;
+    console.log(user.currentDailyGoal.closedAt.split("T")[0]);
+    console.log(todayDateString);
+    if (progress >= target && !isAlreadyCompletedToday) {
+      showConfetti();
+      const questReward = user.currentGoldMultiplier * 100 * user.streak;
+      openSnackbarWithMessage(
+        `Bravo ! Vous avez atteint votre objectif quotidien. Vous avez gagné ${questReward} pièces d'or !`
+      );
+      setUser({
+        ...user,
+        gold: user.gold + questReward,
+      });
+    }
+  }, [progress, target]);
+
   const progressPercentage = (progress / target) * 100;
   const fillClassName = `Footer__progress-bar__fill ${
     progressPercentage >= 100 ? "Footer__progress-bar__fill--completed" : ""

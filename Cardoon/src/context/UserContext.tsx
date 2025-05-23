@@ -26,6 +26,7 @@ const emptyUser: User = {
     target: 0,
     progress: 0,
   },
+  streak: 0,
 };
 
 export const UserContext = createContext<UserContextType>({

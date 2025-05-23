@@ -40,9 +40,11 @@ export default () => {
         updateCardResponse.user.currentDailyGoal.target ===
         updateCardResponse.user.currentDailyGoal.progress
       ) {
-        alert(
-          "Bravo ! Vous avez atteint votre objectif quotidien. Vous avez gagné 1 pièce d'or !"
-        );
+        const questReward = user.currentGoldMultiplier * 100 * user.streak;
+        setUser({
+          ...user,
+          gold: user.gold + questReward,
+        });
       }
     }
   }, [updateCardResponse]);

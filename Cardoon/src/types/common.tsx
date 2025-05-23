@@ -34,6 +34,7 @@ export type Item = {
 };
 
 export interface User {
+  streak: number;
   _id: string;
   username: string;
   score: number;

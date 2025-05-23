@@ -218,9 +218,19 @@ UserSchema.methods = {
       throw new Error("Daily goal not found");
     }
     dailyGoal.progress += increment;
-    if (dailyGoal.progress === dailyGoal.target) {
+    if (
+      dailyGoal.progress === dailyGoal.target &&
+      dailyGoal.status !== "COMPLETED"
+    ) {
       dailyGoal.status = "COMPLETED";
       dailyGoal.closedAt = new Date();
+
+      const currentGoldMultiplier = await this.getGoldMultiplier();
+      this.streak += 1;
+      const goldReward = 100 * currentGoldMultiplier * this.streak;
+      this.gold += goldReward;
+
+      await this.save();
     }
     await dailyGoal.save();
   },

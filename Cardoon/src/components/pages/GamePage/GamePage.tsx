@@ -60,9 +60,8 @@ export default () => {
     }
   }, [data]);
 
-  // BLACK MAGIC
   const addCoinsAnimation = (cardRect: DOMRect) => {
-    const footerElement = document.querySelector("#GamePage__footer__coins");
+    const footerElement = document.querySelector("#Footer__coins");
 
     if (footerElement) {
       const footerRect = footerElement.getBoundingClientRect();

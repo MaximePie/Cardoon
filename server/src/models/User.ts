@@ -320,18 +320,7 @@ UserSchema.methods.spendGold = async function (gold: number) {
 
 UserSchema.methods.earnGold = async function (gold: number) {
   await this.populate("items.base");
-  const goldEffect = this.items.reduce(
-    (acc: number, item: PopulatedUserItem) => {
-      return (
-        acc +
-        (item.base.effect?.type === "gold"
-          ? item.base.effect?.value * item.level || 0
-          : 0)
-      );
-    },
-    0
-  );
-  this.gold += gold + goldEffect;
+  this.gold += await this.currentGoldMultiplier;
   await this.save();
 };
 

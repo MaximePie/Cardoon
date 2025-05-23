@@ -27,10 +27,8 @@ export const DailyGoalProgressBar = ({
   useEffect(() => {
     const todayDateString = new Date().toISOString().split("T")[0];
     const isAlreadyCompletedToday =
-      user.currentDailyGoal &&
-      user.currentDailyGoal.closedAt.split("T")[0] === todayDateString;
-    console.log(user.currentDailyGoal.closedAt.split("T")[0]);
-    console.log(todayDateString);
+      user.currentDailyGoal.closedAt &&
+      user.currentDailyGoal?.closedAt.split("T")[0] === todayDateString;
     if (progress >= target && !isAlreadyCompletedToday) {
       showConfetti();
       const questReward = user.currentGoldMultiplier * 100 * user.streak;

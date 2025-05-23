@@ -10,7 +10,7 @@ import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
-import { GameFooter } from "../../Footer/Footer";
+import { GameFooter } from "../../molecules/Footer/Footer";
 
 interface PutResult {
   user: User;
@@ -36,7 +36,6 @@ export default () => {
   useEffect(() => {
     if (updateCardResponse) {
       setUser(updateCardResponse.user);
-      console.log("User updated", updateCardResponse.user);
       if (
         updateCardResponse.user.currentDailyGoal.target ===
         updateCardResponse.user.currentDailyGoal.progress

@@ -1,8 +1,8 @@
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
-import Button from "../atoms/Button/Button";
+import Button from "../../atoms/Button/Button";
 import { useContext } from "react";
-import { UserContext } from "../../context/UserContext";
-import goldIcon from "../../images/coin.png";
+import { UserContext } from "../../../context/UserContext";
+import goldIcon from "../../../images/coin.png";
 
 interface GameFooterProps {
   setFlash?: (flash: boolean) => void;
@@ -18,18 +18,14 @@ export const DailyGoalProgressBar = ({
   target: number;
 }) => {
   const progressPercentage = (progress / target) * 100;
-  const fillClassName = `GamePage__footer__progress-bar__fill ${
-    progressPercentage >= 100
-      ? "GamePage__footer__progress-bar__fill--completed"
-      : ""
+  const fillClassName = `Footer__progress-bar__fill ${
+    progressPercentage >= 100 ? "Footer__progress-bar__fill--completed" : ""
   }`;
   return (
     <>
-      <span className="GamePage__footer__progress-bar__title">
-        Objectif quotidien
-      </span>
-      <div className="GamePage__footer__progress-bar">
-        <span className="GamePage__footer__progress-bar__text">
+      <span className="Footer__progress-bar__title">Objectif quotidien</span>
+      <div className="Footer__progress-bar">
+        <span className="Footer__progress-bar__text">
           {progress} / {target}
         </span>
         <div
@@ -45,18 +41,18 @@ export const GameFooter = (props: GameFooterProps) => {
   const { user } = useContext(UserContext);
   const { setFlash, isFlashModeOn, currentPage } = props;
   return (
-    <div className="GamePage__footer">
-      <span className="GamePage__footer__element">
+    <div className="Footer">
+      <span className="Footer__element">
         <img
           className="GamePage__icon"
           src={goldIcon}
           alt="Gold"
-          id="GamePage__footer__coins"
+          id="Footer__coins"
         />{" "}
         {user.gold || 0}
       </span>
       {user.currentDailyGoal && (
-        <span className="GamePage__footer__element">
+        <span className="Footer__element">
           <DailyGoalProgressBar
             progress={user.currentDailyGoal.progress}
             target={user.currentDailyGoal.target}
@@ -64,9 +60,9 @@ export const GameFooter = (props: GameFooterProps) => {
         </span>
       )}
       {currentPage !== "shop" && (
-        <span className="GamePage__footer__element">
+        <span className="Footer__element">
           <Button
-            customClassName="GamePage__footer__flashmode"
+            customClassName="Footer__flashmode"
             onClick={() => {
               if (setFlash) {
                 setFlash(!isFlashModeOn);

@@ -14,6 +14,7 @@
 @use "../components/molecules/EditCardForm/EditCardForm" as EditCardForm;
 @use "../components/molecules/Item/Item" as Item;
 @use "../components/molecules/Navbar/Navbar" as Navbar;
+@use "../components/molecules/Footer/Footer" as Footer;
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&family=Roboto+Slab:wght@300;400&display=swap");
 /* Reset some default styles */
 body,

@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import { PopulatedUserCard, User } from "../../../types/common";
+import { useContext, useState } from "react";
+import { PopulatedUserCard } from "../../../types/common";
 import classNames from "classnames";
-import { ACTIONS, usePut } from "../../../hooks/server";
 import { UserContext } from "../../../context/UserContext";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";

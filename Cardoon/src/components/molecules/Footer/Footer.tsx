@@ -1,10 +1,9 @@
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import Button from "../../atoms/Button/Button";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "../../../context/UserContext";
 import goldIcon from "../../../images/coin.png";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { useWindowSize } from "@uidotdev/usehooks";
 import { ConfettiContext } from "../../../App";
 
 interface GameFooterProps {
@@ -51,7 +50,7 @@ export const DailyGoalProgressBar = ({
       <span className="Footer__progress-bar__title">Objectif quotidien</span>
       <div className="Footer__progress-bar">
         <span className="Footer__progress-bar__text">
-          {progress} / {target}
+          {progress > target ? target : progress} / {target}
         </span>
         <div
           className={fillClassName}

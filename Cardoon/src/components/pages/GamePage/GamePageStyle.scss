@@ -32,36 +32,6 @@
       right: 1rem;
     }
   }
-
-  &__footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.5rem 2rem;
-    background-color: #f8f9fa;
-    border-top: 1px solid #dee2e6;
-
-    &__element {
-      display: flex;
-      align-items: center;
-      font-size: 1.2rem;
-      color: #343a40;
-    }
-
-    .GamePage__icon {
-      width: 24px;
-      height: 24px;
-      margin-right: 0.25rem;
-    }
-
-    &__flashmode {
-      margin: 0 !important;
-    }
-  }
 }
 .floating-coin {
   width: 24px;

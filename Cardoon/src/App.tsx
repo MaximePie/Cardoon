@@ -9,9 +9,10 @@ import BossPage from "./components/pages/BossPage/BossPage";
 import { SnackbarProvider } from "./context/SnackbarContext";
 import { UserContext, UserContextProvider } from "./context/UserContext";
 import Navbar from "./components/molecules/Navbar/Navbar";
-import { useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { RESOURCES, useFetch, usePost } from "./hooks/server";
 import { Item } from "./types/common";
+import Confetti from "react-confetti";
 
 const isDev = import.meta.env.MODE === "development";
 
@@ -153,26 +154,78 @@ const ShopAdminPage = () => {
     </div>
   );
 };
+export const ConfettiContext = createContext({
+  isConfettiVisible: false,
+  showConfetti: () => {},
+});
+export const ConfettiProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [isConfettiVisible, setConfettiVisibility] = useState(false);
+  const [width, setWidth] = useState(window.innerWidth);
+  const [height, setHeight] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+      setHeight(window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isConfettiVisible) {
+      const timeout = setTimeout(() => setConfettiVisibility(false), 10000);
+      return () => clearTimeout(timeout);
+    }
+  }, [isConfettiVisible]);
+
+  const showConfetti = () => {
+    setConfettiVisibility(true);
+  };
+
+  return (
+    <ConfettiContext.Provider value={{ isConfettiVisible, showConfetti }}>
+      {children}
+      {isConfettiVisible && (
+        <Confetti
+          width={width}
+          height={height}
+          numberOfPieces={100}
+          recycle={false}
+        />
+      )}
+    </ConfettiContext.Provider>
+  );
+};
 
 const App = () => {
   return (
     <UserContextProvider>
-      <SnackbarProvider>
-        <Router>
-          <Navbar />
-          <div className="Page">
-            <Routes>
-              <Route path="/login" Component={LoginPage} />
-              <Route path="/" Component={GamePage} />
-              <Route path="/shop" Component={ShopPage} />
-              <Route path="/boss" Component={BossPage} />
-              <Route path="/add-card" Component={CardForm} />
-              <Route path="/register" Component={RegisterPage} />
-              <Route path="/ashop" Component={ShopAdminPage} />
-            </Routes>
-          </div>
-        </Router>
-      </SnackbarProvider>
+      <ConfettiProvider>
+        <SnackbarProvider>
+          <Router>
+            <Navbar />
+            <div className="Page">
+              <Routes>
+                <Route path="/login" Component={LoginPage} />
+                <Route path="/" Component={GamePage} />
+                <Route path="/shop" Component={ShopPage} />
+                <Route path="/boss" Component={BossPage} />
+                <Route path="/add-card" Component={CardForm} />
+                <Route path="/register" Component={RegisterPage} />
+                <Route path="/ashop" Component={ShopAdminPage} />
+              </Routes>
+            </div>
+          </Router>
+        </SnackbarProvider>
+      </ConfettiProvider>
     </UserContextProvider>
   );
 };

@@ -44,6 +44,7 @@ router.put("/updateInterval/:id", async (req, res) => {
 
     await user.addScore(userCard.interval);
     await user.earnGold(1);
+    await user.increaseDailyGoalProgress(1);
     const newInterval =
       Math.floor(
         userCard.interval * ratioMultiplier * (1.618 + userCard.answerStreak)
@@ -57,6 +58,8 @@ router.put("/updateInterval/:id", async (req, res) => {
       Math.floor((userCard.interval / 2) * ratioMultiplier) + 1;
     await userCard.updateInterval(newInterval);
   }
+
+  await user.populate("currentDailyGoal");
 
   res.json({ user, userCard });
 });

@@ -2,7 +2,8 @@ import mongoose, { Document, Model, ObjectId } from "mongoose";
 import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
 import { Item } from "./Item.js";
-import { DailyGoal } from "./DailyGoal.js";
+import DailyGoal from "./DailyGoal.js";
+import type { DailyGoal as DailyGoalType } from "./DailyGoal.js";
 
 interface PopulatedUserItem {
   base: Item;
@@ -22,8 +23,7 @@ export interface IUser extends Document {
   items: Item[]; // Array of items owned by the user
   role: "admin" | "user"; // User role
   streak: number; // Streak of daily goals completed
-  dailyGoalSize: number; // Number of good answers required to complete the daily goal
-  currentDailyGoal: DailyGoal; // Current daily goal
+  currentDailyGoal: DailyGoalType; // Current daily goal
   currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
@@ -38,6 +38,8 @@ export interface IUser extends Document {
   removeItem(itemId: ObjectId): Promise<void>;
   upgradeItem(itemId: ObjectId): Promise<Item>;
   getGoldMultiplier(): number;
+  createDailyGoal(target: number, date: Date): Promise<DailyGoalType>;
+  increaseDailyGoalProgress(increment: number): Promise<boolean>;
 }
 
 // Define an interface for the User model (static methods)
@@ -85,6 +87,14 @@ const UserSchema = new mongoose.Schema<IUser>({
   currentGoldMultiplier: {
     type: Number,
     default: 1,
+  },
+  currentDailyGoal: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "DailyGoal",
+  },
+  streak: {
+    type: Number,
+    default: 0,
   },
   items: [
     {
@@ -165,6 +175,68 @@ UserSchema.methods = {
       console.error("Error buying item:", error);
       throw error;
     }
+  },
+
+  // If daily goal does not exist, create it
+  createDailyGoal: async function (target: number, date: Date) {
+    if (!target || !date) {
+      throw new Error("Target and date are required");
+    }
+
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    // Upsert (find or create) a daily goal for the given date and user
+    const dailyGoal = await DailyGoal.findOneAndUpdate(
+      {
+        userId: this._id,
+        date: { $gte: startOfDay, $lte: endOfDay },
+      },
+      {
+        $setOnInsert: {
+          userId: this._id,
+          target,
+          date,
+          progress: 0,
+          status: "PENDING",
+          closedAt: null,
+        },
+      },
+      { new: true, upsert: true }
+    );
+
+    this.currentDailyGoal = dailyGoal._id;
+    await this.save();
+    return dailyGoal;
+  },
+
+  // Return true if the daily goal is completed
+  increaseDailyGoalProgress: async function (increment: number) {
+    if (!this.currentDailyGoal) {
+      throw new Error("No current daily goal found");
+    }
+    const dailyGoal = await DailyGoal.findById(this.currentDailyGoal);
+    if (!dailyGoal) {
+      throw new Error("Daily goal not found");
+    }
+    dailyGoal.progress += increment;
+    if (
+      dailyGoal.progress === dailyGoal.target &&
+      dailyGoal.status !== "COMPLETED"
+    ) {
+      dailyGoal.status = "COMPLETED";
+      dailyGoal.closedAt = new Date();
+
+      const currentGoldMultiplier = await this.getGoldMultiplier();
+      this.streak += 1;
+      const goldReward = 100 * currentGoldMultiplier * this.streak;
+      this.gold += goldReward;
+
+      await this.save();
+    }
+    await dailyGoal.save();
   },
 };
 
@@ -248,18 +320,7 @@ UserSchema.methods.spendGold = async function (gold: number) {
 
 UserSchema.methods.earnGold = async function (gold: number) {
   await this.populate("items.base");
-  const goldEffect = this.items.reduce(
-    (acc: number, item: PopulatedUserItem) => {
-      return (
-        acc +
-        (item.base.effect?.type === "gold"
-          ? item.base.effect?.value * item.level || 0
-          : 0)
-      );
-    },
-    0
-  );
-  this.gold += gold + goldEffect;
+  this.gold += await this.currentGoldMultiplier;
   await this.save();
 };
 

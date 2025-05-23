@@ -22,6 +22,12 @@ const emptyUser: User = {
   role: "user",
   items: [],
   currentGoldMultiplier: 1,
+  currentDailyGoal: {
+    target: 0,
+    progress: 0,
+    closedAt: "",
+  },
+  streak: 0,
 };
 
 export const UserContext = createContext<UserContextType>({

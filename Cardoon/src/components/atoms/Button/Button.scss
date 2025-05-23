@@ -1,4 +1,4 @@
-@use "../../../styles//variables.scss" as *;
+@use "../../../styles/variables.scss" as *;
 
 .Button {
   background: $primary-color;
@@ -37,7 +37,7 @@
   &--secondary {
     background: $secondary-color !important;
     &:hover {
-      background: darken($secondary-color, 5%) !important;
+      background: darken($secondary-color, 5%);
     }
   }
 

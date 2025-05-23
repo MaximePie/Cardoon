@@ -1,3 +1,5 @@
+@use "../../../styles/variables.scss" as *;
+
 .Footer {
   position: fixed;
   bottom: 0;
@@ -26,6 +28,15 @@
 
   &__flashmode {
     margin: 0 !important;
+
+    @media (max-width: 768px) {
+      color: $primary-color;
+      background: none !important;
+    }
+
+    &.Button--secondary {
+      color: $secondary-color;
+    }
   }
 
   &__progress-bar {

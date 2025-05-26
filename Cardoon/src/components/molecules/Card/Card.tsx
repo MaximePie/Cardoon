@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import { PopulatedUserCard, User } from "../../../types/common";
+import { useContext, useState } from "react";
+import { PopulatedUserCard } from "../../../types/common";
 import classNames from "classnames";
-import { ACTIONS, usePut } from "../../../hooks/server";
 import { UserContext } from "../../../context/UserContext";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -38,10 +37,6 @@ interface CardProps {
   isFlashModeOn: boolean;
 }
 
-interface PutResult {
-  user: User;
-  userCard: PopulatedUserCard;
-}
 export default ({
   card,
   onUpdate: onAnswer,
@@ -55,15 +50,8 @@ export default ({
   } = card;
   const [isRecto, flipCard] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { put, data } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
-  const { setUser, addScore, earnGold } = useContext(UserContext);
+  const { addScore, earnGold } = useContext(UserContext);
   const [isFlipping, setIsFlipping] = useState(false);
-
-  useEffect(() => {
-    if (data) {
-      setUser(data.user);
-    }
-  }, [data]);
 
   const cardClassNames = classNames("Card", {
     "Card--verso": !isRecto,
@@ -95,14 +83,12 @@ export default ({
     if (event) {
       event.preventDefault();
     }
-    put(userCardId, { isCorrectAnswer: true });
     onAnswer(userCardId, true);
     addScore(card.interval);
     earnGold(1);
   };
 
   const fail = () => {
-    put(userCardId, { isCorrectAnswer: false });
     onAnswer(userCardId, false);
   };
 

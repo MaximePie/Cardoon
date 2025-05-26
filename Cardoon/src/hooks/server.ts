@@ -64,6 +64,7 @@ export const usePut = <T>(resource: string) => {
         "token"
       )}`;
       const response = await axios.put(url + "/" + id, payload);
+      console.log("response", response);
       setData(response.data);
       setLoading(false);
     } catch (err: any) {
@@ -71,6 +72,11 @@ export const usePut = <T>(resource: string) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (data) {
+      console.log("usePut", data);
+    }
+  }, [data]);
 
   return { data, loading, error, put };
 };

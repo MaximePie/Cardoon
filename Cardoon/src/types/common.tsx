@@ -34,6 +34,7 @@ export type Item = {
 };
 
 export interface User {
+  streak: number;
   _id: string;
   username: string;
   score: number;
@@ -41,4 +42,10 @@ export interface User {
   gold: number;
   items: UserItem[];
   currentGoldMultiplier: number;
+  currentDailyGoal: {
+    target: number;
+    progress: number;
+    closedAt: string;
+    status: "PENDING" | "COMPLETED" | "FAIL";
+  };
 }

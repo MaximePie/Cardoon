@@ -3,6 +3,8 @@ const router = express.Router();
 import Item from "../models/Item.js";
 import authMiddleware from "../middleware/auth.js";
 import User from "../models/User.js";
+import { uploadImage } from "../utils/imagesManager.js";
+import { IncomingForm } from "formidable";
 router.get("/", authMiddleware, async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -32,30 +34,75 @@ router.post("/", authMiddleware, async (req, res) => {
         return;
     }
     try {
-        const { name, description, price, image } = req.body;
-        const existingItem = await Item.findOne({
-            name,
+        const form = new IncomingForm();
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                console.error("Error parsing form:", err);
+                res.status(400).json({ msg: "Error parsing form" });
+                return;
+            }
+            const requiredFields = [
+                "name",
+                "description",
+                "price",
+                "type",
+                "effectValue",
+                "effectType",
+            ];
+            const data = Object.fromEntries(requiredFields.map((k) => [k, fields[k]?.[0] ?? null]));
+            const missing = requiredFields.find((k) => !data[k]);
+            if (missing) {
+                res.status(400).json({ msg: `Missing field: ${missing}` });
+                return;
+            }
+            const { name, description, priceRaw, type, effectValueRaw, effectType } = data;
+            const price = Number(priceRaw);
+            const effectValue = Number(effectValueRaw);
+            if (Number.isNaN(price) || Number.isNaN(effectValue)) {
+                res.status(400).json({ msg: "Price and effectValue must be numbers" });
+                return;
+            }
+            const validTypes = ["head", "weapon", "armor", "accessory"];
+            if (!validTypes.includes(type)) {
+                res.status(400).json({ msg: "Invalid item type" });
+                return;
+            }
+            const imageFile = Array.isArray(files.imageFile)
+                ? files.imageFile[0]
+                : files.imageFile;
+            const existingItem = await Item.findOne({
+                name,
+            });
+            if (existingItem) {
+                res.status(400).json({ msg: "Item already exists" });
+                return;
+            }
+            if (!name || !description || !price) {
+                res.status(400).json({ msg: "Please fill in all fields" });
+                return;
+            }
+            if (!imageFile || !imageFile.filepath || !imageFile.originalFilename) {
+                res.status(400).json({ msg: "Invalid image file" });
+                return;
+            }
+            const imageLink = await uploadImage({
+                filepath: imageFile.filepath,
+                originalFilename: imageFile.originalFilename,
+            });
+            const newItem = new Item({
+                name,
+                description,
+                price: priceRaw,
+                image: imageLink,
+                effect: {
+                    type: effectType,
+                    value: effectValue,
+                },
+                type,
+            });
+            await newItem.save();
+            res.status(200).json(newItem);
         });
-        if (existingItem) {
-            res.status(400).json({ msg: "Item already exists" });
-        }
-        if (!name || !description || !price || !image) {
-            res.status(400).json({ msg: "Please fill in all fields" });
-        }
-        const newItem = new Item({
-            name,
-            description,
-            price,
-            image,
-            effect: {
-                type: "gold",
-                value: 1,
-            },
-            type: "accessory",
-        });
-        await newItem.save();
-        res.status(200).json(newItem);
-        return;
     }
     catch (error) {
         console.error("Error creating item:", error);

@@ -1,65 +1,27 @@
 import Card from "../../molecules/Card/Card";
-import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
-import { RESOURCES, useFetch } from "../../../hooks/server";
+import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../context/UserContext";
-import { PopulatedUserCard } from "../../../types/common";
+import { PopulatedUserCard, User } from "../../../types/common";
 import { Link } from "react-router-dom";
 import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { FetchedCategory } from "../CardFormPage/CardFormPage";
 import goldIcon from "../../../images/coin.png";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
-import Button from "../../atoms/Button/Button";
+import { GameFooter } from "../../molecules/Footer/Footer";
 
-interface GamePageProps {
-  setFlash?: (flash: boolean) => void;
-  isFlashModeOn?: boolean;
-  currentPage: "shop" | "game";
+interface PutResult {
+  user: User;
+  userCard: PopulatedUserCard;
 }
-export const GameFooter = (props: GamePageProps) => {
-  const { user } = useContext(UserContext);
-  const { setFlash, isFlashModeOn, currentPage } = props;
-
-  return (
-    <div className="GamePage__footer">
-      <span className="GamePage__footer__element">
-        <img
-          className="GamePage__icon"
-          src={goldIcon}
-          alt="Gold"
-          id="GamePage__footer__coins"
-        />{" "}
-        {user.gold || 0}
-      </span>
-      {currentPage !== "shop" && (
-        <span className="GamePage__footer__element">
-          <Button
-            customClassName="GamePage__footer__flashmode"
-            onClick={() => {
-              if (setFlash) {
-                setFlash(!isFlashModeOn);
-              } else {
-                console.error("setFlash function is not provided.");
-              }
-            }}
-            variant={isFlashModeOn ? "secondary" : "primary"}
-          >
-            <ElectricBoltIcon />
-          </Button>
-        </span>
-      )}
-    </div>
-  );
-};
-
 export default () => {
   const { data, loading, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );
@@ -68,6 +30,24 @@ export default () => {
   const [categories, setCategories] = useState<FetchedCategory[]>([]);
 
   const [flash, setFlash] = useState(false);
+  const { put, data: updateCardResponse } = usePut<PutResult>(
+    ACTIONS.UPDATE_INTERVAL
+  );
+  useEffect(() => {
+    if (updateCardResponse) {
+      setUser(updateCardResponse.user);
+      // if (
+      //   updateCardResponse.user.currentDailyGoal.target ===
+      //   updateCardResponse.user.currentDailyGoal.progress
+      // ) {
+      //   const questReward = user.currentGoldMultiplier * 100 * user.streak;
+      //   setUser({
+      //     ...user,
+      //     gold: user.gold + questReward,
+      //   });
+      // }
+    }
+  }, [updateCardResponse]);
 
   useEffect(() => {
     if (data) {
@@ -80,9 +60,8 @@ export default () => {
     }
   }, [data]);
 
-  // BLACK MAGIC
   const addCoinsAnimation = (cardRect: DOMRect) => {
-    const footerElement = document.querySelector("#GamePage__footer__coins");
+    const footerElement = document.querySelector("#Footer__coins");
 
     if (footerElement) {
       const footerRect = footerElement.getBoundingClientRect();
@@ -108,6 +87,9 @@ export default () => {
   };
 
   const onUpdate = async (id: string, isCorrect: boolean) => {
+    put(id, {
+      isCorrectAnswer: isCorrect,
+    });
     // Remove the card from the list
     if (isCorrect) {
       // Coin animation

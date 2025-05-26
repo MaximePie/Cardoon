@@ -1,6 +1,6 @@
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import Button from "../../atoms/Button/Button";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { UserContext } from "../../../context/UserContext";
 import goldIcon from "../../../images/coin.png";
 import { SnackbarContext } from "../../../context/SnackbarContext";
@@ -22,13 +22,14 @@ export const DailyGoalProgressBar = ({
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { showConfetti } = useContext(ConfettiContext);
   const { user, setUser } = useContext(UserContext);
+  const previousProgress = useRef(user.currentDailyGoal.status);
 
   useEffect(() => {
-    const todayDateString = new Date().toISOString().split("T")[0];
-    const isAlreadyCompletedToday =
-      user.currentDailyGoal.closedAt &&
-      user.currentDailyGoal?.closedAt.split("T")[0] === todayDateString;
-    if (progress >= target && !isAlreadyCompletedToday) {
+    if (
+      progress >= target &&
+      previousProgress.current === "PENDING" &&
+      user.currentDailyGoal.status === "COMPLETED"
+    ) {
       showConfetti();
       const questReward = user.currentGoldMultiplier * 100 * user.streak;
       openSnackbarWithMessage(
@@ -50,7 +51,7 @@ export const DailyGoalProgressBar = ({
       <span className="Footer__progress-bar__title">Objectif quotidien</span>
       <div className="Footer__progress-bar">
         <span className="Footer__progress-bar__text">
-          {progress > target ? target : progress} / {target}
+          {progress > target ? target : progress} / {target || 1}
         </span>
         <div
           className={fillClassName}

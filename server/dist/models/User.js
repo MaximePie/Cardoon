@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
+import DailyGoal from "./DailyGoal.js";
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -32,6 +33,18 @@ const UserSchema = new mongoose.Schema({
     },
     gold: {
         // Possession of gold coins
+        type: Number,
+        default: 0,
+    },
+    currentGoldMultiplier: {
+        type: Number,
+        default: 1,
+    },
+    currentDailyGoal: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "DailyGoal",
+    },
+    streak: {
         type: Number,
         default: 0,
     },
@@ -83,8 +96,81 @@ UserSchema.methods = {
         userItem.level += 1;
         this.gold -= userItem.currentCost;
         userItem.currentCost *= item.upgradeCostMultiplier || 2;
+        this.currentGoldMultiplier = await this.getGoldMultiplier();
         await this.save();
         return userItem;
+    },
+    buyItem: async function (itemId) {
+        try {
+            const item = await mongoose.model("Item").findById(itemId);
+            if (!item) {
+                throw new Error("Item not found");
+            }
+            if (this.gold < item.price) {
+                throw new Error("Not enough gold");
+            }
+            this.items.push({
+                base: itemId,
+                level: 1,
+                currentCost: item.price * (item.upgradeCostMultiplier || 2),
+            });
+            this.gold -= item.price;
+            this.currentGoldMultiplier = await this.getGoldMultiplier();
+            await this.save();
+        }
+        catch (error) {
+            console.error("Error buying item:", error);
+            throw error;
+        }
+    },
+    // If daily goal does not exist, create it
+    createDailyGoal: async function (target, date) {
+        if (!target || !date) {
+            throw new Error("Target and date are required");
+        }
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+        // Upsert (find or create) a daily goal for the given date and user
+        const dailyGoal = await DailyGoal.findOneAndUpdate({
+            userId: this._id,
+            date: { $gte: startOfDay, $lte: endOfDay },
+        }, {
+            $setOnInsert: {
+                userId: this._id,
+                target,
+                date,
+                progress: 0,
+                status: "PENDING",
+                closedAt: null,
+            },
+        }, { new: true, upsert: true });
+        this.currentDailyGoal = dailyGoal._id;
+        await this.save();
+        return dailyGoal;
+    },
+    // Return true if the daily goal is completed
+    increaseDailyGoalProgress: async function (increment) {
+        if (!this.currentDailyGoal) {
+            throw new Error("No current daily goal found");
+        }
+        const dailyGoal = await DailyGoal.findById(this.currentDailyGoal);
+        if (!dailyGoal) {
+            throw new Error("Daily goal not found");
+        }
+        dailyGoal.progress += increment;
+        if (dailyGoal.progress === dailyGoal.target &&
+            dailyGoal.status !== "COMPLETED") {
+            dailyGoal.status = "COMPLETED";
+            dailyGoal.closedAt = new Date();
+            const currentGoldMultiplier = await this.getGoldMultiplier();
+            this.streak += 1;
+            const goldReward = 100 * currentGoldMultiplier * this.streak;
+            this.gold += goldReward;
+            await this.save();
+        }
+        await dailyGoal.save();
     },
 };
 UserSchema.methods.attachCard = async function (cardId) {
@@ -152,29 +238,7 @@ UserSchema.methods.spendGold = async function (gold) {
 };
 UserSchema.methods.earnGold = async function (gold) {
     await this.populate("items.base");
-    const goldEffect = this.items.reduce((acc, item) => {
-        return (acc +
-            (item.base.effect?.type === "gold"
-                ? item.base.effect?.value * item.level || 0
-                : 0));
-    }, 0);
-    this.gold += gold + goldEffect;
-    await this.save();
-};
-UserSchema.methods.buyItem = async function (itemId) {
-    const item = await mongoose.model("Item").findById(itemId);
-    if (!item) {
-        throw new Error("Item not found");
-    }
-    if (this.gold < item.price) {
-        throw new Error("Not enough gold");
-    }
-    this.items.push({
-        base: itemId,
-        level: 1,
-        currentCost: item.price * (item.upgradeCostMultiplier || 2),
-    });
-    this.gold -= item.price;
+    this.gold += await this.currentGoldMultiplier;
     await this.save();
 };
 UserSchema.methods.removeItem = async function (itemId) {

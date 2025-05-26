@@ -46,5 +46,6 @@ export interface User {
     target: number;
     progress: number;
     closedAt: string;
+    status: "PENDING" | "COMPLETED" | "FAIL";
   };
 }

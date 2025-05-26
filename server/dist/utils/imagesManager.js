@@ -44,7 +44,7 @@ export const uploadImage = (file) => {
             Key: path,
             Body: fileStream,
             ContentType: "application/octet-stream", // Default content type
-            ACL: "public-read",
+            // ACL: "public-read",
         };
         s3.upload(params, (err, data) => {
             if (err) {

@@ -36,16 +36,16 @@ export default () => {
   useEffect(() => {
     if (updateCardResponse) {
       setUser(updateCardResponse.user);
-      if (
-        updateCardResponse.user.currentDailyGoal.target ===
-        updateCardResponse.user.currentDailyGoal.progress
-      ) {
-        const questReward = user.currentGoldMultiplier * 100 * user.streak;
-        setUser({
-          ...user,
-          gold: user.gold + questReward,
-        });
-      }
+      // if (
+      //   updateCardResponse.user.currentDailyGoal.target ===
+      //   updateCardResponse.user.currentDailyGoal.progress
+      // ) {
+      //   const questReward = user.currentGoldMultiplier * 100 * user.streak;
+      //   setUser({
+      //     ...user,
+      //     gold: user.gold + questReward,
+      //   });
+      // }
     }
   }, [updateCardResponse]);
 

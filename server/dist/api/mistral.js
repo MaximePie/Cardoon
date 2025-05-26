@@ -37,6 +37,13 @@ router.post("/", authMiddleware, async (req, res) => {
         
         1. Les questions doivent être courtes, pertinentes et variées (faits, contexte historique, applications, définitions, comparaisons, etc.).
         2. Format de sortie : une liste JSON d’objets ; chaque objet contient exactement "question" et "answer".
+        Exemple :
+        { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }
+        3. Si "\${category}" désigne une langue, remplacez les questions par 10 mots du même champ lexical et de la même langue :
+       { "question": "le mot dans la langue", "answer": "sa traduction en français" }. La question doit être courte. Exemple : Hello -> Bonjour
+        Par exemple, Si la langue est l'italien, ne générer que des questions sur l'italien et pas sur d'autres langues. 
+        5. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
+        6. Fais attention à ne pas générer de questions trop similaires entre elles.
         `;
     }
     else if (promptType === "Subquestions") {

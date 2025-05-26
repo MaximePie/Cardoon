@@ -11,12 +11,10 @@ router.get("/me", authMiddleware, async (req, res) => {
         res.status(404).json({ error: "User not found" });
         return;
     }
+    await user.createDailyGoal(10, new Date());
     await user.populate("items.base"); // Assuming "items.base" is a reference field in the User schema
-    const formattedUser = {
-        ...user.toObject(),
-        goldMultiplier: await user.getGoldMultiplier(),
-    };
-    res.json(formattedUser);
+    await user.populate("currentDailyGoal");
+    res.json(user);
 });
 router.post("/login", async (req, res) => {
     const { email, password, rememberMe } = req.body;
@@ -67,14 +65,15 @@ router.post("/buyItem", authMiddleware, async (req, res) => {
             res.status(404).json({ error: "User not found" });
             return;
         }
-        user.buyItem(itemId); // Assuming this method handles the purchase logic
+        await user.buyItem(itemId);
         res.status(200).json({ message: "Item purchased successfully" });
         return;
     }
     catch (error) {
-        res
-            .status(500)
-            .json({ error: "An error occurred while processing the purchase" });
+        console.error("Error purchasing item: (users.buyItem)", error);
+        res.status(500).json({
+            error: "An error occurred while processing the purchase",
+        });
         return;
     }
 });

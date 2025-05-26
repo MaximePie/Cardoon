@@ -26,6 +26,7 @@ const emptyUser: User = {
     target: 0,
     progress: 0,
     closedAt: "",
+    status: "PENDING", // PENDING, COMPLETED, FAILED
   },
   streak: 0,
 };

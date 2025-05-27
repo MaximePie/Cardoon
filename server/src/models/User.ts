@@ -22,6 +22,7 @@ export interface IUser extends Document {
   gold: number;
   items: Item[]; // Array of items owned by the user
   role: "admin" | "user"; // User role
+  dailyGoal: number;
   streak: number; // Streak of daily goals completed
   currentDailyGoal: DailyGoalType; // Current daily goal
   currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
@@ -40,6 +41,7 @@ export interface IUser extends Document {
   getGoldMultiplier(): number;
   createDailyGoal(target: number, date: Date): Promise<DailyGoalType>;
   increaseDailyGoalProgress(increment: number): Promise<boolean>;
+  updateDailyGoal(target: number): Promise<number>;
 }
 
 // Define an interface for the User model (static methods)
@@ -84,6 +86,10 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: Number,
     default: 0,
   },
+  dailyGoal: {
+    type: Number,
+    default: 0,
+  },
   currentGoldMultiplier: {
     type: Number,
     default: 1,
@@ -121,6 +127,14 @@ const UserSchema = new mongoose.Schema<IUser>({
 });
 
 UserSchema.methods = {
+  updateDailyGoal: async function (target: number) {
+    if (!target) {
+      throw new Error("Target is required");
+    }
+    this.dailyGoal = target;
+    await this.save();
+    return this.dailyGoal;
+  },
   getGoldMultiplier: async function () {
     await this.populate("items.base");
     return this.items.reduce((acc: number, item: PopulatedUserItem) => {

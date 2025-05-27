@@ -18,6 +18,7 @@ const emptyUser: User = {
   _id: "",
   username: "",
   score: 0,
+  dailyGoal: 10,
   gold: 0,
   role: "user",
   items: [],

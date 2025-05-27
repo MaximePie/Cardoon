@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef } from "react";
 import { UserContext } from "../../../context/UserContext";
 import goldIcon from "../../../images/coin.png";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { ConfettiContext } from "../../../App";
+import { ConfettiContext } from "../../../context/ConfettiContext";
 
 interface GameFooterProps {
   setFlash?: (flash: boolean) => void;

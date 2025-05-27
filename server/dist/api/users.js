@@ -40,6 +40,8 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ id: user.id }, jwtSecret, {
             expiresIn: rememberMe ? "90d" : "1d",
         });
+        await user.populate("items.base");
+        await user.populate("currentDailyGoal");
         res.json({ token, user });
     }
     else {

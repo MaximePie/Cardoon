@@ -13,6 +13,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { RESOURCES, useFetch, usePost } from "./hooks/server";
 import { Item } from "./types/common";
 import Confetti from "react-confetti";
+import UserPage from "./components/pages/UserPage/UserPage";
 
 const isDev = import.meta.env.MODE === "development";
 
@@ -217,6 +218,7 @@ const App = () => {
                 <Route path="/login" Component={LoginPage} />
                 <Route path="/" Component={GamePage} />
                 <Route path="/shop" Component={ShopPage} />
+                <Route path="/user" Component={UserPage} />
                 <Route path="/boss" Component={BossPage} />
                 <Route path="/add-card" Component={CardForm} />
                 <Route path="/register" Component={RegisterPage} />

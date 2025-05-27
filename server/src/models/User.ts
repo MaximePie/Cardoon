@@ -245,7 +245,8 @@ UserSchema.methods = {
 
       const currentGoldMultiplier = await this.getGoldMultiplier();
       this.streak += 1;
-      const goldReward = 100 * currentGoldMultiplier * this.streak;
+      const goldReward =
+        10 * currentGoldMultiplier * this.streak * this.dailyGoal;
       this.gold += goldReward;
 
       await this.save();

@@ -31,7 +31,8 @@ export const DailyGoalProgressBar = ({
       user.currentDailyGoal.status === "COMPLETED"
     ) {
       showConfetti();
-      const questReward = user.currentGoldMultiplier * 100 * user.streak;
+      const questReward =
+        user.currentGoldMultiplier * 10 * user.streak * user.dailyGoal;
       openSnackbarWithMessage(
         `Bravo ! Vous avez atteint votre objectif quotidien. Vous avez gagné ${questReward} pièces d'or !`
       );

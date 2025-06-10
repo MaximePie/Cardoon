@@ -2,7 +2,7 @@ import "./styles/app.scss";
 import CardForm from "./components/pages/CardFormPage/CardFormPage";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
-import RegisterPage from "./components/pages/RegisterPage";
+import RegisterPage from "./components/pages/RegisterPage/RegisterPage";
 import GamePage from "./components/pages/GamePage/GamePage";
 import ShopPage from "./components/pages/UpgradePage/UpgradePage";
 import BossPage from "./components/pages/BossPage/BossPage";

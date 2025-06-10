@@ -7,7 +7,7 @@ const backUrl = import.meta.env.VITE_API_URL;
 export const RESOURCES = {
   USERCARDS: "userCards",
   CARDS: "cards",
-  USER: "user",
+  USER_DAILY_GOAL: "users/daily-goal",
   CATEGORIES: "cards/categories",
   ITEMS: "items",
   MISTRAL: "mistral",
@@ -64,7 +64,6 @@ export const usePut = <T>(resource: string) => {
         "token"
       )}`;
       const response = await axios.put(url + "/" + id, payload);
-      console.log("response", response);
       setData(response.data);
       setLoading(false);
     } catch (err: any) {
@@ -72,11 +71,6 @@ export const usePut = <T>(resource: string) => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (data) {
-      console.log("usePut", data);
-    }
-  }, [data]);
 
   return { data, loading, error, put };
 };

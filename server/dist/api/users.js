@@ -11,7 +11,7 @@ router.get("/me", authMiddleware, async (req, res) => {
         res.status(404).json({ error: "User not found" });
         return;
     }
-    await user.createDailyGoal(10, new Date());
+    await user.createDailyGoal(user.dailyGoal, new Date());
     await user.populate("items.base"); // Assuming "items.base" is a reference field in the User schema
     await user.populate("currentDailyGoal");
     res.json(user);
@@ -40,10 +40,17 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ id: user.id }, jwtSecret, {
             expiresIn: rememberMe ? "90d" : "1d",
         });
-        res.json({ token, user });
+        await user.populate("items.base");
+        await user.populate("currentDailyGoal");
+        res
+            .status(200)
+            .setHeader("Authorization", `Bearer ${token}`)
+            .json({ token, user });
+        return;
     }
     else {
         res.status(401).json({ error: "Invalid credentials" });
+        return;
     }
 });
 router.post("/register", async (req, res) => {
@@ -54,6 +61,27 @@ router.post("/register", async (req, res) => {
     }
     const newUser = await User.createUser(email, password, username);
     res.json(newUser);
+});
+// Update desired daily goal for user
+router.put("/daily-goal/:id", authMiddleware, async (req, res) => {
+    const { target } = req.body;
+    const userId = req.user.id;
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            res.status(404).json({ error: "User not found" });
+            return;
+        }
+        await user.updateDailyGoal(target);
+        await user.populate("currentDailyGoal");
+        res.status(200).json(user);
+    }
+    catch (error) {
+        console.error("Error updating daily goal: (users.daily-goal)", error);
+        res.status(500).json({
+            error: "An error occurred while updating the daily goal",
+        });
+    }
 });
 router.post("/buyItem", authMiddleware, async (req, res) => {
     const { itemId } = req.body;

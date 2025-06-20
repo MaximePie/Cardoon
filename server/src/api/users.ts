@@ -53,7 +53,10 @@ router.post("/login", async (req, res) => {
     });
     await user.populate("items.base");
     await user.populate("currentDailyGoal");
-    res.json({ token, user });
+    res
+      .status(200)
+      .setHeader("Authorization", `Bearer ${token}`)
+      .json({ token, user });
     return;
   } else {
     res.status(401).json({ error: "Invalid credentials" });

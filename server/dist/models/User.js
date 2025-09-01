@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    dailyGoal: {
+        type: Number,
+        default: 0,
+    },
     currentGoldMultiplier: {
         type: Number,
         default: 1,
@@ -72,6 +76,14 @@ const UserSchema = new mongoose.Schema({
     },
 });
 UserSchema.methods = {
+    updateDailyGoal: async function (target) {
+        if (!target) {
+            throw new Error("Target is required");
+        }
+        this.dailyGoal = target;
+        await this.save();
+        return this.dailyGoal;
+    },
     getGoldMultiplier: async function () {
         await this.populate("items.base");
         return this.items.reduce((acc, item) => {
@@ -166,7 +178,7 @@ UserSchema.methods = {
             dailyGoal.closedAt = new Date();
             const currentGoldMultiplier = await this.getGoldMultiplier();
             this.streak += 1;
-            const goldReward = 100 * currentGoldMultiplier * this.streak;
+            const goldReward = 10 * currentGoldMultiplier * this.streak * this.dailyGoal;
             this.gold += goldReward;
             await this.save();
         }

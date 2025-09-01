@@ -5,6 +5,7 @@ import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import NorthIcon from "@mui/icons-material/North";
 import LogoutIcon from "@mui/icons-material/Logout";
 import AddIcon from "@mui/icons-material/Add";
+import UserIcon from "@mui/icons-material/Person";
 interface NavbarLink {
   to: string;
   label: string;
@@ -19,6 +20,7 @@ export default () => {
     { to: "/shop", label: "Amélioration", icon: <NorthIcon /> },
     // { to: "/boss", label: "Boss", icon: <StarIcon /> },
     { to: "/add-card", label: "Ajouter une carte", icon: <AddIcon /> },
+    { to: "/user", label: "Mon compte", icon: <UserIcon /> },
   ];
 
   const handleResize = () => {

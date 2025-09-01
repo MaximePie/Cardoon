@@ -41,6 +41,7 @@ export interface User {
   role: "admin" | "user";
   gold: number;
   items: UserItem[];
+  dailyGoal: number;
   currentGoldMultiplier: number;
   currentDailyGoal: {
     target: number;

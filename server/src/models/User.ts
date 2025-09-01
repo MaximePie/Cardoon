@@ -22,8 +22,9 @@ export interface IUser extends Document {
   gold: number;
   items: Item[]; // Array of items owned by the user
   role: "admin" | "user"; // User role
+  dailyGoal: number;
   streak: number; // Streak of daily goals completed
-  currentDailyGoal: DailyGoalType; // Current daily goal
+  currentDailyGoal: mongoose.Types.ObjectId | DailyGoalType; // Current daily goal (ObjectId until populated)
   currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
@@ -37,9 +38,10 @@ export interface IUser extends Document {
   buyItem(itemId: ObjectId): Promise<void>;
   removeItem(itemId: ObjectId): Promise<void>;
   upgradeItem(itemId: ObjectId): Promise<Item>;
-  getGoldMultiplier(): number;
+  getGoldMultiplier(): Promise<number>;
   createDailyGoal(target: number, date: Date): Promise<DailyGoalType>;
   increaseDailyGoalProgress(increment: number): Promise<boolean>;
+  updateDailyGoal(target: number): Promise<number>;
 }
 
 // Define an interface for the User model (static methods)
@@ -84,6 +86,11 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: Number,
     default: 0,
   },
+  dailyGoal: {
+    type: Number,
+    default: 0,
+    min: [0, "Daily goal must be a positive number"],
+  },
   currentGoldMultiplier: {
     type: Number,
     default: 1,
@@ -121,6 +128,19 @@ const UserSchema = new mongoose.Schema<IUser>({
 });
 
 UserSchema.methods = {
+  updateDailyGoal: async function (target: number) {
+    if (
+      target === undefined ||
+      target === null ||
+      target < 0 ||
+      isNaN(target)
+    ) {
+      throw new Error("Target is required");
+    }
+    this.dailyGoal = target;
+    await this.save();
+    return this.dailyGoal;
+  },
   getGoldMultiplier: async function () {
     await this.populate("items.base");
     return this.items.reduce((acc: number, item: PopulatedUserItem) => {
@@ -223,7 +243,7 @@ UserSchema.methods = {
     }
     dailyGoal.progress += increment;
     if (
-      dailyGoal.progress === dailyGoal.target &&
+      dailyGoal.progress >= dailyGoal.target &&
       dailyGoal.status !== "COMPLETED"
     ) {
       dailyGoal.status = "COMPLETED";
@@ -231,7 +251,8 @@ UserSchema.methods = {
 
       const currentGoldMultiplier = await this.getGoldMultiplier();
       this.streak += 1;
-      const goldReward = 100 * currentGoldMultiplier * this.streak;
+      const goldReward =
+        10 * currentGoldMultiplier * this.streak * dailyGoal.target;
       this.gold += goldReward;
 
       await this.save();

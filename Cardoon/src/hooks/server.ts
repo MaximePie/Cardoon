@@ -7,7 +7,7 @@ const backUrl = import.meta.env.VITE_API_URL;
 export const RESOURCES = {
   USERCARDS: "userCards",
   CARDS: "cards",
-  USER: "user",
+  USER_DAILY_GOAL: "users/daily-goal",
   CATEGORIES: "cards/categories",
   ITEMS: "items",
   MISTRAL: "mistral",
@@ -64,7 +64,6 @@ export const usePut = <T>(resource: string) => {
         "token"
       )}`;
       const response = await axios.put(url + "/" + id, payload);
-      console.log("response", response);
       setData(response.data);
       setLoading(false);
     } catch (err: any) {
@@ -72,13 +71,24 @@ export const usePut = <T>(resource: string) => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (data) {
-      console.log("usePut", data);
-    }
-  }, [data]);
 
-  return { data, loading, error, put };
+  // Only use for connected user, no id required
+  const putUser = async (payload: any) => {
+    setLoading(true);
+    try {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
+        "token"
+      )}`;
+      const response = await axios.put(url, payload);
+      setData(response.data);
+      setLoading(false);
+    } catch (err: any) {
+      setError(err.message + " " + err.response.data.errorMessage);
+      setLoading(false);
+    }
+  };
+
+  return { data, loading, error, put, putUser };
 };
 export const useDelete = (resource: string) => {
   const [loading, setLoading] = useState(true);

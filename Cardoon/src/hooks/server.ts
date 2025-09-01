@@ -72,7 +72,23 @@ export const usePut = <T>(resource: string) => {
     }
   };
 
-  return { data, loading, error, put };
+  // Only use for connected user, no id required
+  const putUser = async (payload: any) => {
+    setLoading(true);
+    try {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
+        "token"
+      )}`;
+      const response = await axios.put(url, payload);
+      setData(response.data);
+      setLoading(false);
+    } catch (err: any) {
+      setError(err.message + " " + err.response.data.errorMessage);
+      setLoading(false);
+    }
+  };
+
+  return { data, loading, error, put, putUser };
 };
 export const useDelete = (resource: string) => {
   const [loading, setLoading] = useState(true);

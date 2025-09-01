@@ -9,10 +9,10 @@ export const UserPage = () => {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { username, gold, role, currentDailyGoal, dailyGoal } = user;
   const [draftDailyGoal, setDraftDailyGoal] = useState<number>(dailyGoal || 0);
-  const { put, data: postResult } = usePut<User>(RESOURCES.USER_DAILY_GOAL);
+  const { putUser, data: postResult } = usePut<User>(RESOURCES.USER_DAILY_GOAL);
   const saveDailyGoal = (e: React.FormEvent) => {
     e.preventDefault();
-    put(user._id, {
+    putUser({
       target: draftDailyGoal,
     });
   };

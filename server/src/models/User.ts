@@ -128,7 +128,12 @@ const UserSchema = new mongoose.Schema<IUser>({
 
 UserSchema.methods = {
   updateDailyGoal: async function (target: number) {
-    if (!target) {
+    if (
+      target === undefined ||
+      target === null ||
+      target < 0 ||
+      isNaN(target)
+    ) {
       throw new Error("Target is required");
     }
     this.dailyGoal = target;

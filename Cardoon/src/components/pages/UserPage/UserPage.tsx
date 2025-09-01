@@ -8,7 +8,7 @@ export const UserPage = () => {
   const { user, setUser } = useContext(UserContext);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { username, gold, role, currentDailyGoal, dailyGoal } = user;
-  const [draftDailyGoal, setDraftDailyGoal] = useState<number>(dailyGoal);
+  const [draftDailyGoal, setDraftDailyGoal] = useState<number>(dailyGoal || 0);
   const { put, data: postResult } = usePut<User>(RESOURCES.USER_DAILY_GOAL);
   const saveDailyGoal = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +25,16 @@ export const UserPage = () => {
         `Objectif quotidien mis à jour : ${postResult.dailyGoal}`
       );
     }
-  }, [postResult]);
+  }, [postResult, setUser, openSnackbarWithMessage]);
+
+  const onDraftDailyGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value)) {
+      setDraftDailyGoal(value);
+    } else {
+      setDraftDailyGoal(0);
+    }
+  };
 
   return (
     <div>
@@ -41,7 +50,8 @@ export const UserPage = () => {
           <input
             type="number"
             value={draftDailyGoal}
-            onChange={(e) => setDraftDailyGoal(parseInt(e.target.value))}
+            onChange={onDraftDailyGoalChange}
+            min="1"
           />
         </label>
         <button type="submit">Mettre à jour</button>

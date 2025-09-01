@@ -25,11 +25,12 @@ export const DailyGoalProgressBar = ({
   const previousProgress = useRef(user.currentDailyGoal.status);
 
   useEffect(() => {
-    if (
+    return;
+    const shouldShowConfetti =
       progress >= target &&
       previousProgress.current === "PENDING" &&
-      user.currentDailyGoal.status === "COMPLETED"
-    ) {
+      user.currentDailyGoal.status === "COMPLETED";
+    if (shouldShowConfetti) {
       showConfetti();
       const questReward =
         user.currentGoldMultiplier * 10 * user.streak * user.dailyGoal;
@@ -77,14 +78,14 @@ export const GameFooter = (props: GameFooterProps) => {
         />{" "}
         {user.gold || 0}
       </span>
-      {user.currentDailyGoal && (
+      {/* {user.currentDailyGoal && (
         <span className="Footer__element">
           <DailyGoalProgressBar
             progress={user.currentDailyGoal.progress}
             target={user.currentDailyGoal.target}
           />
         </span>
-      )}
+      )} */}
       {currentPage !== "shop" && (
         <span className="Footer__element">
           <Button

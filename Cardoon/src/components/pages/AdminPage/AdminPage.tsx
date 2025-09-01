@@ -1,10 +1,12 @@
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../context/UserContext";
+import { SnackbarContext } from "../../../context/SnackbarContext";
 import { useFetch, RESOURCES, usePost } from "../../../hooks/server";
 import { Item } from "../../../types/common";
 
 export const ShopAdminPage = () => {
   const { user } = useContext(UserContext);
+  const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const [newItem, setNewItem] = useState<Item>({
     _id: "",
     name: "Calculette Wish",
@@ -24,12 +26,13 @@ export const ShopAdminPage = () => {
   const isDev = import.meta.env.MODE === "development";
 
   const { fetch, data } = useFetch<Item[]>(RESOURCES.ITEMS);
-  const { post } = usePost<Item>(RESOURCES.ITEMS);
+  const { post, loading, error } = usePost<Item>(RESOURCES.ITEMS);
   const [items, setItems] = useState<Item[]>(data || []);
+  const [isSaving, setIsSaving] = useState(false);
   useEffect(() => {
     fetch();
     document.title = "Page d'administration de la boutique";
-  }, []);
+  }, [fetch]);
 
   useEffect(() => {
     if (data) {
@@ -37,12 +40,34 @@ export const ShopAdminPage = () => {
     }
   }, [data]);
 
+  // Handle error and success states for item saving
+  useEffect(() => {
+    if (isSaving && !loading) {
+      if (error) {
+        openSnackbarWithMessage(
+          `Erreur lors de l'ajout de l'objet: ${error}`,
+          "error"
+        );
+      } else {
+        openSnackbarWithMessage(
+          "Objet ajouté avec succès!",
+          "success"
+        );
+        // Refresh the items list
+        fetch();
+      }
+      setIsSaving(false);
+    }
+  }, [isSaving, loading, error, openSnackbarWithMessage, fetch]);
+
   if (!user || user.role !== "admin" || !isDev) {
     return <p>Vous n'avez pas accès à cette page.</p>;
   }
 
   const saveItem = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
+    
     const formData = new FormData();
     if (itemImageFile) {
       formData.append("imageFile", itemImageFile);
@@ -55,7 +80,17 @@ export const ShopAdminPage = () => {
     formData.append("effectType", newItem.effect.type);
     formData.append("effectValue", newItem.effect.value.toString());
 
-    await post(formData);
+    try {
+      await post(formData);
+    } catch (err) {
+      // Handle any additional errors not caught by the hook
+      setIsSaving(false);
+      const errorMessage = err instanceof Error ? err.message : "Une erreur inattendue s'est produite";
+      openSnackbarWithMessage(
+        `Erreur lors de l'ajout de l'objet: ${errorMessage}`,
+        "error"
+      );
+    }
   };
   return (
     <div className="Admin">
@@ -132,7 +167,9 @@ export const ShopAdminPage = () => {
             })
           }
         />
-        <button type="submit">Ajouter</button>
+        <button type="submit" disabled={loading}>
+          {loading ? "Ajout en cours..." : "Ajouter"}
+        </button>
       </form>
       <h2>Liste des objets</h2>
       <ul>

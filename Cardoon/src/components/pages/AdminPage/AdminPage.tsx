@@ -37,7 +37,7 @@ export const ShopAdminPage = () => {
     }
   }, [data]);
 
-  if (!user || user.role !== "admin") {
+  if (!user || user.role !== "admin" || !isDev) {
     return <p>Vous n'avez pas accès à cette page.</p>;
   }
 
@@ -57,11 +57,6 @@ export const ShopAdminPage = () => {
 
     await post(formData);
   };
-
-  if (!isDev) {
-    return <p>Cette page est réservée aux administrateurs.</p>;
-  }
-
   return (
     <div className="Admin">
       <h1>Page d'administration de la boutique</h1>
@@ -87,7 +82,12 @@ export const ShopAdminPage = () => {
           placeholder="Prix de l'objet"
           value={newItem.price}
           onChange={(e) =>
-            setNewItem({ ...newItem, price: parseInt(e.target.value) })
+            setNewItem({
+              ...newItem,
+              price: isNaN(parseInt(e.target.value))
+                ? 0
+                : parseInt(e.target.value),
+            })
           }
         />
         <input
@@ -123,7 +123,12 @@ export const ShopAdminPage = () => {
           onChange={(e) =>
             setNewItem({
               ...newItem,
-              effect: { ...newItem.effect, value: parseInt(e.target.value) },
+              effect: {
+                ...newItem.effect,
+                value: isNaN(parseInt(e.target.value))
+                  ? 0
+                  : parseInt(e.target.value),
+              },
             })
           }
         />

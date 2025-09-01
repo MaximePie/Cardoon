@@ -16,6 +16,7 @@ export default function RegisterPage() {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const { post, data: user } = usePost<User>(ACTIONS.REGISTER);
+  const isFormValid = email && password && username && email.includes("@");
 
   useEffect(() => {
     if (user) {
@@ -30,7 +31,9 @@ export default function RegisterPage() {
     try {
       await post({ email, password, username });
     } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
+      const errorMessage =
+        err.response?.data?.errorMessage || err.message || "An error occurred";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -46,6 +49,7 @@ export default function RegisterPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           label="Email"
+          isRequired
         />
         <Input
           type="password"
@@ -53,6 +57,7 @@ export default function RegisterPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           label="Mot de passe"
+          isRequired
         />
         <Input
           type="text"
@@ -60,8 +65,11 @@ export default function RegisterPage() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           label="Nom d'utilisateur"
+          isRequired
         />
-        <SubmitButton disabled={loading}>S'inscrire</SubmitButton>
+        <SubmitButton disabled={!isFormValid || loading}>
+          S'inscrire
+        </SubmitButton>
         {error && <p>{error}</p>}
       </form>
     </div>

@@ -3,6 +3,7 @@ import { UserContext } from "../../../context/UserContext";
 import { useFetch, RESOURCES, usePost } from "../../../hooks/server";
 import { Item } from "../../../types/common";
 
+const VALID_ITEM_TYPES = ["head", "weapon", "armor", "accessory"] as const;
 export const ShopAdminPage = () => {
   const { user } = useContext(UserContext);
   const [newItem, setNewItem] = useState<Item>({
@@ -108,7 +109,12 @@ export const ShopAdminPage = () => {
         <select
           value={newItem.type}
           onChange={(e) =>
-            setNewItem({ ...newItem, type: e.target.value as Item["type"] })
+            setNewItem({
+              ...newItem,
+              type: VALID_ITEM_TYPES.includes(e.target.value as any)
+                ? (e.target.value as any)
+                : "weapon",
+            })
           }
         >
           <option value="head">Tête</option>

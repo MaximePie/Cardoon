@@ -78,14 +78,14 @@ export const GameFooter = (props: GameFooterProps) => {
         />{" "}
         {user.gold || 0}
       </span>
-      {/* {user.currentDailyGoal && (
+      {user.currentDailyGoal && (
         <span className="Footer__element">
           <DailyGoalProgressBar
             progress={user.currentDailyGoal.progress}
             target={user.currentDailyGoal.target}
           />
         </span>
-      )} */}
+      )}
       {currentPage !== "shop" && (
         <span className="Footer__element">
           <Button

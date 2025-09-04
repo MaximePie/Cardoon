@@ -13,6 +13,11 @@
   background-color: #f8f9fa;
   border-top: 1px solid #dee2e6;
 
+  @media (max-width: 768px) {
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+  }
+
   &__element {
     display: flex;
     align-items: center;
@@ -45,6 +50,10 @@
     border-radius: 0.25rem;
     overflow: hidden;
     position: relative;
+
+    @media (max-width: 768px) {
+      width: 150px; // Adjust width for mobile
+    }
 
     &__title {
       font-size: 1rem;

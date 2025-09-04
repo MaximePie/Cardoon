@@ -21,7 +21,6 @@ const sanitizeInput = (input: string) => {
 };
 
 router.post("/", authMiddleware, async (req, res) => {
-  console.log("HAHA");
   const { promptType } = req.body;
 
   let prompt = "";
@@ -82,8 +81,6 @@ router.post("/", authMiddleware, async (req, res) => {
     7. Fais attention à ne pas générer de questions trop similaires entre elles.
     `;
   }
-
-  console.log("Generated Prompt:", prompt);
 
   if (!prompt) {
     res.status(400).json({ error: "Prompt is required" });

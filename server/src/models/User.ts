@@ -200,7 +200,8 @@ UserSchema.methods = {
   // If daily goal does not exist, create it
   createDailyGoal: async function (target: number, date: Date) {
     if (!target || !date) {
-      throw new Error("Target and date are required");
+      console.error("Target and date are required");
+      return null;
     }
 
     const startOfDay = new Date(date);

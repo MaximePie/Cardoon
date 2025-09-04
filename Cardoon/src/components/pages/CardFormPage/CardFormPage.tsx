@@ -70,7 +70,7 @@ export default () => {
     answer: "",
     imageLink: "",
     category: "",
-    expectedAnswers: ["", "", "", ""],
+    expectedAnswers: ["", "", ""],
   });
 
   // Only used for generated questions, it's not supposed to become a category

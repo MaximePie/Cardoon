@@ -65,8 +65,30 @@ export const DailyGoalProgressBar = ({
 };
 
 export const GameFooter = (props: GameFooterProps) => {
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
+  const { openSnackbarWithMessage } = useContext(SnackbarContext);
+  const { showConfetti } = useContext(ConfettiContext);
   const { setFlash, isFlashModeOn, currentPage } = props;
+  const previousStatus = useRef(user.currentDailyGoal.status);
+
+  useEffect(() => {
+    if (
+      previousStatus.current === "PENDING" &&
+      user.currentDailyGoal.status === "COMPLETED"
+    ) {
+      showConfetti();
+      const questReward =
+        user.currentGoldMultiplier * 10 * user.streak * user.dailyGoal;
+      openSnackbarWithMessage(
+        `Bravo ! Vous avez atteint votre objectif quotidien. Vous avez gagné ${questReward} pièces d'or !`
+      );
+      setUser({
+        ...user,
+        gold: user.gold + questReward,
+      });
+    }
+    previousStatus.current = user.currentDailyGoal.status;
+  }, [user.currentDailyGoal.status]);
   return (
     <div className="Footer">
       <span className="Footer__element">

@@ -14,6 +14,7 @@ export interface Card {
   imageLink: string;
   category: string;
   parentId?: string;
+  expectedAnswers?: string[];
 }
 export interface UserItem {
   base: Item;

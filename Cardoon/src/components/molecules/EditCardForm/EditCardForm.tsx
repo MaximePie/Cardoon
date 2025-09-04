@@ -75,7 +75,7 @@ export default ({
         "\nCette action est irréversible."
     );
     if (!confirm) return;
-    await deleteResource(editedCard._id);
+    await deleteResource(editedCard.card._id);
     close();
     afterDelete();
   };

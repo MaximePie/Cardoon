@@ -9,6 +9,7 @@ export interface ICard extends Document {
   imageLink?: string;
   category?: string;
   parentId?: string;
+  expectedAnswers?: string[]; // Elements of answer that are expected
 }
 
 /**
@@ -35,6 +36,9 @@ const CardSchema = new mongoose.Schema<ICard>({
   },
   parentId: {
     type: String,
+  },
+  expectedAnswers: {
+    type: [String],
   },
 });
 

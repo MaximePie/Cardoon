@@ -70,6 +70,7 @@ export default () => {
     answer: "",
     imageLink: "",
     category: "",
+    expectedAnswers: ["", "", "", ""],
   });
 
   // Only used for generated questions, it's not supposed to become a category
@@ -242,6 +243,23 @@ export default () => {
             className="CardFormPage__form-group"
             isRequired={true}
           />
+          {newCard.expectedAnswers?.map((value, index) => (
+            <Input
+              key={"subanswer-" + index}
+              label={`Sous-réponse ${index + 1} (optionnelle)`}
+              type="text"
+              value={value}
+              onChange={(e) => {
+                const expectedAnswersArray = [...newCard.expectedAnswers!];
+                expectedAnswersArray[index] = e.target.value;
+                setNewCard({
+                  ...newCard,
+                  expectedAnswers: expectedAnswersArray,
+                });
+              }}
+              className="CardFormPage__form-group"
+            />
+          ))}
           <CategoryInput
             categoriesWithCount={categoriesWithCount}
             newCard={newCard}

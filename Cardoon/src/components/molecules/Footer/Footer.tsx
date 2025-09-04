@@ -89,6 +89,17 @@ export const GameFooter = (props: GameFooterProps) => {
     }
     previousStatus.current = user.currentDailyGoal.status;
   }, [user.currentDailyGoal.status]);
+
+  const formattedUserGold = () => {
+    if (user.gold >= 1000000) {
+      return (user.gold / 1000000).toFixed(1) + "M";
+    } else if (user.gold >= 1000) {
+      return (user.gold / 1000).toFixed(1) + "K";
+    } else {
+      return user.gold.toString();
+    }
+  };
+
   return (
     <div className="Footer">
       <span className="Footer__element">
@@ -98,7 +109,7 @@ export const GameFooter = (props: GameFooterProps) => {
           alt="Gold"
           id="Footer__coins"
         />{" "}
-        {user.gold || 0}
+        {formattedUserGold()}
       </span>
       {user.currentDailyGoal && (
         <span className="Footer__element">

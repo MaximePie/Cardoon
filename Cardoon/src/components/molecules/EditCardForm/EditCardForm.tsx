@@ -40,7 +40,7 @@ export default ({
     answer,
     imageLink,
     category,
-    expectedAnswers,
+    expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
   });
 
   const [activeTab, setActiveTab] = useState<"question" | "subquestions">(
@@ -58,7 +58,7 @@ export default ({
       answer,
       imageLink,
       category,
-      expectedAnswers,
+      expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
     });
   }, [isOpen, editedCard]);
 

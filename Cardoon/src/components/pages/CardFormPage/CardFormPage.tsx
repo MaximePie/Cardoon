@@ -66,11 +66,11 @@ export default () => {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const [newCard, setNewCard] = useState<Partial<Card>>({
-    question: "XY?",
-    answer: "YX?",
+    question: "",
+    answer: "",
     imageLink: "",
     category: "",
-    expectedAnswers: ["X", "Y", "Z"],
+    expectedAnswers: ["", "", ""],
   });
 
   // Only used for generated questions, it's not supposed to become a category
@@ -126,9 +126,14 @@ export default () => {
       formData.append("category", newCard.category);
     }
     if (newCard.expectedAnswers) {
-      newCard.expectedAnswers.forEach((expectedAnswer) => {
-        formData.append("expectedAnswers", expectedAnswer);
-      });
+      const cleaned = newCard.expectedAnswers
+        .map((s) => s.trim())
+        .filter(Boolean);
+      if (cleaned.length) {
+        cleaned.forEach((expectedAnswer) => {
+          formData.append("expectedAnswers", expectedAnswer);
+        });
+      }
     }
     await post(formData, "multipart/form-data");
     setNewCard({

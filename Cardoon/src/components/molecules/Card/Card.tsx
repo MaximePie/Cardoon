@@ -44,7 +44,7 @@ export default ({
   isFlashModeOn,
 }: CardProps) => {
   const {
-    card: { question, answer, imageLink, category },
+    card: { question, answer, imageLink, category, expectedAnswers },
     _id: userCardId,
     interval,
   } = card;
@@ -113,7 +113,17 @@ export default ({
                 alignItems: "center",
               }}
             >
-              <p>{question}</p>
+              {category && (
+                <Chip
+                  className="Card__category"
+                  label={category}
+                  size="small"
+                />
+              )}
+              <p>
+                {question}{" "}
+                {expectedAnswers?.length ? `(${expectedAnswers.length})` : ""}
+              </p>
               {imageLink && (
                 <>
                   <img
@@ -137,7 +147,17 @@ export default ({
               >
                 <Edit />
               </IconButton>
-              <p>{answer}</p>
+              <p>
+                {answer}
+
+                {expectedAnswers?.length && expectedAnswers.length > 0 ? (
+                  <ul>
+                    {expectedAnswers.map((expectedAnswer, index) => (
+                      <li key={index}>{expectedAnswer}</li>
+                    ))}
+                  </ul>
+                ) : undefined}
+              </p>
               <Stack spacing={1} direction="row">
                 <Button color="success" onClick={succeed}>
                   ok

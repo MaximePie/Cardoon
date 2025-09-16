@@ -125,13 +125,23 @@ export default () => {
     if (newCard.category) {
       formData.append("category", newCard.category);
     }
-
+    if (newCard.expectedAnswers) {
+      const cleaned = newCard.expectedAnswers
+        .map((s) => s.trim())
+        .filter(Boolean);
+      if (cleaned.length) {
+        cleaned.forEach((expectedAnswer) => {
+          formData.append("expectedAnswers", expectedAnswer);
+        });
+      }
+    }
     await post(formData, "multipart/form-data");
     setNewCard({
       ...newCard,
       question: "",
       answer: "",
       imageLink: "",
+      expectedAnswers: ["", "", ""],
     });
 
     setImage(null);

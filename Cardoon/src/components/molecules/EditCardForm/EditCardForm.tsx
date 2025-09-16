@@ -27,7 +27,7 @@ export default ({
   afterDelete,
 }: EditCardFormProps) => {
   const {
-    card: { question, answer, imageLink, category },
+    card: { question, answer, imageLink, category, expectedAnswers },
   } = editedCard;
 
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
@@ -40,6 +40,7 @@ export default ({
     answer,
     imageLink,
     category,
+    expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
   });
 
   const [activeTab, setActiveTab] = useState<"question" | "subquestions">(
@@ -57,6 +58,7 @@ export default ({
       answer,
       imageLink,
       category,
+      expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
     });
   }, [isOpen, editedCard]);
 
@@ -103,6 +105,7 @@ export default ({
       question: "",
       answer: "",
       imageLink: "",
+      expectedAnswers: ["", "", ""],
     });
     close();
     openSnackbarWithMessage("La carte a été mise à jour");
@@ -151,6 +154,19 @@ export default ({
                   setNewCard({ ...newCard, answer: e.target.value })
                 }
               />
+              {newCard.expectedAnswers?.map((expectedAnswer, index) => (
+                <Input
+                  key={index}
+                  label={`Réponse attendue ${index + 1}`}
+                  type="text"
+                  value={expectedAnswer}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const updatedAnswers = [...(newCard.expectedAnswers ?? [])];
+                    updatedAnswers[index] = e.target.value;
+                    setNewCard({ ...newCard, expectedAnswers: updatedAnswers });
+                  }}
+                />
+              ))}
               <Input
                 label="URL d'image"
                 type="text"

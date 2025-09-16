@@ -150,13 +150,13 @@ export default ({
               <p>
                 {answer}
 
-                {expectedAnswers?.length && expectedAnswers.length > 0 && (
+                {expectedAnswers?.length && expectedAnswers.length > 0 ? (
                   <ul>
                     {expectedAnswers.map((expectedAnswer, index) => (
                       <li key={index}>{expectedAnswer}</li>
                     ))}
                   </ul>
-                )}
+                ) : undefined}
               </p>
               <Stack spacing={1} direction="row">
                 <Button color="success" onClick={succeed}>

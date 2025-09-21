@@ -14,12 +14,57 @@ export const RESOURCES = {
 };
 export const ACTIONS = {
   UPDATE_INTERVAL: "userCards/updateInterval",
+  INVERT_CARD: "cards/invert",
   LOGIN: "users/login",
   REGISTER: "users/register",
   ME: "users/me",
   BUY_ITEM: "users/buyItem",
   REMOVE_ITEM: "users/removeItem",
   UPGRADE_ITEM: "users/upgradeItem",
+};
+
+export const useAdminCatchup = () => {
+  const url = `${backUrl}/api/admin/catchup`;
+  const [data, setData] = useState<void | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<undefined | string>(undefined);
+
+  useEffect(() => {
+    fetch();
+  }, [url]);
+
+  const fetch = () => {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
+      "token"
+    )}`;
+    axios
+      .get(url)
+      .then((response) => {
+        setData(response.data);
+        setLoading(false);
+        setError(undefined);
+      })
+      .catch((err) => {
+        setError(err.response.data.message);
+        setLoading(false);
+      });
+  };
+
+  const post = async () => {
+    setLoading(true);
+    try {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
+        "token"
+      )}`;
+      const response = await axios.post(url);
+      setData(response.data);
+      setLoading(false);
+    } catch (err: any) {
+      setError(err.message + " " + err.response.data.errorMessage);
+      setLoading(false);
+    }
+  };
+  return { data, loading, error, fetch, post };
 };
 
 // Custom hook to get data

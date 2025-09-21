@@ -272,6 +272,7 @@ UserSchema.methods.attachCard = async function (cardId: ObjectId) {
     nextReview: now.getTime() + 5 * 1000,
   });
   await userCard.save();
+  console.log("Attached card to user:", userCard);
   return userCard;
 };
 

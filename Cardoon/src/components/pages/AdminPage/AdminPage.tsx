@@ -1,9 +1,50 @@
 import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../../../context/UserContext";
-import { useFetch, RESOURCES, usePost } from "../../../hooks/server";
+import {
+  useFetch,
+  RESOURCES,
+  usePost,
+  useAdminCatchup,
+} from "../../../hooks/server";
 import { Item } from "../../../types/common";
 
 const VALID_ITEM_TYPES = ["head", "weapon", "armor", "accessory"] as const;
+
+const CaroleCards = () => {
+  const { data, post } = useAdminCatchup();
+  const cardsNotFromCarole =
+    data?.allCardsFromCarole.filter(
+      ({ user }) => user !== "684835fc6f4fff7090150f30"
+    ) || [];
+  console.log("All cards from Carole:", cardsNotFromCarole);
+
+  const triggerCatchup = async () => {
+    const confirm = window.confirm(
+      "Êtes-vous sûr de vouloir lancer la procédure de rattrapage ?" +
+        "\nCette action est irréversible."
+    );
+    if (!confirm) return;
+    await post();
+    alert("Procédure de rattrapage lancée.");
+  };
+
+  return (
+    <div>
+      <p>Max : "67a3c4c1e0440819311607dd"</p>
+      <h2>
+        Cartes Carole (684835fc6f4fff7090150f30) ({cardsNotFromCarole.length}{" "}
+        trouvées)
+      </h2>
+      <button onClick={triggerCatchup}>NUKE</button>
+      <p>
+        {cardsNotFromCarole.map((userCard, index) => (
+          <span key={index}>"{userCard._id}",</span>
+        ))}
+      </p>
+    </div>
+  );
+};
+
 export const ShopAdminPage = () => {
   const { user } = useContext(UserContext);
   const [newItem, setNewItem] = useState<Item>({
@@ -58,6 +99,7 @@ export const ShopAdminPage = () => {
 
     await post(formData);
   };
+
   return (
     <div className="Admin">
       <h1>Page d'administration de la boutique</h1>
@@ -151,6 +193,8 @@ export const ShopAdminPage = () => {
           </li>
         ))}
       </ul>
+
+      <CaroleCards />
     </div>
   );
 };

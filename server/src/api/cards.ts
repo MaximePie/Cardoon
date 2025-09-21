@@ -7,7 +7,7 @@ import User from "../models/User.js";
 import { uploadImage } from "../utils/imagesManager.js";
 import { IncomingForm } from "formidable";
 import UserCard from "../models/UserCard.js";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { Request, Response } from "express";
 
 router.get("/categories", async (req, res) => {
@@ -29,6 +29,24 @@ router.get("/:id", (req, res) => {
     .catch((err) =>
       res.status(404).json({ noCardFound: "No CardFound found" })
     );
+});
+
+router.post("/invert", authMiddleware, async (req, res) => {
+  try {
+    const originalCard = await Card.findById(req.body.cardId);
+    if (!originalCard) {
+      res.status(404).json({ error: "Original card not found" });
+      return;
+    }
+
+    const invertedCard = await originalCard.invert();
+    res.status(201).json({ originalCard, invertedCard });
+    return;
+  } catch (err) {
+    console.error("Error inverting card:", err);
+  }
+  res.status(501).json({ error: "Not implemented yet" });
+  return;
 });
 
 router.post("/", authMiddleware, async (req, res) => {

@@ -1,22 +1,22 @@
-import Card from "../../molecules/Card/Card";
-import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
-import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
-import { useContext, useState, useEffect } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { PopulatedUserCard, User } from "../../../types/common";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
-import { FetchedCategory } from "../CardFormPage/CardFormPage";
+import { UserContext } from "../../../context/UserContext";
+import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
 import goldIcon from "../../../images/coin.png";
+import { PopulatedUserCard, User } from "../../../types/common";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
+import Card from "../../molecules/Card/Card";
+import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { GameFooter } from "../../molecules/Footer/Footer";
+import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
+import { FetchedCategory } from "../CardFormPage/CardFormPage";
 
 interface PutResult {
   user: User;
   userCard: PopulatedUserCard;
 }
-export default () => {
+const GamePage = () => {
   const { data, loading, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
@@ -47,7 +47,7 @@ export default () => {
       //   });
       // }
     }
-  }, [updateCardResponse]);
+  }, [updateCardResponse, setUser]);
 
   useEffect(() => {
     if (data) {
@@ -131,7 +131,7 @@ export default () => {
           !
         </h1>
         <Link to="/login">Se connecter</Link>
-        <Link to="/register">S'inscrire</Link>
+        <Link to="/register">S&apos;inscrire</Link>
       </div>
     );
   }
@@ -174,3 +174,5 @@ export default () => {
     </div>
   );
 };
+
+export default GamePage;

@@ -1,6 +1,8 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { useCallback, useEffect, useState } from "react";
+import { extractErrorMessage } from "../utils";
+
 const backUrl = import.meta.env.VITE_API_URL;
 
 // Resources
@@ -29,11 +31,7 @@ export const useAdminCatchup = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<undefined | string>(undefined);
 
-  useEffect(() => {
-    fetch();
-  }, [url]);
-
-  const fetch = () => {
+  const fetch = useCallback(() => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
       "token"
     )}`;
@@ -45,10 +43,14 @@ export const useAdminCatchup = () => {
         setError(undefined);
       })
       .catch((err) => {
-        setError(err.response.data.message);
+        setError(extractErrorMessage(err));
         setLoading(false);
       });
-  };
+  }, [url]);
+
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
 
   const post = async () => {
     setLoading(true);
@@ -59,8 +61,8 @@ export const useAdminCatchup = () => {
       const response = await axios.post(url);
       setData(response.data);
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
       setLoading(false);
     }
   };
@@ -90,7 +92,7 @@ export const useFetch = <T>(resource: string) => {
         setError(undefined);
       })
       .catch((err) => {
-        setError(err.response.data.message);
+        setError(extractErrorMessage(err));
         setLoading(false);
       });
   };
@@ -102,7 +104,7 @@ export const usePut = <T>(resource: string) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
-  const put = async (id: string, payload: any) => {
+  const put = async (id: string, payload: unknown) => {
     setLoading(true);
     try {
       axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
@@ -111,14 +113,14 @@ export const usePut = <T>(resource: string) => {
       const response = await axios.put(url + "/" + id, payload);
       setData(response.data);
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
       setLoading(false);
     }
   };
 
   // Only use for connected user, no id required
-  const putUser = async (payload: any) => {
+  const putUser = async (payload: unknown) => {
     setLoading(true);
     try {
       axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
@@ -127,8 +129,8 @@ export const usePut = <T>(resource: string) => {
       const response = await axios.put(url, payload);
       setData(response.data);
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
       setLoading(false);
     }
   };
@@ -147,11 +149,11 @@ export const useDelete = (resource: string) => {
     setLoading(true);
     try {
       await axios.delete(url).catch((err) => {
-        setError(err.message + " " + err.response.data.errorMessage);
+        setError(extractErrorMessage(err));
         setLoading(false);
       });
-    } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
       setLoading(false);
     }
   };
@@ -166,7 +168,7 @@ export const usePost = <T>(resource: string) => {
   const [error, setError] = useState<undefined | string>(undefined);
 
   const post = async (
-    payload: any,
+    payload: unknown,
     contentType: "multipart/form-data" | null = null
   ) => {
     setLoading(true);
@@ -182,13 +184,13 @@ export const usePost = <T>(resource: string) => {
       setData(response.data);
       setError(undefined);
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message + " " + err.response.data.errorMessage);
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
       setLoading(false);
     }
   };
 
-  const asyncPost = async (payload: any): Promise<T | undefined> => {
+  const asyncPost = async (payload: unknown): Promise<T | undefined> => {
     setLoading(true);
     try {
       axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
@@ -201,10 +203,8 @@ export const usePost = <T>(resource: string) => {
       });
       setLoading(false);
       return response.data;
-    } catch (err: any) {
-      setError(
-        err.message + " " + err.response?.data?.errorMessage || "Unknown error"
-      );
+    } catch (err: unknown) {
+      setError(extractErrorMessage(err));
       setLoading(false);
     }
   };

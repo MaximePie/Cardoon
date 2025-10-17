@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { ACTIONS, useFetch } from "../hooks/server";
-import { User } from "../types/common";
+import { ACTIONS, useFetch } from "../../hooks/server";
+import { User } from "../../types/common";
 import { UserContext, emptyUser } from "./UserContext";
 
 export const UserContextProvider = ({

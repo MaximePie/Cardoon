@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import classNames from "classnames";
 import { useState } from "react";
-import { useUser } from "../../../context";
+import { useUser } from "../../../context/UserContext";
 import { PopulatedUserCard } from "../../../types/common";
 
 const stringToRgb = (text: string) => {

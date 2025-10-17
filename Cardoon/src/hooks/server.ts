@@ -76,11 +76,7 @@ export const useFetch = <T>(resource: string) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<undefined | string>(undefined);
 
-  useEffect(() => {
-    fetch();
-  }, [url]);
-
-  const fetch = () => {
+  const fetch = useCallback(() => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
       "token"
     )}`;
@@ -95,7 +91,11 @@ export const useFetch = <T>(resource: string) => {
         setError(extractErrorMessage(err));
         setLoading(false);
       });
-  };
+  }, [url]);
+
+  useEffect(() => {
+    fetch();
+  }, [url, fetch]);
 
   return { data, loading, error, fetch };
 };

@@ -38,8 +38,8 @@ export const UserPage = () => {
 
   return (
     <div>
-      <h1>Page de l'utilisateur</h1>
-      <p>Nom d'utilisateur: {username}</p>
+      <h1>Page de l&apos;utilisateur</h1>
+      <p>Nom d&apos;utilisateur: {username}</p>
       <p>
         Objectif quotidien: {currentDailyGoal.progress} /{" "}
         {currentDailyGoal.target} ({currentDailyGoal.status})

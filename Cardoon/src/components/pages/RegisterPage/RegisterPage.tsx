@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { useUser } from "../../../context";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePost } from "../../../hooks/server";
 import { User } from "../../../types/common";
 import Input from "../../atoms/Input/Input";

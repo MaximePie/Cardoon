@@ -1,5 +1,8 @@
 import { useContext } from "react";
-import { UserContext, UserContextType } from "../context/UserContext";
+import {
+  UserContext,
+  UserContextType,
+} from "../context/UserContext/UserContext";
 
 /**
  * Hook personnalisé pour utiliser le UserContext

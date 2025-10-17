@@ -1,19 +1,19 @@
 import { useContext } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { ACTIONS, usePost } from "../../../hooks/server";
-import { Item, UserItem } from "../../../types/common";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import Button from "../../atoms/Button/Button";
+import { ACTIONS, usePost } from "../../../hooks/server";
+import { useUser } from "../../../hooks/useUser";
 import coinImage from "../../../images/coin.png";
+import { Item, UserItem } from "../../../types/common";
+import Button from "../../atoms/Button/Button";
 interface ItemProps {
   item: UserItem | Item;
   type: "UserItem" | "Item";
   afterPurchase: () => void;
 }
 
-export default ({ item, type, afterPurchase }: ItemProps) => {
+const ItemComponent = ({ item, type, afterPurchase }: ItemProps) => {
   const { post: postBuyItem } = usePost<UserItem>(ACTIONS.BUY_ITEM);
-  const { user, removeGold } = useContext(UserContext);
+  const { user, removeGold } = useUser();
   const { post: postUpgradeItem } = usePost<UserItem>(ACTIONS.UPGRADE_ITEM);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const upgradeItem = async (itemId: string) => {
@@ -88,3 +88,5 @@ export default ({ item, type, afterPurchase }: ItemProps) => {
     );
   }
 };
+
+export default ItemComponent;

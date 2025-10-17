@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../../context/UserContext";
 import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
+import { useUser } from "../../../hooks/useUser";
 import goldIcon from "../../../images/coin.png";
 import { PopulatedUserCard, User } from "../../../types/common";
 import { shuffleArray } from "../../../utils";
@@ -21,7 +21,7 @@ const GamePage = () => {
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );

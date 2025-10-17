@@ -1,54 +1,16 @@
-import { useContext, useState, useEffect } from "react";
-import { UserContext } from "../../../context/UserContext";
+import { useContext, useEffect, useState } from "react";
 
-import {
-  useFetch,
-  RESOURCES,
-  usePost,
-  useAdminCatchup,
-} from "../../../hooks/server";
+import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 
+import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useUser } from "../../../hooks/useUser";
 import { Item } from "../../../types/common";
 
 const VALID_ITEM_TYPES = ["head", "weapon", "armor", "accessory"] as const;
-
-const CaroleCards = () => {
-  const { data, post } = useAdminCatchup();
-  const cardsNotFromCarole =
-    data?.allCardsFromCarole.filter(
-      ({ user }) => user !== "684835fc6f4fff7090150f30"
-    ) || [];
-  console.log("All cards from Carole:", cardsNotFromCarole);
-
-  const triggerCatchup = async () => {
-    const confirm = window.confirm(
-      "Êtes-vous sûr de vouloir lancer la procédure de rattrapage ?" +
-        "\nCette action est irréversible."
-    );
-    if (!confirm) return;
-    await post();
-    alert("Procédure de rattrapage lancée.");
-  };
-
-  return (
-    <div>
-      <p>Max : "67a3c4c1e0440819311607dd"</p>
-      <h2>
-        Cartes Carole (684835fc6f4fff7090150f30) ({cardsNotFromCarole.length}{" "}
-        trouvées)
-      </h2>
-      <button onClick={triggerCatchup}>NUKE</button>
-      <p>
-        {cardsNotFromCarole.map((userCard, index) => (
-          <span key={index}>"{userCard._id}",</span>
-        ))}
-      </p>
-    </div>
-  );
-};
+type ItemType = (typeof VALID_ITEM_TYPES)[number];
 
 export const ShopAdminPage = () => {
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const [newItem, setNewItem] = useState<Item>({
     _id: "",
@@ -92,10 +54,7 @@ export const ShopAdminPage = () => {
           "error"
         );
       } else {
-        openSnackbarWithMessage(
-          "Objet ajouté avec succès!",
-          "success"
-        );
+        openSnackbarWithMessage("Objet ajouté avec succès!", "success");
         // Refresh the items list
         fetch();
       }
@@ -104,13 +63,13 @@ export const ShopAdminPage = () => {
   }, [isSaving, loading, error, openSnackbarWithMessage, fetch]);
 
   if (!user || user.role !== "admin" || !isDev) {
-    return <p>Vous n'avez pas accès à cette page.</p>;
+    return <p>Vous n&apos;avez pas accès à cette page.</p>;
   }
 
   const saveItem = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    
+
     const formData = new FormData();
     if (itemImageFile) {
       formData.append("imageFile", itemImageFile);
@@ -128,7 +87,10 @@ export const ShopAdminPage = () => {
     } catch (err) {
       // Handle any additional errors not caught by the hook
       setIsSaving(false);
-      const errorMessage = err instanceof Error ? err.message : "Une erreur inattendue s'est produite";
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Une erreur inattendue s'est produite";
       openSnackbarWithMessage(
         `Erreur lors de l'ajout de l'objet: ${errorMessage}`,
         "error"
@@ -138,7 +100,7 @@ export const ShopAdminPage = () => {
 
   return (
     <div className="Admin">
-      <h1>Page d'administration de la boutique</h1>
+      <h1>Page d&apos;administration de la boutique</h1>
       <p>Cette page est réservée aux administrateurs.</p>
       <h2>Ajouter un nouvel objet</h2>
       <form onSubmit={saveItem}>
@@ -186,14 +148,16 @@ export const ShopAdminPage = () => {
         />
         <select
           value={newItem.type}
-          onChange={(e) =>
+          onChange={(e) => {
+            const val = e.target.value as string;
+            const isValid = (VALID_ITEM_TYPES as readonly ItemType[]).includes(
+              val as ItemType
+            );
             setNewItem({
               ...newItem,
-              type: VALID_ITEM_TYPES.includes(e.target.value as any)
-                ? (e.target.value as any)
-                : "weapon",
-            })
-          }
+              type: isValid ? (val as ItemType) : "weapon",
+            });
+          }}
         >
           <option value="head">Tête</option>
           <option value="weapon">Arme</option>
@@ -231,8 +195,6 @@ export const ShopAdminPage = () => {
           </li>
         ))}
       </ul>
-
-      <CaroleCards />
     </div>
   );
 };

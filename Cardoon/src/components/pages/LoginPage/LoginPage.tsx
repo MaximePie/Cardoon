@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { ACTIONS, usePost } from "../../../hooks/server";
-import { User } from "../../../types/common";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ACTIONS, usePost } from "../../../hooks/server";
+import { useUser } from "../../../hooks/useUser";
+import { User } from "../../../types/common";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 
@@ -17,7 +16,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useUser();
   const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isErroneous, setIsErroneous] = useState(false);
 

@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { useFetch, RESOURCES } from "../../../hooks/server";
+import { useEffect, useState } from "react";
+import { RESOURCES, useFetch } from "../../../hooks/server";
+import { useUser } from "../../../hooks/useUser";
 import { Item as ItemType, UserItem } from "../../../types/common";
-import Item from "../../molecules/Item/Item";
 import { GameFooter } from "../../molecules/Footer/Footer";
+import Item from "../../molecules/Item/Item";
 
-export default () => {
-  const { user, hasItem, refresh } = useContext(UserContext);
+export default function UpgradePage() {
+  const { user, hasItem, refresh } = useUser();
 
   const { fetch, data } = useFetch<ItemType[]>(RESOURCES.ITEMS);
   const [items, setItems] = useState<ItemType[]>(data || []);
@@ -62,4 +62,4 @@ export default () => {
       </div>
     </div>
   );
-};
+}

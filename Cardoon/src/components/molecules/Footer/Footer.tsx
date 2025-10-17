@@ -1,10 +1,10 @@
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
-import Button from "../../atoms/Button/Button";
 import { useContext, useEffect, useRef } from "react";
-import { UserContext } from "../../../context/UserContext";
-import goldIcon from "../../../images/coin.png";
-import { SnackbarContext } from "../../../context/SnackbarContext";
 import { ConfettiContext } from "../../../context/ConfettiContext";
+import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useUser } from "../../../hooks/useUser";
+import goldIcon from "../../../images/coin.png";
+import Button from "../../atoms/Button/Button";
 
 interface GameFooterProps {
   setFlash?: (flash: boolean) => void;
@@ -21,11 +21,10 @@ export const DailyGoalProgressBar = ({
 }) => {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { showConfetti } = useContext(ConfettiContext);
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
   const previousProgress = useRef(user.currentDailyGoal.status);
 
   useEffect(() => {
-    return;
     const shouldShowConfetti =
       progress >= target &&
       previousProgress.current === "PENDING" &&
@@ -42,7 +41,15 @@ export const DailyGoalProgressBar = ({
         gold: user.gold + questReward,
       });
     }
-  }, [progress, target]);
+  }, [
+    progress,
+    target,
+    user.currentDailyGoal.status,
+    showConfetti,
+    openSnackbarWithMessage,
+    setUser,
+    user,
+  ]);
 
   const progressPercentage = (progress / target) * 100;
   const fillClassName = `Footer__progress-bar__fill ${
@@ -65,7 +72,7 @@ export const DailyGoalProgressBar = ({
 };
 
 export const GameFooter = (props: GameFooterProps) => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { showConfetti } = useContext(ConfettiContext);
   const { setFlash, isFlashModeOn, currentPage } = props;
@@ -88,7 +95,13 @@ export const GameFooter = (props: GameFooterProps) => {
       });
     }
     previousStatus.current = user.currentDailyGoal.status;
-  }, [user.currentDailyGoal.status]);
+  }, [
+    user.currentDailyGoal.status,
+    showConfetti,
+    openSnackbarWithMessage,
+    setUser,
+    user,
+  ]);
 
   const formattedUserGold = () => {
     if (user.gold >= 1000000) {

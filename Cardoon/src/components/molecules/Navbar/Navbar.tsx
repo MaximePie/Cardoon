@@ -1,19 +1,19 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { Link } from "react-router-dom";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import NorthIcon from "@mui/icons-material/North";
-import LogoutIcon from "@mui/icons-material/Logout";
 import AddIcon from "@mui/icons-material/Add";
+import LogoutIcon from "@mui/icons-material/Logout";
+import NorthIcon from "@mui/icons-material/North";
 import UserIcon from "@mui/icons-material/Person";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useUser } from "../../../hooks/useUser";
 interface NavbarLink {
   to: string;
   label: string;
   icon: React.ReactNode;
 }
 
-export default () => {
-  const { user, logout } = useContext(UserContext);
+const Navbar = () => {
+  const { user, logout } = useUser();
   const [isMobile, setIsMobile] = useState(false);
   const links: NavbarLink[] = [
     { to: "/", label: "Entraînement", icon: <SportsEsportsIcon /> },
@@ -65,3 +65,5 @@ export default () => {
     </div>
   );
 };
+
+export default Navbar;

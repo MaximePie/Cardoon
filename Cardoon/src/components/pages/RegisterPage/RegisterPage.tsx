@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
+import { useUser } from "../../../context";
+import { SnackbarContext } from "../../../context/SnackbarContext";
 import { ACTIONS, usePost } from "../../../hooks/server";
 import { User } from "../../../types/common";
-import { UserContext } from "../../../context/UserContext";
-import { SnackbarContext } from "../../../context/SnackbarContext";
-import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Input from "../../atoms/Input/Input";
+import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const { post, data: user } = usePost<User>(ACTIONS.REGISTER);

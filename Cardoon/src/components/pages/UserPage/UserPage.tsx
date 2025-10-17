@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { User } from "../../../types/common";
-import { RESOURCES, usePut } from "../../../hooks/server";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import { RESOURCES, usePut } from "../../../hooks/server";
+import { useUser } from "../../../hooks/useUser";
+import { User } from "../../../types/common";
 
 export const UserPage = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { username, gold, role, currentDailyGoal, dailyGoal } = user;
   const [draftDailyGoal, setDraftDailyGoal] = useState<number>(dailyGoal || 0);

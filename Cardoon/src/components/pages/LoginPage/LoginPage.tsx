@@ -48,7 +48,7 @@ export default function LoginForm() {
 
       navigate("/");
     }
-  }, [data]);
+  }, [data, setUser, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

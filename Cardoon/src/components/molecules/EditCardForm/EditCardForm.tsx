@@ -1,8 +1,7 @@
+import Delete from "@mui/icons-material/Delete";
 import { IconButton, Modal } from "@mui/material";
-import { PopulatedUserCard } from "../../../types/common";
 import { useContext, useEffect, useState } from "react";
-import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
-import { FetchedCategory } from "../../pages/CardFormPage/CardFormPage";
+import { SnackbarContext } from "../../../context/SnackbarContext";
 import {
   ACTIONS,
   RESOURCES,
@@ -10,12 +9,13 @@ import {
   usePost,
   usePut,
 } from "../../../hooks/server";
-import Delete from "@mui/icons-material/Delete";
-import { SnackbarContext } from "../../../context/SnackbarContext";
+import { PopulatedUserCard } from "../../../types/common";
+import Button from "../../atoms/Button/Button";
+import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
-import Button from "../../atoms/Button/Button";
-import SubQuestionsTab from "./SubQuestionsTab";
+import { FetchedCategory } from "../../pages/CardFormPage/CardFormPage";
+import SubQuestionsTab from "./SubQuestionsTab/SubQuestionsTab";
 
 interface EditCardFormProps {
   isOpen: boolean;
@@ -25,13 +25,13 @@ interface EditCardFormProps {
   afterDelete: () => void;
 }
 
-export default ({
+export default function EditCardForm({
   isOpen,
   close,
   editedCard,
   categories,
   afterDelete,
-}: EditCardFormProps) => {
+}: EditCardFormProps) {
   const {
     card: { question, answer, imageLink, category, expectedAnswers },
   } = editedCard;
@@ -53,7 +53,7 @@ export default ({
       setInvertedCard(invertedCardData.invertedCard);
       openSnackbarWithMessage("La carte inverse a bien été créée");
     }
-  }, [invertedCardData]);
+  }, [invertedCardData, setInvertedCard, openSnackbarWithMessage]);
 
   const [newCard, setNewCard] = useState({
     question,
@@ -80,7 +80,15 @@ export default ({
       category,
       expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
     });
-  }, [isOpen, editedCard]);
+  }, [
+    isOpen,
+    editedCard,
+    question,
+    answer,
+    imageLink,
+    category,
+    expectedAnswers,
+  ]);
 
   const categoriesWithCount = categories.map(
     (category) => `${category.category} (${category.count})`
@@ -234,4 +242,4 @@ export default ({
       </div>
     </Modal>
   );
-};
+}

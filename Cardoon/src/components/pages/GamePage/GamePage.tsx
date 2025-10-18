@@ -36,26 +36,19 @@ const GamePage = () => {
   useEffect(() => {
     if (updateCardResponse) {
       setUser(updateCardResponse.user);
-      // if (
-      //   updateCardResponse.user.currentDailyGoal.target ===
-      //   updateCardResponse.user.currentDailyGoal.progress
-      // ) {
-      //   const questReward = user.currentGoldMultiplier * 100 * user.streak;
-      //   setUser({
-      //     ...user,
-      //     gold: user.gold + questReward,
-      //   });
-      // }
     }
   }, [updateCardResponse, setUser]);
 
   useEffect(() => {
     if (data) {
-      setUserCards(
-        shuffleArray(data.cards).sort((a: PopulatedUserCard) =>
-          a.card.parentId ? -1 : 1
-        )
+      const shuffled = (shuffleArray(data.cards) as PopulatedUserCard[]).sort(
+        (a: PopulatedUserCard, b: PopulatedUserCard) => {
+          if (a.card.parentId && !b.card.parentId) return -1;
+          if (!a.card.parentId && b.card.parentId) return 1;
+          return 0;
+        }
       );
+      setUserCards(shuffled);
       setCategories(data.categories);
     }
   }, [data]);

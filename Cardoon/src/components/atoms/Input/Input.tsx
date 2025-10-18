@@ -12,7 +12,7 @@ interface InputProps {
   hint?: string;
 }
 
-export default ({
+export default function Input({
   label,
   type,
   value,
@@ -22,7 +22,7 @@ export default ({
   placeholder,
   isRequired = false,
   hint,
-}: InputProps) => {
+}: InputProps) {
   return (
     <div className={`${className || ""} Input`}>
       <label htmlFor={label}>
@@ -39,4 +39,4 @@ export default ({
       />
     </div>
   );
-};
+}

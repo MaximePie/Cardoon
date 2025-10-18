@@ -13,7 +13,7 @@ export default function UpgradePage() {
 
   useEffect(() => {
     fetch();
-  }, []);
+  }, [fetch]);
 
   useEffect(() => {
     if (data) {
@@ -33,7 +33,6 @@ export default function UpgradePage() {
       };
     })
     .filter((item): item is UserItem => item !== null);
-  console.log("User Items with base", userItems);
   const unownedItems: ItemType[] = items.filter((item) => !hasItem(item._id));
   return (
     <div className="Page ShopPage">

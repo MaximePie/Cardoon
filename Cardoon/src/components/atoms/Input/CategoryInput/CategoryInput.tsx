@@ -10,13 +10,13 @@ interface CategoryInputProps {
   label?: string;
   isRequired?: boolean;
 }
-export default ({
+export default function CategoryInput({
   categoriesWithCount,
   newCard,
   setNewCard,
   label = "Catégorie",
   isRequired = false,
-}: CategoryInputProps) => {
+}: CategoryInputProps) {
   return (
     <>
       <div className="CategoryInput__label">
@@ -51,4 +51,4 @@ export default ({
       />
     </>
   );
-};
+}

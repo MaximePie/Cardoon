@@ -8,7 +8,7 @@ export const TokenErrorPage = () => {
         <h2 className="TokenErrorPage__title">⚠️ Session expirée</h2>
         <p className="TokenErrorPage__message">
           Votre session a expiré. Veuillez vous reconnecter pour continuer à
-          utiliser l'application.
+          utiliser l&apos;application.
         </p>
         <Link to="/login" className="TokenErrorPage__link">
           <Button variant="contained">Reconnexion</Button>

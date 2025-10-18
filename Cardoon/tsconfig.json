@@ -1,6 +1,8 @@
 {
-  "strict": true,
-  "noUncheckedIndexedAccess": true,
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },

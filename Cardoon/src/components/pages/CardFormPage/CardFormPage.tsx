@@ -1,15 +1,15 @@
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { Modal } from "@mui/material";
 import { useContext, useState } from "react";
+import { SnackbarContext } from "../../../context/SnackbarContext";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
-import { Modal } from "@mui/material";
-import Input from "../../atoms/Input/Input";
-import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
-import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import Button from "../../atoms/Button/Button";
+import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
-import { SnackbarContext } from "../../../context/SnackbarContext";
+import Input from "../../atoms/Input/Input";
 import Loader from "../../atoms/Loader/Loader";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import QuestionLine from "./QuestionLine/QuestionLine";
 
 interface CardFormModalProps {
@@ -49,7 +49,7 @@ export type MistralResponse = {
  * answer: String
  * @returns
  */
-export default () => {
+export default function CardFormPage() {
   const { post, error, loading } = usePost(RESOURCES.CARDS);
   const { asyncPost: postMistral } = usePost<MistralResponse>(
     RESOURCES.MISTRAL
@@ -153,7 +153,7 @@ export default () => {
   const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    let response = await postMistral({
+    const response = await postMistral({
       category: newCard.category,
       subcategory,
       promptType: "generatedQuestions",
@@ -321,4 +321,4 @@ export default () => {
       <div>{error}</div>
     </div>
   );
-};
+}

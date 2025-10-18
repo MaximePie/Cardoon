@@ -1,6 +1,6 @@
 import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { useContext, useEffect, useRef } from "react";
-import { ConfettiContext } from "../../../context/ConfettiContext";
+import { ConfettiContext } from "../../../context/ConfettiContext/ConfettiContext";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { useUser } from "../../../hooks/useUser";
 import goldIcon from "../../../images/coin.png";

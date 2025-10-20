@@ -16,7 +16,6 @@ export default tseslint.config(
       "**/*.d.ts",
     ],
   },
-  // Configuration pour les fichiers source (src/**)
   {
     extends: [
       js.configs.recommended,

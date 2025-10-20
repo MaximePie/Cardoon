@@ -39,7 +39,11 @@ export default function EditCardForm({
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const { put } = usePut(RESOURCES.CARDS);
-  const { post: invertCardPost, data: invertedCardData } = usePost<{
+  const {
+    post: invertCardPost,
+    data: invertedCardData,
+    loading: invertLoading,
+  } = usePost<{
     invertedCard: PopulatedUserCard | null;
     originalCard: PopulatedUserCard | null;
   }>(ACTIONS.INVERT_CARD);
@@ -80,15 +84,7 @@ export default function EditCardForm({
       category,
       expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
     });
-  }, [
-    isOpen,
-    editedCard,
-    question,
-    answer,
-    imageLink,
-    category,
-    expectedAnswers,
-  ]);
+  }, [isOpen, question, answer, imageLink, category, expectedAnswers]);
 
   const categoriesWithCount = categories.map(
     (category) => `${category.category} (${category.count})`

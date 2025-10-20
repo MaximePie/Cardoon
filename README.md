@@ -42,9 +42,3 @@ This is a MERN stack
 
 - Added Husky
 - Eslint additionnal rules
-
-#### Install Husky on machine
-
-```
-yarn prepare
-```

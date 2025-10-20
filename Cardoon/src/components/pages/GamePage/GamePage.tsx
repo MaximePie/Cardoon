@@ -89,7 +89,7 @@ const GamePage = () => {
       const cardElement = document.querySelector(`[data-card-id="${id}"]`);
       if (cardElement) {
         const cardRect = cardElement.getBoundingClientRect();
-        for (let i = 0; i < user.currentGoldMultiplier + 1; i++) {
+        for (let i = 0; i < Math.min(user.currentGoldMultiplier + 1, 10); i++) {
           setTimeout(() => {
             addCoinsAnimation(cardRect);
           }, i * 200);

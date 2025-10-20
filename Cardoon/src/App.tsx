@@ -8,7 +8,7 @@ import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage/RegisterPage";
 import ShopPage from "./components/pages/UpgradePage/UpgradePage";
 import UserPage from "./components/pages/UserPage/UserPage";
-import { ConfettiProvider } from "./context/ConfettiContext/ConfettiContext";
+import { ConfettiProvider } from "./context/ConfettiContext";
 import { SnackbarContextProvider } from "./context/SnackbarContext";
 import { UserContextProvider } from "./context/UserContext";
 import "./styles/app.scss";

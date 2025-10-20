@@ -41,13 +41,13 @@ const GamePage = () => {
 
   useEffect(() => {
     if (data) {
-      const shuffled = (shuffleArray(data.cards) as PopulatedUserCard[]).sort(
-        (a: PopulatedUserCard, b: PopulatedUserCard) => {
-          if (a.card.parentId && !b.card.parentId) return -1;
-          if (!a.card.parentId && b.card.parentId) return 1;
-          return 0;
-        }
-      );
+      const shuffled = (
+        shuffleArray([...data.cards]) as PopulatedUserCard[]
+      ).sort((a: PopulatedUserCard, b: PopulatedUserCard) => {
+        if (a.card.parentId && !b.card.parentId) return -1;
+        if (!a.card.parentId && b.card.parentId) return 1;
+        return 0;
+      });
       setUserCards(shuffled);
       setCategories(data.categories);
     }

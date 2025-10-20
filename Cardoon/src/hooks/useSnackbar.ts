@@ -3,14 +3,23 @@ import { SnackbarContext } from "../context/SnackbarContext";
 
 /**
  * Hook personnalisé pour utiliser le SnackbarContext
- * Fournit une meilleure expérience développeur avec vérification d'erreur
+ * Fournit une API simplifiée et type-safe pour les snackbars
  */
 export const useSnackbar = () => {
   const context = useContext(SnackbarContext);
 
-  if (!context) {
-    throw new Error("useSnackbar must be used within a SnackbarProvider");
-  }
+  // Fonctions utilitaires pour une meilleure DX
+  const showSuccess = (message: string) => {
+    context.openSnackbarWithMessage(message, "success");
+  };
 
-  return context;
+  const showError = (message: string) => {
+    context.openSnackbarWithMessage(message, "error");
+  };
+
+  return {
+    ...context,
+    showSuccess,
+    showError,
+  };
 };

@@ -1,14 +1,13 @@
 // routes/api/books.js
-import express from "express";
-const router = express.Router();
-import Card from "../models/Card.js";
-import authMiddleware from "../middleware/auth.js";
-import User from "../models/User.js";
-import { uploadImage } from "../utils/imagesManager.js";
+import express, { Request, Response } from "express";
 import { IncomingForm } from "formidable";
-import UserCard from "../models/UserCard.js";
 import mongoose, { ObjectId } from "mongoose";
-import { Request, Response } from "express";
+import authMiddleware from "../middleware/auth.js";
+import Card from "../models/Card.js";
+import User from "../models/User.js";
+import UserCard from "../models/UserCard.js";
+import { uploadImage } from "../utils/imagesManager.js";
+const router = express.Router();
 
 router.get("/categories", async (req, res) => {
   const categories = await Card.aggregate([
@@ -33,7 +32,12 @@ router.get("/:id", (req, res) => {
 
 router.post("/invert", authMiddleware, async (req, res) => {
   try {
-    const originalCard = await Card.findById(req.body.cardId);
+    const { cardId } = req.body as { cardId: string };
+    if (!cardId || !mongoose.Types.ObjectId.isValid(cardId)) {
+      res.status(400).json({ error: "Invalid or missing cardId" });
+      return;
+    }
+    const originalCard = await Card.findById(cardId);
     if (!originalCard) {
       res.status(404).json({ error: "Original card not found" });
       return;
@@ -45,7 +49,7 @@ router.post("/invert", authMiddleware, async (req, res) => {
   } catch (err) {
     console.error("Error inverting card:", err);
   }
-  res.status(501).json({ error: "Not implemented yet" });
+  res.status(501).json({ error: "Error inverting card" });
   return;
 });
 

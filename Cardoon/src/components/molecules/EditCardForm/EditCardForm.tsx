@@ -141,9 +141,15 @@ export default function EditCardForm({
 
   // Send to the server a request to create an inverted card
   const invertCard = async () => {
-    await invertCardPost({
-      cardId: editedCard.card._id,
-    });
+    if (
+      invertLoading ||
+      editedCard.card.isInverted ||
+      editedCard.card.hasInvertedChild ||
+      invertedCard
+    ) {
+      return;
+    }
+    await invertCardPost({ cardId: editedCard.card._id });
   };
 
   return (

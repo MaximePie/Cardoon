@@ -16,7 +16,7 @@ export interface Card {
   parentId?: string;
   expectedAnswers?: string[];
   createdAt: string;
-  ownedBy: string[];
+  ownedBy: string;
   isInverted: boolean;
   hasInvertedChild: boolean;
   originalCardId?: string;

@@ -41,15 +41,7 @@ export const DailyGoalProgressBar = ({
         gold: user.gold + questReward,
       });
     }
-  }, [
-    progress,
-    target,
-    user.currentDailyGoal.status,
-    showConfetti,
-    openSnackbarWithMessage,
-    setUser,
-    user,
-  ]);
+  }, [progress, target, user, showConfetti, openSnackbarWithMessage, setUser]);
 
   const progressPercentage = (progress / target) * 100;
   const fillClassName = `Footer__progress-bar__fill ${

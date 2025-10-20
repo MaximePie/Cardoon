@@ -23,14 +23,17 @@ export default function Input({
   isRequired = false,
   hint,
 }: InputProps) {
+  const inputId = label; // Use label as ID for accessibility
+
   return (
     <div className={`${className || ""} Input`}>
-      <label htmlFor={label}>
+      <label htmlFor={inputId}>
         {label}
         {isRequired && <span className="Input__required">*</span>}
         {hint && <Hint text={hint} customClassName="Input__hint" />}
       </label>
       <input
+        id={inputId}
         placeholder={placeholder || label || ""}
         type={type}
         value={value}

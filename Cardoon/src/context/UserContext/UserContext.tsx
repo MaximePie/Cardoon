@@ -1,47 +1,8 @@
-import { createContext, useEffect, useState } from "react";
-import { User } from "../types/common";
-import { ACTIONS, useFetch } from "../hooks/server";
 import axios from "axios";
-
-interface UserContextType {
-  user: User;
-  setUser: (user: User) => void;
-  logout: () => void;
-  addScore: (score: number) => void;
-  earnGold: (gold: number) => void;
-  removeGold: (gold: number) => void;
-  hasItem: (itemId: string) => boolean;
-  refresh: () => void;
-}
-
-const emptyUser: User = {
-  _id: "",
-  username: "",
-  score: 0,
-  dailyGoal: 10,
-  gold: 0,
-  role: "user",
-  items: [],
-  currentGoldMultiplier: 1,
-  currentDailyGoal: {
-    target: 0,
-    progress: 0,
-    closedAt: "",
-    status: "PENDING", // PENDING, COMPLETED, FAILED
-  },
-  streak: 0,
-};
-
-export const UserContext = createContext<UserContextType>({
-  user: emptyUser,
-  setUser: () => {},
-  logout: () => {},
-  addScore: () => {},
-  earnGold: () => {},
-  removeGold: () => {},
-  hasItem: () => false,
-  refresh: () => {},
-});
+import { useEffect, useState } from "react";
+import { ACTIONS, useFetch } from "../../hooks/server";
+import { User } from "../../types/common";
+import { UserContext, emptyUser } from "./UserContext";
 
 export const UserContextProvider = ({
   children,
@@ -64,7 +25,7 @@ export const UserContextProvider = ({
       }`;
       fetch();
     }
-  }, []);
+  }, [fetch]);
 
   const refresh = () => {
     fetch();

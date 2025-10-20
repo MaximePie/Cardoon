@@ -1,19 +1,19 @@
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { useFetch, RESOURCES } from "../../../hooks/server";
+import { useEffect, useState } from "react";
+import { RESOURCES, useFetch } from "../../../hooks/server";
+import { useUser } from "../../../hooks/useUser";
 import { Item as ItemType, UserItem } from "../../../types/common";
-import Item from "../../molecules/Item/Item";
 import { GameFooter } from "../../molecules/Footer/Footer";
+import Item from "../../molecules/Item/Item";
 
-export default () => {
-  const { user, hasItem, refresh } = useContext(UserContext);
+export default function UpgradePage() {
+  const { user, hasItem, refresh } = useUser();
 
   const { fetch, data } = useFetch<ItemType[]>(RESOURCES.ITEMS);
   const [items, setItems] = useState<ItemType[]>(data || []);
 
   useEffect(() => {
     fetch();
-  }, []);
+  }, [fetch]);
 
   useEffect(() => {
     if (data) {
@@ -33,7 +33,6 @@ export default () => {
       };
     })
     .filter((item): item is UserItem => item !== null);
-  console.log("User Items with base", userItems);
   const unownedItems: ItemType[] = items.filter((item) => !hasItem(item._id));
   return (
     <div className="Page ShopPage">
@@ -62,4 +61,4 @@ export default () => {
       </div>
     </div>
   );
-};
+}

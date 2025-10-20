@@ -1,23 +1,23 @@
-import "./styles/app.scss";
-import CardForm from "./components/pages/CardFormPage/CardFormPage";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Navbar from "./components/molecules/Navbar/Navbar";
+import ShopAdminPage from "./components/pages/AdminPage/AdminPage";
+import BossPage from "./components/pages/BossPage/BossPage";
+import CardForm from "./components/pages/CardFormPage/CardFormPage";
+import GamePage from "./components/pages/GamePage/GamePage";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage/RegisterPage";
-import GamePage from "./components/pages/GamePage/GamePage";
 import ShopPage from "./components/pages/UpgradePage/UpgradePage";
-import BossPage from "./components/pages/BossPage/BossPage";
-import { SnackbarProvider } from "./context/SnackbarContext";
-import { UserContextProvider } from "./context/UserContext";
-import { ConfettiProvider } from "./context/ConfettiContext";
-import Navbar from "./components/molecules/Navbar/Navbar";
 import UserPage from "./components/pages/UserPage/UserPage";
-import ShopAdminPage from "./components/pages/AdminPage/AdminPage";
+import { ConfettiProvider } from "./context/ConfettiContext";
+import { SnackbarContextProvider } from "./context/SnackbarContext";
+import { UserContextProvider } from "./context/UserContext";
+import "./styles/app.scss";
 
 const App = () => {
   return (
     <UserContextProvider>
       <ConfettiProvider>
-        <SnackbarProvider>
+        <SnackbarContextProvider>
           <Router>
             <Navbar />
             <div className="Page">
@@ -33,7 +33,7 @@ const App = () => {
               </Routes>
             </div>
           </Router>
-        </SnackbarProvider>
+        </SnackbarContextProvider>
       </ConfettiProvider>
     </UserContextProvider>
   );

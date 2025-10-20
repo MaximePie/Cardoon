@@ -12,7 +12,7 @@ interface InputProps {
   hint?: string;
 }
 
-export default ({
+export default function Input({
   label,
   type,
   value,
@@ -22,15 +22,18 @@ export default ({
   placeholder,
   isRequired = false,
   hint,
-}: InputProps) => {
+}: InputProps) {
+  const inputId = label; // Use label as ID for accessibility
+
   return (
     <div className={`${className || ""} Input`}>
-      <label htmlFor={label}>
+      <label htmlFor={inputId}>
         {label}
         {isRequired && <span className="Input__required">*</span>}
         {hint && <Hint text={hint} customClassName="Input__hint" />}
       </label>
       <input
+        id={inputId}
         placeholder={placeholder || label || ""}
         type={type}
         value={value}
@@ -39,4 +42,4 @@ export default ({
       />
     </div>
   );
-};
+}

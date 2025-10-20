@@ -15,6 +15,11 @@ export interface Card {
   category: string;
   parentId?: string;
   expectedAnswers?: string[];
+  createdAt: string;
+  ownedBy: string;
+  isInverted: boolean;
+  hasInvertedChild: boolean;
+  originalCardId?: string;
 }
 export interface UserItem {
   base: Item;

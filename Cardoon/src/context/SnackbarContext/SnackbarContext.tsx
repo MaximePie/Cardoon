@@ -1,23 +1,13 @@
 import { Alert, Snackbar } from "@mui/material";
-import { createContext, useState } from "react";
-
-export const SnackbarContext = createContext({
-  openSnackbarWithMessage: (
-    message: string,
-    variant: "success" | "error" = "success"
-  ) => {
-    console.log(message, variant);
-  },
-  handleCloseSnackbar: () => {},
-});
-
+import { useState } from "react";
+import { SnackbarContext } from "./SnackbarContext";
 interface snackbarStatus {
   open: boolean;
   message: string;
   variant: "success" | "error";
 }
 
-export const SnackbarProvider = ({
+export const SnackbarContextProvider = ({
   children,
 }: {
   children: React.ReactNode;

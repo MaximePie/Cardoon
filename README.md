@@ -37,3 +37,8 @@ This is a MERN stack
 - Card Form is not more user friendly
 - Disabled IA generation for new questions for the moment
   > TODO : Adjust card creation option
+
+### 20/10/2025
+
+- Added Husky
+- Eslint additionnal rules

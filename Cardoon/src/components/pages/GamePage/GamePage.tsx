@@ -1,27 +1,27 @@
-import Card from "../../molecules/Card/Card";
-import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
-import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
-import { useContext, useState, useEffect } from "react";
-import { UserContext } from "../../../context/UserContext";
-import { PopulatedUserCard, User } from "../../../types/common";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
-import { FetchedCategory } from "../CardFormPage/CardFormPage";
+import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
+import { useUser } from "../../../hooks/useUser";
 import goldIcon from "../../../images/coin.png";
+import { PopulatedUserCard, User } from "../../../types/common";
 import { shuffleArray } from "../../../utils";
 import Loader from "../../atoms/Loader/Loader";
+import Card from "../../molecules/Card/Card";
+import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { GameFooter } from "../../molecules/Footer/Footer";
+import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
+import { FetchedCategory } from "../CardFormPage/CardFormPage";
 
 interface PutResult {
   user: User;
   userCard: PopulatedUserCard;
 }
-export default () => {
+const GamePage = () => {
   const { data, loading, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
   }>(RESOURCES.USERCARDS);
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );
@@ -36,26 +36,19 @@ export default () => {
   useEffect(() => {
     if (updateCardResponse) {
       setUser(updateCardResponse.user);
-      // if (
-      //   updateCardResponse.user.currentDailyGoal.target ===
-      //   updateCardResponse.user.currentDailyGoal.progress
-      // ) {
-      //   const questReward = user.currentGoldMultiplier * 100 * user.streak;
-      //   setUser({
-      //     ...user,
-      //     gold: user.gold + questReward,
-      //   });
-      // }
     }
-  }, [updateCardResponse]);
+  }, [updateCardResponse, setUser]);
 
   useEffect(() => {
     if (data) {
-      setUserCards(
-        shuffleArray(data.cards).sort((a: PopulatedUserCard) =>
-          a.card.parentId ? -1 : 1
-        )
-      );
+      const shuffled = (
+        shuffleArray([...data.cards]) as PopulatedUserCard[]
+      ).sort((a: PopulatedUserCard, b: PopulatedUserCard) => {
+        if (a.card.parentId && !b.card.parentId) return -1;
+        if (!a.card.parentId && b.card.parentId) return 1;
+        return 0;
+      });
+      setUserCards(shuffled);
       setCategories(data.categories);
     }
   }, [data]);
@@ -96,7 +89,7 @@ export default () => {
       const cardElement = document.querySelector(`[data-card-id="${id}"]`);
       if (cardElement) {
         const cardRect = cardElement.getBoundingClientRect();
-        for (let i = 0; i < user.currentGoldMultiplier + 1; i++) {
+        for (let i = 0; i < Math.min(user.currentGoldMultiplier + 1, 10); i++) {
           setTimeout(() => {
             addCoinsAnimation(cardRect);
           }, i * 200);
@@ -131,7 +124,7 @@ export default () => {
           !
         </h1>
         <Link to="/login">Se connecter</Link>
-        <Link to="/register">S'inscrire</Link>
+        <Link to="/register">S&apos;inscrire</Link>
       </div>
     );
   }
@@ -174,3 +167,5 @@ export default () => {
     </div>
   );
 };
+
+export default GamePage;

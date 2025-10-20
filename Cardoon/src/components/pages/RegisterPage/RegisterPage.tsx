@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from "react";
+import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePost } from "../../../hooks/server";
 import { User } from "../../../types/common";
-import { UserContext } from "../../../context/UserContext";
-import { SnackbarContext } from "../../../context/SnackbarContext";
-import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
+import { extractErrorMessage } from "../../../utils";
 import Input from "../../atoms/Input/Input";
+import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const { post, data: user } = usePost<User>(ACTIONS.REGISTER);
@@ -23,17 +24,15 @@ export default function RegisterPage() {
       setUser(user);
       openSnackbarWithMessage("Compte créé avec succès !");
     }
-  }, [user]);
+  }, [user, setUser, openSnackbarWithMessage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
       await post({ email, password, username });
-    } catch (err: any) {
-      const errorMessage =
-        err.response?.data?.errorMessage || err.message || "An error occurred";
-      setError(errorMessage);
+    } catch (err) {
+      setError(extractErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -68,7 +67,7 @@ export default function RegisterPage() {
           isRequired
         />
         <SubmitButton disabled={!isFormValid || loading}>
-          S'inscrire
+          S&apos;inscrire
         </SubmitButton>
         {error && <p>{error}</p>}
       </form>

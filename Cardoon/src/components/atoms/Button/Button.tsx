@@ -1,5 +1,5 @@
-import React from "react";
 import classnames from "classnames";
+import React from "react";
 import { Tooltip } from "react-tooltip";
 
 interface ButtonProps {
@@ -22,7 +22,7 @@ const makeTooltipIdFromContent = (content: string) => {
     .toString();
 };
 
-export default ({
+export default function Button({
   children,
   customClassName,
   disabled,
@@ -31,7 +31,7 @@ export default ({
   icon,
   tooltip,
   isLoading,
-}: ButtonProps) => {
+}: ButtonProps) {
   const className = classnames("Button", customClassName, {
     "Button--disabled": disabled,
     "Button--danger": variant === "danger",
@@ -58,4 +58,4 @@ export default ({
       />
     </>
   );
-};
+}

@@ -1,10 +1,7 @@
-import { useState, useEffect, createContext } from "react";
+import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
+import { ConfettiContext } from "./ConfettiContext";
 
-export const ConfettiContext = createContext({
-  isConfettiVisible: false,
-  showConfetti: () => {},
-});
 export const ConfettiProvider = ({
   children,
 }: {

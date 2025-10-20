@@ -1,15 +1,21 @@
-import { IconButton, Modal } from "@mui/material";
-import { PopulatedUserCard } from "../../../types/common";
-import { useContext, useEffect, useState } from "react";
-import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
-import { FetchedCategory } from "../../pages/CardFormPage/CardFormPage";
-import { RESOURCES, useDelete, usePut } from "../../../hooks/server";
 import Delete from "@mui/icons-material/Delete";
+import { IconButton, Modal } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import {
+  ACTIONS,
+  RESOURCES,
+  useDelete,
+  usePost,
+  usePut,
+} from "../../../hooks/server";
+import { PopulatedUserCard } from "../../../types/common";
+import Button from "../../atoms/Button/Button";
+import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
-import Button from "../../atoms/Button/Button";
-import SubQuestionsTab from "./SubQuestionsTab";
+import { FetchedCategory } from "../../pages/CardFormPage/CardFormPage";
+import SubQuestionsTab from "./SubQuestionsTab/SubQuestionsTab";
 
 interface EditCardFormProps {
   isOpen: boolean;
@@ -19,13 +25,13 @@ interface EditCardFormProps {
   afterDelete: () => void;
 }
 
-export default ({
+export default function EditCardForm({
   isOpen,
   close,
   editedCard,
   categories,
   afterDelete,
-}: EditCardFormProps) => {
+}: EditCardFormProps) {
   const {
     card: { question, answer, imageLink, category, expectedAnswers },
   } = editedCard;
@@ -33,7 +39,25 @@ export default ({
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const { put } = usePut(RESOURCES.CARDS);
+  const {
+    post: invertCardPost,
+    data: invertedCardData,
+    loading: invertLoading,
+  } = usePost<{
+    invertedCard: PopulatedUserCard | null;
+    originalCard: PopulatedUserCard | null;
+  }>(ACTIONS.INVERT_CARD);
   const { deleteResource } = useDelete(RESOURCES.CARDS);
+  const [invertedCard, setInvertedCard] = useState<null | PopulatedUserCard>(
+    null
+  );
+
+  useEffect(() => {
+    if (invertedCardData) {
+      setInvertedCard(invertedCardData.invertedCard);
+      openSnackbarWithMessage("La carte inverse a bien été créée");
+    }
+  }, [invertedCardData, setInvertedCard, openSnackbarWithMessage]);
 
   const [newCard, setNewCard] = useState({
     question,
@@ -60,7 +84,7 @@ export default ({
       category,
       expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
     });
-  }, [isOpen, editedCard]);
+  }, [isOpen, question, answer, imageLink, category, expectedAnswers]);
 
   const categoriesWithCount = categories.map(
     (category) => `${category.category} (${category.count})`
@@ -111,6 +135,19 @@ export default ({
     openSnackbarWithMessage("La carte a été mise à jour");
   };
 
+  // Send to the server a request to create an inverted card
+  const invertCard = async () => {
+    if (
+      invertLoading ||
+      editedCard.card.isInverted ||
+      editedCard.card.hasInvertedChild ||
+      invertedCard
+    ) {
+      return;
+    }
+    await invertCardPost({ cardId: editedCard.card._id });
+  };
+
   return (
     <Modal open={isOpen} onClose={handleClose}>
       <div className="EditCardForm">
@@ -130,6 +167,17 @@ export default ({
                 onClick={() => setActiveTab("subquestions")}
               >
                 Sous-questions
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={
+                  editedCard.card.isInverted ||
+                  editedCard.card.hasInvertedChild ||
+                  invertedCard !== null
+                }
+                onClick={invertCard}
+              >
+                Créer une question inverse
               </Button>
             </h1>
             <IconButton className="EditCardForm__close" onClick={close}>
@@ -196,4 +244,4 @@ export default ({
       </div>
     </Modal>
   );
-};
+}

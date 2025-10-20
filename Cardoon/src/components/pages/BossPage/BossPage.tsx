@@ -1,8 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import bossImage from "../../../images/boss_image_test.png";
-import { useUserCards } from "../../../hooks/usercards";
-import { PopulatedUserCard } from "../../../types/common";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useUserCards } from "../../../hooks/usercards";
+import bossImage from "../../../images/boss_image_test.png";
+import { PopulatedUserCard } from "../../../types/common";
 import Card from "../../molecules/Card/Card";
 type GameState = "started" | "stopped";
 
@@ -17,14 +17,14 @@ const BossCard = () => {
   );
 };
 
-export default () => {
+export default function BossPage() {
   const [gameState, setGameState] = useState<GameState>("stopped");
   const [timer, setTimer] = useState<number>(60);
   const initialHealthPoints = 350;
   const [healthPoints, setHealthPoints] = useState<number>(initialHealthPoints);
   const { userCards, removeCard } = useUserCards();
   const { openSnackbarWithMessage: showSnackbar } = useContext(SnackbarContext);
-  const openSnackbarWithMessage = useCallback(showSnackbar, []);
+  const openSnackbarWithMessage = useCallback(showSnackbar, [showSnackbar]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -120,4 +120,4 @@ export default () => {
       )}
     </div>
   );
-};
+}

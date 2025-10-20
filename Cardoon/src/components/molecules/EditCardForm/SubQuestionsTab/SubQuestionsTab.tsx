@@ -1,80 +1,13 @@
-import { useContext, useState } from "react";
-import { SnackbarContext } from "../../../context/SnackbarContext";
-import { usePost, RESOURCES } from "../../../hooks/server";
-import { PopulatedUserCard } from "../../../types/common";
-import Input from "../../atoms/Input/Input";
-import Button from "../../atoms/Button/Button";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import Loader from "../../atoms/Loader/Loader";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { MistralResponse } from "../../pages/CardFormPage/CardFormPage";
-
-interface GeneratedSubquestionsProps {
-  subquestions: { question: string; answer: string }[] | null;
-  addQuestion: (question: string, answer: string) => void;
-  isLoading: boolean;
-}
-
-interface SubQuestionProps {
-  question: string;
-  answer: string;
-  addQuestion: (question: string, answer: string) => void;
-}
-
-const SubQuestion = ({ question, answer, addQuestion }: SubQuestionProps) => {
-  const [isAdded, setIsAdded] = useState(false);
-
-  const handleAddQuestion = () => {
-    addQuestion(question, answer);
-    setIsAdded(true);
-  };
-
-  return (
-    <p className="GeneratedSubquestions__subquestion">
-      <span className="GeneratedSubquestions__subquestion__text">
-        <span className="GeneratedSubquestions__subquestion__text__question">
-          {question}
-        </span>
-        <span className="GeneratedSubquestions__subquestion__text__answer">
-          {answer}
-        </span>
-      </span>
-      <Button
-        variant="secondary"
-        onClick={handleAddQuestion}
-        disabled={isAdded}
-      >
-        {isAdded ? "✅ Ajouté" : "Ajouter"}
-      </Button>
-    </p>
-  );
-};
-
-const GeneratedSubquestions = ({
-  subquestions,
-  addQuestion,
-  isLoading,
-}: GeneratedSubquestionsProps) => {
-  return (
-    <div className="GeneratedSubquestions">
-      <h2>Questions générées</h2>
-      {isLoading && (
-        <div className="GeneratedSubquestions__loader">
-          <Loader />
-        </div>
-      )}
-      {!isLoading && !subquestions?.length && <p>Aucune question générée.</p>}
-      {subquestions?.map((subquestion, index) => (
-        <SubQuestion
-          key={index}
-          question={subquestion.question}
-          answer={subquestion.answer}
-          addQuestion={addQuestion}
-        />
-      ))}
-    </div>
-  );
-};
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import { useContext, useState } from "react";
+import { SnackbarContext } from "../../../../context/SnackbarContext";
+import { RESOURCES, usePost } from "../../../../hooks/server";
+import { PopulatedUserCard } from "../../../../types/common";
+import Button from "../../../atoms/Button/Button";
+import Input from "../../../atoms/Input/Input";
+import { MistralResponse } from "../../../pages/CardFormPage/CardFormPage";
+import GeneratedSubquestions from "./GeneratedSubquestions";
 
 interface SubQuestionsTabProps {
   editedCard: PopulatedUserCard;
@@ -86,7 +19,11 @@ interface SubQuestionsTabProps {
     category: string | undefined;
   };
 }
-export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
+export default function SubQuestionsTabComponent({
+  editedCard,
+  goBack,
+  newCard,
+}: SubQuestionsTabProps) {
   const { post } = usePost(RESOURCES.CARDS);
   const { asyncPost: postMistral } = usePost<MistralResponse>(
     RESOURCES.MISTRAL
@@ -134,7 +71,7 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
   ) => {
     e.preventDefault();
     setIsLoading(true);
-    let response = await postMistral({
+    const response = await postMistral({
       question: newCard.question,
       answer: newCard.answer,
       category: newCard.category || "",
@@ -163,12 +100,14 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
       if (!Array.isArray(parsedResponse)) {
         throw new Error("Invalid response format");
       }
-      const subquestions = parsedResponse.map((subquestion: any) => {
-        return {
-          question: subquestion.question,
-          answer: subquestion.answer,
-        };
-      });
+      const subquestions = parsedResponse.map(
+        (subquestion: { question: string; answer: string }) => {
+          return {
+            question: subquestion.question,
+            answer: subquestion.answer,
+          };
+        }
+      );
 
       setGeneratedSubquestions(subquestions);
       setIsLoading(false);
@@ -229,4 +168,4 @@ export default ({ editedCard, newCard, goBack }: SubQuestionsTabProps) => {
       </>
     </div>
   );
-};
+}

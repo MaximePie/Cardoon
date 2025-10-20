@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import { ICard } from "./Card";
 
 /**
  * A user card has the following properties:
@@ -12,7 +13,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 export interface IUserCard extends Document {
   user: mongoose.Types.ObjectId;
-  card: mongoose.Types.ObjectId;
+  card: mongoose.Types.ObjectId | ICard;
   interval: number;
   lastReviewed: Date;
   nextReview: Date;

@@ -1,13 +1,13 @@
-import { useContext, useState } from "react";
-import { PopulatedUserCard } from "../../../types/common";
-import classNames from "classnames";
-import { UserContext } from "../../../context/UserContext";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
 import Edit from "@mui/icons-material/Edit";
 import { Chip, IconButton } from "@mui/material";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import classNames from "classnames";
+import { useState } from "react";
+import { useUser } from "../../../context/UserContext";
+import { PopulatedUserCard } from "../../../types/common";
 
-const stringToRgb = (text: String) => {
+const stringToRgb = (text: string) => {
   let hash = 0;
 
   // Calcule un hash simple basé sur le code ASCII de chaque caractère
@@ -37,7 +37,7 @@ interface CardProps {
   isFlashModeOn: boolean;
 }
 
-export default ({
+const Card = ({
   card,
   onUpdate: onAnswer,
   onEditClick,
@@ -50,7 +50,7 @@ export default ({
   } = card;
   const [isRecto, flipCard] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { addScore, earnGold } = useContext(UserContext);
+  const { addScore, earnGold } = useUser();
   const [isFlipping, setIsFlipping] = useState(false);
 
   const cardClassNames = classNames("Card", {
@@ -173,3 +173,5 @@ export default ({
     </>
   );
 };
+
+export default Card;

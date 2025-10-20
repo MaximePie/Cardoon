@@ -1,17 +1,17 @@
 // app.js
 import express from "express";
-import connectDB from "./config/db.js";
 import cardsRoutes from "./api/cards.js";
+import connectDB from "./config/db.js";
 
 import { Request, Response } from "express";
 
-import usersRoutes from "./api/users.js";
-import userCardsRoutes from "./api/userCards.js";
+import bodyParser from "body-parser";
+import cors from "cors";
+import dotenv from "dotenv";
 import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
-import cors from "cors";
-import bodyParser from "body-parser";
-import dotenv from "dotenv";
+import userCardsRoutes from "./api/userCards.js";
+import usersRoutes from "./api/users.js";
 
 dotenv.config();
 const app = express();
@@ -31,7 +31,6 @@ app.use("/api/userCards", userCardsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/mistral", mistralRoutes);
 app.use("/api/items", itemsRoutes);
-
 export const errorHandler = (
   err: Error,
   req: Request,

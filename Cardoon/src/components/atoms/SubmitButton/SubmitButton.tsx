@@ -6,12 +6,12 @@ interface SubmitButtonProp {
   isLoading?: boolean;
 }
 
-export default ({
+export default function SubmitButton({
   children,
   className,
   disabled,
   isLoading,
-}: SubmitButtonProp) => {
+}: SubmitButtonProp) {
   return (
     <button
       className={`Button ${className}`}
@@ -22,4 +22,4 @@ export default ({
       {isLoading && <Loader className="Button__loader" />}
     </button>
   );
-};
+}

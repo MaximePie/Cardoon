@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 Running pre-push checks..."
+
+# Navigate to Cardoon directory
+cd Cardoon
+
+# 1. Run full linting
+echo "🧹 Running full ESLint check..."
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "❌ Full lint check failed!"
+  exit 1
+fi
+
+# 2. Type checking
+echo "📝 Checking TypeScript types..."
+npm run type-check
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript type check failed!"
+  exit 1
+fi
+
+# 3. Build check
+echo "🏗️  Checking if build works..."
+npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Build failed!"
+  exit 1
+fi
+
+echo "✅ All pre-push checks passed!"

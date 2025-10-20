@@ -32,11 +32,12 @@ export const useAdminCatchup = () => {
   const [error, setError] = useState<undefined | string>(undefined);
 
   const fetch = useCallback(() => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-      "token"
-    )}`;
     axios
-      .get(url)
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      })
       .then((response) => {
         setData(response.data);
         setLoading(false);
@@ -55,10 +56,11 @@ export const useAdminCatchup = () => {
   const post = async () => {
     setLoading(true);
     try {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-        "token"
-      )}`;
-      const response = await axios.post(url);
+      const response = await axios.post(url, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
       setData(response.data);
       setLoading(false);
     } catch (err: unknown) {
@@ -77,11 +79,12 @@ export const useFetch = <T>(resource: string) => {
   const [error, setError] = useState<undefined | string>(undefined);
 
   const fetch = useCallback(() => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-      "token"
-    )}`;
     axios
-      .get(url)
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      })
       .then((response) => {
         setData(response.data);
         setLoading(false);
@@ -107,10 +110,11 @@ export const usePut = <T>(resource: string) => {
   const put = async (id: string, payload: unknown) => {
     setLoading(true);
     try {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-        "token"
-      )}`;
-      const response = await axios.put(url + "/" + id, payload);
+      const response = await axios.put(url + "/" + id, payload, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
       setData(response.data);
       setLoading(false);
     } catch (err: unknown) {
@@ -126,7 +130,10 @@ export const usePut = <T>(resource: string) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
         "token"
       )}`;
-      const response = await axios.put(url, payload);
+      const response = await axios.put(url, {
+        payload,
+        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+      });
       setData(response.data);
       setLoading(false);
     } catch (err: unknown) {
@@ -142,16 +149,19 @@ export const useDelete = (resource: string) => {
   const [error, setError] = useState("null");
 
   const deleteResource = async (id: string) => {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-      "token"
-    )}`;
     const url = `${backUrl}/api/` + resource + "/" + id;
     setLoading(true);
     try {
-      await axios.delete(url).catch((err) => {
-        setError(extractErrorMessage(err));
-        setLoading(false);
-      });
+      await axios
+        .delete(url, {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        })
+        .catch((err) => {
+          setError(extractErrorMessage(err));
+          setLoading(false);
+        });
     } catch (err: unknown) {
       setError(extractErrorMessage(err));
       setLoading(false);
@@ -173,14 +183,14 @@ export const usePost = <T>(resource: string) => {
   ) => {
     setLoading(true);
     try {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-        "token"
-      )}`;
-
       if (contentType) {
         axios.defaults.headers.post["Content-Type"] = contentType;
       }
-      const response = await axios.post(url, payload);
+      const response = await axios.post(url, payload, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
       setData(response.data);
       setError(undefined);
       setLoading(false);

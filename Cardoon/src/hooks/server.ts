@@ -27,7 +27,7 @@ export const ACTIONS = {
 
 export const useAdminCatchup = () => {
   const url = `${backUrl}/api/admin/catchup`;
-  const [data, setData] = useState<void | null>(null);
+  const [data, setData] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<undefined | string>(undefined);
 

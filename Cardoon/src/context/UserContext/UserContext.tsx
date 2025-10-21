@@ -38,16 +38,16 @@ export const UserContextProvider = ({
   }, [data]);
 
   const addScore = (score: number) => {
-    setUser({ ...user, score: user.score + score });
+    setUser({ ...user, score: (user?.score ?? 0) + score });
   };
 
   const earnGold = (gold: number) => {
-    const totalGold = gold * user.currentGoldMultiplier;
-    setUser({ ...user, gold: user.gold + totalGold });
+    const totalGold = gold * (user?.currentGoldMultiplier ?? 1);
+    setUser({ ...user, gold: (user?.gold ?? 0) + totalGold });
   };
 
   const removeGold = (gold: number) => {
-    setUser({ ...user, gold: user.gold - gold });
+    setUser({ ...user, gold: Math.max(0, (user?.gold ?? 0) - gold) });
   };
   // Clear the cookie
   const logout = () => {

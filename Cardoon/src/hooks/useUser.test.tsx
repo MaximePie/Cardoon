@@ -14,6 +14,8 @@ const mockUserContextValue = {
     gold: 50,
     streak: 5,
   },
+  allUserCards: [],
+  getAllUserCards: vi.fn(),
   setUser: vi.fn(),
   logout: vi.fn(),
   addScore: vi.fn(),
@@ -65,11 +67,64 @@ describe("useUser", () => {
       expect(result.current.removeGold).toBe(mockUserContextValue.removeGold);
       expect(result.current.hasItem).toBe(mockUserContextValue.hasItem);
       expect(result.current.refresh).toBe(mockUserContextValue.refresh);
+      expect(result.current.getAllUserCards).toBe(
+        mockUserContextValue.getAllUserCards
+      );
+    });
+
+    it("should provide access to user cards", () => {
+      const { result } = renderHook(() => useUser(), {
+        wrapper: UserContextProvider,
+      });
+
+      expect(result.current.allUserCards).toBe(
+        mockUserContextValue.allUserCards
+      );
+      expect(result.current.allUserCards).toEqual([]);
     });
   });
 
   describe("Different user states", () => {
     it("should handle different user with different properties", () => {
+      const mockUserCards = [
+        {
+          _id: "card1",
+          card: {
+            _id: "1",
+            question: "Test question 1",
+            answer: "Test answer 1",
+            interval: 1,
+            imageLink: "",
+            category: "test",
+            createdAt: "2023-01-01",
+            ownedBy: "456",
+            isInverted: false,
+            hasInvertedChild: false,
+          },
+          interval: 1,
+          lastReviewed: "2023-01-01",
+          nextReview: "2023-01-02",
+        },
+        {
+          _id: "card2",
+          card: {
+            _id: "2",
+            question: "Test question 2",
+            answer: "Test answer 2",
+            interval: 2,
+            imageLink: "",
+            category: "test",
+            createdAt: "2023-01-02",
+            ownedBy: "456",
+            isInverted: false,
+            hasInvertedChild: false,
+          },
+          interval: 2,
+          lastReviewed: "2023-01-02",
+          nextReview: "2023-01-04",
+        },
+      ];
+
       const differentUserContextValue = {
         ...mockUserContextValue,
         user: {
@@ -81,6 +136,7 @@ describe("useUser", () => {
           streak: 10,
           role: "admin" as const,
         },
+        allUserCards: mockUserCards,
       };
 
       const DifferentUserProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -99,6 +155,10 @@ describe("useUser", () => {
       expect(result.current.user.username).toBe("anotheruser");
       expect(result.current.user.score).toBe(200);
       expect(result.current.user.role).toBe("admin");
+      expect(result.current.allUserCards).toHaveLength(2);
+      expect(result.current.allUserCards[0].card.question).toBe(
+        "Test question 1"
+      );
     });
 
     it("should handle empty user state", () => {
@@ -183,6 +243,16 @@ describe("useUser", () => {
       result.current.refresh();
 
       expect(mockUserContextValue.refresh).toHaveBeenCalled();
+    });
+
+    it("should call getAllUserCards method when invoked", async () => {
+      const { result } = renderHook(() => useUser(), {
+        wrapper: UserContextProvider,
+      });
+
+      await result.current.getAllUserCards();
+
+      expect(mockUserContextValue.getAllUserCards).toHaveBeenCalled();
     });
   });
 

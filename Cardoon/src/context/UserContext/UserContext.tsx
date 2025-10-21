@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import { ACTIONS, useFetch } from "../../hooks/server";
-import { User } from "../../types/common";
+import { useCallback, useEffect, useState } from "react";
+import { ACTIONS, RESOURCES, useFetch } from "../../hooks/server";
+import { PopulatedUserCard, User } from "../../types/common";
 import { UserContext, emptyUser } from "./UserContext";
 
 export const UserContextProvider = ({
@@ -10,6 +10,11 @@ export const UserContextProvider = ({
   children: React.ReactNode;
 }) => {
   const { fetch, data } = useFetch<User>(ACTIONS.ME);
+  const { fetch: fetchAllCards, data: userCardsData } = useFetch<{
+    userCards: PopulatedUserCard[];
+  }>(RESOURCES.USERCARDS);
+
+  const allUserCards = userCardsData?.userCards ?? [];
 
   const [user, setUser] = useState<User>(emptyUser);
 
@@ -61,6 +66,10 @@ export const UserContextProvider = ({
     return user.items.some((item) => item.base._id === itemId);
   };
 
+  const getAllUserCards = useCallback(async () => {
+    await fetchAllCards();
+  }, [fetchAllCards]);
+
   return (
     <UserContext.Provider
       value={{
@@ -72,6 +81,8 @@ export const UserContextProvider = ({
         earnGold,
         removeGold,
         refresh,
+        allUserCards: allUserCards || [],
+        getAllUserCards,
       }}
     >
       {children}

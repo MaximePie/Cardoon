@@ -20,7 +20,7 @@ const GamePage = () => {
   const { data, loading, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
-  }>(RESOURCES.USERCARDS);
+  }>(RESOURCES.REVIEW_USERCARDS);
   const { user, setUser } = useUser();
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []

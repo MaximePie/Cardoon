@@ -1,8 +1,10 @@
 import { createContext } from "react";
-import { User } from "../../types/common";
+import { PopulatedUserCard, User } from "../../types/common";
 
 export interface UserContextType {
   user: User;
+  allUserCards: PopulatedUserCard[];
+  getAllUserCards: () => Promise<void>;
   setUser: (user: User) => void;
   logout: () => void;
   addScore: (score: number) => void;
@@ -38,5 +40,7 @@ export const UserContext = createContext<UserContextType>({
   earnGold: () => {},
   removeGold: () => {},
   hasItem: () => false,
+  getAllUserCards: async () => {},
   refresh: () => {},
+  allUserCards: [],
 });

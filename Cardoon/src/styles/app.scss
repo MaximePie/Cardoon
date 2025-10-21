@@ -11,6 +11,7 @@
 @use "../components/pages/GamePage/GamePageStyle" as GamePage;
 @use "../components/pages/RegisterPage/RegisterPage" as RegisterPage;
 @use "../components/pages/TokenErrorPage/TokenErrorPage" as NotFoundPage;
+@use "../components/pages/UserPage/UserPage" as UserPage;
 @use "../components/pages/CardFormPage/CardFormPage" as CardFormPage;
 @use "../components/molecules/EditCardForm/EditCardForm" as EditCardForm;
 @use "../components/molecules/Item/Item" as Item;

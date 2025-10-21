@@ -1,12 +1,13 @@
 // routes/api/books.js
 import express from "express";
-const router = express.Router();
-import Card from "../models/Card.js";
-import authMiddleware from "../middleware/auth.js";
-import User from "../models/User.js";
-import { uploadImage } from "../utils/imagesManager.js";
 import { IncomingForm } from "formidable";
+import mongoose from "mongoose";
+import authMiddleware from "../middleware/auth.js";
+import Card from "../models/Card.js";
+import User from "../models/User.js";
 import UserCard from "../models/UserCard.js";
+import { uploadImage } from "../utils/imagesManager.js";
+const router = express.Router();
 router.get("/categories", async (req, res) => {
     const categories = await Card.aggregate([
         { $group: { _id: "$category", count: { $sum: 1 } } },
@@ -23,6 +24,28 @@ router.get("/:id", (req, res) => {
         .then((card) => res.json(card))
         .catch((err) => res.status(404).json({ noCardFound: "No CardFound found" }));
 });
+router.post("/invert", authMiddleware, async (req, res) => {
+    try {
+        const { cardId } = req.body;
+        if (!cardId || !mongoose.Types.ObjectId.isValid(cardId)) {
+            res.status(400).json({ error: "Invalid or missing cardId" });
+            return;
+        }
+        const originalCard = await Card.findById(cardId);
+        if (!originalCard) {
+            res.status(404).json({ error: "Original card not found" });
+            return;
+        }
+        const invertedCard = await originalCard.invert();
+        res.status(201).json({ originalCard, invertedCard });
+        return;
+    }
+    catch (err) {
+        console.error("Error inverting card:", err);
+    }
+    res.status(501).json({ error: "Error inverting card" });
+    return;
+});
 router.post("/", authMiddleware, async (req, res) => {
     const form = new IncomingForm();
     form.parse(req, async (err, fields, files) => {
@@ -35,6 +58,11 @@ router.post("/", authMiddleware, async (req, res) => {
             const image = files.image ? files.image[0] : null;
             const category = fields.category ? fields.category[0] : null;
             const parentId = fields.parentId ? fields.parentId[0] : null;
+            const expectedAnswers = fields.expectedAnswers
+                ? Array.isArray(fields.expectedAnswers)
+                    ? fields.expectedAnswers
+                    : [fields.expectedAnswers]
+                : [];
             let imageLink = (fields.imageLink ?? []).length > 0
                 ? fields.imageLink[0]
                 : null;
@@ -72,6 +100,7 @@ router.post("/", authMiddleware, async (req, res) => {
                 imageLink,
                 category,
                 parentId,
+                expectedAnswers,
             };
             const createdCard = await Card.create(newCard);
             await user.attachCard(createdCard._id);

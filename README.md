@@ -38,7 +38,16 @@ This is a MERN stack
 - Disabled IA generation for new questions for the moment
   > TODO : Adjust card creation option
 
+### 19/10/2025
+
+- Added React front tests
+
 ### 20/10/2025
 
 - Added Husky
 - Eslint additionnal rules
+
+### 21/10/2025
+
+- Added Express helmet
+- Added Zod basic validation

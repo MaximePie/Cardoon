@@ -22,9 +22,13 @@ export const DailyGoalProgressBar = ({
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { showConfetti } = useContext(ConfettiContext);
   const { user, setUser } = useUser();
-  const previousProgress = useRef(user.currentDailyGoal.status);
+  const previousProgress = useRef(user.currentDailyGoal?.status || "PENDING");
+  console.log(user);
 
   useEffect(() => {
+    // Vérifications de sécurité pour éviter les erreurs undefined
+    if (!user?.currentDailyGoal) return;
+
     const shouldShowConfetti =
       progress >= target &&
       previousProgress.current === "PENDING" &&
@@ -32,13 +36,16 @@ export const DailyGoalProgressBar = ({
     if (shouldShowConfetti) {
       showConfetti();
       const questReward =
-        user.currentGoldMultiplier * 10 * user.streak * user.dailyGoal;
+        (user.currentGoldMultiplier ?? 1) *
+        10 *
+        (user.streak ?? 1) *
+        (user.dailyGoal ?? 1);
       openSnackbarWithMessage(
         `Bravo ! Vous avez atteint votre objectif quotidien. Vous avez gagné ${questReward} pièces d'or !`
       );
       setUser({
         ...user,
-        gold: user.gold + questReward,
+        gold: (user.gold ?? 0) + questReward,
       });
     }
   }, [progress, target, user, showConfetti, openSnackbarWithMessage, setUser]);
@@ -68,27 +75,33 @@ export const GameFooter = (props: GameFooterProps) => {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { showConfetti } = useContext(ConfettiContext);
   const { setFlash, isFlashModeOn, currentPage } = props;
-  const previousStatus = useRef(user.currentDailyGoal.status);
+  const previousStatus = useRef(user.currentDailyGoal?.status || "PENDING");
 
   useEffect(() => {
+    // Vérifications de sécurité pour éviter les erreurs undefined
+    if (!user?.currentDailyGoal) return;
+
     if (
       previousStatus.current === "PENDING" &&
       user.currentDailyGoal.status === "COMPLETED"
     ) {
       showConfetti();
       const questReward =
-        user.currentGoldMultiplier * 10 * user.streak * user.dailyGoal;
+        (user.currentGoldMultiplier ?? 1) *
+        10 *
+        (user.streak ?? 1) *
+        (user.dailyGoal ?? 1);
       openSnackbarWithMessage(
         `Bravo ! Vous avez atteint votre objectif quotidien. Vous avez gagné ${questReward} pièces d'or !`
       );
       setUser({
         ...user,
-        gold: user.gold + questReward,
+        gold: (user.gold ?? 0) + questReward,
       });
     }
-    previousStatus.current = user.currentDailyGoal.status;
+    previousStatus.current = user.currentDailyGoal?.status || "PENDING";
   }, [
-    user.currentDailyGoal.status,
+    user.currentDailyGoal?.status,
     showConfetti,
     openSnackbarWithMessage,
     setUser,
@@ -96,12 +109,15 @@ export const GameFooter = (props: GameFooterProps) => {
   ]);
 
   const formattedUserGold = () => {
-    if (user.gold >= 1000000) {
-      return (user.gold / 1000000).toFixed(1) + "M";
-    } else if (user.gold >= 1000) {
-      return (user.gold / 1000).toFixed(1) + "K";
+    // Vérification de sécurité pour éviter l'erreur undefined
+    const goldAmount = user?.gold ?? 0;
+
+    if (goldAmount >= 1000000) {
+      return (goldAmount / 1000000).toFixed(1) + "M";
+    } else if (goldAmount >= 1000) {
+      return (goldAmount / 1000).toFixed(1) + "K";
     } else {
-      return user.gold.toString();
+      return goldAmount.toString();
     }
   };
 
@@ -116,11 +132,11 @@ export const GameFooter = (props: GameFooterProps) => {
         />{" "}
         {formattedUserGold()}
       </span>
-      {user.currentDailyGoal && (
+      {user?.currentDailyGoal && (
         <span className="Footer__element">
           <DailyGoalProgressBar
-            progress={user.currentDailyGoal.progress}
-            target={user.currentDailyGoal.target}
+            progress={user.currentDailyGoal.progress ?? 0}
+            target={user.currentDailyGoal.target ?? 1}
           />
         </span>
       )}

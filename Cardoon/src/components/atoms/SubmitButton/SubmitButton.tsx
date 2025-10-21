@@ -14,7 +14,7 @@ export default function SubmitButton({
 }: SubmitButtonProp) {
   return (
     <button
-      className={`Button ${className}`}
+      className={`Button ${className || ""}`.trim()}
       disabled={disabled || isLoading}
       type="submit"
     >

@@ -3,5 +3,5 @@ interface LoaderProps {
 }
 
 export default function Loader(props: LoaderProps) {
-  return <span className={`Loader ${props.className}`}></span>;
+  return <span className={`Loader ${props.className || ""}`.trim()}></span>;
 }

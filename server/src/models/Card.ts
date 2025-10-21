@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
-import UserCard from "./UserCard";
-import User, { IUser } from "./User";
+import User, { IUser } from "./User.js";
+import UserCard from "./UserCard.js";
 
 /**
  * Interface for the Card document

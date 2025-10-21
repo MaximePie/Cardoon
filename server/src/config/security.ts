@@ -15,6 +15,8 @@ export const helmetConfig: HelmetOptions = {
       scriptSrc: ["'self'"],
       connectSrc: [
         "'self'",
+        "http://localhost:5173",
+        "http://192.168.1.137:5173",
         "https://api.mistral.ai",
         "https://huggingface.co",
       ],

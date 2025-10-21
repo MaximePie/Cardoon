@@ -11,13 +11,21 @@ import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import demoValidationRoutes from "./api/demo-validation.js";
 import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
-import usersRoutes from "./api/users.js";
+import usersValidatedRoutes from "./api/users-validated.js";
+// import usersRoutes from "./api/users.js"; // Temporarily disabled due to validation errors
 
 dotenv.config();
 const app = express();
+
+// CORS configuration - MUST be before other middlewares
+app.use(cors(securityConfig.cors));
+
+// Handle preflight OPTIONS requests explicitly
+app.options("*", cors(securityConfig.cors));
 
 // Security middleware with Helmet
 app.use(helmet(helmetConfig));
@@ -41,9 +49,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS configuration
-app.use(cors(securityConfig.cors));
-
 // Body parser with size limits
 app.use(bodyParser.json(securityConfig.bodyParser.json));
 app.use(bodyParser.urlencoded(securityConfig.bodyParser.urlencoded));
@@ -52,7 +57,9 @@ app.use((req, res, next) => {
 });
 app.use("/api/cards", cardsRoutes);
 app.use("/api/userCards", userCardsRoutes);
-app.use("/api/users", usersRoutes);
+// app.use("/api/users", usersRoutes); // Temporarily disabled
+app.use("/api/users", usersValidatedRoutes); // New validated users API
+app.use("/api/validation", demoValidationRoutes); // Demo validation routes
 app.use("/api/mistral", mistralRoutes);
 app.use("/api/items", itemsRoutes);
 export const errorHandler = (
@@ -70,6 +77,12 @@ export const errorHandler = (
 app.use(errorHandler);
 connectDB();
 
-const port = process.env.PORT || 8082;
+const port = parseInt(process.env.PORT || "8082");
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+const server = app.listen(port, "0.0.0.0", () =>
+  console.log(`Server running on port ${port}`)
+);
+
+server.on("error", (err) => {
+  console.error("Server error:", err);
+});

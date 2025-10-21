@@ -35,7 +35,7 @@ router.post("/", authMiddleware, async (req, res) => {
         
         Contraintes :
         
-        1. Les questions doivent être courtes, pertinentes et variées (faits, contexte historique, applications, définitions, comparaisons, etc.).
+        1. Les questions et réponses doivent être courtes (80 caractères maximum si possible, ne jamais dépasser 100 caractères), pertinentes et variées (faits, contexte historique, applications, définitions, comparaisons, etc.).
         2. Format de sortie : une liste JSON d’objets ; chaque objet contient exactement "question" et "answer".
         Exemple :
         { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }
@@ -62,9 +62,9 @@ router.post("/", authMiddleware, async (req, res) => {
     Contraintes :
     
     1. Les sous-questions doivent explorer des points complémentaires à la question initiale (aucune reformulation ni paraphrase).
-    2. Les questions doivent être courtes, pertinentes et variées (faits, contexte historique, applications, définitions, comparaisons, etc.).
+    2. Les questions et réponses doivent être courtes (80 caractères maximum si possible, ne jamais dépasser 100 caractères), pertinentes et variées (faits, contexte historique, applications, définitions, comparaisons, etc.).
     3. Format de sortie : une liste JSON d’objets ; chaque objet contient exactement "question" et "answer".
-       Exemple :
+       Exemple : 
        { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }
     4. Si "\${category}" désigne une langue, remplacez les questions par 10 mots du même champ lexical et de la même langue :
        { "question": "le mot dans la langue", "answer": "sa traduction en français" }. La question doit être courte. Exemple : Hello -> Bonjour

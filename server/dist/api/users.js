@@ -63,7 +63,7 @@ router.post("/register", async (req, res) => {
     res.json(newUser);
 });
 // Update desired daily goal for user
-router.put("/daily-goal/:id", authMiddleware, async (req, res) => {
+router.put("/daily-goal", authMiddleware, async (req, res) => {
     const { target } = req.body;
     const userId = req.user.id;
     try {

@@ -2,12 +2,15 @@
 import express from "express";
 import cardsRoutes from "./api/cards.js";
 import connectDB from "./config/db.js";
+import { helmetConfig, securityConfig } from "./config/security.js";
 
 import { Request, Response } from "express";
 
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
@@ -15,14 +18,35 @@ import usersRoutes from "./api/users.js";
 
 dotenv.config();
 const app = express();
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://192.168.1.137:5173",
-  "https://cardoon-front.onrender.com",
-];
-app.use(cors({ origin: allowedOrigins, credentials: true }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+// Security middleware with Helmet
+app.use(helmet(helmetConfig));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: securityConfig.rateLimit.windowMs,
+  max: securityConfig.rateLimit.max,
+  message: securityConfig.rateLimit.message,
+  standardHeaders: securityConfig.rateLimit.standardHeaders,
+  legacyHeaders: securityConfig.rateLimit.legacyHeaders,
+});
+app.use("/api/", limiter);
+
+// Additional security headers for Permissions Policy
+app.use((req, res, next) => {
+  res.setHeader(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=()"
+  );
+  next();
+});
+
+// CORS configuration
+app.use(cors(securityConfig.cors));
+
+// Body parser with size limits
+app.use(bodyParser.json(securityConfig.bodyParser.json));
+app.use(bodyParser.urlencoded(securityConfig.bodyParser.urlencoded));
 app.use((req, res, next) => {
   next();
 });

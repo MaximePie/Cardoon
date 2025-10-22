@@ -1,3 +1,4 @@
+/// <reference types="../../../vite-env" />
 import { Tab, Tabs } from "@mui/material";
 import Divider from "@mui/material/Divider/Divider";
 import { useContext, useEffect, useState } from "react";

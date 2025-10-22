@@ -1,3 +1,4 @@
+/// <reference types="../vite-env" />
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useCallback, useEffect, useState } from "react";

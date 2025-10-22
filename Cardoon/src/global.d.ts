@@ -1,12 +1,4 @@
-/// <reference types="vite/client" />
-
-interface ImportMetaEnv {
-  readonly VITE_API_URL: string;
-}
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
-}
+// Global type declarations for Vite/TypeScript
 
 declare module "*.png" {
   const src: string;
@@ -37,3 +29,16 @@ declare module "*.webp" {
   const src: string;
   export default src;
 }
+
+// Vite environment extensions
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_API_URL: string;
+  }
+
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
+}
+
+export {};

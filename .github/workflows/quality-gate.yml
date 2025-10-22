@@ -21,23 +21,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "18"
-          cache: "npm"
-          cache-dependency-path: "Cardoon/package-lock.json"
+          cache: "yarn"
+          cache-dependency-path: "yarn.lock"
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: 🔍 Run ESLint
-        run: npm run lint
+        run: yarn lint
 
       - name: 📝 TypeScript check
-        run: npx tsc --noEmit
+        run: yarn type-check
 
       - name: 🧪 Run tests
-        run: npm test -- --run
+        run: yarn test --run
 
       - name: 🏗️ Build check
-        run: npm run build
+        run: yarn build
 
       - name: ✅ Quality Gate Summary
         run: |

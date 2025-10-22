@@ -11,7 +11,7 @@ on:
       - "Cardoon/.eslintrc.*"
       - "Cardoon/eslint.config.*"
       - "Cardoon/package.json"
-      - "Cardoon/package-lock.json"
+      - "Cardoon/yarn.lock"
       - ".github/workflows/lint.yml"
   push:
     branches: [main]
@@ -33,19 +33,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "Cardoon/package-lock.json"
+          cache: "yarn"
+          cache-dependency-path: "Cardoon/yarn.lock"
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: 🔍 Run ESLint
-        run: npm run lint
+        run: yarn lint
 
       - name: 📊 Run ESLint with JSON output (on failure)
         if: failure()
-        run: npm run lint -- --format json --output-file eslint-results.json
-        continue-on-error: true
+        run: yarn lint --format json --output-file eslint-results.json || true
 
       - name: 📋 Comment PR with ESLint results
         if: failure() && github.event_name == 'pull_request'

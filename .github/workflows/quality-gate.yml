@@ -1,4 +1,4 @@
-name: 🚀 Quality Gate
+name: 🎯 Quality Gate
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   quality-gate:
-    name: 🎯 Quality Gate
+    name: 🎯 All Quality Checks
     runs-on: ubuntu-latest
 
     defaults:
@@ -21,28 +21,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "Cardoon/package-lock.json"
+          cache: "yarn"
+          cache-dependency-path: "Cardoon/yarn.lock"
 
       - name: 📦 Install dependencies
-        run: npm ci
+        run: yarn install --frozen-lockfile
 
       - name: 🔍 Run ESLint
-        run: npm run lint
+        run: yarn lint
 
       - name: 📝 TypeScript check
-        run: npx tsc --noEmit
+        run: yarn type-check
 
       - name: 🧪 Run tests
-        run: npm test -- --run
+        run: yarn test --run
 
       - name: 🏗️ Build check
-        run: npm run build
+        run: yarn build
 
-      - name: ✅ Quality Gate Passed
+      - name: ✅ Quality Gate Summary
         run: |
           echo "🎉 All quality checks passed!"
           echo "✅ ESLint: No linting errors"
-          echo "✅ TypeScript: Type checking passed"
+          echo "✅ TypeScript: Type checking passed" 
           echo "✅ Tests: All tests passing"
           echo "✅ Build: Application builds successfully"

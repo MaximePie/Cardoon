@@ -51,3 +51,7 @@ This is a MERN stack
 
 - Added Express helmet
 - Added Zod basic validation
+
+### 22/10/2025
+
+- Added first CI/CD pipelines

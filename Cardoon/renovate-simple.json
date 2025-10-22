@@ -1,0 +1,47 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "description": "Renovate configuration for Cardoon project - Simple setup",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":prImmediately"
+  ],
+  "timezone": "Europe/Paris",
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies", "renovate"],
+  "assignees": ["MaximePie"],
+  "baseBranches": ["dev"],
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 1,
+  "commitMessagePrefix": "chore(deps): ",
+  "branchPrefix": "renovate/",
+  "packageRules": [
+    {
+      "description": "Auto-merge patch updates for dev dependencies",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "description": "Group major updates together",
+      "matchUpdateTypes": ["major"],
+      "groupName": "major dependencies",
+      "addLabels": ["breaking-change"]
+    },
+    {
+      "description": "Security updates - high priority",
+      "matchPackagePatterns": ["*"],
+      "vulnerabilityAlerts": {
+        "enabled": true
+      },
+      "prPriority": 20,
+      "schedule": ["at any time"]
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"]
+  }
+}

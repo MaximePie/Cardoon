@@ -4,6 +4,7 @@ import { ConfettiContext } from "../../../context/ConfettiContext/ConfettiContex
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { useUser } from "../../../hooks/useUser";
 import goldIcon from "../../../images/coin.png";
+import { formattedNumber } from "../../../utils/numbers";
 import Button from "../../atoms/Button/Button";
 
 interface GameFooterProps {
@@ -108,19 +109,6 @@ export const GameFooter = (props: GameFooterProps) => {
     user,
   ]);
 
-  const formattedUserGold = () => {
-    // Vérification de sécurité pour éviter l'erreur undefined
-    const goldAmount = user?.gold ?? 0;
-
-    if (goldAmount >= 1000000) {
-      return (goldAmount / 1000000).toFixed(1) + "M";
-    } else if (goldAmount >= 1000) {
-      return (goldAmount / 1000).toFixed(1) + "K";
-    } else {
-      return goldAmount.toString();
-    }
-  };
-
   return (
     <div className="Footer">
       <span className="Footer__element">
@@ -130,7 +118,7 @@ export const GameFooter = (props: GameFooterProps) => {
           alt="Gold"
           id="Footer__coins"
         />{" "}
-        {formattedUserGold()}
+        {formattedNumber(user?.gold || 0)}
       </span>
       {user?.currentDailyGoal && (
         <span className="Footer__element">

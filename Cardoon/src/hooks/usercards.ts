@@ -17,7 +17,7 @@ export const useUserCards = (): UserCardHookReturnType => {
   const { data, loading, fetch, error } = useFetch<{
     cards: PopulatedUserCard[];
     categories: FetchedCategory[];
-  }>(RESOURCES.USERCARDS);
+  }>(RESOURCES.REVIEW_USERCARDS);
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     data?.cards || []
   );

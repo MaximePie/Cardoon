@@ -1,10 +1,24 @@
 // routes/api/books.js
 import express from "express";
-const router = express.Router();
-import User from "../models/User.js";
-import Card from "../models/Card.js";
-import UserCard from "../models/UserCard.js";
 import authMiddleware from "../middleware/auth.js";
+import Card from "../models/Card.js";
+import User from "../models/User.js";
+import UserCard from "../models/UserCard.js";
+const router = express.Router();
+
+// Return every user card without filtering by due date
+// @route   GET api/userCards/all
+// @desc    Get all user cards
+// @access  Private
+router.get("/all", authMiddleware, async (req, res) => {
+  const user = await User.findById((req as any).user.id);
+  if (!user) {
+    res.status(404).json({ msg: "User not found" });
+    return;
+  }
+  const userCards = await UserCard.find({ user: user.id }).populate("card");
+  res.json({ userCards });
+});
 
 // @route   GET api/books
 // @desc    Get all books

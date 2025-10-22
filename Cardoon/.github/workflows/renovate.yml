@@ -1,0 +1,38 @@
+name: 🤖 Renovate
+
+on:
+  schedule:
+    # Run every Monday at 5:00 AM UTC (6:00 AM Paris time)
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: "Log level"
+        required: true
+        default: "info"
+        type: choice
+        options:
+          - info
+          - debug
+          - trace
+
+env:
+  LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
+
+jobs:
+  renovate:
+    name: 🔄 Renovate Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🤖 Run Renovate
+        uses: renovatebot/github-action@v40.2.10
+        with:
+          configurationFile: Cardoon/renovate.json
+          token: ${{ secrets.RENOVATE_TOKEN }}
+        env:
+          LOG_LEVEL: ${{ env.LOG_LEVEL }}
+          RENOVATE_BASE_DIR: ${{ github.workspace }}/Cardoon

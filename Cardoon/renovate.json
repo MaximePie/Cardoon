@@ -1,0 +1,115 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":separatePatchReleases",
+    "helpers:pinGitHubActionsByDigest"
+  ],
+  "timezone": "Europe/Paris",
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies"],
+  "assignees": ["MaximePie"],
+  "reviewers": ["MaximePie"],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "baseBranches": ["dev"],
+  "packageRules": [
+    {
+      "groupName": "React ecosystem",
+      "matchPackagePatterns": ["^@types/react", "^react"],
+      "schedule": ["before 6am on monday"],
+      "automerge": false
+    },
+    {
+      "groupName": "Testing utilities",
+      "matchPackagePatterns": ["vitest", "@vitest", "@testing-library"],
+      "schedule": ["before 6am on monday"],
+      "automerge": false
+    },
+    {
+      "groupName": "ESLint ecosystem",
+      "matchPackagePatterns": ["eslint", "^@eslint"],
+      "schedule": ["before 6am on monday"],
+      "automerge": false
+    },
+    {
+      "groupName": "TypeScript ecosystem",
+      "matchPackagePatterns": ["typescript", "@types", "typescript-eslint"],
+      "schedule": ["before 6am on monday"],
+      "automerge": false
+    },
+    {
+      "groupName": "Vite ecosystem",
+      "matchPackagePatterns": ["vite", "@vitejs"],
+      "schedule": ["before 6am on monday"],
+      "automerge": false
+    },
+    {
+      "groupName": "Material-UI ecosystem",
+      "matchPackagePatterns": ["^@mui"],
+      "schedule": ["before 6am on monday"],
+      "automerge": false
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchCurrentVersion": "!/^0/",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "requiredStatusChecks": null
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": false,
+      "labels": ["dependencies", "patch"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "major"],
+      "addLabels": ["breaking-change"],
+      "prPriority": 10
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "labels": ["dependencies", "minor"],
+      "prPriority": 5
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "schedule": ["at any time"],
+    "prPriority": 20,
+    "labels": ["security", "dependencies"]
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on monday"],
+    "commitMessageAction": "Update",
+    "commitMessageTopic": "lock file",
+    "prTitle": "chore: update lock file"
+  },
+  "commitMessagePrefix": "chore(deps): ",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "prTitle": "{{commitMessagePrefix}}{{commitMessageAction}} {{commitMessageTopic}} to {{#if isMajor}}v{{newMajor}}{{else}}{{#if isSingleVersion}}v{{toVersion}}{{else}}{{newValue}}{{/if}}{{/if}}",
+  "branchPrefix": "renovate/",
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/examples/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__tests__/**"
+  ],
+  "ignoreDeps": [],
+  "rangeStrategy": "bump",
+  "separateMinorPatch": true,
+  "separateMajorMinor": true,
+  "separateMultipleMajor": true,
+  "rebaseWhen": "conflicted",
+  "updateNotScheduled": false
+}

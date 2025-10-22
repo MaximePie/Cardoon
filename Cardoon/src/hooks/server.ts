@@ -1,3 +1,4 @@
+/// <reference types="../vite-env" />
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useCallback, useEffect, useState } from "react";
@@ -7,7 +8,8 @@ const backUrl = import.meta.env.VITE_API_URL;
 
 // Resources
 export const RESOURCES = {
-  USERCARDS: "userCards",
+  USERCARDS: "userCards/all",
+  REVIEW_USERCARDS: "userCards",
   CARDS: "cards",
   USER_DAILY_GOAL: "users/daily-goal",
   CATEGORIES: "cards/categories",

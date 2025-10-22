@@ -55,3 +55,9 @@ This is a MERN stack
 ### 22/10/2025
 
 - Added first CI/CD pipelines
+- Fixed CI/CD workflow placement (moved to repository root)
+- Added comprehensive GitHub Actions workflows:
+  - 🔍 ESLint with PR comments
+  - 🧪 Tests, TypeScript & Build validation
+  - 🎯 Quality Gate for PRs
+  - 🚀 Debugging workflow

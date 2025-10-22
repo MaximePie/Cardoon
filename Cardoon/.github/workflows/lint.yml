@@ -1,0 +1,80 @@
+name: 🔍 ESLint Check
+
+on:
+  pull_request:
+    branches: [main, dev]
+    paths:
+      - "Cardoon/**/*.ts"
+      - "Cardoon/**/*.tsx"
+      - "Cardoon/**/*.js"
+      - "Cardoon/**/*.jsx"
+      - "Cardoon/.eslintrc.*"
+      - "Cardoon/eslint.config.*"
+      - "Cardoon/package.json"
+      - "Cardoon/package-lock.json"
+      - ".github/workflows/lint.yml"
+  push:
+    branches: [main]
+
+jobs:
+  eslint:
+    name: 🔍 ESLint Analysis
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Cardoon
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "Cardoon/package-lock.json"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Run ESLint
+        run: npm run lint
+
+      - name: 📊 Run ESLint with JSON output (on failure)
+        if: failure()
+        run: npm run lint -- --format json --output-file eslint-results.json
+        continue-on-error: true
+
+      - name: 📋 Comment PR with ESLint results
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = './Cardoon/eslint-results.json';
+
+            if (fs.existsSync(path)) {
+              const results = JSON.parse(fs.readFileSync(path, 'utf8'));
+              const errors = results.filter(r => r.errorCount > 0);
+              
+              if (errors.length > 0) {
+                let comment = '## 🚨 ESLint Issues Found\n\n';
+                errors.forEach(file => {
+                  comment += `### 📄 ${file.filePath.replace(process.cwd() + '/Cardoon/', '')}\n`;
+                  file.messages.forEach(msg => {
+                    const severity = msg.severity === 2 ? '❌' : '⚠️';
+                    comment += `- ${severity} Line ${msg.line}:${msg.column} - ${msg.message} \`${msg.ruleId || 'unknown'}\`\n`;
+                  });
+                  comment += '\n';
+                });
+                
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: comment
+                });
+              }
+            }

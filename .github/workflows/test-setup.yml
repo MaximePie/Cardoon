@@ -1,0 +1,75 @@
+name: 🚀 Test GitHub Actions
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch: # Permet de déclencher manuellement depuis l'interface GitHub
+
+jobs:
+  test-actions:
+    name: 🧪 Test Basic Setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ✅ Basic test
+        run: |
+          echo "🎉 GitHub Actions est bien configuré !"
+          echo "📅 Date: $(date)"
+          echo "🌿 Branch: ${{ github.ref_name }}"
+          echo "👤 Actor: ${{ github.actor }}"
+          echo "🎯 Event: ${{ github.event_name }}"
+
+      - name: 📂 Check project structure
+        run: |
+          echo "📁 Structure à la racine :"
+          ls -la
+          echo ""
+          echo "📁 Structure Cardoon :"
+          ls -la Cardoon/ || echo "❌ Dossier Cardoon non trouvé"
+          echo ""
+          if [ -f "Cardoon/package.json" ]; then
+            echo "✅ package.json trouvé dans Cardoon/"
+          else
+            echo "❌ package.json non trouvé dans Cardoon/"
+          fi
+
+  test-cardoon-setup:
+    name: 🟢 Test Cardoon Setup
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Cardoon
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "Cardoon/package-lock.json"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 📋 Show available scripts
+        run: |
+          echo "📝 Scripts disponibles :"
+          npm run
+          echo ""
+          echo "📝 Versions :"
+          echo "Node: $(node --version)"
+          echo "npm: $(npm --version)"
+
+      - name: ✅ Quick validation
+        run: |
+          echo "✅ Installation successful!"
+          echo "📦 node_modules exists: $([ -d node_modules ] && echo 'Yes' || echo 'No')"

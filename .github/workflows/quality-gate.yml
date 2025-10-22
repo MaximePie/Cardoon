@@ -1,0 +1,48 @@
+name: 🎯 Quality Gate
+
+on:
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  quality-gate:
+    name: 🎯 All Quality Checks
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./Cardoon
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "Cardoon/package-lock.json"
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🔍 Run ESLint
+        run: npm run lint
+
+      - name: 📝 TypeScript check
+        run: npx tsc --noEmit
+
+      - name: 🧪 Run tests
+        run: npm test -- --run
+
+      - name: 🏗️ Build check
+        run: npm run build
+
+      - name: ✅ Quality Gate Summary
+        run: |
+          echo "🎉 All quality checks passed!"
+          echo "✅ ESLint: No linting errors"
+          echo "✅ TypeScript: Type checking passed" 
+          echo "✅ Tests: All tests passing"
+          echo "✅ Build: Application builds successfully"

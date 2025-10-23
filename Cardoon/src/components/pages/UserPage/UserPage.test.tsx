@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SnackbarContextProvider } from "../../../context/SnackbarContext";
 import * as userHooks from "../../../hooks/useUser";
 import { User } from "../../../types/common";
@@ -17,8 +18,13 @@ vi.mock("../../../hooks/useUser", () => ({
   useUser: vi.fn(),
 }));
 
+vi.mock("../../../hooks/useUserCards", () => ({
+  useUserCardsManager: vi.fn(),
+}));
+
 // Import mocked modules
 import { usePut } from "../../../hooks/server";
+import { useUserCardsManager } from "../../../hooks/useUserCards";
 
 // Helper function to create complete user context mock
 const createMockUserContext = (user: User, overrides = {}) => ({
@@ -65,21 +71,61 @@ describe("UserPage", () => {
     error: undefined,
   };
 
+  // Mock du hook TanStack Query pour les cartes utilisateur
+  const mockDeleteCard = vi.fn();
+  const mockRefetch = vi.fn();
+  const mockUserCardsManagerReturn = {
+    cards: [],
+    isLoading: false,
+    isDeletingCard: false,
+    error: null,
+    deleteError: null,
+    deleteCard: mockDeleteCard,
+    refetch: mockRefetch.mockResolvedValue({
+      data: [],
+      isError: false,
+      isLoading: false,
+      isSuccess: true,
+    }),
+    isStale: false,
+  };
+
+  // Créer un QueryClient pour les tests
+  let testQueryClient: QueryClient;
+
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Recréer le QueryClient pour chaque test
+    testQueryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          gcTime: 0,
+          staleTime: 0,
+        },
+        mutations: {
+          retry: false,
+        },
+      },
+    });
 
     vi.mocked(userHooks.useUser).mockReturnValue(
       createMockUserContext(mockUser, { setUser: mockSetUser })
     );
 
     vi.mocked(usePut).mockReturnValue(mockUsePutReturn);
+
+    vi.mocked(useUserCardsManager).mockReturnValue(mockUserCardsManagerReturn);
   });
 
   const renderUserPage = () => {
     return render(
-      <SnackbarContextProvider>
-        <UserPage />
-      </SnackbarContextProvider>
+      <QueryClientProvider client={testQueryClient}>
+        <SnackbarContextProvider>
+          <UserPage />
+        </SnackbarContextProvider>
+      </QueryClientProvider>
     );
   };
 

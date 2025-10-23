@@ -1,10 +1,20 @@
 /// <reference types="../../../vite-env" />
-import { Tab, Tabs } from "@mui/material";
+import {
+  Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tabs,
+} from "@mui/material";
 import Divider from "@mui/material/Divider/Divider";
 import { useContext, useEffect, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { RESOURCES, usePut } from "../../../hooks/server";
 import { useUser } from "../../../hooks/useUser";
+import { useUserCardsManager } from "../../../hooks/useUserCards";
 import coinImage from "../../../images/coin.png";
 import { User } from "../../../types/common";
 import { formattedNumber } from "../../../utils/numbers";
@@ -26,11 +36,31 @@ function ExpBar({ currentExp }: { currentExp: number }) {
 }
 
 export const UserPage = () => {
-  const { user, setUser, allUserCards, getAllUserCards } = useUser();
+  const { user, setUser } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { username, gold, role, currentDailyGoal, dailyGoal } = user;
   const [draftDailyGoal, setDraftDailyGoal] = useState<number>(dailyGoal || 0);
   const { putUser, data: postResult } = usePut<User>(RESOURCES.USER_DAILY_GOAL);
+
+  // 🚀 TanStack Query pour la gestion optimiste des cartes
+  const {
+    cards: allUserCards,
+    isLoading: isLoadingCards,
+    deleteCard,
+    isDeletingCard,
+    error: cardsError,
+  } = useUserCardsManager(user._id, {
+    onDeleteSuccess: () => {
+      openSnackbarWithMessage("Carte supprimée avec succès !", "success");
+    },
+    onDeleteError: (error) => {
+      openSnackbarWithMessage(
+        `Erreur lors de la suppression: ${error.message}`,
+        "error"
+      );
+    },
+  });
+
   const [activeTab, setActiveTab] = useState<"profile" | "cards">("profile");
 
   const saveDailyGoal = (e: React.FormEvent) => {
@@ -50,13 +80,6 @@ export const UserPage = () => {
     }
   }, [postResult, setUser, openSnackbarWithMessage]);
 
-  useEffect(() => {
-    // Only fetch if we don't have user cards yet
-    if (allUserCards.length === 0) {
-      getAllUserCards();
-    }
-  }, [getAllUserCards, allUserCards.length]);
-
   const onDraftDailyGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value)) {
@@ -66,7 +89,21 @@ export const UserPage = () => {
     }
   };
 
-  console.log("User Cards:", allUserCards);
+  const editCard = (cardId: string) => {
+    // Implement card editing logic here
+    console.log("Edit card with ID:", cardId);
+  };
+
+  // 🗑️ Suppression optimiste avec confirmation utilisateur
+  const handleDeleteCard = (cardId: string, cardQuestion: string) => {
+    const confirmDelete = window.confirm(
+      `Êtes-vous sûr de vouloir supprimer cette carte ?\n\nQuestion: "${cardQuestion}"`
+    );
+    if (!confirmDelete) return;
+
+    // Suppression optimiste via TanStack Query
+    deleteCard(cardId);
+  };
 
   return (
     <div className="UserPage">
@@ -132,12 +169,75 @@ export const UserPage = () => {
       )}
       {activeTab === "cards" && (
         <div className="UserPage__tab-content">
-          <h3>Vos cartes</h3>
-          {allUserCards.map((card) => (
-            <div key={card._id} className="UserPage__card">
-              <h4>{card.card.question}</h4>
+          <h3>Vos cartes ({allUserCards.length})</h3>
+          {/* 🔄 Affichage du loading des cartes */}
+          {isLoadingCards ? (
+            <div className="UserPage__loading">
+              <p>Chargement des cartes...</p>
             </div>
-          ))}
+          ) : cardsError ? (
+            <div className="UserPage__error">
+              <p>Erreur lors du chargement des cartes: {cardsError.message}</p>
+            </div>
+          ) : (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Question</TableCell>
+                    <TableCell>Réponse</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {allUserCards.map((card) => (
+                    <TableRow
+                      key={card._id}
+                      style={{
+                        opacity: isDeletingCard ? 0.7 : 1,
+                        transition: "opacity 0.3s ease",
+                      }}
+                    >
+                      <TableCell>{card.card.question}</TableCell>
+                      <TableCell>{card.card.answer}</TableCell>
+                      <TableCell>
+                        <button
+                          onClick={() => editCard(card.card._id)}
+                          disabled={isDeletingCard}
+                        >
+                          ✏️ Modifier
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDeleteCard(card.card._id, card.card.question)
+                          }
+                          disabled={isDeletingCard}
+                          style={{ marginLeft: "8px" }}
+                        >
+                          {isDeletingCard
+                            ? "🔄 Suppression..."
+                            : "🗑️ Supprimer"}
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {allUserCards.length === 0 && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={3}
+                        style={{ textAlign: "center", padding: "2rem" }}
+                      >
+                        <p>
+                          Aucune carte trouvée. Commencez par créer votre
+                          première carte !
+                        </p>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </div>
       )}
     </div>

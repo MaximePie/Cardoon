@@ -1,0 +1,238 @@
+/**
+ * @fileoverview Services API pour la gestion des cartes utilisateur
+ *
+ * Ce module centralise toutes les interactions avec l'API backend pour :
+ * - Récupération des cartes utilisateur
+ * - Suppression de cartes
+ * - Mise à jour des intervalles
+ * - Gestion des erreurs réseau
+ *
+ * @version 1.0.0
+ * @author Cardoon Team
+ */
+
+import axios from "axios";
+import Cookies from "js-cookie";
+import { PopulatedUserCard } from "../types/common";
+import { extractErrorMessage } from "../utils";
+
+const backUrl = import.meta.env.VITE_API_URL;
+
+/**
+ * Configuration axios pour les requêtes authentifiées
+ */
+const createAuthenticatedAxios = () => {
+  const token = Cookies.get("token");
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  };
+};
+
+/**
+ * Récupère toutes les cartes d'un utilisateur
+ *
+ * @param userId - ID de l'utilisateur (optionnel, utilise l'utilisateur connecté si non fourni)
+ * @returns Promise<PopulatedUserCard[]> - Liste des cartes utilisateur
+ *
+ * @throws {Error} Erreur réseau ou d'authentification
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   const cards = await getUserCards();
+ *   console.log(`${cards.length} cartes récupérées`);
+ * } catch (error) {
+ *   console.error('Erreur:', error.message);
+ * }
+ * ```
+ */
+export const getUserCards = async (
+  userId?: string | number
+): Promise<PopulatedUserCard[]> => {
+  try {
+    const url = userId
+      ? `${backUrl}/api/userCards/user/${userId}`
+      : `${backUrl}/api/userCards`;
+
+    const response = await axios.get(url, createAuthenticatedAxios());
+
+    // Le backend peut retourner soit directement un array, soit un objet avec une propriété cards
+    const cards = Array.isArray(response.data)
+      ? response.data
+      : response.data.cards;
+
+    if (!Array.isArray(cards)) {
+      throw new Error("Format de réponse inattendu du serveur");
+    }
+
+    // Tri des cartes : cartes avec parentId en premier
+    return cards.sort((a, b) => {
+      if (a.card.parentId && !b.card.parentId) return -1;
+      if (!a.card.parentId && b.card.parentId) return 1;
+      return 0;
+    });
+  } catch (error) {
+    const errorMessage = extractErrorMessage(error);
+    console.error(
+      "Erreur lors de la récupération des cartes utilisateur:",
+      errorMessage
+    );
+    throw new Error(`Impossible de récupérer les cartes: ${errorMessage}`);
+  }
+};
+
+/**
+ * Supprime une carte utilisateur
+ *
+ * @param cardId - ID de la carte à supprimer
+ * @returns Promise<void>
+ *
+ * @throws {Error} Erreur réseau, d'authentification ou si la carte n'existe pas
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   await deleteUserCard('card123');
+ *   console.log('Carte supprimée avec succès');
+ * } catch (error) {
+ *   if (error.message.includes('404')) {
+ *     console.error('Carte introuvable');
+ *   } else {
+ *     console.error('Erreur:', error.message);
+ *   }
+ * }
+ * ```
+ */
+export const deleteUserCard = async (cardId: string): Promise<void> => {
+  try {
+    if (!cardId || typeof cardId !== "string") {
+      throw new Error("ID de carte invalide");
+    }
+
+    const url = `${backUrl}/api/userCards/${cardId}`;
+    await axios.delete(url, createAuthenticatedAxios());
+
+    // La suppression a réussi (pas de contenu retourné normalement)
+  } catch (error) {
+    const errorMessage = extractErrorMessage(error);
+
+    // Gestion spécifique des erreurs courantes
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        throw new Error(`Carte introuvable (ID: ${cardId}) - 404`);
+      } else if (error.response?.status === 403) {
+        throw new Error(
+          "Vous n'êtes pas autorisé à supprimer cette carte - 403"
+        );
+      } else if (error.response?.status === 401) {
+        throw new Error("Session expirée, veuillez vous reconnecter - 401");
+      }
+    }
+
+    console.error("Erreur lors de la suppression de carte:", {
+      cardId,
+      error: errorMessage,
+    });
+
+    throw new Error(`Impossible de supprimer la carte: ${errorMessage}`);
+  }
+};
+
+/**
+ * Met à jour l'intervalle d'une carte utilisateur
+ *
+ * @param cardId - ID de la carte
+ * @param newInterval - Nouvel intervalle en jours
+ * @returns Promise<PopulatedUserCard> - Carte mise à jour
+ *
+ * @throws {Error} Erreur réseau ou d'authentification
+ *
+ * @example
+ * ```typescript
+ * try {
+ *   const updatedCard = await updateCardInterval('card123', 7);
+ *   console.log(`Nouvel intervalle: ${updatedCard.interval} jours`);
+ * } catch (error) {
+ *   console.error('Erreur mise à jour:', error.message);
+ * }
+ * ```
+ */
+export const updateCardInterval = async (
+  cardId: string,
+  newInterval: number
+): Promise<PopulatedUserCard> => {
+  try {
+    if (!cardId || typeof cardId !== "string") {
+      throw new Error("ID de carte invalide");
+    }
+
+    if (!Number.isInteger(newInterval) || newInterval < 0) {
+      throw new Error("Intervalle invalide (doit être un entier positif)");
+    }
+
+    const url = `${backUrl}/api/userCards/updateInterval/${cardId}`;
+    const payload = { interval: newInterval };
+
+    const response = await axios.put(url, payload, createAuthenticatedAxios());
+
+    if (!response.data) {
+      throw new Error("Aucune donnée retournée par le serveur");
+    }
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = extractErrorMessage(error);
+    console.error("Erreur lors de la mise à jour de l'intervalle:", {
+      cardId,
+      newInterval,
+      error: errorMessage,
+    });
+
+    throw new Error(
+      `Impossible de mettre à jour l'intervalle: ${errorMessage}`
+    );
+  }
+};
+
+/**
+ * Récupère les statistiques d'un utilisateur (nombre de cartes, progression, etc.)
+ *
+ * @param userId - ID de l'utilisateur
+ * @returns Promise<UserStats> - Statistiques utilisateur
+ *
+ * @throws {Error} Erreur réseau ou d'authentification
+ */
+export interface UserStats {
+  totalCards: number;
+  reviewedToday: number;
+  streak: number;
+  nextReviewCount: number;
+}
+
+export const getUserStats = async (
+  userId: string | number
+): Promise<UserStats> => {
+  try {
+    const url = `${backUrl}/api/users/${userId}/stats`;
+    const response = await axios.get(url, createAuthenticatedAxios());
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = extractErrorMessage(error);
+    console.error(
+      "Erreur lors de la récupération des statistiques:",
+      errorMessage
+    );
+    throw new Error(
+      `Impossible de récupérer les statistiques: ${errorMessage}`
+    );
+  }
+};
+
+/**
+ * Types pour TypeScript
+ */
+export type { PopulatedUserCard } from "../types/common";

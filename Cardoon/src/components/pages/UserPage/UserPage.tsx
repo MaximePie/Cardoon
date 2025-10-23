@@ -1,5 +1,8 @@
 /// <reference types="../../../vite-env" />
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
+  IconButton,
   Tab,
   Table,
   TableBody,
@@ -201,23 +204,27 @@ export const UserPage = () => {
                       <TableCell>{card.card.question}</TableCell>
                       <TableCell>{card.card.answer}</TableCell>
                       <TableCell>
-                        <button
+                        <IconButton
+                          aria-label="modifier"
                           onClick={() => editCard(card.card._id)}
                           disabled={isDeletingCard}
+                          size="small"
+                          color="primary"
                         >
-                          ✏️ Modifier
-                        </button>
-                        <button
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          aria-label="supprimer"
                           onClick={() =>
-                            handleDeleteCard(card.card._id, card.card.question)
+                            handleDeleteCard(card._id, card.card.question)
                           }
                           disabled={isDeletingCard}
-                          style={{ marginLeft: "8px" }}
+                          size="small"
+                          sx={{ ml: 1 }}
+                          color="error"
                         >
-                          {isDeletingCard
-                            ? "🔄 Suppression..."
-                            : "🗑️ Supprimer"}
-                        </button>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}

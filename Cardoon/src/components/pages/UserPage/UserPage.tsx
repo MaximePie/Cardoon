@@ -2,6 +2,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {
+  Checkbox,
   IconButton,
   Tab,
   Table,
@@ -21,6 +22,7 @@ import { useUserCardsManager } from "../../../hooks/useUserCards";
 import coinImage from "../../../images/coin.png";
 import { User } from "../../../types/common";
 import { formattedNumber } from "../../../utils/numbers";
+import Button from "../../atoms/Button/Button";
 
 function ExpBar({ currentExp }: { currentExp: number }) {
   const expForNextLevel = 1000;
@@ -44,6 +46,15 @@ export const UserPage = () => {
   const { username, gold, role, currentDailyGoal, dailyGoal } = user;
   const [draftDailyGoal, setDraftDailyGoal] = useState<number>(dailyGoal || 0);
   const { putUser, data: postResult } = usePut<User>(RESOURCES.USER_DAILY_GOAL);
+  const [selectedCards, setSelectedCards] = useState<string[]>([]);
+
+  const toggleCardSelection = (cardId: string) => {
+    setSelectedCards((prevSelected) =>
+      prevSelected.includes(cardId)
+        ? prevSelected.filter((id) => id !== cardId)
+        : [...prevSelected, cardId]
+    );
+  };
 
   // 🚀 TanStack Query pour la gestion optimiste des cartes
   const {
@@ -106,6 +117,18 @@ export const UserPage = () => {
 
     // Suppression optimiste via TanStack Query
     deleteCard(cardId);
+  };
+
+  const deleteSelectedCards = () => {
+    const confirmDelete = window.confirm(
+      `Êtes-vous sûr de vouloir supprimer les ${selectedCards.length} cartes sélectionnées ?`
+    );
+    if (!confirmDelete) return;
+
+    selectedCards.forEach((cardId) => {
+      deleteCard(cardId);
+    });
+    setSelectedCards([]);
   };
 
   return (
@@ -172,7 +195,16 @@ export const UserPage = () => {
       )}
       {activeTab === "cards" && (
         <div className="UserPage__tab-content">
-          <h3>Vos cartes ({allUserCards.length})</h3>
+          <h3 className="UserPage__cards-header">
+            Vos cartes ({allUserCards.length})
+            <Button
+              onClick={deleteSelectedCards}
+              disabled={selectedCards.length === 0}
+            >
+              Supprimer ({selectedCards.length}) cartes
+            </Button>
+          </h3>
+
           {/* 🔄 Affichage du loading des cartes */}
           {isLoadingCards ? (
             <div className="UserPage__loading">
@@ -187,6 +219,7 @@ export const UserPage = () => {
               <Table>
                 <TableHead>
                   <TableRow>
+                    <TableCell></TableCell>
                     <TableCell>Question</TableCell>
                     <TableCell>Réponse</TableCell>
                     <TableCell>Actions</TableCell>
@@ -201,6 +234,10 @@ export const UserPage = () => {
                         transition: "opacity 0.3s ease",
                       }}
                     >
+                      <Checkbox
+                        checked={selectedCards.includes(card._id)}
+                        onChange={() => toggleCardSelection(card._id)}
+                      />
                       <TableCell>{card.card.question}</TableCell>
                       <TableCell>{card.card.answer}</TableCell>
                       <TableCell>

@@ -66,17 +66,17 @@ This is a MERN stack
 
 - 🚀 **Implemented TanStack Query v5** for optimistic card deletion
   - ✨ Instant UI feedback with automatic rollback on errors
-  - 📊 Intelligent caching and background synchronization  
+  - 📊 Intelligent caching and background synchronization
   - 🔄 Optimistic updates for better user experience
   - 📝 Comprehensive error handling with user-friendly messages
   - 🎯 Centralized query management with standardized keys
   - 📚 Full documentation in `docs/TANSTACK_QUERY_IMPLEMENTATION.md`
 
-## TODOS 
+## TODOS
 
 - Add tests on back
 - ✅ ~~Add Tanstack~~ - **DONE** (Optimistic deletion implemented)
-- Add profilers 
+- Add profilers
 - Add Zustand/Redux
 - Yup, React hook forms
 - Extend TanStack Query to card creation and editing

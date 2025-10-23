@@ -78,4 +78,32 @@ router.put("/updateInterval/:id", async (req, res) => {
   res.json({ user, userCard });
 });
 
+// @route   DELETE api/userCards/:id
+// @desc    Delete a user card
+// @access  Private
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const userCard = await UserCard.findById(req.params.id);
+    if (!userCard) {
+      res.status(404).json({ msg: "User card not found" });
+      return;
+    }
+
+    // Vérifier que l'utilisateur authentifié est propriétaire de cette carte
+    const authenticatedUserId = (req as any).user.id;
+    if (userCard.user.toString() !== authenticatedUserId) {
+      res.status(403).json({ msg: "Not authorized to delete this card" });
+      return;
+    }
+
+    // Supprimer la carte utilisateur
+    await UserCard.findByIdAndDelete(req.params.id);
+
+    res.json({ msg: "User card deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user card:", error);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 export default router;

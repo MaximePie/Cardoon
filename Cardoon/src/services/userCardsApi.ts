@@ -50,19 +50,17 @@ const createAuthenticatedAxios = () => {
  * ```
  */
 export const getUserCards = async (
-  userId?: string | number
+  _userId?: string | number
 ): Promise<PopulatedUserCard[]> => {
   try {
-    const url = userId
-      ? `${backUrl}/api/userCards/user/${userId}`
-      : `${backUrl}/api/userCards`;
+    // L'endpoint backend utilise l'authentification pour déterminer l'utilisateur
+    // Pas besoin de passer l'userId dans l'URL
+    const url = `${backUrl}/api/userCards/all`;
 
     const response = await axios.get(url, createAuthenticatedAxios());
 
-    // Le backend peut retourner soit directement un array, soit un objet avec une propriété cards
-    const cards = Array.isArray(response.data)
-      ? response.data
-      : response.data.cards;
+    // Le backend retourne un objet avec une propriété userCards
+    const cards = response.data.userCards;
 
     if (!Array.isArray(cards)) {
       throw new Error("Format de réponse inattendu du serveur");

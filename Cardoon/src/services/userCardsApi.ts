@@ -22,6 +22,32 @@ if (!backUrl) {
 }
 
 /**
+ * Creates an error that preserves HTTP status information for retry logic
+ * @param message - Error message
+ * @param originalError - Original axios error
+ * @returns Error with preserved status information
+ */
+const createStatusPreservingError = (
+  message: string,
+  originalError: unknown
+): Error => {
+  const error = new Error(message) as Error & {
+    status?: number;
+    response?: { status?: number };
+  };
+
+  if (axios.isAxiosError(originalError)) {
+    const status = originalError.response?.status;
+    if (status) {
+      error.status = status;
+      error.response = { status };
+    }
+  }
+
+  return error;
+};
+
+/**
  * Configuration axios pour les requêtes authentifiées
  */
 const createAuthenticatedAxios = () => {
@@ -79,7 +105,10 @@ export const getUserCards = async (
       "Erreur lors de la récupération des cartes utilisateur:",
       errorMessage
     );
-    throw new Error(`Impossible de récupérer les cartes: ${errorMessage}`);
+    throw createStatusPreservingError(
+      `Impossible de récupérer les cartes: ${errorMessage}`,
+      error
+    );
   }
 };
 
@@ -121,13 +150,20 @@ export const deleteUserCard = async (cardId: string): Promise<void> => {
     // Gestion spécifique des erreurs courantes
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
-        throw new Error(`Carte introuvable (ID: ${cardId}) - 404`);
+        throw createStatusPreservingError(
+          `Carte introuvable (ID: ${cardId}) - 404`,
+          error
+        );
       } else if (error.response?.status === 403) {
-        throw new Error(
-          "Vous n'êtes pas autorisé à supprimer cette carte - 403"
+        throw createStatusPreservingError(
+          "Vous n'êtes pas autorisé à supprimer cette carte - 403",
+          error
         );
       } else if (error.response?.status === 401) {
-        throw new Error("Session expirée, veuillez vous reconnecter - 401");
+        throw createStatusPreservingError(
+          "Session expirée, veuillez vous reconnecter - 401",
+          error
+        );
       }
     }
 
@@ -136,7 +172,10 @@ export const deleteUserCard = async (cardId: string): Promise<void> => {
       error: errorMessage,
     });
 
-    throw new Error(`Impossible de supprimer la carte: ${errorMessage}`);
+    throw createStatusPreservingError(
+      `Impossible de supprimer la carte: ${errorMessage}`,
+      error
+    );
   }
 };
 
@@ -192,8 +231,9 @@ export const updateCardInterval = async (
       error: errorMessage,
     });
 
-    throw new Error(
-      `Impossible de mettre à jour l'intervalle: ${errorMessage}`
+    throw createStatusPreservingError(
+      `Impossible de mettre à jour l'intervalle: ${errorMessage}`,
+      error
     );
   }
 };
@@ -227,8 +267,9 @@ export const getUserStats = async (
       "Erreur lors de la récupération des statistiques:",
       errorMessage
     );
-    throw new Error(
-      `Impossible de récupérer les statistiques: ${errorMessage}`
+    throw createStatusPreservingError(
+      `Impossible de récupérer les statistiques: ${errorMessage}`,
+      error
     );
   }
 };

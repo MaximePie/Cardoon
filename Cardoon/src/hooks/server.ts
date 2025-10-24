@@ -132,8 +132,7 @@ export const usePut = <T>(resource: string) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
         "token"
       )}`;
-      const response = await axios.put(url, {
-        payload,
+      const response = await axios.put(url, payload, {
         headers: { Authorization: `Bearer ${Cookies.get("token")}` },
       });
       setData(response.data);

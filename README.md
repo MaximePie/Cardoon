@@ -80,3 +80,4 @@ This is a MERN stack
 - Add Zustand/Redux
 - Yup, React hook forms
 - Extend TanStack Query to card creation and editing
+- Add storybook

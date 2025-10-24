@@ -95,14 +95,13 @@ describe("QueryClient Retry Guard Integration", () => {
       expect(shouldRetryQuery(3, error502)).toBe(false);
     });
 
-    it("should handle 401 errors with token refresh logic", () => {
-      // 401 errors should allow one retry attempt (for token refresh)
+    it("should not retry 401 errors - handled at higher level", () => {
+      // 401 errors should not be retried automatically by TanStack Query
+      // Token refresh should be handled by axios interceptors or error boundaries
       const error401 = { status: 401, message: "Unauthorized" };
 
-      // First attempt should allow retry (triggers token refresh)
-      expect(shouldRetryQuery(0, error401)).toBe(true);
-
-      // After first failure, should not retry
+      // No automatic retries for 401 errors
+      expect(shouldRetryQuery(0, error401)).toBe(false);
       expect(shouldRetryQuery(1, error401)).toBe(false);
       expect(shouldRetryQuery(2, error401)).toBe(false);
     });

@@ -16,8 +16,11 @@ import Cookies from "js-cookie";
 import { PopulatedUserCard } from "../types/common";
 import { extractErrorMessage } from "../utils";
 
-const backUrl = import.meta.env.VITE_API_URL;
-if (!backUrl) {
+// Get API URL from environment, with fallback for test environments
+const backUrl = import.meta.env.VITE_API_URL || process.env.VITE_API_URL;
+
+// During tests we allow backUrl to be undefined (tests should mock API calls)
+if (!backUrl && process.env.NODE_ENV !== "test") {
   throw new Error("VITE_API_URL is not defined. Configure API base URL.");
 }
 

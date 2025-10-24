@@ -12,8 +12,6 @@
  */
 
 import { QueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import Cookies from "js-cookie";
 
 /**
  * Extracts HTTP status code from error objects
@@ -50,36 +48,6 @@ export const getErrorHeaders = (
     return maybe.response?.headers;
   }
   return undefined;
-};
-
-/**
- * Attempts to refresh user authentication by re-fetching user data
- *
- * @returns Promise<boolean> - true if refresh succeeded, false otherwise
- */
-export const attemptTokenRefresh = async (): Promise<boolean> => {
-  try {
-    const token = Cookies.get("token");
-    if (!token) {
-      return false;
-    }
-
-    const backUrl = import.meta.env.VITE_API_URL;
-    if (!backUrl) {
-      return false;
-    }
-
-    // Attempt to fetch user data to validate token
-    const response = await axios.get(`${backUrl}/api/users/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    return response.status === 200;
-  } catch {
-    return false;
-  }
 };
 
 /**
@@ -124,12 +92,6 @@ export const shouldRetryForbidden = (
   return null;
 };
 
-// Track failed auth attempts to manage retry logic
-const authRetryAttempts = new Map<
-  string,
-  { count: number; timestamp: number }
->();
-
 /**
  * Determines if a failed query should be retried based on failure count and error type
  *
@@ -149,31 +111,12 @@ export const shouldRetryQuery = (
     return false;
   }
 
-  // 401: Allow one retry attempt per session, trigger async token refresh
+  // 401: Disable automatic retries - handle token refresh at higher level
+  // TanStack Query's retry function must be synchronous, but token refresh is async.
+  // Returning false prevents immediate retry with stale token.
+  // Token refresh should be handled by axios interceptors or error boundaries.
   if (status === 401) {
-    const token = Cookies.get("token");
-    const sessionKey = `401_${token || "no-token"}`;
-
-    if (failureCount === 0) {
-      const retryInfo = authRetryAttempts.get(sessionKey);
-      const now = Date.now();
-
-      // If we haven't tried refreshing in the last 5 minutes, allow retry
-      if (!retryInfo || now - retryInfo.timestamp > 300000) {
-        authRetryAttempts.set(sessionKey, { count: 1, timestamp: now });
-
-        // Trigger async token refresh (fire and forget)
-        attemptTokenRefresh().then((success) => {
-          if (!success) {
-            // Clear auth attempts if refresh failed
-            authRetryAttempts.delete(sessionKey);
-          }
-        });
-
-        return true; // Allow one retry
-      }
-    }
-    return false; // Don't retry 401 if we've already tried recently
+    return false;
   }
 
   // 403: Only retry if response includes explicit retry guidance

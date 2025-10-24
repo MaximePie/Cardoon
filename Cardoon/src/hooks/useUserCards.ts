@@ -115,7 +115,7 @@ export const useDeleteCard = (
         userCardsQueryKey,
         (oldCards) => {
           if (!oldCards) return [];
-          return oldCards.filter((card) => card.card._id !== cardId);
+          return oldCards.filter((card) => card._id !== cardId);
         }
       );
 

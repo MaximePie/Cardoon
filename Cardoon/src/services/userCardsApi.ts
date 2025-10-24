@@ -17,20 +17,21 @@ import { PopulatedUserCard } from "../types/common";
 import { extractErrorMessage } from "../utils";
 
 const backUrl = import.meta.env.VITE_API_URL;
+if (!backUrl) {
+  throw new Error("VITE_API_URL is not defined. Configure API base URL.");
+}
 
 /**
  * Configuration axios pour les requêtes authentifiées
  */
 const createAuthenticatedAxios = () => {
   const token = Cookies.get("token");
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
   };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return { headers };
 };
-
 /**
  * Récupère toutes les cartes d'un utilisateur
  *
@@ -168,7 +169,9 @@ export const updateCardInterval = async (
     }
 
     if (!Number.isInteger(newInterval) || newInterval < 0) {
-      throw new Error("Intervalle invalide (doit être un entier positif)");
+      throw new Error(
+        "Intervalle invalide (doit être un entier strictement positif)"
+      );
     }
 
     const url = `${backUrl}/api/userCards/updateInterval/${cardId}`;

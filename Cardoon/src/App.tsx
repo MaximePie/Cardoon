@@ -36,7 +36,9 @@ const App = () => {
                   <Route path="/ashop" Component={ShopAdminPage} />
                 </Routes>
               </div>
-              <ReactQueryDevtools initialIsOpen={false} />
+              {import.meta.env.DEV && (
+                <ReactQueryDevtools initialIsOpen={false} />
+              )}
             </Router>
           </SnackbarContextProvider>
         </ConfettiProvider>

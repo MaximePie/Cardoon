@@ -45,9 +45,23 @@ export const queryClient = new QueryClient({
       refetchOnMount: true, // Refetch au montage du composant
 
       // 🚫 Error Handling
-      retry: (failureCount, error) => {
+      retry: (failureCount, error: unknown) => {
+        const getStatus = (err: unknown): number | undefined => {
+          if (typeof err === "object" && err !== null) {
+            const maybe = err as {
+              response?: { status?: unknown };
+              status?: unknown;
+            };
+            if (typeof maybe.response?.status === "number")
+              return maybe.response.status;
+            if (typeof maybe.status === "number") return maybe.status;
+          }
+          return undefined;
+        };
+
+        const status = getStatus(error);
         // Pas de retry pour les erreurs 404 (ressource introuvable)
-        if (error instanceof Error && error.message.includes("404")) {
+        if (status === 404) {
           return false;
         }
         // Retry jusqu'à 3 fois pour les autres erreurs
@@ -57,7 +71,7 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       // 🔄 Mutation Strategy
-      retry: 1, // Retry une seule fois pour les mutations
+      retry: false,
       retryDelay: 1000, // 1 seconde de délai
 
       // 📝 Logging des erreurs de mutation
@@ -118,6 +132,8 @@ export const QueryKeys = {
  *
  * @description Types utilitaires pour une meilleure expérience développeur
  */
-export type QueryKey = (typeof QueryKeys)[keyof typeof QueryKeys];
-export type UserCardsQueryKey = ReturnType<typeof QueryKeys.userCards>;
-export type UserQueryKey = ReturnType<typeof QueryKeys.user>;
+type _KeyValue<K extends keyof typeof QueryKeys> =
+  (typeof QueryKeys)[K] extends (...args: unknown[]) => infer R
+    ? R
+    : (typeof QueryKeys)[K];
+export type QueryKey = _KeyValue<keyof typeof QueryKeys>;

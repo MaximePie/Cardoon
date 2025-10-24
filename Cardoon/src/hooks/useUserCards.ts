@@ -89,7 +89,16 @@ export const useDeleteCard = (
   const queryClient = useQueryClient();
   const userCardsQueryKey = QueryKeys.userCards(userId);
 
-  return useMutation({
+  return useMutation<
+    void,
+    Error,
+    string,
+    {
+      previousCards?: PopulatedUserCard[];
+    }
+  >({
+    mutationKey: ["userCardDelete", userId],
+    retry: false, // Pas de retry automatique pour les suppressions
     mutationFn: (cardId: string) => deleteUserCard(cardId),
 
     // 🚀 OPTIMISTIC UPDATE - Mise à jour immédiate de l'UI
@@ -106,7 +115,7 @@ export const useDeleteCard = (
         userCardsQueryKey,
         (oldCards) => {
           if (!oldCards) return [];
-          return oldCards.filter((card) => card._id !== cardId);
+          return oldCards.filter((card) => card.card._id !== cardId);
         }
       );
 

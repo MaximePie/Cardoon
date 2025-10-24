@@ -305,7 +305,7 @@ const UserCards = () => {
               {allUserCards.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={3}
+                    colSpan={4}
                     style={{ textAlign: "center", padding: "2rem" }}
                   >
                     <div className="UserPage__empty-state">

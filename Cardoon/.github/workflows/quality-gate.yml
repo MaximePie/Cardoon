@@ -35,6 +35,8 @@ jobs:
 
       - name: 🧪 Run tests
         run: npm test -- --run
+        env:
+          VITE_API_URL: "http://localhost:3000"
 
       - name: 🏗️ Build check
         run: npm run build

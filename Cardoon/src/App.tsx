@@ -1,3 +1,5 @@
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Navbar from "./components/molecules/Navbar/Navbar";
 import ShopAdminPage from "./components/pages/AdminPage/AdminPage";
@@ -11,31 +13,37 @@ import UserPage from "./components/pages/UserPage/UserPage";
 import { ConfettiProvider } from "./context/ConfettiContext";
 import { SnackbarContextProvider } from "./context/SnackbarContext";
 import { UserContextProvider } from "./context/UserContext";
+import { queryClient } from "./lib/queryClient";
 import "./styles/app.scss";
 
 const App = () => {
   return (
-    <UserContextProvider>
-      <ConfettiProvider>
-        <SnackbarContextProvider>
-          <Router>
-            <Navbar />
-            <div className="Page">
-              <Routes>
-                <Route path="/login" Component={LoginPage} />
-                <Route path="/" Component={GamePage} />
-                <Route path="/shop" Component={ShopPage} />
-                <Route path="/user" Component={UserPage} />
-                <Route path="/boss" Component={BossPage} />
-                <Route path="/add-card" Component={CardForm} />
-                <Route path="/register" Component={RegisterPage} />
-                <Route path="/ashop" Component={ShopAdminPage} />
-              </Routes>
-            </div>
-          </Router>
-        </SnackbarContextProvider>
-      </ConfettiProvider>
-    </UserContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <UserContextProvider>
+        <ConfettiProvider>
+          <SnackbarContextProvider>
+            <Router>
+              <Navbar />
+              <div className="Page">
+                <Routes>
+                  <Route path="/login" Component={LoginPage} />
+                  <Route path="/" Component={GamePage} />
+                  <Route path="/shop" Component={ShopPage} />
+                  <Route path="/user" Component={UserPage} />
+                  <Route path="/boss" Component={BossPage} />
+                  <Route path="/add-card" Component={CardForm} />
+                  <Route path="/register" Component={RegisterPage} />
+                  <Route path="/ashop" Component={ShopAdminPage} />
+                </Routes>
+              </div>
+              {import.meta.env.DEV && (
+                <ReactQueryDevtools initialIsOpen={false} />
+              )}
+            </Router>
+          </SnackbarContextProvider>
+        </ConfettiProvider>
+      </UserContextProvider>
+    </QueryClientProvider>
   );
 };
 

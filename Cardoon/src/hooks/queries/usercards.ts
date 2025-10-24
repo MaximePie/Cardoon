@@ -1,9 +1,9 @@
 // Contains a hook to get usercards and making it able to play them
 
 import { useEffect, useState } from "react";
-import { FetchedCategory } from "../components/pages/CardFormPage/CardFormPage";
-import { PopulatedUserCard } from "../types/common";
-import { RESOURCES, useFetch } from "./server";
+import { FetchedCategory } from "../../components/pages/CardFormPage/CardFormPage";
+import { PopulatedUserCard } from "../../types/common";
+import { RESOURCES, useFetch } from "../server";
 type UserCardHookReturnType = {
   loading: boolean;
   userCards: PopulatedUserCard[];

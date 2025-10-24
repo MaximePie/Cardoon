@@ -58,11 +58,15 @@ export const useAdminCatchup = () => {
   const post = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(url, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
+      const response = await axios.post(
+        url,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
       setData(response.data);
       setLoading(false);
     } catch (err: unknown) {
@@ -132,8 +136,7 @@ export const usePut = <T>(resource: string) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
         "token"
       )}`;
-      const response = await axios.put(url, {
-        payload,
+      const response = await axios.put(url, payload, {
         headers: { Authorization: `Bearer ${Cookies.get("token")}` },
       });
       setData(response.data);
@@ -148,22 +151,19 @@ export const usePut = <T>(resource: string) => {
 };
 export const useDelete = (resource: string) => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("null");
+  const [error, setError] = useState<undefined | string>(undefined);
 
   const deleteResource = async (id: string) => {
     const url = `${backUrl}/api/` + resource + "/" + id;
     setLoading(true);
     try {
-      await axios
-        .delete(url, {
-          headers: {
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        })
-        .catch((err) => {
-          setError(extractErrorMessage(err));
-          setLoading(false);
-        });
+      await axios.delete(url, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
+      setLoading(false);
+      setError(undefined);
     } catch (err: unknown) {
       setError(extractErrorMessage(err));
       setLoading(false);

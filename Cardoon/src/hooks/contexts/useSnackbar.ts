@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SnackbarContext } from "../context/SnackbarContext";
+import { SnackbarContext } from "../../context/SnackbarContext";
 
 /**
  * Hook personnalisé pour utiliser le SnackbarContext

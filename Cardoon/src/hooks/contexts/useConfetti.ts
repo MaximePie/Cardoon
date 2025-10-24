@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ConfettiContext } from "../context/ConfettiContext";
+import { ConfettiContext } from "../../context/ConfettiContext";
 /**
  * Custom hook to use the ConfettiContext
  * Provides a simple and intuitive API for confetti effects

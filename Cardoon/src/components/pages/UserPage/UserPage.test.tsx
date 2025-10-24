@@ -1,7 +1,8 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SnackbarContextProvider } from "../../../context/SnackbarContext";
-import * as userHooks from "../../../hooks/useUser";
+import * as userHooks from "../../../hooks/contexts/useUser";
 import { User } from "../../../types/common";
 import UserPage from "./UserPage";
 
@@ -13,11 +14,16 @@ vi.mock("../../../hooks/server", () => ({
   usePut: vi.fn(),
 }));
 
-vi.mock("../../../hooks/useUser", () => ({
+vi.mock("../../../hooks/contexts/useUser", () => ({
   useUser: vi.fn(),
 }));
 
+vi.mock("../../../hooks/queries/useUserCards", () => ({
+  useUserCardsManager: vi.fn(),
+}));
+
 // Import mocked modules
+import { useUserCardsManager } from "../../../hooks/queries/useUserCards";
 import { usePut } from "../../../hooks/server";
 
 // Helper function to create complete user context mock
@@ -65,21 +71,63 @@ describe("UserPage", () => {
     error: undefined,
   };
 
+  // Mock du hook TanStack Query pour les cartes utilisateur
+  const mockDeleteCard = vi.fn();
+  const mockDeleteCards = vi.fn();
+  const mockRefetch = vi.fn();
+  const mockUserCardsManagerReturn = {
+    cards: [],
+    isLoading: false,
+    isDeletingCard: false,
+    error: null,
+    deleteError: null,
+    deleteCard: mockDeleteCard,
+    deleteCards: mockDeleteCards,
+    refetch: mockRefetch.mockResolvedValue({
+      data: [],
+      isError: false,
+      isLoading: false,
+      isSuccess: true,
+    }),
+    isStale: false,
+  };
+
+  // Créer un QueryClient pour les tests
+  let testQueryClient: QueryClient;
+
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Recréer le QueryClient pour chaque test
+    testQueryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+          gcTime: 0,
+          staleTime: 0,
+        },
+        mutations: {
+          retry: false,
+        },
+      },
+    });
 
     vi.mocked(userHooks.useUser).mockReturnValue(
       createMockUserContext(mockUser, { setUser: mockSetUser })
     );
 
     vi.mocked(usePut).mockReturnValue(mockUsePutReturn);
+
+    vi.mocked(useUserCardsManager).mockReturnValue(mockUserCardsManagerReturn);
   });
 
   const renderUserPage = () => {
     return render(
-      <SnackbarContextProvider>
-        <UserPage />
-      </SnackbarContextProvider>
+      <QueryClientProvider client={testQueryClient}>
+        <SnackbarContextProvider>
+          <UserPage />
+        </SnackbarContextProvider>
+      </QueryClientProvider>
     );
   };
 
@@ -93,7 +141,13 @@ describe("UserPage", () => {
       expect(screen.getByText("testuser")).toBeInTheDocument();
       expect(screen.getByText("500")).toBeInTheDocument();
       expect(screen.getByText("Knowledge Coins")).toBeInTheDocument();
-      expect(screen.getByText(/Rôle\s*:\s*user/)).toBeInTheDocument();
+      expect(
+        screen.getByText((content, element) => {
+          return (
+            element?.tagName.toLowerCase() === "p" && content.includes("user")
+          );
+        })
+      ).toBeInTheDocument();
     });
 
     it("should render daily goal progress correctly", () => {
@@ -111,7 +165,7 @@ describe("UserPage", () => {
       // Input min attribute might not be set in the component
 
       expect(
-        screen.getByRole("button", { name: "Enregistrer" })
+        screen.getByRole("button", { name: "Enregistrer l'objectif quotidien" })
       ).toBeInTheDocument();
     });
   });
@@ -151,7 +205,7 @@ describe("UserPage", () => {
       fireEvent.change(input, { target: { value: "20" } });
 
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       fireEvent.submit(form!);
 
@@ -162,7 +216,7 @@ describe("UserPage", () => {
       renderUserPage();
 
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       fireEvent.submit(form!);
 
@@ -217,8 +271,16 @@ describe("UserPage", () => {
 
       renderUserPage();
 
-      expect(screen.getByText("admin")).toBeInTheDocument();
-      expect(screen.getByText(/Rôle\s*:\s*admin/)).toBeInTheDocument();
+      expect(screen.getAllByRole("heading", { level: 3 })[0]).toHaveTextContent(
+        "admin"
+      );
+      expect(
+        screen.getByText((content, element) => {
+          return (
+            element?.tagName.toLowerCase() === "p" && content.includes("admin")
+          );
+        })
+      ).toBeInTheDocument();
       expect(screen.getByText("10.0K")).toBeInTheDocument();
     });
 
@@ -260,7 +322,7 @@ describe("UserPage", () => {
 
       // Submit with final value
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       fireEvent.submit(form!);
 
@@ -271,7 +333,7 @@ describe("UserPage", () => {
       renderUserPage();
 
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       const mockPreventDefault = vi.fn();
 
@@ -312,7 +374,7 @@ describe("UserPage", () => {
 
       // Component should still be interactive during loading
       expect(
-        screen.getByRole("button", { name: "Enregistrer" })
+        screen.getByRole("button", { name: "Enregistrer l'objectif quotidien" })
       ).toBeInTheDocument();
     });
   });

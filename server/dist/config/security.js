@@ -55,12 +55,14 @@ export const helmetConfig = {
  */
 export const securityConfig = {
     // Rate limiting settings (to be used with express-rate-limit)
+    // Disabled in development environment for easier testing
     rateLimit: {
         windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100, // limit each IP to 100 requests per windowMs
+        max: process.env.NODE_ENV === "development" ? 0 : 100, // 0 = disabled in dev, 100 in production
         message: "Too many requests from this IP, please try again later.",
         standardHeaders: true,
         legacyHeaders: false,
+        skip: process.env.NODE_ENV === "development" ? () => true : undefined, // Skip all requests in dev
     },
     // CORS settings
     cors: {

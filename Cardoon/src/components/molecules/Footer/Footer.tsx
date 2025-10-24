@@ -26,7 +26,6 @@ export const DailyGoalProgressBar = ({
   const lastProcessedGoal = useRef<string | null>(null);
   const isInitialMount = useRef(true);
   const previousStatus = useRef<string | null>(null);
-  console.log(user);
 
   // Mémoriser les valeurs importantes pour éviter les re-calculs
   const goalTrackingData = useMemo(

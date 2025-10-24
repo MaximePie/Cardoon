@@ -19,6 +19,7 @@ import { SnackbarContext } from "../../../context/SnackbarContext";
 import { useUser } from "../../../hooks/contexts/useUser";
 import { useUserCardsManager } from "../../../hooks/queries/useUserCards";
 import { RESOURCES, usePut } from "../../../hooks/server";
+import useIsMobile from "../../../hooks/useIsMobile";
 import coinImage from "../../../images/coin.png";
 import { User } from "../../../types/common";
 import { formattedNumber } from "../../../utils/numbers";
@@ -209,6 +210,7 @@ const UserProfile = () => {
 const UserCards = () => {
   const { user } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
+  const { isMobile } = useIsMobile();
   // ✅ Gestionnaire de sélection de carte (exemple d'implémentation)
   const [selectedCards, setSelectedCard] = useState<string[]>([]);
   // � TanStack Query pour la gestion optimiste des cartes
@@ -291,7 +293,7 @@ const UserCards = () => {
         <div className="UserPage__error">
           <p>Erreur lors du chargement des cartes: {cardsError.message}</p>
         </div>
-      ) : (
+      ) : !isMobile ? (
         <TableContainer>
           <Table>
             <TableHead>
@@ -369,6 +371,64 @@ const UserCards = () => {
             </TableBody>
           </Table>
         </TableContainer>
+      ) : (
+        <div className="UserPage__mobile-cards">
+          {allUserCards.map((card) => (
+            <div
+              key={card._id}
+              className="UserPage__mobile-card"
+              style={{
+                opacity: isDeletingCard ? 0.7 : 1,
+                transition: "opacity 0.3s ease",
+              }}
+            >
+              <div className="UserPage__mobile-card-header">
+                <div className="UserPage__mobile-card-actions">
+                  <Checkbox
+                    checked={selectedCards.includes(card._id) || false}
+                    onChange={handleSelectCard(card._id)}
+                  />
+                  <IconButton
+                    aria-label={`Modifier la carte: ${card.card.question}`}
+                    onClick={() => handleEditCard(card.card._id)}
+                    disabled={isDeletingCard}
+                    size="small"
+                    color="primary"
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    aria-label={`Supprimer la carte: ${card.card.question}`}
+                    onClick={() =>
+                      handleDeleteCard(card._id, card.card.question)
+                    }
+                    disabled={isDeletingCard}
+                    size="small"
+                    color="error"
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </div>
+              </div>
+              <div className="UserPage__mobile-card-content">
+                <p>
+                  <strong>Q:</strong> {card.card.question}
+                </p>
+                <p>
+                  <strong>A:</strong> {card.card.answer}
+                </p>
+              </div>
+              <Divider />
+            </div>
+          ))}
+          {allUserCards.length === 0 && (
+            <div className="UserPage__empty-state">
+              <p>
+                Aucune carte trouvée. Commencez par créer votre première carte !
+              </p>
+            </div>
+          )}
+        </div>
       )}
     </section>
   );

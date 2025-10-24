@@ -86,15 +86,6 @@ export const getUserCards = async (
     // L'endpoint backend utilise l'authentification pour déterminer l'utilisateur
     // Pas besoin de passer l'userId dans l'URL
     const url = `${backUrl}/api/userCards/all`;
-
-    // Debug logging for production troubleshooting
-    console.log("🔍 getUserCards Debug:", {
-      backUrl,
-      fullUrl: url,
-      environment: import.meta.env.MODE,
-      production: import.meta.env.PROD,
-    });
-
     const response = await axios.get(url, createAuthenticatedAxios());
 
     // Le backend retourne un objet avec une propriété userCards

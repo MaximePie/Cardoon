@@ -14,6 +14,55 @@
 import { QueryClient } from "@tanstack/react-query";
 
 /**
+ * Extracts HTTP status code from error objects
+ *
+ * @param err - The error object to extract status from
+ * @returns The HTTP status code if available, undefined otherwise
+ */
+export const getErrorStatus = (err: unknown): number | undefined => {
+  if (typeof err === "object" && err !== null) {
+    const maybe = err as {
+      response?: { status?: unknown };
+      status?: unknown;
+    };
+    if (typeof maybe.response?.status === "number")
+      return maybe.response.status;
+    if (typeof maybe.status === "number") return maybe.status;
+  }
+  return undefined;
+};
+
+/**
+ * Determines if a failed query should be retried based on failure count and error type
+ *
+ * @param failureCount - Number of times the query has already failed
+ * @param error - The error that caused the failure
+ * @returns true if the query should be retried, false otherwise
+ */
+export const shouldRetryQuery = (
+  failureCount: number,
+  error: unknown
+): boolean => {
+  const status = getErrorStatus(error);
+  // Pas de retry pour les erreurs 404 (ressource introuvable)
+  if (status === 404) {
+    return false;
+  }
+  // Retry jusqu'à 3 fois pour les autres erreurs
+  return failureCount < 3;
+};
+
+/**
+ * Calculates retry delay with exponential backoff
+ *
+ * @param attemptIndex - The current attempt number (0-based)
+ * @returns Delay in milliseconds before the next retry attempt
+ */
+export const getRetryDelay = (attemptIndex: number): number => {
+  return Math.min(1000 * 2 ** attemptIndex, 30000);
+};
+
+/**
  * Configuration du QueryClient pour l'application Cardoon
  *
  * @description Configuration centralisée avec des paramètres optimisés pour :
@@ -45,29 +94,8 @@ export const queryClient = new QueryClient({
       refetchOnMount: true, // Refetch au montage du composant
 
       // 🚫 Error Handling
-      retry: (failureCount, error: unknown) => {
-        const getStatus = (err: unknown): number | undefined => {
-          if (typeof err === "object" && err !== null) {
-            const maybe = err as {
-              response?: { status?: unknown };
-              status?: unknown;
-            };
-            if (typeof maybe.response?.status === "number")
-              return maybe.response.status;
-            if (typeof maybe.status === "number") return maybe.status;
-          }
-          return undefined;
-        };
-
-        const status = getStatus(error);
-        // Pas de retry pour les erreurs 404 (ressource introuvable)
-        if (status === 404) {
-          return false;
-        }
-        // Retry jusqu'à 3 fois pour les autres erreurs
-        return failureCount < 3;
-      },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000), // Backoff exponentiel
+      retry: shouldRetryQuery,
+      retryDelay: getRetryDelay,
     },
     mutations: {
       // 🔄 Mutation Strategy

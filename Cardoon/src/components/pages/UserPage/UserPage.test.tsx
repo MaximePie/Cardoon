@@ -73,6 +73,7 @@ describe("UserPage", () => {
 
   // Mock du hook TanStack Query pour les cartes utilisateur
   const mockDeleteCard = vi.fn();
+  const mockDeleteCards = vi.fn();
   const mockRefetch = vi.fn();
   const mockUserCardsManagerReturn = {
     cards: [],
@@ -81,6 +82,7 @@ describe("UserPage", () => {
     error: null,
     deleteError: null,
     deleteCard: mockDeleteCard,
+    deleteCards: mockDeleteCards,
     refetch: mockRefetch.mockResolvedValue({
       data: [],
       isError: false,

@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { useUserCards } from "../../../hooks/usercards";
+import { useUserCards } from "../../../hooks/queries/usercards";
 import bossImage from "../../../images/boss_image_test.png";
 import { PopulatedUserCard } from "../../../types/common";
 import Card from "../../molecules/Card/Card";

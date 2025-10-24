@@ -5,8 +5,12 @@
  * for proper retry logic integration with QueryClient
  */
 
-import axios from "axios";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// Mock environment variable BEFORE any imports
+vi.stubEnv("VITE_API_URL", "http://localhost:3000");
+
+import axios from "axios";
 import { deleteUserCard } from "./userCardsApi";
 
 // Mock axios module
@@ -49,8 +53,6 @@ interface ErrorWithStatus extends Error {
 describe("userCardsApi Error Handling", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Mock environment variable
-    vi.stubEnv("VITE_API_URL", "http://localhost:3000");
   });
 
   describe("HTTP Status Code Preservation", () => {

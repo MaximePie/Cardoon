@@ -12,9 +12,9 @@
  */
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { QueryKeys } from "../lib/queryClient";
-import { deleteUserCard, getUserCards } from "../services/userCardsApi";
-import { PopulatedUserCard } from "../types/common";
+import { QueryKeys } from "../../lib/queryClient";
+import { deleteUserCard, getUserCards } from "../../services/userCardsApi";
+import { PopulatedUserCard } from "../../types/common";
 
 /**
  * Hook pour récupérer les cartes d'un utilisateur
@@ -158,10 +158,73 @@ export const useDeleteCard = (
   });
 };
 
+export const useDeleteCards = (
+  userId: string | number,
+  options: DeleteCardOptions = {}
+) => {
+  const queryClient = useQueryClient();
+  const userCardsQueryKey = QueryKeys.userCards(userId);
+
+  return useMutation<
+    void,
+    Error,
+    string[],
+    {
+      previousCards?: PopulatedUserCard[];
+    }
+  >({
+    mutationKey: ["userCardsDelete", userId],
+    retry: false,
+    mutationFn: (cardIds: string[]) =>
+      Promise.all(cardIds.map((cardId) => deleteUserCard(cardId))).then(
+        () => {}
+      ),
+
+    onMutate: async (cardIds: string[]) => {
+      await queryClient.cancelQueries({ queryKey: userCardsQueryKey });
+
+      const previousCards =
+        queryClient.getQueryData<PopulatedUserCard[]>(userCardsQueryKey);
+
+      queryClient.setQueryData<PopulatedUserCard[]>(
+        userCardsQueryKey,
+        (oldCards) => {
+          if (!oldCards) return [];
+          return oldCards.filter((card) => !cardIds.includes(card._id));
+        }
+      );
+
+      return { previousCards };
+    },
+
+    onSuccess: () => {
+      options.onSuccess?.();
+    },
+
+    onError: (error, cardIds, context) => {
+      if (context?.previousCards) {
+        queryClient.setQueryData(userCardsQueryKey, context.previousCards);
+      }
+
+      console.error("Échec de la suppression de cartes:", {
+        cardIds,
+        error: error.message,
+        userId,
+      });
+
+      options.onError?.(error as Error);
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: userCardsQueryKey });
+    },
+  });
+};
+
 /**
- * Hook combiné pour la gestion complète des cartes utilisateur
+ * Hook combiné pour gérer les cartes utilisateur avec fetch et suppression
  *
- * @description Hook de commodité qui combine :
+ * @description Ce hook combine :
  * - La récupération des cartes (useUserCards)
  * - La suppression optimiste (useDeleteCard)
  * - Les états de loading/error unifiés
@@ -210,6 +273,11 @@ export const useUserCardsManager = (
     onError: options.onDeleteError,
   });
 
+  const deleteCardsMutation = useDeleteCards(userId, {
+    onSuccess: options.onDeleteSuccess,
+    onError: options.onDeleteError,
+  });
+
   return {
     // 📊 Données
     cards: cardsQuery.data || [],
@@ -224,6 +292,7 @@ export const useUserCardsManager = (
 
     // 🎯 Actions
     deleteCard: deleteCardMutation.mutate,
+    deleteCards: deleteCardsMutation.mutate,
 
     // 🔧 Utilitaires
     refetch: cardsQuery.refetch,

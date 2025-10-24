@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useUser } from "../../../hooks/contexts/useUser";
 import { ACTIONS, usePost } from "../../../hooks/server";
-import { useUser } from "../../../hooks/useUser";
 import coinImage from "../../../images/coin.png";
 import { Item, UserItem } from "../../../types/common";
 import Button from "../../atoms/Button/Button";

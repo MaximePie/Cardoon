@@ -2,6 +2,7 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {
+  Checkbox,
   IconButton,
   Tab,
   Table,
@@ -15,12 +16,13 @@ import {
 import Divider from "@mui/material/Divider/Divider";
 import { useContext, useEffect, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
+import { useUser } from "../../../hooks/contexts/useUser";
+import { useUserCardsManager } from "../../../hooks/queries/useUserCards";
 import { RESOURCES, usePut } from "../../../hooks/server";
-import { useUser } from "../../../hooks/useUser";
-import { useUserCardsManager } from "../../../hooks/useUserCards";
 import coinImage from "../../../images/coin.png";
 import { User } from "../../../types/common";
 import { formattedNumber } from "../../../utils/numbers";
+import Button from "../../atoms/Button/Button";
 
 // 🎯 Constants pour éviter la duplication et améliorer la lisibilité
 const EXP_FOR_NEXT_LEVEL = 1000;
@@ -207,12 +209,14 @@ const UserProfile = () => {
 const UserCards = () => {
   const { user } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
-
+  // ✅ Gestionnaire de sélection de carte (exemple d'implémentation)
+  const [selectedCards, setSelectedCard] = useState<string[]>([]);
   // � TanStack Query pour la gestion optimiste des cartes
   const {
     cards: allUserCards,
     isLoading: isLoadingCards,
     deleteCard,
+    deleteCards,
     isDeletingCard,
     error: cardsError,
   } = useUserCardsManager(user._id, {
@@ -243,9 +247,40 @@ const UserCards = () => {
     deleteCard(cardId);
   };
 
+  const handleSelectCard =
+    (cardId: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.checked) {
+        setSelectedCard((prev) => [...prev, cardId]);
+      } else {
+        setSelectedCard((prev) => prev.filter((id) => id !== cardId));
+      }
+    };
+
+  const handleDeleteSelectedCards = () => {
+    if (selectedCards.length === 0) return;
+
+    const userConfirmed = window.confirm(
+      `Êtes-vous sûr de vouloir supprimer les ${selectedCards.length} cartes sélectionnées ?`
+    );
+
+    if (!userConfirmed) return;
+
+    deleteCards(selectedCards);
+    setSelectedCard([]); // Clear selection after deletion
+  };
+
   return (
     <section className="UserPage__tab-content" aria-labelledby="cards-tab">
-      <h3 id="cards-tab">Vos cartes ({allUserCards.length})</h3>
+      <h3 id="cards-tab">
+        Vos cartes ({allUserCards.length})
+        <Button
+          variant="primary"
+          onClick={handleDeleteSelectedCards}
+          disabled={selectedCards.length === 0}
+        >
+          Supprimer {selectedCards.length} carte(s)
+        </Button>
+      </h3>
 
       {/* 🔄 Gestion des états de chargement et d'erreur */}
       {isLoadingCards ? (
@@ -261,6 +296,7 @@ const UserCards = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell></TableCell>
                 <TableCell>Question</TableCell>
                 <TableCell>Réponse</TableCell>
                 <TableCell>Actions</TableCell>
@@ -275,30 +311,43 @@ const UserCards = () => {
                     transition: "opacity 0.3s ease",
                   }}
                 >
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedCards.includes(card._id) || false}
+                      onChange={handleSelectCard(card._id)}
+                    />
+                  </TableCell>
                   <TableCell>{card.card.question}</TableCell>
                   <TableCell>{card.card.answer}</TableCell>
                   <TableCell>
-                    <IconButton
-                      aria-label={`Modifier la carte: ${card.card.question}`}
-                      onClick={() => handleEditCard(card.card._id)}
-                      disabled={isDeletingCard}
-                      size="small"
-                      color="primary"
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
                     >
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton
-                      aria-label={`Supprimer la carte: ${card.card.question}`}
-                      onClick={() =>
-                        handleDeleteCard(card._id, card.card.question)
-                      }
-                      disabled={isDeletingCard}
-                      size="small"
-                      sx={{ ml: 1 }}
-                      color="error"
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
+                      <IconButton
+                        aria-label={`Modifier la carte: ${card.card.question}`}
+                        onClick={() => handleEditCard(card.card._id)}
+                        disabled={isDeletingCard}
+                        size="small"
+                        color="primary"
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        aria-label={`Supprimer la carte: ${card.card.question}`}
+                        onClick={() =>
+                          handleDeleteCard(card._id, card.card.question)
+                        }
+                        disabled={isDeletingCard}
+                        size="small"
+                        color="error"
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

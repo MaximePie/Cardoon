@@ -1,7 +1,7 @@
 import { renderHook } from "@testing-library/react";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { UserContext, emptyUser } from "../context/UserContext/UserContext";
+import { UserContext, emptyUser } from "../../context/UserContext/UserContext";
 import { useUser } from "./useUser";
 
 // Mock du UserContext

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../../../hooks/contexts/useUser";
 import { ACTIONS, usePost } from "../../../hooks/server";
-import { useUser } from "../../../hooks/useUser";
 import { User } from "../../../types/common";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";

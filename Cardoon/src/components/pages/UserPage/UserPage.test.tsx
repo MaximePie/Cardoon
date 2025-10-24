@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SnackbarContextProvider } from "../../../context/SnackbarContext";
-import * as userHooks from "../../../hooks/useUser";
+import * as userHooks from "../../../hooks/contexts/useUser";
 import { User } from "../../../types/common";
 import UserPage from "./UserPage";
 
@@ -14,17 +14,17 @@ vi.mock("../../../hooks/server", () => ({
   usePut: vi.fn(),
 }));
 
-vi.mock("../../../hooks/useUser", () => ({
+vi.mock("../../../hooks/contexts/useUser", () => ({
   useUser: vi.fn(),
 }));
 
-vi.mock("../../../hooks/useUserCards", () => ({
+vi.mock("../../../hooks/queries/useUserCards", () => ({
   useUserCardsManager: vi.fn(),
 }));
 
 // Import mocked modules
+import { useUserCardsManager } from "../../../hooks/queries/useUserCards";
 import { usePut } from "../../../hooks/server";
-import { useUserCardsManager } from "../../../hooks/useUserCards";
 
 // Helper function to create complete user context mock
 const createMockUserContext = (user: User, overrides = {}) => ({

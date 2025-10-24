@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { useUser } from "../../../hooks/useUser";
+import { useUser } from "../../../hooks/contexts/useUser";
 import { Item } from "../../../types/common";
 
 const VALID_ITEM_TYPES = ["head", "weapon", "armor", "accessory"] as const;

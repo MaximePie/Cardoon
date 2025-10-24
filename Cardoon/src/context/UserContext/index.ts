@@ -7,4 +7,4 @@ export type { UserContextType } from "./UserContext";
 export { UserContextProvider } from "./UserContext.tsx";
 
 // Re-export the custom hook for convenience
-export { useUser } from "../../hooks/useUser";
+export { useUser } from "../../hooks/contexts/useUser.ts";

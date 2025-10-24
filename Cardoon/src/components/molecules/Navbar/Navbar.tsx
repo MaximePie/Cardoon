@@ -5,7 +5,7 @@ import UserIcon from "@mui/icons-material/Person";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../../../hooks/useUser";
+import { useUser } from "../../../hooks/contexts/useUser";
 interface NavbarLink {
   to: string;
   label: string;

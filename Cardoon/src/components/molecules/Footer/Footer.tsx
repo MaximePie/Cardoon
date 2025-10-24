@@ -2,7 +2,7 @@ import ElectricBoltIcon from "@mui/icons-material/ElectricBolt";
 import { useContext, useEffect, useRef } from "react";
 import { ConfettiContext } from "../../../context/ConfettiContext/ConfettiContext";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { useUser } from "../../../hooks/useUser";
+import { useUser } from "../../../hooks/contexts/useUser";
 import goldIcon from "../../../images/coin.png";
 import { formattedNumber } from "../../../utils/numbers";
 import Button from "../../atoms/Button/Button";

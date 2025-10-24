@@ -139,7 +139,13 @@ describe("UserPage", () => {
       expect(screen.getByText("testuser")).toBeInTheDocument();
       expect(screen.getByText("500")).toBeInTheDocument();
       expect(screen.getByText("Knowledge Coins")).toBeInTheDocument();
-      expect(screen.getByText(/Rôle\s*:\s*user/)).toBeInTheDocument();
+      expect(
+        screen.getByText((content, element) => {
+          return (
+            element?.tagName.toLowerCase() === "p" && content.includes("user")
+          );
+        })
+      ).toBeInTheDocument();
     });
 
     it("should render daily goal progress correctly", () => {
@@ -157,7 +163,7 @@ describe("UserPage", () => {
       // Input min attribute might not be set in the component
 
       expect(
-        screen.getByRole("button", { name: "Enregistrer" })
+        screen.getByRole("button", { name: "Enregistrer l'objectif quotidien" })
       ).toBeInTheDocument();
     });
   });
@@ -197,7 +203,7 @@ describe("UserPage", () => {
       fireEvent.change(input, { target: { value: "20" } });
 
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       fireEvent.submit(form!);
 
@@ -208,7 +214,7 @@ describe("UserPage", () => {
       renderUserPage();
 
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       fireEvent.submit(form!);
 
@@ -263,8 +269,16 @@ describe("UserPage", () => {
 
       renderUserPage();
 
-      expect(screen.getByText("admin")).toBeInTheDocument();
-      expect(screen.getByText(/Rôle\s*:\s*admin/)).toBeInTheDocument();
+      expect(screen.getAllByRole("heading", { level: 3 })[0]).toHaveTextContent(
+        "admin"
+      );
+      expect(
+        screen.getByText((content, element) => {
+          return (
+            element?.tagName.toLowerCase() === "p" && content.includes("admin")
+          );
+        })
+      ).toBeInTheDocument();
       expect(screen.getByText("10.0K")).toBeInTheDocument();
     });
 
@@ -306,7 +320,7 @@ describe("UserPage", () => {
 
       // Submit with final value
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       fireEvent.submit(form!);
 
@@ -317,7 +331,7 @@ describe("UserPage", () => {
       renderUserPage();
 
       const form = screen
-        .getByRole("button", { name: "Enregistrer" })
+        .getByRole("button", { name: "Enregistrer l'objectif quotidien" })
         .closest("form");
       const mockPreventDefault = vi.fn();
 
@@ -358,7 +372,7 @@ describe("UserPage", () => {
 
       // Component should still be interactive during loading
       expect(
-        screen.getByRole("button", { name: "Enregistrer" })
+        screen.getByRole("button", { name: "Enregistrer l'objectif quotidien" })
       ).toBeInTheDocument();
     });
   });

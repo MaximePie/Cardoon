@@ -208,7 +208,7 @@ const UserCards = () => {
   const { user } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
-  // � TanStack Query pour la gestion optimiste des cartes
+  // 🚀 TanStack Query pour la gestion optimiste des cartes
   const {
     cards: allUserCards,
     isLoading: isLoadingCards,

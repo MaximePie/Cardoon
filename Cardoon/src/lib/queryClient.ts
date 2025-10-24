@@ -12,6 +12,8 @@
  */
 
 import { QueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 /**
  * Extracts HTTP status code from error objects
@@ -33,6 +35,102 @@ export const getErrorStatus = (err: unknown): number | undefined => {
 };
 
 /**
+ * Extracts response headers from error objects
+ *
+ * @param err - The error object to extract headers from
+ * @returns The response headers if available, undefined otherwise
+ */
+export const getErrorHeaders = (
+  err: unknown
+): Record<string, string> | undefined => {
+  if (typeof err === "object" && err !== null) {
+    const maybe = err as {
+      response?: { headers?: Record<string, string> };
+    };
+    return maybe.response?.headers;
+  }
+  return undefined;
+};
+
+/**
+ * Attempts to refresh user authentication by re-fetching user data
+ *
+ * @returns Promise<boolean> - true if refresh succeeded, false otherwise
+ */
+export const attemptTokenRefresh = async (): Promise<boolean> => {
+  try {
+    const token = Cookies.get("token");
+    if (!token) {
+      return false;
+    }
+
+    const backUrl = import.meta.env.VITE_API_URL;
+    if (!backUrl) {
+      return false;
+    }
+
+    // Attempt to fetch user data to validate token
+    const response = await axios.get(`${backUrl}/api/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.status === 200;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Determines if a 403 error should be retried based on response headers
+ *
+ * @param headers - Response headers from the error
+ * @returns number of seconds to wait before retry, or null if no retry
+ */
+export const shouldRetryForbidden = (
+  headers?: Record<string, string>
+): number | null => {
+  if (!headers) return null;
+
+  // Check for Retry-After header (rate limiting)
+  const retryAfter = headers["retry-after"] || headers["Retry-After"];
+  if (retryAfter) {
+    const seconds = parseInt(retryAfter, 10);
+    if (!isNaN(seconds) && seconds > 0 && seconds <= 300) {
+      // Max 5 minutes
+      return seconds * 1000; // Convert to milliseconds
+    }
+  }
+
+  // Check for rate limit headers
+  const rateLimitRemaining =
+    headers["x-ratelimit-remaining"] || headers["X-RateLimit-Remaining"];
+  const rateLimitReset =
+    headers["x-ratelimit-reset"] || headers["X-RateLimit-Reset"];
+
+  if (rateLimitRemaining === "0" && rateLimitReset) {
+    const resetTime = parseInt(rateLimitReset, 10);
+    if (!isNaN(resetTime)) {
+      const now = Math.floor(Date.now() / 1000);
+      const waitTime = Math.max(0, resetTime - now);
+      if (waitTime <= 300) {
+        // Max 5 minutes
+        return waitTime * 1000; // Convert to milliseconds
+      }
+    }
+  }
+
+  return null;
+};
+
+// Track failed auth attempts to manage retry logic
+const authRetryAttempts = new Map<
+  string,
+  { count: number; timestamp: number }
+>();
+
+/**
  * Determines if a failed query should be retried based on failure count and error type
  *
  * @param failureCount - Number of times the query has already failed
@@ -44,10 +142,49 @@ export const shouldRetryQuery = (
   error: unknown
 ): boolean => {
   const status = getErrorStatus(error);
+  const headers = getErrorHeaders(error);
+
   // Pas de retry pour les erreurs 404 (ressource introuvable)
   if (status === 404) {
     return false;
   }
+
+  // 401: Allow one retry attempt per session, trigger async token refresh
+  if (status === 401) {
+    const token = Cookies.get("token");
+    const sessionKey = `401_${token || "no-token"}`;
+
+    if (failureCount === 0) {
+      const retryInfo = authRetryAttempts.get(sessionKey);
+      const now = Date.now();
+
+      // If we haven't tried refreshing in the last 5 minutes, allow retry
+      if (!retryInfo || now - retryInfo.timestamp > 300000) {
+        authRetryAttempts.set(sessionKey, { count: 1, timestamp: now });
+
+        // Trigger async token refresh (fire and forget)
+        attemptTokenRefresh().then((success) => {
+          if (!success) {
+            // Clear auth attempts if refresh failed
+            authRetryAttempts.delete(sessionKey);
+          }
+        });
+
+        return true; // Allow one retry
+      }
+    }
+    return false; // Don't retry 401 if we've already tried recently
+  }
+
+  // 403: Only retry if response includes explicit retry guidance
+  if (status === 403) {
+    if (failureCount === 0) {
+      const retryDelay = shouldRetryForbidden(headers);
+      return retryDelay !== null; // Only retry if server indicates it's okay
+    }
+    return false; // Don't retry 403 more than once
+  }
+
   // Retry jusqu'à 3 fois pour les autres erreurs
   return failureCount < 3;
 };
@@ -55,10 +192,30 @@ export const shouldRetryQuery = (
 /**
  * Calculates retry delay with exponential backoff
  *
+ * Special handling for 403 errors with Retry-After headers
+ *
  * @param attemptIndex - The current attempt number (0-based)
+ * @param error - The error object (optional, for special case handling)
  * @returns Delay in milliseconds before the next retry attempt
  */
-export const getRetryDelay = (attemptIndex: number): number => {
+export const getRetryDelay = (
+  attemptIndex: number,
+  error?: unknown
+): number => {
+  // Handle 403 errors with explicit retry guidance
+  if (error) {
+    const status = getErrorStatus(error);
+    const headers = getErrorHeaders(error);
+
+    if (status === 403 && headers) {
+      const retryDelay = shouldRetryForbidden(headers);
+      if (retryDelay !== null) {
+        return retryDelay; // Use server-specified delay
+      }
+    }
+  }
+
+  // Default exponential backoff with maximum cap
   return Math.min(1000 * 2 ** attemptIndex, 30000);
 };
 

@@ -88,16 +88,59 @@ describe("QueryClient Retry Guard Integration", () => {
       expect(shouldRetryQuery(3, error500)).toBe(false);
       expect(shouldRetryQuery(4, error500)).toBe(false);
 
-      // Test other status codes
-      const error403 = { status: 403, message: "Forbidden" };
-      expect(shouldRetryQuery(0, error403)).toBe(true);
-      expect(shouldRetryQuery(2, error403)).toBe(true);
-      expect(shouldRetryQuery(3, error403)).toBe(false);
+      // Test other non-special status codes
+      const error502 = { status: 502, message: "Bad Gateway" };
+      expect(shouldRetryQuery(0, error502)).toBe(true);
+      expect(shouldRetryQuery(2, error502)).toBe(true);
+      expect(shouldRetryQuery(3, error502)).toBe(false);
+    });
 
+    it("should handle 401 errors with token refresh logic", () => {
+      // 401 errors should allow one retry attempt (for token refresh)
       const error401 = { status: 401, message: "Unauthorized" };
+
+      // First attempt should allow retry (triggers token refresh)
       expect(shouldRetryQuery(0, error401)).toBe(true);
-      expect(shouldRetryQuery(2, error401)).toBe(true);
-      expect(shouldRetryQuery(3, error401)).toBe(false);
+
+      // After first failure, should not retry
+      expect(shouldRetryQuery(1, error401)).toBe(false);
+      expect(shouldRetryQuery(2, error401)).toBe(false);
+    });
+
+    it("should handle 403 errors based on retry headers", () => {
+      // 403 without retry headers should not retry
+      const error403NoHeaders = { status: 403, message: "Forbidden" };
+      expect(shouldRetryQuery(0, error403NoHeaders)).toBe(false);
+      expect(shouldRetryQuery(1, error403NoHeaders)).toBe(false);
+
+      // 403 with Retry-After header should allow one retry
+      const error403WithRetryAfter = {
+        status: 403,
+        message: "Forbidden",
+        response: {
+          status: 403,
+          headers: {
+            "retry-after": "5",
+          },
+        },
+      };
+      expect(shouldRetryQuery(0, error403WithRetryAfter)).toBe(true);
+      expect(shouldRetryQuery(1, error403WithRetryAfter)).toBe(false);
+
+      // 403 with rate limit headers should allow one retry
+      const error403WithRateLimit = {
+        status: 403,
+        message: "Rate Limited",
+        response: {
+          status: 403,
+          headers: {
+            "x-ratelimit-remaining": "0",
+            "x-ratelimit-reset": String(Math.floor(Date.now() / 1000) + 10),
+          },
+        },
+      };
+      expect(shouldRetryQuery(0, error403WithRateLimit)).toBe(true);
+      expect(shouldRetryQuery(1, error403WithRateLimit)).toBe(false);
     });
 
     it("should retry errors without status codes up to 3 times", () => {
@@ -143,6 +186,40 @@ describe("QueryClient Retry Guard Integration", () => {
 
       // Test boundary case where it hits the cap
       expect(getRetryDelay(5)).toBe(30000); // 2^5 * 1000 = 32000, capped at 30000
+    });
+
+    it("should use custom delay for 403 errors with retry headers", () => {
+      // 403 error with Retry-After header should use custom delay
+      const error403WithRetryAfter = {
+        status: 403,
+        response: {
+          status: 403,
+          headers: {
+            "retry-after": "5",
+          },
+        },
+      };
+      expect(getRetryDelay(0, error403WithRetryAfter)).toBe(5000); // 5 seconds in ms
+
+      // 403 error with rate limit headers
+      const futureTimestamp = Math.floor(Date.now() / 1000) + 10;
+      const error403WithRateLimit = {
+        status: 403,
+        response: {
+          status: 403,
+          headers: {
+            "x-ratelimit-remaining": "0",
+            "x-ratelimit-reset": String(futureTimestamp),
+          },
+        },
+      };
+      const delay = getRetryDelay(0, error403WithRateLimit);
+      expect(delay).toBeGreaterThan(0);
+      expect(delay).toBeLessThanOrEqual(10000); // Should be around 10 seconds or less
+
+      // 403 error without retry headers should use normal exponential backoff
+      const error403NoHeaders = { status: 403, message: "Forbidden" };
+      expect(getRetryDelay(1, error403NoHeaders)).toBe(2000); // Normal exponential backoff
     });
   });
 });

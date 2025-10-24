@@ -79,6 +79,7 @@ export const GameFooter = (props: GameFooterProps) => {
   const previousStatus = useRef(user.currentDailyGoal?.status || "PENDING");
 
   useEffect(() => {
+    return; // Temporarly disabled
     // Vérifications de sécurité pour éviter les erreurs undefined
     if (!user?.currentDailyGoal) return;
 

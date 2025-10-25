@@ -3,9 +3,9 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import NorthIcon from "@mui/icons-material/North";
 import UserIcon from "@mui/icons-material/Person";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../../../hooks/contexts/useUser";
+import useIsMobile from "../../../hooks/useIsMobile";
 interface NavbarLink {
   to: string;
   label: string;
@@ -14,7 +14,7 @@ interface NavbarLink {
 
 const Navbar = () => {
   const { user, logout } = useUser();
-  const [isMobile, setIsMobile] = useState(false);
+  const { isMobile } = useIsMobile();
   const links: NavbarLink[] = [
     { to: "/", label: "Entraînement", icon: <SportsEsportsIcon /> },
     { to: "/shop", label: "Amélioration", icon: <NorthIcon /> },
@@ -23,21 +23,6 @@ const Navbar = () => {
     { to: "/user", label: "Mon compte", icon: <UserIcon /> },
   ];
 
-  const handleResize = () => {
-    if (window.innerWidth < 768) {
-      setIsMobile(true);
-    } else {
-      setIsMobile(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    handleResize();
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
   return (
     <div className="Navbar">
       {!user._id && (

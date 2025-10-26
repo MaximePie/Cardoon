@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: 🤖 Run Renovate
-        uses: renovatebot/github-action@v40.2.10
+        uses: renovatebot/github-action@v40.3.6
         with:
           configurationFile: Cardoon/renovate.json
           token: ${{ secrets.RENOVATE_TOKEN }}

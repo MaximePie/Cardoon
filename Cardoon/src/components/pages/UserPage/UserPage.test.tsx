@@ -83,6 +83,8 @@ describe("UserPage", () => {
     deleteError: null,
     deleteCard: mockDeleteCard,
     deleteCards: mockDeleteCards,
+    editCard: vi.fn(),
+    isEditingCard: false,
     refetch: mockRefetch.mockResolvedValue({
       data: [],
       isError: false,
@@ -118,7 +120,9 @@ describe("UserPage", () => {
 
     vi.mocked(usePut).mockReturnValue(mockUsePutReturn);
 
-    vi.mocked(useUserCardsManager).mockReturnValue(mockUserCardsManagerReturn);
+    vi.mocked(useUserCardsManager).mockReturnValue({
+      ...mockUserCardsManagerReturn,
+    });
   });
 
   const renderUserPage = () => {

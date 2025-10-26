@@ -1,3 +1,4 @@
+import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
@@ -7,20 +8,13 @@ import {
   IconButton,
   TableCell,
   TableRow,
+  TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useIsMobile from "../../../../hooks/useIsMobile";
 import { Card } from "../../../../types/common";
 
-export default function UserCardRow({
-  card,
-  isDeleting,
-  isEditingCard, // If card edition is pending
-  isSelected,
-  onSelect,
-  onEdit,
-  onDelete,
-}: {
+interface UserCardRowProps {
   card: Card;
   isDeleting: boolean;
   isEditingCard: boolean;
@@ -28,87 +22,211 @@ export default function UserCardRow({
   onSelect: () => void;
   onEdit: (newValues: Partial<Card>) => void;
   onDelete: () => void;
-}) {
+}
+
+interface EditableValues {
+  question: string;
+  answer: string;
+}
+
+export default function UserCardRow({
+  card,
+  isDeleting,
+  isEditingCard,
+  isSelected,
+  onSelect,
+  onEdit,
+  onDelete,
+}: UserCardRowProps) {
   const { isMobile } = useIsMobile();
   const [isEditing, setIsEditing] = useState(false);
-  const [newValues, setNewValues] = useState<Partial<Card>>({
+  const [editValues, setEditValues] = useState<EditableValues>({
     question: card.question,
     answer: card.answer,
   });
 
-  const handleEditClick = () => {
+  // Synchroniser les valeurs d'édition avec les props de la carte
+  useEffect(() => {
+    if (!isEditing) {
+      setEditValues({
+        question: card.question,
+        answer: card.answer,
+      });
+    }
+  }, [card.question, card.answer, isEditing]);
+
+  const handleEditStart = useCallback(() => {
+    setEditValues({
+      question: card.question,
+      answer: card.answer,
+    });
     setIsEditing(true);
-  };
+  }, [card.question, card.answer]);
 
-  /**
-   * Forward the new values to the onEdit prop and exit editing mode
-   */
-  const handleEditSave = () => {
+  const handleEditCancel = useCallback(() => {
+    setEditValues({
+      question: card.question,
+      answer: card.answer,
+    });
     setIsEditing(false);
-    onEdit({ ...card, ...newValues });
+  }, [card.question, card.answer]);
+
+  const handleEditSave = useCallback(() => {
+    // Validation simple
+    const trimmedQuestion = editValues.question.trim();
+    const trimmedAnswer = editValues.answer.trim();
+
+    if (!trimmedQuestion || !trimmedAnswer) {
+      return; // Ne pas sauvegarder si les champs sont vides
+    }
+
+    setIsEditing(false);
+    onEdit({
+      ...card,
+      question: trimmedQuestion,
+      answer: trimmedAnswer,
+    });
+  }, [editValues, card, onEdit]);
+
+  const handleQuestionChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEditValues((prev) => ({
+        ...prev,
+        question: e.target.value,
+      }));
+    },
+    []
+  );
+
+  const handleAnswerChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEditValues((prev) => ({
+        ...prev,
+        answer: e.target.value,
+      }));
+    },
+    []
+  );
+
+  // Styles mémorisés pour éviter les re-renders
+  const containerStyle = {
+    opacity: isDeleting ? 0.7 : 1,
+    transition: "opacity 0.3s ease",
   };
 
-  return isMobile ? (
-    <div
-      key={card._id}
-      className="UserPage__mobile-card"
-      style={{
-        opacity: isDeleting ? 0.7 : 1,
-        transition: "opacity 0.3s ease",
-      }}
-    >
-      <div className="UserPage__mobile-card-header">
-        <div className="UserPage__mobile-card-actions">
-          <Checkbox checked={isSelected} onChange={onSelect} />
-          <IconButton
-            aria-label={`Modifier la carte: ${card.question}`}
-            onClick={handleEditClick}
-            disabled={isDeleting || isEditingCard}
-            size="small"
-            color="primary"
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-          <IconButton
-            aria-label={`Supprimer la carte: ${card.question}`}
-            onClick={onDelete}
-            disabled={isDeleting || isEditingCard}
-            size="small"
-            color="error"
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+  const actionButtonsStyle = {
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+  };
+
+  // Fonction pour rendre les boutons d'action
+  const renderActionButtons = () => (
+    <>
+      <IconButton
+        aria-label={`${isEditing ? "Sauvegarder" : "Modifier"} la carte: ${card.question}`}
+        onClick={isEditing ? handleEditSave : handleEditStart}
+        disabled={isDeleting || (isEditingCard && !isEditing)}
+        size="small"
+        color="primary"
+      >
+        {isEditing ? (
+          <SaveIcon fontSize="small" />
+        ) : (
+          <EditIcon fontSize="small" />
+        )}
+      </IconButton>
+      {isEditing && (
+        <IconButton
+          aria-label={`Annuler l'édition de la carte: ${card.question}`}
+          onClick={handleEditCancel}
+          disabled={isDeleting}
+          size="small"
+          color="secondary"
+        >
+          <CancelIcon fontSize="small" />
+        </IconButton>
+      )}
+      <IconButton
+        aria-label={`Supprimer la carte: ${card.question}`}
+        onClick={onDelete}
+        disabled={isDeleting || isEditing}
+        size="small"
+        color="error"
+      >
+        <DeleteIcon fontSize="small" />
+      </IconButton>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <div
+        key={card._id}
+        className="UserPage__mobile-card"
+        style={containerStyle}
+      >
+        <div className="UserPage__mobile-card-header">
+          <div className="UserPage__mobile-card-actions">
+            <Checkbox checked={isSelected} onChange={onSelect} />
+            {renderActionButtons()}
+          </div>
         </div>
+        <div className="UserPage__mobile-card-content">
+          {isEditing ? (
+            <>
+              <TextField
+                label="Question"
+                value={editValues.question}
+                onChange={handleQuestionChange}
+                fullWidth
+                size="small"
+                margin="dense"
+                multiline
+                rows={2}
+              />
+              <TextField
+                label="Réponse"
+                value={editValues.answer}
+                onChange={handleAnswerChange}
+                fullWidth
+                size="small"
+                margin="dense"
+                multiline
+                rows={2}
+              />
+            </>
+          ) : (
+            <>
+              <p>
+                <strong>Q:</strong> {card.question}
+              </p>
+              <p>
+                <strong>A:</strong> {card.answer}
+              </p>
+            </>
+          )}
+        </div>
+        <Divider />
       </div>
-      <div className="UserPage__mobile-card-content">
-        <p>
-          <strong>Q:</strong> {card.question}
-        </p>
-        <p>
-          <strong>A:</strong> {card.answer}
-        </p>
-      </div>
-      <Divider />
-    </div>
-  ) : (
-    <TableRow
-      key={card._id}
-      style={{
-        opacity: isDeleting ? 0.7 : 1,
-        transition: "opacity 0.3s ease",
-      }}
-    >
+    );
+  }
+
+  return (
+    <TableRow key={card._id} style={containerStyle}>
       <TableCell>
         <Checkbox checked={isSelected} onChange={onSelect} />
       </TableCell>
       <TableCell>
         {isEditing ? (
-          <input
-            type="text"
-            value={newValues.question}
-            onChange={(e) =>
-              setNewValues({ ...newValues, question: e.target.value })
-            }
+          <TextField
+            value={editValues.question}
+            onChange={handleQuestionChange}
+            fullWidth
+            size="small"
+            variant="outlined"
+            multiline
+            maxRows={4}
           />
         ) : (
           card.question
@@ -116,48 +234,21 @@ export default function UserCardRow({
       </TableCell>
       <TableCell>
         {isEditing ? (
-          <input
-            type="text"
-            value={newValues.answer}
-            onChange={(e) =>
-              setNewValues({ ...newValues, answer: e.target.value })
-            }
+          <TextField
+            value={editValues.answer}
+            onChange={handleAnswerChange}
+            fullWidth
+            size="small"
+            variant="outlined"
+            multiline
+            maxRows={4}
           />
         ) : (
           card.answer
         )}
       </TableCell>
       <TableCell>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
-          }}
-        >
-          <IconButton
-            aria-label={`Modifier la carte: ${card.question}`}
-            onClick={isEditing ? handleEditSave : handleEditClick}
-            disabled={isDeleting}
-            size="small"
-            color="primary"
-          >
-            {isEditing ? (
-              <SaveIcon fontSize="small" />
-            ) : (
-              <EditIcon fontSize="small" />
-            )}
-          </IconButton>
-          <IconButton
-            aria-label={`Supprimer la carte: ${card.question}`}
-            onClick={onDelete}
-            disabled={isDeleting}
-            size="small"
-            color="error"
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </div>
+        <div style={actionButtonsStyle}>{renderActionButtons()}</div>
       </TableCell>
     </TableRow>
   );

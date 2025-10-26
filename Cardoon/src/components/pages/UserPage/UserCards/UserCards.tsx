@@ -43,6 +43,15 @@ export default function UserCards() {
         "error"
       );
     },
+    onEditSuccess: () => {
+      openSnackbarWithMessage("Carte modifiée avec succès !", "success");
+    },
+    onEditError: (error) => {
+      openSnackbarWithMessage(
+        `Erreur lors de la modification: ${error.message}`,
+        "error"
+      );
+    },
   });
 
   const handleEditCard = (newCard: Partial<Card>) => {

@@ -225,7 +225,15 @@ export const useDeleteCards = (
   });
 };
 
-const useEditCard = (userId: string | number) => {
+interface EditCardOptions {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+}
+
+const useEditCard = (
+  userId: string | number,
+  options: EditCardOptions = {}
+) => {
   const queryClient = useQueryClient();
   const userCardsQueryKey = QueryKeys.userCards(userId);
 
@@ -260,7 +268,7 @@ const useEditCard = (userId: string | number) => {
     },
 
     onSuccess: () => {
-      // no-op: keep consistent with other hooks or add a callback parameter if needed
+      options.onSuccess?.();
     },
 
     onError: (error, newCard, context) => {
@@ -273,6 +281,7 @@ const useEditCard = (userId: string | number) => {
         error: error.message,
         userId,
       });
+      options.onError?.(error as Error);
     },
 
     onSettled: () => {
@@ -325,6 +334,8 @@ export const useUserCardsManager = (
   options: {
     onDeleteSuccess?: () => void;
     onDeleteError?: (error: Error) => void;
+    onEditSuccess?: () => void;
+    onEditError?: (error: Error) => void;
   } = {}
 ) => {
   const cardsQuery = useUserCards(userId);
@@ -338,7 +349,10 @@ export const useUserCardsManager = (
     onError: options.onDeleteError,
   });
 
-  const editCardMutation = useEditCard(userId);
+  const editCardMutation = useEditCard(userId, {
+    onSuccess: options.onEditSuccess,
+    onError: options.onEditError,
+  });
 
   return {
     // 📊 Données

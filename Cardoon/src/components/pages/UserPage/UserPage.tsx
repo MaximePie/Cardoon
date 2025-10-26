@@ -2,7 +2,7 @@
 import { Tab, Tabs } from "@mui/material";
 import Divider from "@mui/material/Divider/Divider";
 import { useState } from "react";
-import UserCards from "./UserCards";
+import UserCards from "./UserCards/UserCards";
 import UserHeader from "./UserHeader";
 import UserProfile from "./UserProfile";
 

@@ -15,6 +15,7 @@ import { Card } from "../../../../types/common";
 export default function UserCardRow({
   card,
   isDeleting,
+  isEditingCard, // If card edition is pending
   isSelected,
   onSelect,
   onEdit,
@@ -22,6 +23,7 @@ export default function UserCardRow({
 }: {
   card: Card;
   isDeleting: boolean;
+  isEditingCard: boolean;
   isSelected: boolean;
   onSelect: () => void;
   onEdit: (newValues: Partial<Card>) => void;
@@ -61,7 +63,7 @@ export default function UserCardRow({
           <IconButton
             aria-label={`Modifier la carte: ${card.question}`}
             onClick={handleEditClick}
-            disabled={isDeleting}
+            disabled={isDeleting || isEditingCard}
             size="small"
             color="primary"
           >
@@ -70,7 +72,7 @@ export default function UserCardRow({
           <IconButton
             aria-label={`Supprimer la carte: ${card.question}`}
             onClick={onDelete}
-            disabled={isDeleting}
+            disabled={isDeleting || isEditingCard}
             size="small"
             color="error"
           >

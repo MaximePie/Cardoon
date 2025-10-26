@@ -361,6 +361,7 @@ export const useUserCardsManager = (
     // 🔄 États de loading
     isLoading: cardsQuery.isLoading,
     isDeletingCard: deleteCardMutation.isPending,
+    isEditingCard: editCardMutation.isPending,
 
     // ❌ États d'erreur
     error: cardsQuery.error,

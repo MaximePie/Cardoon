@@ -31,6 +31,7 @@ export default function UserCards() {
     deleteCard,
     deleteCards,
     isDeletingCard,
+    isEditingCard,
     error: cardsError,
     editCard,
   } = useUserCardsManager(user._id, {
@@ -134,6 +135,7 @@ export default function UserCards() {
                     handleDeleteCard(card._id, card.card.question)
                   }
                   isDeleting={isDeletingCard}
+                  isEditingCard={isEditingCard}
                 />
               ))}
               {allUserCards.length === 0 && (
@@ -165,6 +167,7 @@ export default function UserCards() {
               onEdit={handleEditCard}
               onDelete={() => handleDeleteCard(card._id, card.card.question)}
               isDeleting={isDeletingCard}
+              isEditingCard={isEditingCard}
             />
           ))}
           {allUserCards.length === 0 && (

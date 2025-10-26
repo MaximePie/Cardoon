@@ -6,6 +6,7 @@
  * - Suppression de cartes
  * - Mise à jour des intervalles
  * - Gestion des erreurs réseau
+ * - Modification d'une carte
  *
  * @version 1.0.0
  * @author Cardoon Team
@@ -235,6 +236,84 @@ export const updateCardInterval = async (
 
     throw createStatusPreservingError(
       `Impossible de mettre à jour l'intervalle: ${errorMessage}`,
+      error
+    );
+  }
+};
+
+export const editUserCard = async (
+  cardId: string,
+  updatedFields: Partial<{
+    question: string;
+    answer: string;
+    category: string;
+    imageLink: string;
+    image: File;
+  }>
+): Promise<PopulatedUserCard> => {
+  try {
+    if (!cardId || typeof cardId !== "string") {
+      throw new Error("ID de carte invalide");
+    }
+
+    // Création du FormData pour correspondre au format attendu par le backend
+    const formData = new FormData();
+
+    // Ajout des champs texte s'ils sont fournis
+    if (updatedFields.question !== undefined) {
+      formData.append("question", updatedFields.question);
+    }
+
+    if (updatedFields.answer !== undefined) {
+      formData.append("answer", updatedFields.answer);
+    }
+
+    if (updatedFields.category !== undefined) {
+      formData.append("category", updatedFields.category);
+    }
+
+    if (updatedFields.imageLink !== undefined) {
+      formData.append("imageLink", updatedFields.imageLink);
+    }
+
+    // Ajout du fichier image s'il est fourni
+    if (updatedFields.image instanceof File) {
+      formData.append("image", updatedFields.image);
+    }
+
+    const url = `${backUrl}/api/cards/${cardId}`;
+
+    // Configuration spéciale pour FormData (pas de Content-Type défini manuellement)
+    const token = Cookies.get("token");
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        // Note: Ne pas définir Content-Type pour FormData, le navigateur le fait automatiquement
+      },
+    };
+
+    const response = await axios.put(url, formData, config);
+
+    if (!response.data) {
+      throw new Error("Aucune donnée retournée par le serveur");
+    }
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = extractErrorMessage(error);
+    console.error("Erreur lors de la modification de la carte:", {
+      cardId,
+      updatedFields: {
+        ...updatedFields,
+        image: updatedFields.image
+          ? `File: ${updatedFields.image.name}`
+          : undefined,
+      },
+      error: errorMessage,
+    });
+
+    throw createStatusPreservingError(
+      `Impossible de modifier la carte: ${errorMessage}`,
       error
     );
   }

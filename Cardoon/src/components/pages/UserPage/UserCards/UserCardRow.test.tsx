@@ -28,10 +28,12 @@ describe("UserCardRow", () => {
     card: mockCard,
     isDeleting: false,
     isEditingCard: false,
+    isInverting: false,
     isSelected: false,
     onSelect: vi.fn(),
     onEdit: vi.fn(),
     onDelete: vi.fn(),
+    onInvert: vi.fn(),
   };
 
   let mockProps: typeof defaultProps;
@@ -43,6 +45,7 @@ describe("UserCardRow", () => {
       onSelect: vi.fn(),
       onEdit: vi.fn(),
       onDelete: vi.fn(),
+      onInvert: vi.fn(),
     };
     vi.mocked(useIsMobile).mockReturnValue({ isMobile: false });
   });
@@ -60,6 +63,9 @@ describe("UserCardRow", () => {
 
         // Contrôles
         expect(screen.getByRole("checkbox")).toBeInTheDocument();
+        expect(
+          screen.getByLabelText(/Créer une question inverse/)
+        ).toBeInTheDocument();
         expect(screen.getByLabelText(/Modifier la carte/)).toBeInTheDocument();
         expect(screen.getByLabelText(/Supprimer la carte/)).toBeInTheDocument();
       });
@@ -185,10 +191,55 @@ describe("UserCardRow", () => {
       });
     });
 
+    describe("Invert Functionality", () => {
+      it("should render invert button and call onInvert when clicked", () => {
+        render(<UserCardRow {...mockProps} />);
+
+        const invertButton = screen.getByLabelText(
+          /Créer une question inverse/
+        );
+        expect(invertButton).toBeInTheDocument();
+        expect(invertButton).not.toBeDisabled();
+
+        fireEvent.click(invertButton);
+        expect(mockProps.onInvert).toHaveBeenCalledTimes(1);
+      });
+
+      it("should disable invert button when card has childCard", () => {
+        const childCard: Card = {
+          ...mockCard,
+          _id: "child123",
+          isInverted: true,
+          originalCardId: mockCard._id,
+        };
+
+        render(<UserCardRow {...mockProps} childCard={childCard} />);
+
+        const invertButton = screen.getByLabelText(
+          /Créer une question inverse/
+        );
+        expect(invertButton).toBeDisabled();
+      });
+
+      it("should disable invert button when isInverting is true", () => {
+        render(<UserCardRow {...mockProps} isInverting={true} />);
+
+        const invertButton = screen.getByLabelText(
+          /Créer une question inverse/
+        );
+        expect(invertButton).toBeDisabled();
+      });
+    });
+
     describe("State Management", () => {
-      it("should disable buttons when isDeleting is true", () => {
+      it("should disable edit and delete buttons when isDeleting is true", () => {
         render(<UserCardRow {...mockProps} isDeleting={true} />);
 
+        // Le bouton d'inversion N'EST PAS désactivé par isDeleting
+        expect(
+          screen.getByLabelText(/Créer une question inverse/)
+        ).not.toBeDisabled();
+        // Seuls les boutons d'édition et suppression sont désactivés
         expect(screen.getByLabelText(/Modifier la carte/)).toBeDisabled();
         expect(screen.getByLabelText(/Supprimer la carte/)).toBeDisabled();
       });
@@ -228,6 +279,9 @@ describe("UserCardRow", () => {
 
         // Contrôles mobile
         expect(screen.getByRole("checkbox")).toBeInTheDocument();
+        expect(
+          screen.getByLabelText(/Créer une question inverse/)
+        ).toBeInTheDocument();
         expect(screen.getByLabelText(/Modifier la carte/)).toBeInTheDocument();
         expect(screen.getByLabelText(/Supprimer la carte/)).toBeInTheDocument();
       });
@@ -247,9 +301,11 @@ describe("UserCardRow", () => {
         render(<UserCardRow {...mockProps} />);
 
         fireEvent.click(screen.getByRole("checkbox"));
+        fireEvent.click(screen.getByLabelText(/Créer une question inverse/));
         fireEvent.click(screen.getByLabelText(/Supprimer la carte/));
 
         expect(mockProps.onSelect).toHaveBeenCalledTimes(1);
+        expect(mockProps.onInvert).toHaveBeenCalledTimes(1);
         expect(mockProps.onDelete).toHaveBeenCalledTimes(1);
       });
 
@@ -258,9 +314,15 @@ describe("UserCardRow", () => {
           <UserCardRow {...mockProps} isDeleting={true} isEditingCard={true} />
         );
 
+        const invertButton = screen.getByLabelText(
+          /Créer une question inverse/
+        );
         const editButton = screen.getByLabelText(/Modifier la carte/);
         const deleteButton = screen.getByLabelText(/Supprimer la carte/);
 
+        // Le bouton d'inversion N'EST PAS désactivé par isDeleting
+        expect(invertButton).not.toBeDisabled();
+        // Les boutons d'édition et suppression sont désactivés par isDeleting
         expect(editButton).toBeDisabled();
         expect(deleteButton).toBeDisabled();
       });
@@ -299,6 +361,11 @@ describe("UserCardRow", () => {
       render(<UserCardRow {...mockProps} />);
 
       expect(
+        screen.getByLabelText(
+          /Créer une question inverse.*Quelle est la capitale/
+        )
+      ).toBeInTheDocument();
+      expect(
         screen.getByLabelText(/Modifier la carte.*Quelle est la capitale/)
       ).toBeInTheDocument();
       expect(
@@ -320,6 +387,43 @@ describe("UserCardRow", () => {
       // Les nouvelles valeurs devraient être affichées
       expect(screen.getByText("Nouvelle question externe")).toBeInTheDocument();
       expect(screen.getByText("Nouvelle réponse externe")).toBeInTheDocument();
+    });
+
+    it("should handle multiple state combinations with invert functionality", () => {
+      const childCard: Card = {
+        ...mockCard,
+        _id: "child123",
+        isInverted: true,
+      };
+
+      render(
+        <UserCardRow
+          {...mockProps}
+          isInverting={true}
+          isSelected={true}
+          childCard={childCard}
+        />
+      );
+
+      const checkbox = screen.getByRole("checkbox");
+      const invertButton = screen.getByLabelText(/Créer une question inverse/);
+
+      expect(checkbox).toBeChecked();
+      expect(invertButton).toBeDisabled(); // Désactivé car childCard existe ET isInverting
+    });
+
+    it("should maintain invert button state during editing", () => {
+      render(<UserCardRow {...mockProps} />);
+
+      // Entrer en mode édition
+      fireEvent.click(screen.getByLabelText(/Modifier la carte/));
+
+      // Le bouton d'inversion devrait toujours être disponible pendant l'édition
+      const invertButton = screen.getByLabelText(/Créer une question inverse/);
+      expect(invertButton).not.toBeDisabled();
+
+      // Mais le bouton de suppression devrait être désactivé
+      expect(screen.getByLabelText(/Supprimer la carte/)).toBeDisabled();
     });
   });
 });

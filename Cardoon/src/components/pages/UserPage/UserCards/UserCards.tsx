@@ -199,12 +199,11 @@ export default function UserCards() {
               childCard={
                 allUserCards
                   .filter((uc) => uc.card.isInverted)
-                  .find((uc) => {
-                    console.log(uc);
-                    return uc.card.originalCardId
+                  .find((uc) =>
+                    uc.card.originalCardId
                       ? uc.card.originalCardId === card._id
-                      : false;
-                  })?.card
+                      : false
+                  )?.card
               }
             />
           ))}

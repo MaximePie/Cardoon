@@ -50,6 +50,7 @@ export const helmetConfig = {
     // Note: Permissions Policy can be added manually as middleware if needed
     // It's not yet fully supported in Helmet's TypeScript definitions
 };
+const isDevelopment = process.env.NODE_ENV === "development" || !process.env.NODE_ENV;
 /**
  * Additional security middleware configuration
  */
@@ -58,11 +59,11 @@ export const securityConfig = {
     // Disabled in development environment for easier testing
     rateLimit: {
         windowMs: 15 * 60 * 1000, // 15 minutes
-        max: process.env.NODE_ENV === "development" ? 0 : 100, // 0 = disabled in dev, 100 in production
+        max: isDevelopment ? 0 : 100, // 0 = disabled in dev, 100 in production
         message: "Too many requests from this IP, please try again later.",
         standardHeaders: true,
         legacyHeaders: false,
-        skip: process.env.NODE_ENV === "development" ? () => true : undefined, // Skip all requests in dev
+        skip: isDevelopment ? () => true : undefined, // Skip all requests in dev
     },
     // CORS settings
     cors: {

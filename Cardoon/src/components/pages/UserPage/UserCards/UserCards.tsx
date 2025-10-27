@@ -34,6 +34,8 @@ export default function UserCards() {
     isEditingCard,
     error: cardsError,
     editCard,
+    invertCard,
+    isInvertingCard,
   } = useUserCardsManager(user._id, {
     onDeleteSuccess: () => {
       openSnackbarWithMessage("Carte supprimée avec succès !", "success");
@@ -50,6 +52,15 @@ export default function UserCards() {
     onEditError: (error) => {
       openSnackbarWithMessage(
         `Erreur lors de la modification: ${error.message}`,
+        "error"
+      );
+    },
+    onInvertSuccess: () => {
+      openSnackbarWithMessage("Carte inversée avec succès !", "success");
+    },
+    onInvertError: (error) => {
+      openSnackbarWithMessage(
+        `Erreur lors de l'inversion: ${error.message}`,
         "error"
       );
     },
@@ -88,6 +99,10 @@ export default function UserCards() {
 
     deleteCards(selectedCards);
     setSelectedCard([]); // Clear selection after deletion
+  };
+
+  const handleInvertCard = (cardId: string) => {
+    invertCard(cardId);
   };
 
   return (
@@ -136,6 +151,17 @@ export default function UserCards() {
                   }
                   isDeleting={isDeletingCard}
                   isEditingCard={isEditingCard}
+                  isInverting={isInvertingCard}
+                  onInvert={() => handleInvertCard(card.card._id)}
+                  childCard={
+                    allUserCards
+                      .filter((uc) => uc.card.isInverted)
+                      .find((uc) =>
+                        uc.card.originalCardId
+                          ? uc.card.originalCardId === card.card._id
+                          : false
+                      )?.card
+                  }
                 />
               ))}
               {allUserCards.length === 0 && (
@@ -166,8 +192,20 @@ export default function UserCards() {
               onSelect={() => handleSelectCard(card._id)}
               onEdit={handleEditCard}
               onDelete={() => handleDeleteCard(card._id, card.card.question)}
+              onInvert={() => handleInvertCard(card._id)}
               isDeleting={isDeletingCard}
               isEditingCard={isEditingCard}
+              isInverting={isInvertingCard}
+              childCard={
+                allUserCards
+                  .filter((uc) => uc.card.isInverted)
+                  .find((uc) => {
+                    console.log(uc);
+                    return uc.card.originalCardId
+                      ? uc.card.originalCardId === card._id
+                      : false;
+                  })?.card
+              }
             />
           ))}
           {allUserCards.length === 0 && (

@@ -8,7 +8,6 @@ import UserCard from "./UserCard.js";
 export interface ICard extends Document {
   question: string;
   answer: string;
-  createdAt: Date;
   ownedBy: ObjectId; // User ID who owns this card
   imageLink?: string;
   category?: string;
@@ -27,50 +26,49 @@ export interface ICardModel extends Model<ICard> {
   getCategories(): CountedCategory[];
 }
 
-const CardSchema = new mongoose.Schema<ICard>({
-  question: {
-    type: String,
-    required: true,
+const CardSchema = new mongoose.Schema<ICard>(
+  {
+    question: {
+      type: String,
+      required: true,
+    },
+    answer: {
+      type: String,
+      required: true,
+    },
+    imageLink: {
+      type: String,
+    },
+    category: {
+      type: String,
+    },
+    parentId: {
+      type: String,
+    },
+    expectedAnswers: {
+      type: [String],
+    },
+    ownedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    isInverted: {
+      type: Boolean,
+      default: false,
+    },
+    hasInvertedChild: {
+      type: Boolean,
+      default: false,
+    },
+    originalCardId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Card",
+      default: null,
+    },
   },
-  answer: {
-    type: String,
-    required: true,
-  },
-  imageLink: {
-    type: String,
-  },
-  category: {
-    type: String,
-  },
-  parentId: {
-    type: String,
-  },
-  expectedAnswers: {
-    type: [String],
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  ownedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    default: null,
-  },
-  isInverted: {
-    type: Boolean,
-    default: false,
-  },
-  hasInvertedChild: {
-    type: Boolean,
-    default: false,
-  },
-  originalCardId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Card",
-    default: null,
-  },
-});
+  { timestamps: true }
+);
 
 type CountedCategory = {
   category: string;

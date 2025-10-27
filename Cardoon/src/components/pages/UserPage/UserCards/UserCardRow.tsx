@@ -2,6 +2,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import SyncIcon from "@mui/icons-material/Sync";
 import {
   Checkbox,
   Divider,
@@ -18,10 +19,13 @@ interface UserCardRowProps {
   card: Card;
   isDeleting: boolean;
   isEditingCard: boolean;
+  isInverting: boolean;
   isSelected: boolean;
   onSelect: () => void;
   onEdit: (newValues: Partial<Card>) => void;
   onDelete: () => void;
+  onInvert: () => void;
+  childCard?: Card;
 }
 
 interface EditableValues {
@@ -33,10 +37,13 @@ export default function UserCardRow({
   card,
   isDeleting,
   isEditingCard,
+  isInverting,
   isSelected,
   onSelect,
   onEdit,
   onDelete,
+  onInvert,
+  childCard,
 }: UserCardRowProps) {
   const { isMobile } = useIsMobile();
   const [isEditing, setIsEditing] = useState(false);
@@ -54,6 +61,10 @@ export default function UserCardRow({
       });
     }
   }, [card.question, card.answer, isEditing]);
+
+  const handleInvertCard = useCallback(() => {
+    onInvert();
+  }, [onInvert]);
 
   const handleEditStart = useCallback(() => {
     setEditValues({
@@ -108,7 +119,6 @@ export default function UserCardRow({
     []
   );
 
-  // Styles mémorisés pour éviter les re-renders
   const containerStyle = {
     opacity: isDeleting ? 0.7 : 1,
     transition: "opacity 0.3s ease",
@@ -123,6 +133,15 @@ export default function UserCardRow({
   // Fonction pour rendre les boutons d'action
   const renderActionButtons = () => (
     <>
+      <IconButton
+        disabled={!!childCard || isInverting}
+        color="warning"
+        aria-label={`Créer une question inverse pour la carte: ${card.question}`}
+        onClick={handleInvertCard}
+        size="small"
+      >
+        <SyncIcon fontSize="small" />
+      </IconButton>
       <IconButton
         aria-label={`${isEditing ? "Sauvegarder" : "Modifier"} la carte: ${card.question}`}
         onClick={isEditing ? handleEditSave : handleEditStart}

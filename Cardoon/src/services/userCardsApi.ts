@@ -241,6 +241,48 @@ export const updateCardInterval = async (
   }
 };
 
+/**
+ * @param cardId
+ * @returns
+ */
+export const invertCard = async (
+  cardId: string
+): Promise<PopulatedUserCard> => {
+  try {
+    if (!cardId || typeof cardId !== "string") {
+      throw new Error("ID de carte invalide");
+    }
+
+    const url = `${backUrl}/api/cards/invert`;
+
+    const token = Cookies.get("token");
+    const config = {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    };
+
+    const response = await axios.post(url, { cardId }, config);
+
+    if (!response.data) {
+      throw new Error("Aucune donnée retournée par le serveur");
+    }
+
+    return response.data;
+  } catch (error) {
+    const errorMessage = extractErrorMessage(error);
+    console.error("Erreur lors de l'inversion de la carte:", {
+      cardId,
+      error: errorMessage,
+    });
+
+    throw createStatusPreservingError(
+      `Impossible d'inverser la carte: ${errorMessage}`,
+      error
+    );
+  }
+};
+
 export const editUserCard = async (
   cardId: string,
   updatedFields: Partial<{

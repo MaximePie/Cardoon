@@ -109,13 +109,15 @@ export default function UserCards() {
     <section className="UserPage__tab-content" aria-labelledby="cards-tab">
       <h3 id="cards-tab">
         Vos cartes ({allUserCards.length})
-        <Button
-          variant="primary"
-          onClick={handleDeleteSelectedCards}
-          disabled={selectedCards.length === 0}
-        >
-          Supprimer {selectedCards.length} carte(s)
-        </Button>
+        {selectedCards.length > 0 && (
+          <Button
+            variant="primary"
+            onClick={handleDeleteSelectedCards}
+            disabled={selectedCards.length === 0}
+          >
+            Supprimer {selectedCards.length} carte(s)
+          </Button>
+        )}
       </h3>
 
       {/* 🔄 Gestion des états de chargement et d'erreur */}

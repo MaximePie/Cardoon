@@ -94,4 +94,15 @@
     margin: 1em;
     gap: 10px;
   }
+
+  &__delete-selected-button {
+    background-color: #ff4d4f;
+    border-color: #ff4d4f;
+    width: 180px;
+
+    &:hover {
+      background-color: #ff7875;
+      border-color: #ff7875;
+    }
+  }
 }

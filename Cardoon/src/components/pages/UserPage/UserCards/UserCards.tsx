@@ -7,6 +7,7 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
+import { AnimatePresence, motion } from "motion/react";
 import { useContext, useState } from "react";
 import { SnackbarContext } from "../../../../context/SnackbarContext";
 import { useUser } from "../../../../context/UserContext";
@@ -122,17 +123,28 @@ export default function UserCards() {
 
   return (
     <section className="UserPage__tab-content" aria-labelledby="cards-tab">
+      <AnimatePresence>
+        {selectedCards.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, x: 0, y: 20 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            exit={{ opacity: 0, x: 0, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+            style={{ position: "fixed", bottom: 20, right: 20, zIndex: 2000 }}
+          >
+            <Button
+              variant="primary"
+              onClick={handleDeleteSelectedCards}
+              disabled={selectedCards.length === 0}
+              customClassName="UserPage__delete-selected-button"
+            >
+              Supprimer {selectedCards.length} carte(s)
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <h3 id="cards-tab" className="UserPage__tab-title">
         Vos cartes ({filteredCards.length})
-        {selectedCards.length > 0 && (
-          <Button
-            variant="primary"
-            onClick={handleDeleteSelectedCards}
-            disabled={selectedCards.length === 0}
-          >
-            Supprimer {selectedCards.length} carte(s)
-          </Button>
-        )}
       </h3>
       <TextField
         variant="standard"

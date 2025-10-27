@@ -21,7 +21,7 @@ interface UserCardRowProps {
   isEditingCard: boolean;
   isInverting: boolean;
   isSelected: boolean;
-  onSelect: () => void;
+  onSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEdit: (newValues: Partial<Card>) => void;
   onDelete: () => void;
   onInvert: () => void;

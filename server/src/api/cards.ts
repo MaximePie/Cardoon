@@ -31,6 +31,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/invert", authMiddleware, async (req, res) => {
+  console.log("Received invert request:", req.body);
   try {
     const { cardId } = req.body as { cardId: string };
     if (!cardId || !mongoose.Types.ObjectId.isValid(cardId)) {

@@ -37,8 +37,22 @@ const limiter = rateLimit({
   message: securityConfig.rateLimit.message,
   standardHeaders: securityConfig.rateLimit.standardHeaders,
   legacyHeaders: securityConfig.rateLimit.legacyHeaders,
+  skip: securityConfig.rateLimit.skip, // Ajouter la fonction skip pour bypasser en dev
 });
-app.use("/api/", limiter);
+
+console.log("Rate limiter config:", {
+  max: securityConfig.rateLimit.max,
+  skip: !!securityConfig.rateLimit.skip,
+  isDev: process.env.NODE_ENV === "development",
+});
+
+// Only apply rate limiting in production
+if (process.env.NODE_ENV === "production") {
+  app.use("/api/", limiter);
+  console.log("Rate limiting ENABLED");
+} else {
+  console.log("Rate limiting DISABLED (development mode)");
+}
 
 // Additional security headers for Permissions Policy
 app.use((req, res, next) => {

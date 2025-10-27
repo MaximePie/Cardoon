@@ -1,5 +1,5 @@
 import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Navbar from "./components/molecules/Navbar/Navbar";
 import ShopAdminPage from "./components/pages/AdminPage/AdminPage";
@@ -36,9 +36,10 @@ const App = () => {
                   <Route path="/ashop" Component={ShopAdminPage} />
                 </Routes>
               </div>
-              {import.meta.env.DEV && (
+              {/* DevTools désactivés - Décommenter si nécessaire */}
+              {/* {import.meta.env.DEV && (
                 <ReactQueryDevtools initialIsOpen={false} />
-              )}
+              )} */}
             </Router>
           </SnackbarContextProvider>
         </ConfettiProvider>

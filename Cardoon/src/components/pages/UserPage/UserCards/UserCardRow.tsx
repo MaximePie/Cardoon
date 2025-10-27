@@ -2,6 +2,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
+import SyncIcon from "@mui/icons-material/Sync";
 import {
   Checkbox,
   Divider,
@@ -18,10 +19,13 @@ interface UserCardRowProps {
   card: Card;
   isDeleting: boolean;
   isEditingCard: boolean;
+  isInverting: boolean;
   isSelected: boolean;
-  onSelect: () => void;
+  onSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onEdit: (newValues: Partial<Card>) => void;
   onDelete: () => void;
+  onInvert: () => void;
+  childCard?: Card;
 }
 
 interface EditableValues {
@@ -33,10 +37,13 @@ export default function UserCardRow({
   card,
   isDeleting,
   isEditingCard,
+  isInverting,
   isSelected,
   onSelect,
   onEdit,
   onDelete,
+  onInvert,
+  childCard,
 }: UserCardRowProps) {
   const { isMobile } = useIsMobile();
   const [isEditing, setIsEditing] = useState(false);
@@ -54,6 +61,10 @@ export default function UserCardRow({
       });
     }
   }, [card.question, card.answer, isEditing]);
+
+  const handleInvertCard = useCallback(() => {
+    onInvert();
+  }, [onInvert]);
 
   const handleEditStart = useCallback(() => {
     setEditValues({
@@ -108,7 +119,6 @@ export default function UserCardRow({
     []
   );
 
-  // Styles mémorisés pour éviter les re-renders
   const containerStyle = {
     opacity: isDeleting ? 0.7 : 1,
     transition: "opacity 0.3s ease",
@@ -124,16 +134,25 @@ export default function UserCardRow({
   const renderActionButtons = () => (
     <>
       <IconButton
+        disabled={!!childCard || isInverting}
+        color="warning"
+        aria-label={`Créer une question inverse pour la carte: ${card.question}`}
+        onClick={handleInvertCard}
+        size="medium"
+      >
+        <SyncIcon fontSize="medium" />
+      </IconButton>
+      <IconButton
         aria-label={`${isEditing ? "Sauvegarder" : "Modifier"} la carte: ${card.question}`}
         onClick={isEditing ? handleEditSave : handleEditStart}
         disabled={isDeleting || (isEditingCard && !isEditing)}
-        size="small"
+        size="medium"
         color="primary"
       >
         {isEditing ? (
-          <SaveIcon fontSize="small" />
+          <SaveIcon fontSize="medium" />
         ) : (
-          <EditIcon fontSize="small" />
+          <EditIcon fontSize="medium" />
         )}
       </IconButton>
       {isEditing && (
@@ -141,20 +160,20 @@ export default function UserCardRow({
           aria-label={`Annuler l'édition de la carte: ${card.question}`}
           onClick={handleEditCancel}
           disabled={isDeleting}
-          size="small"
+          size="medium"
           color="secondary"
         >
-          <CancelIcon fontSize="small" />
+          <CancelIcon fontSize="medium" />
         </IconButton>
       )}
       <IconButton
         aria-label={`Supprimer la carte: ${card.question}`}
         onClick={onDelete}
         disabled={isDeleting || isEditing}
-        size="small"
+        size="medium"
         color="error"
       >
-        <DeleteIcon fontSize="small" />
+        <DeleteIcon fontSize="medium" />
       </IconButton>
     </>
   );
@@ -180,7 +199,7 @@ export default function UserCardRow({
                 value={editValues.question}
                 onChange={handleQuestionChange}
                 fullWidth
-                size="small"
+                size="medium"
                 margin="dense"
                 multiline
                 rows={2}
@@ -190,7 +209,7 @@ export default function UserCardRow({
                 value={editValues.answer}
                 onChange={handleAnswerChange}
                 fullWidth
-                size="small"
+                size="medium"
                 margin="dense"
                 multiline
                 rows={2}
@@ -198,10 +217,10 @@ export default function UserCardRow({
             </>
           ) : (
             <>
-              <p>
+              <p className="UserPage__mobile-card-question">
                 <strong>Q:</strong> {card.question}
               </p>
-              <p>
+              <p className="UserPage__mobile-card-answer">
                 <strong>A:</strong> {card.answer}
               </p>
             </>
@@ -223,7 +242,7 @@ export default function UserCardRow({
             value={editValues.question}
             onChange={handleQuestionChange}
             fullWidth
-            size="small"
+            size="medium"
             variant="outlined"
             multiline
             maxRows={4}
@@ -238,7 +257,7 @@ export default function UserCardRow({
             value={editValues.answer}
             onChange={handleAnswerChange}
             fullWidth
-            size="small"
+            size="medium"
             variant="outlined"
             multiline
             maxRows={4}

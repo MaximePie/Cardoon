@@ -5,6 +5,7 @@
 @use "../components/atoms/ImagePaster/ImagePaster" as ImagePaster;
 @use "../components/atoms/Button/Button" as Button;
 @use "../components/atoms/Loader/Loader" as Loader;
+@use "../components/atoms/ExpBar/ExpBar" as ExpBar;
 @use "../components/pages/LoginPage/LoginPage" as LoginPage;
 @use "../components/pages/UpgradePage/UpgradePage" as UpgradePage;
 @use "../components/pages/BossPage/BossPage" as BossPage;
@@ -33,6 +34,7 @@ html {
 
 .Page {
   margin-top: 60px;
+  overflow-x: hidden;
 }
 .Admin {
   img {
@@ -45,6 +47,17 @@ html {
   h1 {
     font-size: 2rem;
     margin: 0.5rem 0;
+  }
+  h2 {
+    font-size: 1.25rem;
+    margin: 0.5rem 0;
+  }
+  h3 {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+  p {
+    font-size: 0.9rem;
   }
 }
 

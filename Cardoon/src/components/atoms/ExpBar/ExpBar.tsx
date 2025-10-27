@@ -4,7 +4,7 @@ interface ExpBarProps {
   maxExp?: number;
 }
 // 🎯 Constants pour éviter la duplication et améliorer la lisibilité
-const EXP_FOR_NEXT_LEVEL = 1000;
+const EXP_FOR_NEXT_LEVEL = 5000;
 
 export default function ExpBar({
   currentExp,

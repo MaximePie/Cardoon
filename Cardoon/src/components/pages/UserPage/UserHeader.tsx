@@ -1,9 +1,9 @@
 import { useUser } from "../../../hooks/contexts/useUser";
-import ExpBar from "./ExpBar";
+import ExpBar from "../../atoms/ExpBar/ExpBar";
 
 export default function UserHeader() {
   const { user } = useUser();
-  const { username, score } = user;
+  const { username } = user;
 
   return (
     <section className="UserPage__header">
@@ -17,7 +17,7 @@ export default function UserHeader() {
       <div className="UserPage__header-infos">
         <h3>{username}</h3>
         <p>Expérience</p>
-        <ExpBar currentExp={score} />
+        <ExpBar currentExp={1230} />
       </div>
     </section>
   );

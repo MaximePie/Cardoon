@@ -17,6 +17,7 @@ import {
   deleteUserCard,
   editUserCard,
   getUserCards,
+  invertCard,
 } from "../../services/userCardsApi";
 import { Card, PopulatedUserCard } from "../../types/common";
 
@@ -290,6 +291,66 @@ const useEditCard = (
   });
 };
 
+const useInvertCard = (
+  userId: string | number,
+  options: EditCardOptions = {}
+) => {
+  const queryClient = useQueryClient();
+  const userCardsQueryKey = QueryKeys.userCards(userId);
+
+  return useMutation<
+    PopulatedUserCard,
+    Error,
+    string,
+    {
+      previousCards?: PopulatedUserCard[];
+    }
+  >({
+    mutationKey: ["userCardsInvert", userId],
+    mutationFn: (cardId: string) => invertCard(cardId),
+
+    onMutate: async (cardId) => {
+      await queryClient.cancelQueries({ queryKey: userCardsQueryKey });
+
+      const previousCards =
+        queryClient.getQueryData<PopulatedUserCard[]>(userCardsQueryKey);
+
+      queryClient.setQueryData<PopulatedUserCard[]>(
+        userCardsQueryKey,
+        (oldCards) => {
+          if (!oldCards) return [];
+          return oldCards.map((card) =>
+            card._id === cardId ? { ...card, isInverted: true } : card
+          );
+        }
+      );
+
+      return { previousCards };
+    },
+
+    onSuccess: () => {
+      options.onSuccess?.();
+    },
+
+    onError: (error, cardId, context) => {
+      if (context?.previousCards) {
+        queryClient.setQueryData(userCardsQueryKey, context.previousCards);
+      }
+
+      console.error("Échec de l'inversion de carte:", {
+        cardId,
+        error: error.message,
+        userId,
+      });
+      options.onError?.(error as Error);
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: userCardsQueryKey });
+    },
+  });
+};
+
 /**
  * Hook combiné pour gérer les cartes utilisateur avec fetch et suppression
  *
@@ -336,6 +397,8 @@ export const useUserCardsManager = (
     onDeleteError?: (error: Error) => void;
     onEditSuccess?: () => void;
     onEditError?: (error: Error) => void;
+    onInvertSuccess?: () => void;
+    onInvertError?: (error: Error) => void;
   } = {}
 ) => {
   const cardsQuery = useUserCards(userId);
@@ -354,6 +417,11 @@ export const useUserCardsManager = (
     onError: options.onEditError,
   });
 
+  const invertCardMutation = useInvertCard(userId, {
+    onSuccess: options.onInvertSuccess,
+    onError: options.onInvertError,
+  });
+
   return {
     // 📊 Données
     cards: cardsQuery.data || [],
@@ -362,15 +430,19 @@ export const useUserCardsManager = (
     isLoading: cardsQuery.isLoading,
     isDeletingCard: deleteCardMutation.isPending,
     isEditingCard: editCardMutation.isPending,
+    isInvertingCard: invertCardMutation.isPending,
 
     // ❌ États d'erreur
     error: cardsQuery.error,
     deleteError: deleteCardMutation.error,
+    editError: editCardMutation.error,
+    invertError: invertCardMutation.error,
 
     // 🎯 Actions
     deleteCard: deleteCardMutation.mutate,
     deleteCards: deleteCardsMutation.mutate,
     editCard: editCardMutation.mutate,
+    invertCard: invertCardMutation.mutate,
 
     // 🔧 Utilitaires
     refetch: cardsQuery.refetch,

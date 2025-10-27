@@ -22,10 +22,6 @@ const CardSchema = new mongoose.Schema({
     expectedAnswers: {
         type: [String],
     },
-    createdAt: {
-        type: Date,
-        default: Date.now,
-    },
     ownedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -44,7 +40,7 @@ const CardSchema = new mongoose.Schema({
         ref: "Card",
         default: null,
     },
-});
+}, { timestamps: true });
 CardSchema.statics.getCategories = async function () {
     const categories = await this.aggregate([
         { $group: { _id: "$category", count: { $sum: 1 } } },

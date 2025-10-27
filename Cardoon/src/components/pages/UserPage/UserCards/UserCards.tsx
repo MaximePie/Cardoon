@@ -5,6 +5,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { SnackbarContext } from "../../../../context/SnackbarContext";
@@ -25,6 +26,7 @@ export default function UserCards() {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { isMobile } = useIsMobile();
   const [selectedCards, setSelectedCard] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const {
     cards: allUserCards,
     isLoading: isLoadingCards,
@@ -65,6 +67,17 @@ export default function UserCards() {
       );
     },
   });
+
+  if (!user) {
+    return null; // Ou un indicateur de chargement
+  }
+
+  // Filtrer les cartes en fonction du terme de recherche
+  const filteredCards = allUserCards.filter(
+    (userCard) =>
+      userCard.card.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      userCard.card.answer.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleEditCard = (newCard: Partial<Card>) => {
     editCard(newCard);
@@ -109,6 +122,11 @@ export default function UserCards() {
     <section className="UserPage__tab-content" aria-labelledby="cards-tab">
       <h3 id="cards-tab">
         Vos cartes ({allUserCards.length})
+        <TextField
+          variant="outlined"
+          placeholder="Rechercher une carte..."
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         {selectedCards.length > 0 && (
           <Button
             variant="primary"
@@ -141,7 +159,7 @@ export default function UserCards() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {allUserCards.map((card) => (
+              {filteredCards.map((card) => (
                 <UserCardRow
                   key={card._id}
                   card={card.card}
@@ -166,7 +184,7 @@ export default function UserCards() {
                   }
                 />
               ))}
-              {allUserCards.length === 0 && (
+              {filteredCards.length === 0 && (
                 <TableRow>
                   <TableCell
                     colSpan={4}
@@ -186,7 +204,7 @@ export default function UserCards() {
         </TableContainer>
       ) : (
         <div className="UserPage__mobile-cards">
-          {allUserCards.map((card) => (
+          {filteredCards.map((card) => (
             <UserCardRow
               key={card._id}
               card={card.card}
@@ -199,7 +217,7 @@ export default function UserCards() {
               isEditingCard={isEditingCard}
               isInverting={isInvertingCard}
               childCard={
-                allUserCards
+                filteredCards
                   .filter((uc) => uc.card.isInverted)
                   .find((uc) =>
                     uc.card.originalCardId
@@ -209,7 +227,7 @@ export default function UserCards() {
               }
             />
           ))}
-          {allUserCards.length === 0 && (
+          {filteredCards.length === 0 && (
             <div className="UserPage__empty-state">
               <p>
                 Aucune carte trouvée. Commencez par créer votre première carte !

@@ -16,7 +16,7 @@ export const UserPage = () => {
 
   return (
     <div className="UserPage">
-      <h2>Profil</h2>
+      <h2 className="UserPage__header">Profil</h2>
       <UserHeader />
       <Divider />
       <Tabs value={activeTab} onChange={handleTabChange}>

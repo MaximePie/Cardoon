@@ -120,13 +120,8 @@ export default function UserCards() {
 
   return (
     <section className="UserPage__tab-content" aria-labelledby="cards-tab">
-      <h3 id="cards-tab">
-        Vos cartes ({allUserCards.length})
-        <TextField
-          variant="outlined"
-          placeholder="Rechercher une carte..."
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <h3 id="cards-tab" className="UserPage__tab-title">
+        Vos cartes ({filteredCards.length})
         {selectedCards.length > 0 && (
           <Button
             variant="primary"
@@ -137,6 +132,14 @@ export default function UserCards() {
           </Button>
         )}
       </h3>
+      <TextField
+        variant="standard"
+        placeholder="Rechercher une carte..."
+        onChange={(e) => setSearchTerm(e.target.value)}
+        size="small"
+        fullWidth
+        style={{ marginBottom: "1rem", margin: "0 10px" }}
+      />
 
       {/* 🔄 Gestion des états de chargement et d'erreur */}
       {isLoadingCards ? (

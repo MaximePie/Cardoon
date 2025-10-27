@@ -138,21 +138,21 @@ export default function UserCardRow({
         color="warning"
         aria-label={`Créer une question inverse pour la carte: ${card.question}`}
         onClick={handleInvertCard}
-        size="small"
+        size="medium"
       >
-        <SyncIcon fontSize="small" />
+        <SyncIcon fontSize="medium" />
       </IconButton>
       <IconButton
         aria-label={`${isEditing ? "Sauvegarder" : "Modifier"} la carte: ${card.question}`}
         onClick={isEditing ? handleEditSave : handleEditStart}
         disabled={isDeleting || (isEditingCard && !isEditing)}
-        size="small"
+        size="medium"
         color="primary"
       >
         {isEditing ? (
-          <SaveIcon fontSize="small" />
+          <SaveIcon fontSize="medium" />
         ) : (
-          <EditIcon fontSize="small" />
+          <EditIcon fontSize="medium" />
         )}
       </IconButton>
       {isEditing && (
@@ -160,20 +160,20 @@ export default function UserCardRow({
           aria-label={`Annuler l'édition de la carte: ${card.question}`}
           onClick={handleEditCancel}
           disabled={isDeleting}
-          size="small"
+          size="medium"
           color="secondary"
         >
-          <CancelIcon fontSize="small" />
+          <CancelIcon fontSize="medium" />
         </IconButton>
       )}
       <IconButton
         aria-label={`Supprimer la carte: ${card.question}`}
         onClick={onDelete}
         disabled={isDeleting || isEditing}
-        size="small"
+        size="medium"
         color="error"
       >
-        <DeleteIcon fontSize="small" />
+        <DeleteIcon fontSize="medium" />
       </IconButton>
     </>
   );
@@ -199,7 +199,7 @@ export default function UserCardRow({
                 value={editValues.question}
                 onChange={handleQuestionChange}
                 fullWidth
-                size="small"
+                size="medium"
                 margin="dense"
                 multiline
                 rows={2}
@@ -209,7 +209,7 @@ export default function UserCardRow({
                 value={editValues.answer}
                 onChange={handleAnswerChange}
                 fullWidth
-                size="small"
+                size="medium"
                 margin="dense"
                 multiline
                 rows={2}
@@ -217,10 +217,10 @@ export default function UserCardRow({
             </>
           ) : (
             <>
-              <p>
+              <p className="UserPage__mobile-card-question">
                 <strong>Q:</strong> {card.question}
               </p>
-              <p>
+              <p className="UserPage__mobile-card-answer">
                 <strong>A:</strong> {card.answer}
               </p>
             </>
@@ -242,7 +242,7 @@ export default function UserCardRow({
             value={editValues.question}
             onChange={handleQuestionChange}
             fullWidth
-            size="small"
+            size="medium"
             variant="outlined"
             multiline
             maxRows={4}
@@ -257,7 +257,7 @@ export default function UserCardRow({
             value={editValues.answer}
             onChange={handleAnswerChange}
             fullWidth
-            size="small"
+            size="medium"
             variant="outlined"
             multiline
             maxRows={4}

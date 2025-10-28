@@ -1,0 +1,52 @@
+.AdventurePage {
+  text-align: center;
+  padding: 20px;
+
+  &__characters {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+
+  &__Hero {
+    position: relative;
+    width: 200px;
+    margin: 0 auto 20px auto;
+  }
+  &__Enemy {
+    position: relative;
+    width: 200px;
+    margin: 0 auto 20px auto;
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  &__healthBar {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 15px;
+    background-color: #555;
+    border: 2px solid #000;
+    border-radius: 5px;
+    overflow: hidden;
+
+    &__fill {
+      height: 100%;
+      background-color: #f00;
+      transition: width 0.3s ease;
+    }
+  }
+
+  &__Cards {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+}

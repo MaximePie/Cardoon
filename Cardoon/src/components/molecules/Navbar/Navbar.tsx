@@ -18,7 +18,6 @@ const Navbar = () => {
   const links: NavbarLink[] = [
     { to: "/", label: "Entraînement", icon: <SportsEsportsIcon /> },
     { to: "/shop", label: "Amélioration", icon: <NorthIcon /> },
-    // { to: "/boss", label: "Boss", icon: <StarIcon /> },
     { to: "/add-card", label: "Ajouter une carte", icon: <AddIcon /> },
     { to: "/user", label: "Mon compte", icon: <UserIcon /> },
     { to: "/adventure", label: "Aventure", icon: <SportsEsportsIcon /> },

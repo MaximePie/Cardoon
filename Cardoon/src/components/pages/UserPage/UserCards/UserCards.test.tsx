@@ -151,6 +151,8 @@ describe("UserCards", () => {
     vi.mocked(userHooks.useUser).mockReturnValue({
       user: mockUser,
       allUserCards: mockUserCards,
+      reviewUserCards: [],
+      getReviewUserCards: vi.fn(),
       setUser: vi.fn(),
       addScore: vi.fn(),
       earnGold: vi.fn(),
@@ -454,7 +456,9 @@ describe("UserCards", () => {
 
       renderUserCards();
 
-      expect(screen.getByText("Chargement des cartes...")).toBeInTheDocument();
+      expect(document.querySelector(".UserPage__loading")).toBeInTheDocument();
+      // Verify that skeleton components are present
+      expect(document.querySelectorAll(".MuiSkeleton-root")).toHaveLength(3);
     });
 
     it("should show error message when there is an error", () => {
@@ -538,6 +542,8 @@ describe("UserCards", () => {
       vi.mocked(userHooks.useUser).mockReturnValue({
         user: userWithoutCards,
         allUserCards: [],
+        reviewUserCards: [],
+        getReviewUserCards: vi.fn(),
         setUser: vi.fn(),
         addScore: vi.fn(),
         earnGold: vi.fn(),

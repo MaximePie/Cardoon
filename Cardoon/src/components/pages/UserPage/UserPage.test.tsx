@@ -29,6 +29,8 @@ import { usePut } from "../../../hooks/server";
 // Helper function to create complete user context mock
 const createMockUserContext = (user: User, overrides = {}) => ({
   user,
+  reviewUserCards: [],
+  getReviewUserCards: vi.fn(),
   setUser: vi.fn(),
   logout: vi.fn(),
   addScore: vi.fn(),
@@ -143,19 +145,20 @@ describe("UserPage", () => {
     it("should render user information correctly", () => {
       renderUserPage();
 
+      // Check for "Profil" tab button instead of heading
+      expect(screen.getByRole("tab", { name: "Profil" })).toBeInTheDocument();
+
+      // Check username in heading
       expect(
-        screen.getByRole("heading", { name: "Profil" })
+        screen.getByRole("heading", { name: "testuser" })
       ).toBeInTheDocument();
-      expect(screen.getByText("testuser")).toBeInTheDocument();
+
+      // Check gold amount and currency label
       expect(screen.getByText("500")).toBeInTheDocument();
       expect(screen.getByText("Knowledge Coins")).toBeInTheDocument();
-      expect(
-        screen.getByText((content, element) => {
-          return (
-            element?.tagName.toLowerCase() === "p" && content.includes("user")
-          );
-        })
-      ).toBeInTheDocument();
+
+      // Check for experience text in the new UserHeader
+      expect(screen.getByText("Expérience")).toBeInTheDocument();
     });
 
     it("should render daily goal progress correctly", () => {
@@ -279,16 +282,12 @@ describe("UserPage", () => {
 
       renderUserPage();
 
-      expect(screen.getAllByRole("heading", { level: 3 })[0]).toHaveTextContent(
-        "admin"
-      );
       expect(
-        screen.getByText((content, element) => {
-          return (
-            element?.tagName.toLowerCase() === "p" && content.includes("admin")
-          );
-        })
+        screen.getByRole("heading", { name: "admin" })
       ).toBeInTheDocument();
+
+      // Check for experience text instead of role text
+      expect(screen.getByText("Expérience")).toBeInTheDocument();
       expect(screen.getByText("10.0K")).toBeInTheDocument();
     });
 
@@ -366,10 +365,8 @@ describe("UserPage", () => {
 
       renderUserPage();
 
-      // Component should still render normally despite error - use heading role to be specific
-      expect(
-        screen.getByRole("heading", { name: "Profil" })
-      ).toBeInTheDocument();
+      // Component should still render normally despite error - check for tab instead
+      expect(screen.getByRole("tab", { name: "Profil" })).toBeInTheDocument();
     });
 
     it("should handle loading state", () => {

@@ -1,4 +1,5 @@
 import {
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -158,7 +159,24 @@ export default function UserCards() {
       {/* 🔄 Gestion des états de chargement et d'erreur */}
       {isLoadingCards ? (
         <div className="UserPage__loading">
-          <p>Chargement des cartes...</p>
+          <Skeleton
+            variant="rounded"
+            width="100%"
+            height={80}
+            style={{ margin: "1rem" }}
+          />
+          <Skeleton
+            variant="rounded"
+            width="100%"
+            height={80}
+            style={{ margin: "1rem" }}
+          />
+          <Skeleton
+            variant="rounded"
+            width="100%"
+            height={80}
+            style={{ margin: "1rem" }}
+          />
         </div>
       ) : cardsError ? (
         <div className="UserPage__error">

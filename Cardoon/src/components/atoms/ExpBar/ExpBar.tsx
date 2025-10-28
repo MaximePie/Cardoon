@@ -14,6 +14,9 @@ export default function ExpBar({
 
   return (
     <div className="ExpBar">
+      <span className="ExpBar__text">
+        {currentExp} / {maxExp} XP
+      </span>
       <div
         className="ExpBar__fill"
         style={{ width: `${progressPercentage}%` }}

@@ -1,5 +1,5 @@
-import { useUser } from "../../../hooks/contexts/useUser";
-import ExpBar from "../../atoms/ExpBar/ExpBar";
+import { useUser } from "../../../../hooks/contexts/useUser";
+import ExpBar from "../../../atoms/ExpBar/ExpBar";
 
 export default function UserHeader() {
   const { user } = useUser();
@@ -14,7 +14,7 @@ export default function UserHeader() {
           alt={`Avatar de ${username}`}
         />
       </div>
-      <div className="UserPage__header-infos">
+      <div className="UserPage__header-info">
         <h3>{username}</h3>
         <p>Expérience</p>
         <ExpBar currentExp={1230} />

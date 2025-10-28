@@ -15,6 +15,8 @@ const mockUserContextValue = {
     streak: 5,
   },
   allUserCards: [],
+  reviewUserCards: [],
+  getReviewUserCards: vi.fn(),
   getAllUserCards: vi.fn(),
   setUser: vi.fn(),
   logout: vi.fn(),

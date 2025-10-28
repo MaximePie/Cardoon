@@ -2,10 +2,22 @@
   text-align: center;
   padding: 20px;
 
+  &__stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 20px;
+  }
+
   &__characters {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
+  }
+
+  &__characterImage {
+    width: 150px;
+    height: 150px;
   }
 
   &__Hero {

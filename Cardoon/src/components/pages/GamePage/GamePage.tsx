@@ -28,6 +28,7 @@ const GamePage = () => {
   const [editedCard, setEditedCard] = useState<PopulatedUserCard | null>(null);
   const [isEditModalActive, setEditModalActiveState] = useState(false);
   const [categories, setCategories] = useState<FetchedCategory[]>([]);
+  const { addScore, earnGold } = useUser();
 
   const [flash, setFlash] = useState(false);
   const { put, data: updateCardResponse } = usePut<PutResult>(
@@ -79,14 +80,19 @@ const GamePage = () => {
     }
   };
 
-  const onUpdate = async (id: string, isCorrect: boolean) => {
-    put(id, {
+  const onUpdate = async (card: PopulatedUserCard, isCorrect: boolean) => {
+    addScore(card.interval);
+    earnGold(1);
+
+    put(card._id, {
       isCorrectAnswer: isCorrect,
     });
     // Remove the card from the list
     if (isCorrect) {
       // Coin animation
-      const cardElement = document.querySelector(`[data-card-id="${id}"]`);
+      const cardElement = document.querySelector(
+        `[data-card-id="${card._id}"]`
+      );
       if (cardElement) {
         const cardRect = cardElement.getBoundingClientRect();
         for (let i = 0; i < Math.min(user.currentGoldMultiplier + 1, 10); i++) {
@@ -96,7 +102,9 @@ const GamePage = () => {
         }
       }
     }
-    setUserCards(userCards.filter((card) => card._id !== id));
+    setUserCards(
+      userCards.filter((remainingCards) => card._id !== remainingCards._id)
+    );
   };
 
   const openEditCardForm = (card: PopulatedUserCard) => {

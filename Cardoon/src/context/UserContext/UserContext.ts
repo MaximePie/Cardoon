@@ -5,6 +5,8 @@ export interface UserContextType {
   user: User;
   allUserCards: PopulatedUserCard[];
   getAllUserCards: () => Promise<void>;
+  getReviewUserCards: () => Promise<void>;
+  reviewUserCards: PopulatedUserCard[];
   setUser: (user: User) => void;
   logout: () => void;
   addScore: (score: number) => void;
@@ -34,6 +36,7 @@ export const emptyUser: User = {
 
 export const UserContext = createContext<UserContextType>({
   user: emptyUser,
+  reviewUserCards: [],
   setUser: () => {},
   logout: () => {},
   addScore: () => {},
@@ -41,6 +44,7 @@ export const UserContext = createContext<UserContextType>({
   removeGold: () => {},
   hasItem: () => false,
   getAllUserCards: async () => {},
+  getReviewUserCards: async () => {},
   refresh: () => {},
   allUserCards: [],
 });

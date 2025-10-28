@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Navbar from "./components/molecules/Navbar/Navbar";
 import ShopAdminPage from "./components/pages/AdminPage/AdminPage";
+import AdventurePage from "./components/pages/AdventurePage/AdventurePage";
 import BossPage from "./components/pages/BossPage/BossPage";
 import CardForm from "./components/pages/CardFormPage/CardFormPage";
 import GamePage from "./components/pages/GamePage/GamePage";
@@ -31,6 +32,7 @@ const App = () => {
                   <Route path="/shop" Component={ShopPage} />
                   <Route path="/user" Component={UserPage} />
                   <Route path="/boss" Component={BossPage} />
+                  <Route path="/adventure" Component={AdventurePage} />
                   <Route path="/add-card" Component={CardForm} />
                   <Route path="/register" Component={RegisterPage} />
                   <Route path="/ashop" Component={ShopAdminPage} />

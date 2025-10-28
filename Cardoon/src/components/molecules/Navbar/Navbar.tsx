@@ -21,6 +21,7 @@ const Navbar = () => {
     // { to: "/boss", label: "Boss", icon: <StarIcon /> },
     { to: "/add-card", label: "Ajouter une carte", icon: <AddIcon /> },
     { to: "/user", label: "Mon compte", icon: <UserIcon /> },
+    { to: "/adventure", label: "Aventure", icon: <SportsEsportsIcon /> },
   ];
 
   return (

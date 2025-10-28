@@ -3,7 +3,7 @@ import { Tab, Tabs } from "@mui/material";
 import Divider from "@mui/material/Divider/Divider";
 import { useState } from "react";
 import UserCards from "./UserCards/UserCards";
-import UserHeader from "./UserHeader";
+import UserHeader from "./UserHeader/UserHeader";
 import UserProfile from "./UserProfile";
 
 type UserPageTab = "profile" | "cards";
@@ -16,7 +16,6 @@ export const UserPage = () => {
 
   return (
     <div className="UserPage">
-      <h2 className="UserPage__header">Profil</h2>
       <UserHeader />
       <Divider />
       <Tabs value={activeTab} onChange={handleTabChange}>

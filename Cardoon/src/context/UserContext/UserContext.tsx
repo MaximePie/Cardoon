@@ -13,8 +13,12 @@ export const UserContextProvider = ({
   const { fetch: fetchAllCards, data: userCardsData } = useFetch<{
     userCards: PopulatedUserCard[];
   }>(RESOURCES.USERCARDS);
+  const { fetch: fetchReviewUserCards, data: reviewUserCardsData } = useFetch<{
+    cards: PopulatedUserCard[];
+  }>(RESOURCES.REVIEW_USERCARDS);
 
   const allUserCards = userCardsData?.userCards ?? [];
+  const reviewUserCards = reviewUserCardsData?.cards ?? [];
 
   const [user, setUser] = useState<User>(emptyUser);
 
@@ -70,9 +74,16 @@ export const UserContextProvider = ({
     await fetchAllCards();
   }, [fetchAllCards]);
 
+  const getReviewUserCards = useCallback(async () => {
+    await fetchReviewUserCards();
+  }, [fetchReviewUserCards]);
+
+  console.log(reviewUserCards);
+
   return (
     <UserContext.Provider
       value={{
+        reviewUserCards,
         user,
         hasItem,
         setUser,
@@ -83,6 +94,7 @@ export const UserContextProvider = ({
         refresh,
         allUserCards: allUserCards || [],
         getAllUserCards,
+        getReviewUserCards,
       }}
     >
       {children}

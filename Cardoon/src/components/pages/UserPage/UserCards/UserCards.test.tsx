@@ -454,7 +454,9 @@ describe("UserCards", () => {
 
       renderUserCards();
 
-      expect(screen.getByText("Chargement des cartes...")).toBeInTheDocument();
+      expect(document.querySelector(".UserPage__loading")).toBeInTheDocument();
+      // Verify that skeleton components are present
+      expect(document.querySelectorAll(".MuiSkeleton-root")).toHaveLength(3);
     });
 
     it("should show error message when there is an error", () => {

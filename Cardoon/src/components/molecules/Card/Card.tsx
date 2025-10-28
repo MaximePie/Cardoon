@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import classNames from "classnames";
 import { useState } from "react";
-import { useUser } from "../../../context/UserContext";
 import { PopulatedUserCard } from "../../../types/common";
 
 const stringToRgb = (text: string) => {
@@ -32,7 +31,7 @@ const stringToRgb = (text: string) => {
 
 interface CardProps {
   card: PopulatedUserCard;
-  onUpdate: (id: string, isCorrect: boolean) => void;
+  onUpdate: (card: PopulatedUserCard, isCorrect: boolean) => void;
   onEditClick: () => void;
   isFlashModeOn: boolean;
 }
@@ -50,7 +49,6 @@ const Card = ({
   } = card;
   const [isRecto, flipCard] = useState(true);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { addScore, earnGold } = useUser();
   const [isFlipping, setIsFlipping] = useState(false);
 
   const cardClassNames = classNames("Card", {
@@ -83,13 +81,11 @@ const Card = ({
     if (event) {
       event.preventDefault();
     }
-    onAnswer(userCardId, true);
-    addScore(card.interval);
-    earnGold(1);
+    onAnswer(card, true);
   };
 
   const fail = () => {
-    onAnswer(userCardId, false);
+    onAnswer(card, false);
   };
 
   return (

@@ -29,6 +29,8 @@ import { usePut } from "../../../hooks/server";
 // Helper function to create complete user context mock
 const createMockUserContext = (user: User, overrides = {}) => ({
   user,
+  reviewUserCards: [],
+  getReviewUserCards: vi.fn(),
   setUser: vi.fn(),
   logout: vi.fn(),
   addScore: vi.fn(),

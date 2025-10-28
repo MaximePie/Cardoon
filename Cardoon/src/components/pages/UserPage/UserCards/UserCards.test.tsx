@@ -151,6 +151,8 @@ describe("UserCards", () => {
     vi.mocked(userHooks.useUser).mockReturnValue({
       user: mockUser,
       allUserCards: mockUserCards,
+      reviewUserCards: [],
+      getReviewUserCards: vi.fn(),
       setUser: vi.fn(),
       addScore: vi.fn(),
       earnGold: vi.fn(),
@@ -540,6 +542,8 @@ describe("UserCards", () => {
       vi.mocked(userHooks.useUser).mockReturnValue({
         user: userWithoutCards,
         allUserCards: [],
+        reviewUserCards: [],
+        getReviewUserCards: vi.fn(),
         setUser: vi.fn(),
         addScore: vi.fn(),
         earnGold: vi.fn(),

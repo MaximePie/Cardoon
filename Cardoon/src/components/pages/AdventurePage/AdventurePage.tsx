@@ -98,10 +98,35 @@ const AdventurePage = () => {
     );
   }, [reviewUserCards, updateCardResponse]);
 
+  const levelUp = () => {
+    setHero((prev) => ({
+      ...prev,
+      level: prev.level + 1,
+      maxHealth: prev.maxHealth + 20,
+      currentHealth: prev.maxHealth + 20,
+      attackDamage: prev.attackDamage + 5,
+      defense: prev.defense + 2,
+      experience: 0,
+      experienceToNextLevel: Math.floor(prev.experienceToNextLevel * 1.5),
+    }));
+  };
+
   const onEnemyDefeated = () => {
     alert("Vous avez vaincu l'ennemi !");
-    currentEnemy.currentHealth = currentEnemy.maxHealth;
-    hero.currentHealth = hero.maxHealth;
+    setHero((prev) => ({
+      ...prev,
+      experience: prev.experience + currentEnemy.experience,
+    }));
+    // Check for level up
+    if (
+      hero.experience + currentEnemy.experience >=
+      hero.experienceToNextLevel
+    ) {
+      levelUp();
+      alert("Félicitations ! Vous avez gagné un niveau !");
+    }
+    // Reset enemy
+    setCurrentEnemy(enemies[0]);
   };
 
   const removeCard = (card: PopulatedUserCard, isCorrect: boolean) => {
@@ -121,11 +146,17 @@ const AdventurePage = () => {
           Allons-y !
         </p>
         <div className="AdventurePage__stats">
-          <FavoriteIcon color="error" fontSize="small" /> {hero.currentHealth} /{" "}
-          {hero.maxHealth} &nbsp; &nbsp;
-          {hero.attackDamage} <WhatshotIcon color="error" fontSize="small" />
-          <StarBorderPurple500Icon color="warning" fontSize="small" />
-          {hero.level}
+          <span>
+            <FavoriteIcon color="error" fontSize="small" /> {hero.currentHealth}{" "}
+            / {hero.maxHealth}
+          </span>
+          <span>
+            <WhatshotIcon color="error" fontSize="small" /> {hero.attackDamage}
+          </span>
+          <span>
+            <StarBorderPurple500Icon color="warning" fontSize="small" />{" "}
+            {hero.level}
+          </span>
           <ExpBar
             currentExp={hero.experience}
             maxExp={hero.experienceToNextLevel}

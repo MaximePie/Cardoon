@@ -161,6 +161,7 @@ describe("UserCards", () => {
       logout: vi.fn(),
       refresh: vi.fn(),
       getAllUserCards: vi.fn(),
+      updateImage: vi.fn(),
     });
 
     vi.mocked(useIsMobileHook.default).mockReturnValue({ isMobile: false });
@@ -552,6 +553,7 @@ describe("UserCards", () => {
         logout: vi.fn(),
         refresh: vi.fn(),
         getAllUserCards: vi.fn(),
+        updateImage: vi.fn(),
       });
 
       vi.mocked(useUserCardsManager).mockReturnValue({

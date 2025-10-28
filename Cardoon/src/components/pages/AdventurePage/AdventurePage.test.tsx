@@ -141,6 +141,7 @@ describe("AdventurePage", () => {
     refresh: vi.fn(),
     getAllUserCards: vi.fn(),
     getReviewUserCards: mockGetReviewUserCards,
+    updateImage: vi.fn(),
   };
 
   beforeEach(() => {

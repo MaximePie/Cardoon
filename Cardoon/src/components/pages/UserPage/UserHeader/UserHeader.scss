@@ -6,12 +6,49 @@
   margin-bottom: 20px;
   gap: 2em;
 
+  &-avatar-container {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+    cursor: pointer;
+
+    &:hover .UserPage__header-avatar {
+      border-color: #34d399;
+      box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.5);
+      transform: scale(1.05);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 24 24'%3E%3Cpath d='M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3-5c0-1.65 1.35-3 3-3s3 1.35 3 3-1.35 3-3 3-3-1.35-3-3z'/%3E%3C/svg%3E");
+      background-size: 20px 20px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    &:hover::after {
+      opacity: 1;
+    }
+  }
+
   &-avatar {
     width: 150px;
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid #68ff9a;
+    transition: all 0.3s ease;
   }
 
   &-info {
@@ -20,5 +57,51 @@
     justify-content: center;
     align-items: center;
     gap: 1em;
+  }
+
+  .avatar-preview-actions {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+
+    button {
+      font-size: 0.8em;
+      padding: 6px 12px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      &[data-variant="primary"] {
+        background: #34d399;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: #10b981;
+        }
+      }
+
+      &[data-variant="secondary"] {
+        background: #6b7280;
+        color: white;
+
+        &:hover:not(:disabled) {
+          background: #4b5563;
+        }
+      }
+    }
   }
 }

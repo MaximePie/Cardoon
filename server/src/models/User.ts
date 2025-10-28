@@ -1,9 +1,9 @@
-import mongoose, { Document, Model, ObjectId } from "mongoose";
-import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
-import { Item } from "./Item.js";
-import DailyGoal from "./DailyGoal.js";
+import mongoose, { Document, Model, ObjectId } from "mongoose";
 import type { DailyGoal as DailyGoalType } from "./DailyGoal.js";
+import DailyGoal from "./DailyGoal.js";
+import { Item } from "./Item.js";
+import UserCard from "./UserCard.js";
 
 interface PopulatedUserItem {
   base: Item;
@@ -26,6 +26,7 @@ export interface IUser extends Document {
   streak: number; // Streak of daily goals completed
   currentDailyGoal: mongoose.Types.ObjectId | DailyGoalType; // Current daily goal (ObjectId until populated)
   currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
+  image?: string; // Profile image URL (optional)
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;
@@ -124,6 +125,10 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: String,
     enum: ["admin", "user"],
     default: "user",
+  },
+  image: {
+    type: String,
+    required: false, // Profile image is optional
   },
 });
 

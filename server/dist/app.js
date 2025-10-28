@@ -12,7 +12,7 @@ import demoValidationRoutes from "./api/demo-validation.js";
 import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
-import usersValidatedRoutes from "./api/users-validated.js";
+import usersValidatedRoutes from "./api/users.js";
 // import usersRoutes from "./api/users.js"; // Temporarily disabled due to validation errors
 dotenv.config();
 const app = express();
@@ -29,8 +29,21 @@ const limiter = rateLimit({
     message: securityConfig.rateLimit.message,
     standardHeaders: securityConfig.rateLimit.standardHeaders,
     legacyHeaders: securityConfig.rateLimit.legacyHeaders,
+    skip: securityConfig.rateLimit.skip, // Ajouter la fonction skip pour bypasser en dev
 });
-app.use("/api/", limiter);
+console.log("Rate limiter config:", {
+    max: securityConfig.rateLimit.max,
+    skip: !!securityConfig.rateLimit.skip,
+    isDev: process.env.NODE_ENV === "development",
+});
+// Only apply rate limiting in production
+if (process.env.NODE_ENV === "production") {
+    app.use("/api/", limiter);
+    console.log("Rate limiting ENABLED");
+}
+else {
+    console.log("Rate limiting DISABLED (development mode)");
+}
 // Additional security headers for Permissions Policy
 app.use((req, res, next) => {
     res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=()");

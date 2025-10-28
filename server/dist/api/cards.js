@@ -25,6 +25,7 @@ router.get("/:id", (req, res) => {
         .catch((err) => res.status(404).json({ noCardFound: "No CardFound found" }));
 });
 router.post("/invert", authMiddleware, async (req, res) => {
+    console.log("Received invert request:", req.body);
     try {
         const { cardId } = req.body;
         if (!cardId || !mongoose.Types.ObjectId.isValid(cardId)) {

@@ -2,13 +2,16 @@ import bcrypt from "bcrypt";
 import express, { Response } from "express";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/auth.js";
+import { validateImageUpload } from "../middleware/fileUpload.js";
 import {
   createErrorResponse,
   createSuccessResponse,
   validateBody,
 } from "../middleware/simpleValidation.js";
 import User from "../models/User.js";
+import { uploadImage } from "../utils/imagesManager.js";
 import {
+  avatarUploadSchema,
   dailyGoalSchema,
   itemPurchaseSchema,
   itemUpgradeSchema,
@@ -160,6 +163,57 @@ router.put(
         .status(500)
         .json(
           createErrorResponse("An error occurred while updating the daily goal")
+        );
+    }
+  }
+);
+
+// Update user image with Zod validation
+router.put(
+  "/me/image",
+  authMiddleware,
+  validateImageUpload(avatarUploadSchema),
+  async (req: any, res: Response) => {
+    try {
+      const userId = req.user.id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        res.status(404).json(createErrorResponse("User not found"));
+        return;
+      }
+
+      // File has already been validated by the middleware
+      const validatedFile = req.validatedFile;
+      const uploadedFile = req.uploadedFile;
+      console.log(uploadedFile.filepath);
+      try {
+        console.log("Uploading image for user:", userId, validatedFile);
+        // Upload image to S3
+        const imageUrl = await uploadImage({
+          filepath: uploadedFile.filepath,
+          originalFilename: validatedFile.originalFilename || "avatar.jpg",
+        });
+
+        // Update user with new image URL
+        user.image = imageUrl;
+        await user.save();
+
+        res
+          .status(200)
+          .json(
+            createSuccessResponse({ imageUrl }, "Image updated successfully")
+          );
+      } catch (uploadError) {
+        console.error("Error uploading image:", uploadError);
+        res.status(500).json(createErrorResponse("Error uploading image"));
+      }
+    } catch (error) {
+      console.error("Error updating image:", error);
+      res
+        .status(500)
+        .json(
+          createErrorResponse("An error occurred while updating the image")
         );
     }
   }

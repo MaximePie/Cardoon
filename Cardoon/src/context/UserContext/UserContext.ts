@@ -14,6 +14,7 @@ export interface UserContextType {
   removeGold: (gold: number) => void;
   hasItem: (itemId: string) => boolean;
   refresh: () => void;
+  updateImage: (imageFile: File) => Promise<void>;
 }
 
 export const emptyUser: User = {
@@ -46,5 +47,6 @@ export const UserContext = createContext<UserContextType>({
   getAllUserCards: async () => {},
   getReviewUserCards: async () => {},
   refresh: () => {},
+  updateImage: async (_imageFile: File) => {},
   allUserCards: [],
 });

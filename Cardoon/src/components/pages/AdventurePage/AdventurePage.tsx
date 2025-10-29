@@ -3,6 +3,8 @@ import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { useEffect, useState } from "react";
 import enemy from "../../../assets/Enemies/NightBorne_idle.gif";
+import heroAttack from "../../../assets/Hero/attack1.gif";
+import heroIdle from "../../../assets/Hero/idle.gif";
 import { useUser } from "../../../hooks/contexts/useUser";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { PopulatedUserCard, User } from "../../../types/common";
@@ -62,6 +64,7 @@ const AdventurePage = () => {
     reviewUserCards.slice(0, 5)
   );
   const [hero, setHero] = useState<Hero>(baseHero);
+  const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
 
   const [currentEnemy, setCurrentEnemy] = useState<Enemy>(enemies[0]);
 
@@ -70,6 +73,10 @@ const AdventurePage = () => {
   );
 
   const attack = (enemy: Enemy, isCorrect: boolean) => {
+    setHeroState("attacking");
+    setTimeout(() => {
+      setHeroState("idle");
+    }, 500);
     if (isCorrect) {
       const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
       const enemyDamage = Math.max(0, enemy.attackDamage - hero.defense);
@@ -168,7 +175,7 @@ const AdventurePage = () => {
           <div className="AdventurePage__background"></div>
           <div className="AdventurePage__Hero">
             <img
-              src="https://picsum.photos/200"
+              src={heroState === "idle" ? heroIdle : heroAttack}
               alt="Hero Avatar"
               className="AdventurePage__characterImage"
             />

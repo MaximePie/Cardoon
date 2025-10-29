@@ -591,4 +591,251 @@ describe("AdventurePage", () => {
       expect(screen.getByTestId("card-card1")).toBeInTheDocument();
     });
   });
+
+  describe("Hero Sprite Animation", () => {
+    it("should display idle hero sprite by default", () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+      expect(heroImage).toBeInTheDocument();
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("idle.gif")
+      );
+    });
+
+    it("should switch to attack sprite when hero attacks (correct answer)", async () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+
+      // Initially should be idle
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("idle.gif")
+      );
+
+      // Click correct answer to trigger attack
+      const correctButton = screen.getByTestId("correct-card1");
+      fireEvent.click(correctButton);
+
+      // Should switch to attack sprite immediately
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("attack1.gif")
+      );
+
+      // Should return to idle after timeout
+      await waitFor(
+        () => {
+          expect(heroImage).toHaveAttribute(
+            "src",
+            expect.stringContaining("idle.gif")
+          );
+        },
+        { timeout: 600 } // Wait slightly longer than the 500ms timeout
+      );
+    });
+
+    it("should switch to attack sprite when hero attacks (wrong answer)", async () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+
+      // Initially should be idle
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("idle.gif")
+      );
+
+      // Click wrong answer to trigger attack
+      const wrongButton = screen.getByTestId("wrong-card1");
+      fireEvent.click(wrongButton);
+
+      // Should switch to attack sprite even on wrong answers
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("attack1.gif")
+      );
+
+      // Should return to idle after timeout
+      await waitFor(
+        () => {
+          expect(heroImage).toHaveAttribute(
+            "src",
+            expect.stringContaining("idle.gif")
+          );
+        },
+        { timeout: 600 }
+      );
+    });
+
+    it("should handle multiple rapid attacks correctly", async () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+
+      // Click multiple cards rapidly
+      const correctButton1 = screen.getByTestId("correct-card1");
+      const correctButton2 = screen.getByTestId("correct-card2");
+
+      fireEvent.click(correctButton1);
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("attack1.gif")
+      );
+
+      // Click another card before first animation finishes
+      fireEvent.click(correctButton2);
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("attack1.gif")
+      );
+
+      // Should eventually return to idle
+      await waitFor(
+        () => {
+          expect(heroImage).toHaveAttribute(
+            "src",
+            expect.stringContaining("idle.gif")
+          );
+        },
+        { timeout: 1000 }
+      );
+    });
+
+    it("should maintain sprite state consistency during combat", () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+
+      // Verify hero image element exists and has proper attributes
+      expect(heroImage).toBeInTheDocument();
+      expect(heroImage).toHaveAttribute("alt", "Hero Avatar");
+      expect(heroImage).toHaveClass("AdventurePage__characterImage");
+
+      // Should start with idle sprite
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("idle.gif")
+      );
+    });
+
+    it("should display hero sprite with proper CSS classes", () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+      const heroContainer = heroImage.closest(".AdventurePage__Hero");
+
+      expect(heroContainer).toBeInTheDocument();
+      expect(heroImage).toHaveClass("AdventurePage__characterImage");
+    });
+  });
+
+  describe("Hero State Management", () => {
+    it("should maintain heroState as idle initially", () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("idle.gif")
+      );
+    });
+
+    it("should reset hero state to idle after each attack sequence", async () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+
+      // Perform attack
+      const correctButton = screen.getByTestId("correct-card1");
+      fireEvent.click(correctButton);
+
+      // Check attack state
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("attack1.gif")
+      );
+
+      // Wait for state reset
+      await waitFor(
+        () => {
+          expect(heroImage).toHaveAttribute(
+            "src",
+            expect.stringContaining("idle.gif")
+          );
+        },
+        { timeout: 600 }
+      );
+
+      // Should be ready for next attack
+      const correctButton2 = screen.getByTestId("correct-card2");
+      fireEvent.click(correctButton2);
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("attack1.gif")
+      );
+    });
+
+    it("should handle hero state transitions without errors", () => {
+      // Mock console.error to catch any potential errors
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      renderAdventurePage();
+
+      const correctButton = screen.getByTestId("correct-card1");
+
+      // Should not throw any errors during state transitions
+      expect(() => {
+        fireEvent.click(correctButton);
+      }).not.toThrow();
+
+      expect(consoleSpy).not.toHaveBeenCalled();
+      consoleSpy.mockRestore();
+    });
+  });
+
+  describe("Sprite Asset Loading", () => {
+    it("should have correct asset paths for hero sprites", () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+
+      // Check idle sprite path
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("idle.gif")
+      );
+
+      // Trigger attack to check attack sprite path
+      const correctButton = screen.getByTestId("correct-card1");
+      fireEvent.click(correctButton);
+
+      expect(heroImage).toHaveAttribute(
+        "src",
+        expect.stringContaining("attack1.gif")
+      );
+    });
+
+    it("should handle sprite switching without breaking image display", () => {
+      renderAdventurePage();
+
+      const heroImage = screen.getByAltText("Hero Avatar");
+
+      // Initial state
+      expect(heroImage).toBeInTheDocument();
+      expect(heroImage).toHaveAttribute("src");
+
+      // After attack
+      const correctButton = screen.getByTestId("correct-card1");
+      fireEvent.click(correctButton);
+
+      // Should still be rendered with new src
+      expect(heroImage).toBeInTheDocument();
+      expect(heroImage).toHaveAttribute("src");
+    });
+  });
 });

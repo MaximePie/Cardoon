@@ -9,6 +9,10 @@ export default defineConfig({
       NODE_ENV: "test",
       VITE_API_URL: "http://localhost:3000",
     },
+    // Handle static assets in tests
+    deps: {
+      inline: ["@testing-library/jest-dom"],
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

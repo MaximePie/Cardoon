@@ -186,13 +186,13 @@ router.put(
       // File has already been validated by the middleware
       const validatedFile = req.validatedFile;
       const uploadedFile = req.uploadedFile;
-      console.log(uploadedFile.filepath);
+      const tempPath = uploadedFile.filepath;
       try {
-        console.log("Uploading image for user:", userId, validatedFile);
         // Upload image to S3
         const imageUrl = await uploadImage({
-          filepath: uploadedFile.filepath,
+          filepath: tempPath,
           originalFilename: validatedFile.originalFilename || "avatar.jpg",
+          contentType: validatedFile.mimetype,
         });
 
         // Update user with new image URL
@@ -207,6 +207,14 @@ router.put(
       } catch (uploadError) {
         console.error("Error uploading image:", uploadError);
         res.status(500).json(createErrorResponse("Error uploading image"));
+      } finally {
+        // Clean up temp file
+        const fs = await import("fs");
+        fs.unlink(tempPath, (err) => {
+          if (err) {
+            console.error("Error deleting temp file:", err);
+          }
+        });
       }
     } catch (error) {
       console.error("Error updating image:", error);

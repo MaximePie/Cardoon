@@ -1,8 +1,8 @@
 // Used to upload images to S3 bucket
-import formidable from "formidable";
 import AWS from "aws-sdk";
-import fs from "fs";
 import dotenv from "dotenv";
+import formidable from "formidable";
+import fs from "fs";
 dotenv.config();
 
 export const parseFile = async (req: any): Promise<string> => {
@@ -42,6 +42,7 @@ export const parseFile = async (req: any): Promise<string> => {
 export const uploadImage = (file: {
   filepath: string;
   originalFilename: string;
+  contentType: string;
 }): Promise<string> => {
   const fileStream = fs.createReadStream(file.filepath);
 
@@ -55,13 +56,16 @@ export const uploadImage = (file: {
   if (!bucketName) {
     throw new Error("AWS_BUCKET_NAME is missing in .env file");
   }
-  const path = Date.now().toString() + file.originalFilename;
+  const safeName = (file.originalFilename || "avatar.jpg")
+    .replace(/[^\w.\-]/g, "_")
+    .slice(-128);
+  const path = Date.now().toString() + safeName;
   return new Promise((resolve, reject) => {
     const params: AWS.S3.PutObjectRequest = {
       Bucket: bucketName,
       Key: path,
       Body: fileStream,
-      ContentType: "application/octet-stream", // Default content type
+      ContentType: file.contentType || "application/octet-stream",
       // ACL: "public-read",
     };
 

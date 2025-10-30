@@ -234,12 +234,21 @@ export const errorResponseSchema = z.object({
  * File upload validation schemas
  */
 
-// Image upload schema
+// General image upload schema (5MB limit)
 export const imageUploadSchema = z.object({
   mimetype: z
     .string()
     .refine((val) => val.startsWith("image/"), "File must be an image"),
   size: z.number().max(5 * 1024 * 1024, "Image size cannot exceed 5MB"), // 5MB limit
+});
+
+// Avatar/profile image upload schema (10MB limit)
+export const avatarUploadSchema = z.object({
+  mimetype: z
+    .string()
+    .refine((val) => val.startsWith("image/"), "File must be an image"),
+  size: z.number().max(10 * 1024 * 1024, "Image size cannot exceed 10MB"), // 10MB limit
+  originalFilename: z.string().optional(),
 });
 
 /**
@@ -276,3 +285,4 @@ export type DailyGoalData = z.infer<typeof dailyGoalSchema>;
 export type DailyGoalProgress = z.infer<typeof dailyGoalProgressSchema>;
 export type ParamId = z.infer<typeof paramIdSchema>;
 export type MultipleIds = z.infer<typeof multipleIdsSchema>;
+export type AvatarUpload = z.infer<typeof avatarUploadSchema>;

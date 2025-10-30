@@ -55,4 +55,5 @@ export interface User {
     closedAt: string;
     status: "PENDING" | "COMPLETED" | "FAIL";
   };
+  image?: string; // URL de l'image de profil
 }

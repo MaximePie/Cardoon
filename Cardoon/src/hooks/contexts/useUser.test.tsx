@@ -25,6 +25,7 @@ const mockUserContextValue = {
   removeGold: vi.fn(),
   hasItem: vi.fn(() => false),
   refresh: vi.fn(),
+  updateImage: vi.fn(),
 };
 
 const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({

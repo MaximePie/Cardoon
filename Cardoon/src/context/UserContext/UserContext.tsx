@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import { ACTIONS, RESOURCES, useFetch } from "../../hooks/server";
+import { ACTIONS, RESOURCES, useFetch, usePut } from "../../hooks/server";
 import { PopulatedUserCard, User } from "../../types/common";
 import { UserContext, emptyUser } from "./UserContext";
 
@@ -16,6 +16,7 @@ export const UserContextProvider = ({
   const { fetch: fetchReviewUserCards, data: reviewUserCardsData } = useFetch<{
     cards: PopulatedUserCard[];
   }>(RESOURCES.REVIEW_USERCARDS);
+  const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
 
   const allUserCards = userCardsData?.userCards ?? [];
   const reviewUserCards = reviewUserCardsData?.cards ?? [];
@@ -78,7 +79,20 @@ export const UserContextProvider = ({
     await fetchReviewUserCards();
   }, [fetchReviewUserCards]);
 
-  console.log(reviewUserCards);
+  const updateImage = async (imageFile: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      await saveUserImage(formData);
+
+      // Refresh l'utilisateur pour s'assurer qu'on a les dernières données
+      await fetch();
+    } catch (error) {
+      console.error("Error updating image:", error);
+      throw error;
+    }
+  };
 
   return (
     <UserContext.Provider
@@ -95,6 +109,7 @@ export const UserContextProvider = ({
         allUserCards: allUserCards || [],
         getAllUserCards,
         getReviewUserCards,
+        updateImage,
       }}
     >
       {children}

@@ -15,7 +15,7 @@ import demoValidationRoutes from "./api/demo-validation.js";
 import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
-import usersValidatedRoutes from "./api/users-validated.js";
+import usersValidatedRoutes from "./api/users.js";
 // import usersRoutes from "./api/users.js"; // Temporarily disabled due to validation errors
 
 dotenv.config();

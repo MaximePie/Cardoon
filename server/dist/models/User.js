@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import UserCard from "./UserCard.js";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 import DailyGoal from "./DailyGoal.js";
+import UserCard from "./UserCard.js";
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -74,6 +74,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         enum: ["admin", "user"],
         default: "user",
+    },
+    image: {
+        type: String,
+        required: false, // Profile image is optional
     },
 });
 UserSchema.methods = {

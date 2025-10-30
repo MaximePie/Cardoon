@@ -40,6 +40,7 @@ const createMockUserContext = (user: User, overrides = {}) => ({
   refresh: vi.fn(),
   allUserCards: [],
   getAllUserCards: vi.fn(),
+  updateImage: vi.fn(),
   ...overrides,
 });
 

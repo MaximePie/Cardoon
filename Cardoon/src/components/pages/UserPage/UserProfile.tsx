@@ -11,7 +11,11 @@ export default function UserProfile() {
     <section className="UserPage__tab-content" aria-labelledby="profile-tab">
       <section className="UserPage__Currencies">
         <div className="UserPage__currency">
-          <img src={coinImage} alt="Pièces de connaissance" />
+          <img
+            src={coinImage}
+            alt="Pièces de connaissance"
+            className="UserPage__currency-icon"
+          />
           <div className="UserPage__currency-info">
             <span className="UserPage__currency-amount">
               {formattedNumber(gold || 0)}

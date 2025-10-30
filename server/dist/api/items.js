@@ -1,10 +1,10 @@
 import express from "express";
-const router = express.Router();
-import Item from "../models/Item.js";
+import { IncomingForm } from "formidable";
 import authMiddleware from "../middleware/auth.js";
+import Item from "../models/Item.js";
 import User from "../models/User.js";
 import { uploadImage } from "../utils/imagesManager.js";
-import { IncomingForm } from "formidable";
+const router = express.Router();
 router.get("/", authMiddleware, async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -88,6 +88,7 @@ router.post("/", authMiddleware, async (req, res) => {
             const imageLink = await uploadImage({
                 filepath: imageFile.filepath,
                 originalFilename: imageFile.originalFilename,
+                contentType: imageFile.mimetype || "image/jpeg",
             });
             const newItem = new Item({
                 name,

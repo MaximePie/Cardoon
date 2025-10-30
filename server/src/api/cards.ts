@@ -100,6 +100,7 @@ router.post("/", authMiddleware, async (req, res) => {
             imageLink = await uploadImage({
               filepath: image.filepath,
               originalFilename: image.originalFilename ?? "default_filename",
+              contentType: image.mimetype || "image/jpeg",
             });
           } else {
             imageLink = null;
@@ -166,6 +167,7 @@ router.put("/:id", async (req, res) => {
             imageLink = await uploadImage({
               filepath: image.filepath,
               originalFilename: image.originalFilename ?? "default_filename",
+              contentType: image.mimetype || "image/jpeg",
             });
           } else {
             imageLink = null;

@@ -134,7 +134,7 @@ export default function UserCards() {
             style={{ position: "fixed", bottom: 20, right: 20, zIndex: 2000 }}
           >
             <Button
-              variant="primary"
+              variant="danger"
               onClick={handleDeleteSelectedCards}
               disabled={selectedCards.length === 0}
               customClassName="UserPage__delete-selected-button"

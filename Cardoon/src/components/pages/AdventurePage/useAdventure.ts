@@ -148,9 +148,6 @@ export default function useAdventure() {
 
   const removeCard = (card: PopulatedUserCard, isCorrect: boolean) => {
     attack(currentEnemy, isCorrect);
-    if (currentEnemy.currentHealth <= 0) {
-      onEnemyDefeated();
-    }
     updateUserCard(card._id, { isCorrectAnswer: isCorrect });
     setCardsInHand((prev) => prev.filter((c) => c._id !== card._id));
     getReviewUserCards();

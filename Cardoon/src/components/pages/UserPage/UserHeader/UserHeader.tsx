@@ -48,7 +48,6 @@ export default function UserHeader() {
 
   const saveImage = async () => {
     if (!selectedFile) return;
-    console.log("Sauvegarde de l'image sélectionnée:", selectedFile);
     updateImage(selectedFile);
   };
 

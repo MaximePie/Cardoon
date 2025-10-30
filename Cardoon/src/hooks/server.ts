@@ -134,11 +134,9 @@ export const usePut = <T>(resource: string) => {
   const putUser = async (payload: unknown) => {
     setLoading(true);
     try {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-        "token"
-      )}`;
+      const token = Cookies.get("token");
       const response = await axios.put(url, payload, {
-        headers: { Authorization: `Bearer ${Cookies.get("token")}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setData(response.data);
       setLoading(false);
@@ -186,12 +184,15 @@ export const usePost = <T>(resource: string) => {
   ) => {
     setLoading(true);
     try {
-      if (contentType) {
-        axios.defaults.headers.post["Content-Type"] = contentType;
-      }
+      const token = Cookies.get("token");
+      const headers: Record<string, string> = token
+        ? { Authorization: `Bearer ${token}` }
+        : {};
+      if (contentType && contentType !== "multipart/form-data")
+        headers["Content-Type"] = contentType;
       const response = await axios.post(url, payload, {
         headers: {
-          Authorization: `Bearer ${Cookies.get("token")}`,
+          ...headers,
         },
       });
       setData(response.data);
@@ -206,12 +207,11 @@ export const usePost = <T>(resource: string) => {
   const asyncPost = async (payload: unknown): Promise<T | undefined> => {
     setLoading(true);
     try {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${Cookies.get(
-        "token"
-      )}`;
+      const token = Cookies.get("token");
       const response = await axios.post(url, payload, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
       setLoading(false);

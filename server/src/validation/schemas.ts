@@ -251,11 +251,6 @@ export const avatarUploadSchema = z.object({
   originalFilename: z.string().optional(),
 });
 
-// User image update schema for form validation
-export const userImageUpdateSchema = z.object({
-  image: avatarUploadSchema,
-});
-
 /**
  * Common validation helpers
  */
@@ -291,4 +286,3 @@ export type DailyGoalProgress = z.infer<typeof dailyGoalProgressSchema>;
 export type ParamId = z.infer<typeof paramIdSchema>;
 export type MultipleIds = z.infer<typeof multipleIdsSchema>;
 export type AvatarUpload = z.infer<typeof avatarUploadSchema>;
-export type UserImageUpdate = z.infer<typeof userImageUpdateSchema>;

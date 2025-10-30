@@ -217,7 +217,7 @@ export const GameFooter = (props: GameFooterProps) => {
                 console.error("setFlash function is not provided.");
               }
             }}
-            variant={isFlashModeOn ? "secondary" : "primary"}
+            variant={isFlashModeOn ? "secondary" : undefined}
           >
             <ElectricBoltIcon />
           </Button>

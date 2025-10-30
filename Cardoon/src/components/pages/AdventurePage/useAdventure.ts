@@ -104,15 +104,15 @@ export default function useAdventure() {
     setTimeout(() => {
       setEnemyState("idle");
     }, 1000);
+
+    const newExperience = hero.experience + currentEnemy.experience;
+
     setHero((prev) => ({
       ...prev,
-      experience: prev.experience + currentEnemy.experience,
+      experience: newExperience,
     }));
     // Check for level up
-    if (
-      hero.experience + currentEnemy.experience >=
-      hero.experienceToNextLevel
-    ) {
+    if (newExperience >= hero.experienceToNextLevel) {
       levelUp();
     }
     // Reset enemy

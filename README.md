@@ -72,6 +72,10 @@ This is a MERN stack
   - 🎯 Centralized query management with standardized keys
   - 📚 Full documentation in `docs/TANSTACK_QUERY_IMPLEMENTATION.md`
 
+### 30/10/2025
+
+- Added a sweet beep after pre-commit and pre-push hooks
+
 ## TODOS
 
 - Add tests on back

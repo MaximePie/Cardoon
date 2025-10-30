@@ -19,6 +19,7 @@ echo "📝 Checking TypeScript types..."
 npm run type-check
 if [ $? -ne 0 ]; then
   echo "❌ TypeScript type check failed!"
+  echo -e "\a"  # Beep de succès
   exit 1
 fi
 
@@ -27,6 +28,7 @@ echo "🏗️  Checking if build works..."
 npm run build
 if [ $? -ne 0 ]; then
   echo "❌ Build failed!"
+  echo -e "\a\a"  # Double beep d'erreur
   exit 1
 fi
 

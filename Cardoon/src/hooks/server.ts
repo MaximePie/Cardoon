@@ -31,7 +31,7 @@ export const ACTIONS = {
 export const useAdminCatchup = () => {
   const url = `${backUrl}/api/admin/catchup`;
   const [data, setData] = useState<unknown>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
 
   const fetch = useCallback(() => {
@@ -82,7 +82,7 @@ export const useAdminCatchup = () => {
 export const useFetch = <T>(resource: string) => {
   const url = `${backUrl}/api/${resource}`;
   const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
 
   const fetch = useCallback(() => {

@@ -7,7 +7,7 @@ interface ButtonProps {
   customClassName?: string;
   disabled?: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  variant?: "primary" | "danger" | "secondary";
+  variant?: "danger" | "secondary";
   icon?: React.ReactNode;
   tooltip?: string;
   tooltipId?: string;

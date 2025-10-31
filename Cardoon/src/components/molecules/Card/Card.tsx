@@ -2,32 +2,8 @@ import Edit from "@mui/icons-material/Edit";
 import { Chip, IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import classNames from "classnames";
-import { useState } from "react";
 import { PopulatedUserCard } from "../../../types/common";
-
-const stringToRgb = (text: string) => {
-  let hash = 0;
-
-  // Calcule un hash simple basé sur le code ASCII de chaque caractère
-  for (let i = 0; i < text.length; i++) {
-    hash = (hash << 5) - hash + text.charCodeAt(i);
-    hash |= 0; // Assure une conversion à un entier 32 bits
-  }
-
-  // Décompose le hash en trois valeurs (0–255)
-  let r = (hash >> 16) & 255;
-  let g = (hash >> 8) & 255;
-  let b = hash & 255;
-
-  // On "éclaircit" un peu la couleur en la décalant vers le blanc
-  const ratio = 0.6; // Ajustez pour éclaircir plus ou moins
-  r = Math.round(r + (255 - r) * ratio);
-  g = Math.round(g + (255 - g) * ratio);
-  b = Math.round(b + (255 - b) * ratio);
-
-  return `rgb(${r}, ${g}, ${b})`;
-};
+import useCard from "./useCard";
 
 interface CardProps {
   card: PopulatedUserCard;
@@ -43,51 +19,21 @@ const Card = ({
   isFlashModeOn,
 }: CardProps) => {
   const {
-    card: { question, answer, imageLink, category, expectedAnswers },
-    _id: userCardId,
+    cardClassNames,
+    cardBackground,
+    onCardClick,
+    succeed,
+    fail,
+    isRecto,
+    showAnswer,
+    userCardId,
+    question,
+    answer,
+    imageLink,
+    category,
+    expectedAnswers,
     interval,
-  } = card;
-  const [isRecto, flipCard] = useState(true);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [isFlipping, setIsFlipping] = useState(false);
-
-  const cardClassNames = classNames("Card", {
-    "Card--verso": !isRecto,
-    "Card--isFlipping": isFlipping,
-  });
-  const cardBackground = `linear-gradient(  
-  130deg,  
-  ${stringToRgb(category || "")},  
-  #ffffff  
-)`;
-
-  // If recto, set to false, else do nothing
-  const onCardClick = () => {
-    if (isRecto) {
-      if (isFlashModeOn) {
-        succeed();
-      } else {
-        setIsFlipping(true);
-        flipCard(false);
-        setTimeout(() => {
-          setShowAnswer(true);
-          setIsFlipping(false);
-        }, 200);
-      }
-    }
-  };
-
-  const succeed = (event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-    }
-    onAnswer(card, true);
-  };
-
-  const fail = () => {
-    onAnswer(card, false);
-  };
-
+  } = useCard(card, onAnswer, isFlashModeOn);
   return (
     <>
       <div

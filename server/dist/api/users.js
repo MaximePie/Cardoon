@@ -22,12 +22,14 @@ router.post("/login", validateBody(userLoginSchema), asyncHandler(async (req, re
 }));
 // Register
 router.post("/register", validateBody(userRegistrationSchema), asyncHandler(async (req, res) => {
-    const user = await UserService.createUser(req.validatedBody.email, req.validatedBody.password, req.validatedBody.username);
+    const { email, password, username } = req.validatedBody;
+    const user = await UserService.createUser(email, password, username);
     res.status(201).json(user);
 }));
 // Update daily goal
 router.put("/daily-goal", authMiddleware, validateBody(dailyGoalSchema), asyncHandler(async (req, res) => {
-    const user = await UserService.updateDailyGoal(req.user.id, req.validatedBody.target);
+    const { target } = req.validatedBody;
+    const user = await UserService.updateDailyGoal(req.user.id, target);
     res
         .status(200)
         .json(createSuccessResponse(user, "Daily goal updated successfully"));
@@ -41,21 +43,24 @@ router.put("/me/image", authMiddleware, validateImageUpload(avatarUploadSchema),
 }));
 // Buy item
 router.post("/buyItem", authMiddleware, validateBody(itemPurchaseSchema), asyncHandler(async (req, res) => {
-    const user = await UserService.purchaseItem(req.user.id, req.validatedBody.itemId);
+    const { itemId } = req.validatedBody;
+    const user = await UserService.purchaseItem(req.user.id, itemId);
     res
         .status(200)
         .json(createSuccessResponse(user, "Item purchased successfully"));
 }));
 // Remove item
 router.post("/removeItem", authMiddleware, validateBody(itemPurchaseSchema), asyncHandler(async (req, res) => {
-    await UserService.removeItem(req.user.id, req.validatedBody.itemId);
+    const { itemId } = req.validatedBody;
+    await UserService.removeItem(req.user.id, itemId);
     res
         .status(200)
         .json(createSuccessResponse(null, "Item removed successfully"));
 }));
 // Upgrade item
 router.post("/upgradeItem", authMiddleware, validateBody(itemUpgradeSchema), asyncHandler(async (req, res) => {
-    const upgradedItem = await UserService.upgradeItem(req.user.id, req.validatedBody.itemId);
+    const { itemId } = req.validatedBody;
+    const upgradedItem = await UserService.upgradeItem(req.user.id, itemId);
     res
         .status(200)
         .json(createSuccessResponse(upgradedItem, "Item upgraded successfully"));

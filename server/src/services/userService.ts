@@ -67,8 +67,10 @@ export class UserService {
     });
 
     await user.populate(["items.base", "currentDailyGoal"]);
+    const safeUser = { ...user.toObject() };
+    delete safeUser.password;
 
-    return { token, user };
+    return { token, user: safeUser };
   }
 
   static async getUserProfile(userId: string) {

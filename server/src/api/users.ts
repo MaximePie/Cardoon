@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import express, { Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/auth.js";
@@ -29,33 +29,53 @@ interface AuthenticatedRequest extends express.Request {
   validatedParams?: any;
   uploadedFile?: any;
 }
-// Get current user with validation
-router.get("/me", authMiddleware, async (req, res: Response) => {
-  try {
-    const authReq = req as AuthenticatedRequest;
-    const user = await User.findById(authReq.user.id);
+class AppError extends Error {
+  public readonly statusCode: number;
+  public readonly isOperational: boolean;
 
+  constructor(message: string, statusCode: number, isOperational = true) {
+    super(message);
+    this.statusCode = statusCode;
+    this.isOperational = isOperational;
+
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+class NotFoundError extends AppError {
+  constructor(message: string) {
+    super(message, 404);
+  }
+}
+class UserService {
+  static async getUserProfile(userId: string) {
+    const user = await User.findById(userId);
     if (!user) {
-      res.status(404).json(createErrorResponse("User not found"));
-      return;
+      throw new NotFoundError("User not found");
     }
 
     await user.createDailyGoal(user.dailyGoal, new Date());
-    await user.populate("items.base");
-    await user.populate("currentDailyGoal");
+    await user.populate(["items.base", "currentDailyGoal"]);
 
-    res.json(user);
-  } catch (error) {
-    console.error("Get user error:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to retrieve user";
-    if (error instanceof Error && (error as any).name === "NotFoundError") {
-      res.status(404).json(createErrorResponse(errorMessage));
-      return;
-    }
-    res.status(500).json(createErrorResponse(errorMessage));
+    return user;
   }
-});
+}
+
+const asyncHandler = (fn: Function) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+
+// Get current user with validation
+// Get current user
+router.get(
+  "/me",
+  authMiddleware,
+  asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    const user = await UserService.getUserProfile(req.user.id);
+    res.json(user);
+  })
+);
 
 // Login with Zod validation
 router.post(

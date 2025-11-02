@@ -20,10 +20,19 @@ import {
 } from "../validation/schemas.js";
 const router = express.Router();
 
+interface AuthenticatedRequest extends express.Request {
+  user: {
+    id: string;
+  };
+  validatedBody?: any;
+  validatedParams?: any;
+  uploadedFile?: any;
+}
 // Get current user with validation
-router.get("/me", authMiddleware, async (req: any, res: Response) => {
+router.get("/me", authMiddleware, async (req, res: Response) => {
   try {
-    const user = await User.findById(req.user.id);
+    const authReq = req as AuthenticatedRequest;
+    const user = await User.findById(authReq.user.id);
 
     if (!user) {
       res.status(404).json(createErrorResponse("User not found"));
@@ -37,7 +46,13 @@ router.get("/me", authMiddleware, async (req: any, res: Response) => {
     res.json(user);
   } catch (error) {
     console.error("Get user error:", error);
-    res.status(500).json(createErrorResponse("Failed to retrieve user"));
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to retrieve user";
+    if (error instanceof Error && (error as any).name === "NotFoundError") {
+      res.status(404).json(createErrorResponse(errorMessage));
+      return;
+    }
+    res.status(500).json(createErrorResponse(errorMessage));
   }
 });
 
@@ -88,9 +103,15 @@ router.post(
         .json({ token, user });
     } catch (error) {
       console.error("Login error:", error);
-      res
-        .status(500)
-        .json(createErrorResponse("An error occurred during login"));
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred during login";
+      if (error instanceof Error && (error as any).name === "NotFoundError") {
+        res.status(404).json(createErrorResponse(errorMessage));
+        return;
+      }
+      res.status(500).json(createErrorResponse(errorMessage));
     }
   }
 );
@@ -128,9 +149,15 @@ router.post(
       res.status(201).json(userResponse);
     } catch (error) {
       console.error("Registration error:", error);
-      res
-        .status(500)
-        .json(createErrorResponse("An error occurred during registration"));
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred during registration";
+      if (error instanceof Error && (error as any).name === "NotFoundError") {
+        res.status(404).json(createErrorResponse(errorMessage));
+        return;
+      }
+      res.status(500).json(createErrorResponse(errorMessage));
     }
   }
 );
@@ -159,11 +186,15 @@ router.put(
         .json(createSuccessResponse(user, "Daily goal updated successfully"));
     } catch (error) {
       console.error("Error updating daily goal:", error);
-      res
-        .status(500)
-        .json(
-          createErrorResponse("An error occurred while updating the daily goal")
-        );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred while updating the daily goal";
+      if (error instanceof Error && (error as any).name === "NotFoundError") {
+        res.status(404).json(createErrorResponse(errorMessage));
+        return;
+      }
+      res.status(500).json(createErrorResponse(errorMessage));
     }
   }
 );
@@ -218,11 +249,15 @@ router.put(
       }
     } catch (error) {
       console.error("Error updating image:", error);
-      res
-        .status(500)
-        .json(
-          createErrorResponse("An error occurred while updating the image")
-        );
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "An error occurred while updating the image";
+      if (error instanceof Error && (error as any).name === "NotFoundError") {
+        res.status(404).json(createErrorResponse(errorMessage));
+        return;
+      }
+      res.status(500).json(createErrorResponse(errorMessage));
     }
   }
 );
@@ -257,6 +292,16 @@ router.post(
         error instanceof Error
           ? error.message
           : "An error occurred while processing the purchase";
+
+      // Avoid referencing potentially undefined global classes; check error.name instead
+      if (error instanceof Error && (error as any).name === "ValidationError") {
+        res.status(400).json(createErrorResponse(errorMessage));
+        return;
+      }
+      if (error instanceof Error && (error as any).name === "NotFoundError") {
+        res.status(404).json(createErrorResponse(errorMessage));
+        return;
+      }
       res.status(500).json(createErrorResponse(errorMessage));
     }
   }
@@ -289,6 +334,10 @@ router.post(
         error instanceof Error
           ? error.message
           : "An error occurred while removing the item";
+      if (error instanceof Error && (error as any).name === "NotFoundError") {
+        res.status(404).json(createErrorResponse(errorMessage));
+        return;
+      }
       res.status(500).json(createErrorResponse(errorMessage));
     }
   }
@@ -323,6 +372,10 @@ router.post(
         error instanceof Error
           ? error.message
           : "An error occurred while upgrading the item";
+      if (error instanceof Error && (error as any).name === "NotFoundError") {
+        res.status(404).json(createErrorResponse(errorMessage));
+        return;
+      }
       res.status(500).json(createErrorResponse(errorMessage));
     }
   }

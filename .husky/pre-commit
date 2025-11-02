@@ -12,13 +12,13 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# 2. Backend TypeScript build (temporarily disabled)
-# echo "🔨 Building backend TypeScript..."
-# yarn build
-# if [ $? -ne 0 ]; then
-#   echo "❌ Backend TypeScript build failed!"
-#   exit 1
-# fi
+# 2. Backend TypeScript build
+echo "🔨 Building backend TypeScript..."
+yarn build
+if [ $? -ne 0 ]; then
+  echo "❌ Backend TypeScript build failed!"
+  exit 1
+fi
 cd ..
 
 # Navigate to Cardoon directory

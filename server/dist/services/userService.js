@@ -1,15 +1,25 @@
+var _a;
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { AppError, NotFoundError } from "../errors";
-import { ValidationError } from "../errors/ValidationError";
+import { AppError, NotFoundError, ValidationError } from "../errors";
 import User from "../models/User";
 import { uploadImage } from "../utils/imagesManager";
 export class UserService {
+    static getJwtSecret() {
+        const jwtSecret = process.env.JWT_SECRET;
+        if (!jwtSecret) {
+            throw new AppError("JWT_SECRET is not configured", 500);
+        }
+        return jwtSecret;
+    }
     static async authenticate(credentials) {
         const { email, username, password, rememberMe } = credentials;
         const jwtSecret = process.env.JWT_SECRET;
         if (!jwtSecret) {
             throw new AppError("JWT_SECRET is not configured", 500);
+        }
+        if ((!email && !username) || !password) {
+            throw new ValidationError("Email/Username and password are required");
         }
         // Get user by email or username
         const user = email
@@ -106,8 +116,9 @@ export class UserService {
         return upgradedItem;
     }
 }
+_a = UserService;
 UserService.JWT_CONFIG = {
-    SECRET: process.env.JWT_SECRET || "default_secret",
+    SECRET: _a.getJwtSecret(),
     DEFAULT_EXPIRY: "1d",
     SHORT_EXPIRY: "15m",
 };

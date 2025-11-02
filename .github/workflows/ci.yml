@@ -33,7 +33,7 @@ jobs:
         run: npm run test:coverage:report
 
       - name: 📊 Upload backend coverage reports
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           directory: ./server/coverage
           flags: backend-unittests
@@ -66,7 +66,7 @@ jobs:
         run: yarn test --run --coverage
 
       - name: 📊 Upload frontend coverage reports
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           directory: ./Cardoon/coverage
           flags: frontend-unittests

@@ -4,7 +4,7 @@ export interface AuthenticatedRequest extends Request {
   user: {
     id: string;
   };
-  validatedBody?: any;
-  validatedParams?: any;
-  uploadedFile?: any;
+  validatedBody?: unknown;
+  validatedParams?: unknown;
+  uploadedFile?: Request["uploadedFile"];
 }

@@ -2,8 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { ObjectId } from "mongoose";
-import { AppError, NotFoundError } from "../errors";
-import { ValidationError } from "../errors/ValidationError";
+import { AppError, NotFoundError, ValidationError } from "../errors";
 import User from "../models/User";
 import { uploadImage } from "../utils/imagesManager";
 export interface LoginCredentials {
@@ -17,8 +16,16 @@ export interface AuthResult {
   user: any;
 }
 export class UserService {
+  private static getJwtSecret(): string {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new AppError("JWT_SECRET is not configured", 500);
+    }
+    return jwtSecret;
+  }
+
   private static JWT_CONFIG = {
-    SECRET: process.env.JWT_SECRET || "default_secret",
+    SECRET: this.getJwtSecret(),
     DEFAULT_EXPIRY: "1d",
     SHORT_EXPIRY: "15m",
   } as const;
@@ -31,6 +38,10 @@ export class UserService {
 
     if (!jwtSecret) {
       throw new AppError("JWT_SECRET is not configured", 500);
+    }
+
+    if ((!email && !username) || !password) {
+      throw new ValidationError("Email/Username and password are required");
     }
 
     // Get user by email or username

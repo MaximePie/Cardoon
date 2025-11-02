@@ -35,6 +35,7 @@ export const useAdminCatchup = () => {
   const [error, setError] = useState<undefined | string>(undefined);
 
   const fetch = useCallback(() => {
+    setLoading(true);
     axios
       .get(url, {
         headers: {

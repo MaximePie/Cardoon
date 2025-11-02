@@ -1,4 +1,5 @@
 import express, { Response } from "express";
+import { ObjectId } from "mongoose";
 import authMiddleware from "../middleware/auth.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { validateImageUpload } from "../middleware/fileUpload.js";
@@ -48,9 +49,9 @@ router.post(
   validateBody(userRegistrationSchema),
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const user = await UserService.createUser(
-      req.validatedBody.email,
-      req.validatedBody.password,
-      req.validatedBody.username
+      (req.validatedBody as { email: string }).email,
+      (req.validatedBody as { password: string }).password,
+      (req.validatedBody as { username: string }).username
     );
 
     res.status(201).json(user);
@@ -65,7 +66,7 @@ router.put(
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const user = await UserService.updateDailyGoal(
       req.user.id,
-      req.validatedBody.target
+      (req.validatedBody as { target: number }).target
     );
     res
       .status(200)
@@ -97,7 +98,7 @@ router.post(
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const user = await UserService.purchaseItem(
       req.user.id,
-      req.validatedBody.itemId
+      (req.validatedBody as { itemId: ObjectId }).itemId
     );
     res
       .status(200)
@@ -111,7 +112,10 @@ router.post(
   authMiddleware,
   validateBody(itemPurchaseSchema),
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    await UserService.removeItem(req.user.id, req.validatedBody.itemId);
+    await UserService.removeItem(
+      req.user.id,
+      (req.validatedBody as { itemId: ObjectId }).itemId
+    );
     res
       .status(200)
       .json(createSuccessResponse(null, "Item removed successfully"));
@@ -126,7 +130,7 @@ router.post(
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const upgradedItem = await UserService.upgradeItem(
       req.user.id,
-      req.validatedBody.itemId
+      (req.validatedBody as { itemId: ObjectId }).itemId
     );
     res
       .status(200)

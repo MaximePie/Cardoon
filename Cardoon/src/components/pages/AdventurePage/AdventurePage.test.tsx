@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { UserContext } from "../../../context/UserContext";
 import { PopulatedUserCard, User } from "../../../types/common";
 import AdventurePage from "./AdventurePage";
@@ -155,6 +155,11 @@ describe("AdventurePage", () => {
       loading: false,
       error: undefined,
     });
+  });
+
+  afterEach(() => {
+    // Clear all timers to prevent them from running after test teardown
+    vi.clearAllTimers();
   });
 
   const renderAdventurePage = (contextValue = mockUserContextValue) => {

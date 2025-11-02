@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { PopulatedUserCard, User } from "../../../types/common";
@@ -65,11 +65,19 @@ export default function useAdventure() {
     ACTIONS.UPDATE_INTERVAL
   );
 
+  // Refs to store timer IDs for cleanup
+  const heroStateTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const enemyStateTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const attack = (enemy: Enemy, isCorrect: boolean) => {
     if (isCorrect) {
       // Hero only performs attack animation when answer is correct for visual feedback
       setHeroState("attacking");
-      setTimeout(() => {
+      // Clear any existing timer before setting a new one
+      if (heroStateTimerRef.current) {
+        clearTimeout(heroStateTimerRef.current);
+      }
+      heroStateTimerRef.current = setTimeout(() => {
         setHeroState("idle");
       }, 500);
       const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
@@ -101,7 +109,11 @@ export default function useAdventure() {
 
   const onEnemyDefeated = useCallback(() => {
     setEnemyState("defeated");
-    setTimeout(() => {
+    // Clear any existing timer before setting a new one
+    if (enemyStateTimerRef.current) {
+      clearTimeout(enemyStateTimerRef.current);
+    }
+    enemyStateTimerRef.current = setTimeout(() => {
       setEnemyState("idle");
     }, 1000);
 
@@ -152,6 +164,19 @@ export default function useAdventure() {
     setCardsInHand((prev) => prev.filter((c) => c._id !== card._id));
     getReviewUserCards();
   };
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (heroStateTimerRef.current) {
+        clearTimeout(heroStateTimerRef.current);
+      }
+      if (enemyStateTimerRef.current) {
+        clearTimeout(enemyStateTimerRef.current);
+      }
+    };
+  }, []);
+
   return {
     cardsInHand,
     hero,

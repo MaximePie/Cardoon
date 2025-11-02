@@ -35,3 +35,9 @@ export interface ItemRequest
   extends AuthenticatedRequest<{
     itemId: import("mongoose").ObjectId;
   }> {}
+
+export interface UploadedFile {
+  filepath: string;
+  originalFilename?: string;
+  mimetype: string;
+}

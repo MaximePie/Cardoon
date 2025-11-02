@@ -6,7 +6,7 @@ echo "🔍 Running pre-commit checks..."
 # 1. Backend unit tests
 echo "🧪 Running backend unit tests..."
 cd server
-npm run test:unit
+yarn test:unit
 if [ $? -ne 0 ]; then
   echo "❌ Backend unit tests failed!"
   exit 1
@@ -26,7 +26,7 @@ cd Cardoon
 
 # 3. Type checking with TypeScript
 echo "📝 Checking TypeScript types..."
-npm run type-check
+yarn type-check
 if [ $? -ne 0 ]; then
   echo "❌ TypeScript type check failed!"
   exit 1
@@ -34,7 +34,7 @@ fi
 
 # 4. Lint and format staged files
 echo "🧹 Running ESLint and Prettier on staged files..."
-npx lint-staged
+yarn lint-staged
 if [ $? -ne 0 ]; then
   echo "❌ Linting failed!"
   exit 1
@@ -42,7 +42,7 @@ fi
 
 # 5. Run frontend tests
 echo "🧪 Running frontend tests..."
-npm run test:run
+yarn test:run
 if [ $? -ne 0 ]; then
   echo "❌ Frontend tests failed!"
   exit 1

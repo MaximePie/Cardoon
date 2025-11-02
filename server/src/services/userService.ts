@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { ObjectId } from "mongoose";
 import { AppError, NotFoundError, ValidationError } from "../errors";
 import User from "../models/User";
+import { UploadedFile } from "../types/requests";
 import { uploadImage } from "../utils/imagesManager";
 export interface LoginCredentials {
   email?: string;
@@ -116,7 +117,7 @@ export class UserService {
     return user;
   }
 
-  static async updateUserImage(userId: string, imageFile: any) {
+  static async updateUserImage(userId: string, imageFile: UploadedFile) {
     const user = await User.findById(userId);
     if (!user) {
       throw new NotFoundError("User not found");

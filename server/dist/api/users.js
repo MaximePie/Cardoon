@@ -36,7 +36,8 @@ router.put("/daily-goal", authMiddleware, validateBody(dailyGoalSchema), asyncHa
 }));
 // Update user image
 router.put("/me/image", authMiddleware, validateImageUpload(avatarUploadSchema), asyncHandler(async (req, res) => {
-    const result = await UserService.updateUserImage(req.user.id, req.uploadedFile);
+    const uploadedFile = req.uploadedFile;
+    const result = await UserService.updateUserImage(req.user.id, uploadedFile);
     res
         .status(200)
         .json(createSuccessResponse(result, "Image updated successfully"));

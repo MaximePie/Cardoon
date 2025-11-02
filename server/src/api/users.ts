@@ -11,6 +11,7 @@ import {
   AuthenticatedRequest,
   DailyGoalRequest,
   ItemRequest,
+  UploadedFile,
   UserLoginRequest,
   UserRegistrationRequest,
 } from "../types/requests.js";
@@ -80,10 +81,8 @@ router.put(
   authMiddleware,
   validateImageUpload(avatarUploadSchema),
   asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
-    const result = await UserService.updateUserImage(
-      req.user.id,
-      req.uploadedFile
-    );
+    const uploadedFile = req.uploadedFile as UploadedFile;
+    const result = await UserService.updateUserImage(req.user.id, uploadedFile);
     res
       .status(200)
       .json(createSuccessResponse(result, "Image updated successfully"));

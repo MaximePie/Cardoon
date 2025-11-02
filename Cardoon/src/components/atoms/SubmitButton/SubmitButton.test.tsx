@@ -116,13 +116,13 @@ describe("SubmitButton", () => {
       expect(button).toBeDisabled();
     });
 
-    it("should show both children and loader when loading", () => {
+    it("should show loader instead of children when loading", () => {
       const { container } = render(
         <SubmitButton isLoading={true}>Submitting...</SubmitButton>
       );
       const button = getSubmitButton(container);
 
-      expect(button).toHaveTextContent("Submitting...");
+      expect(button).not.toHaveTextContent("Submitting...");
       expect(button.querySelector(".Button__loader")).toBeInTheDocument();
     });
   });
@@ -151,7 +151,7 @@ describe("SubmitButton", () => {
       expect(button).toBeDisabled(); // Should be disabled due to loading
     });
 
-    it("should handle all props together", () => {
+    it("should show loader instead of children when loading with all props", () => {
       const { container } = render(
         <SubmitButton
           className="complex-submit"
@@ -165,7 +165,7 @@ describe("SubmitButton", () => {
 
       expect(button).toHaveClass("Button", "complex-submit");
       expect(button).toBeDisabled();
-      expect(button).toHaveTextContent("Complex Button");
+      expect(button).not.toHaveTextContent("Complex Button");
       expect(button.querySelector(".Button__loader")).toBeInTheDocument();
     });
   });

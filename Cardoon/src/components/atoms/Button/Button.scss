@@ -13,6 +13,7 @@
   cursor: pointer;
   transition: background 0.3s;
   max-width: 250px;
+  position: relative;
 
   display: flex;
   justify-content: center;
@@ -51,12 +52,5 @@
     &:hover {
       background: $disabled-color;
     }
-  }
-
-  &__loader {
-    margin-left: 0.5rem;
-    width: 24px !important;
-    height: 24px !important;
-    transform: translate(-50%, -50%);
   }
 }

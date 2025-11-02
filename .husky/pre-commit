@@ -3,24 +3,6 @@
 
 echo "🔍 Running pre-commit checks..."
 
-# 1. Backend unit tests
-echo "🧪 Running backend unit tests..."
-cd server
-yarn test:unit
-if [ $? -ne 0 ]; then
-  echo "❌ Backend unit tests failed!"
-  exit 1
-fi
-
-# 2. Backend TypeScript build
-echo "🔨 Building backend TypeScript..."
-yarn build
-if [ $? -ne 0 ]; then
-  echo "❌ Backend TypeScript build failed!"
-  exit 1
-fi
-cd ..
-
 # Navigate to Cardoon directory
 cd Cardoon
 

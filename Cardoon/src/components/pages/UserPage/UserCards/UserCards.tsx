@@ -28,7 +28,6 @@ export default function UserCards() {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { isMobile } = useIsMobile();
   const [selectedCards, setSelectedCard] = useState<string[]>([]);
-  console.log(selectedCards);
   const [searchTerm, setSearchTerm] = useState("");
   const {
     cards: allUserCards,
@@ -97,7 +96,6 @@ export default function UserCards() {
 
   const handleSelectCard =
     (cardId: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      console.log("Checkbox changed for card:", cardId, event.target.checked);
       if (event.target.checked) {
         setSelectedCard((prev) => [...prev, cardId]);
       } else {

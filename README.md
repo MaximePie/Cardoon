@@ -76,6 +76,11 @@ This is a MERN stack
 
 - Added a sweet beep after pre-commit and pre-push hooks
 
+## 02/11/2025
+
+- Added first tests on backend
+- Restructured User controller that was complex, more are to come.
+
 ## TODOS
 
 - Add tests on back
@@ -85,3 +90,4 @@ This is a MERN stack
 - Yup, React hook forms
 - Extend TanStack Query to card creation and editing
 - Add storybook
+- Add router boundaries for unlogged users

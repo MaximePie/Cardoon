@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
 // Import real UserService for coverage
-import { UserService } from "./UserService";
+import { UserService } from "./UserService.js";
 describe("UserService Coverage", () => {
     it("should load UserService class", () => {
         assert.strictEqual(typeof UserService, "function");

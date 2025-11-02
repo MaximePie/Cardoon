@@ -2,10 +2,10 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { ObjectId } from "mongoose";
-import { AppError, NotFoundError, ValidationError } from "../errors/index.js";
-import User from "../models/User.js";
-import { UploadedFile } from "../types/requests.js";
-import { uploadImage } from "../utils/imagesManager.js";
+import { AppError, NotFoundError, ValidationError } from "../errors";
+import User from "../models/User";
+import { UploadedFile } from "../types/requests";
+import { uploadImage } from "../utils/imagesManager";
 export interface LoginCredentials {
   email?: string;
   username?: string;

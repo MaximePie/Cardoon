@@ -2,7 +2,7 @@ import assert from "node:assert";
 import { describe, it } from "node:test";
 
 // Import real UserService for coverage
-import { UserService } from "./UserService.js";
+import { UserService } from "./UserService";
 
 describe("UserService Coverage", () => {
   it("should load UserService class", () => {

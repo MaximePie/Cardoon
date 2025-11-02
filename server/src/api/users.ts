@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import express, { Response } from "express";
+import fs from "fs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/auth.js";
 import { validateImageUpload } from "../middleware/fileUpload.js";
@@ -88,10 +89,15 @@ router.post(
         res.status(401).json(createErrorResponse("Invalid credentials"));
         return;
       }
-
+      const JWT_CONFIG = {
+        DEFAULT_EXPIRY: "30d",
+        SHORT_EXPIRY: "1d",
+      } as const;
       // Generate JWT token
       const token = jwt.sign({ id: user.id }, jwtSecret, {
-        expiresIn: rememberMe ? "90d" : "1d",
+        expiresIn: rememberMe
+          ? JWT_CONFIG.DEFAULT_EXPIRY
+          : JWT_CONFIG.SHORT_EXPIRY,
       });
 
       await user.populate("items.base");
@@ -240,7 +246,6 @@ router.put(
         res.status(500).json(createErrorResponse("Error uploading image"));
       } finally {
         // Clean up temp file
-        const fs = await import("fs");
         fs.unlink(tempPath, (err) => {
           if (err) {
             console.error("Error deleting temp file:", err);

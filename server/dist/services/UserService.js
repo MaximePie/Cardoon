@@ -1,9 +1,9 @@
 var _a;
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { AppError, NotFoundError, ValidationError } from "../errors";
-import User from "../models/User";
-import { uploadImage } from "../utils/imagesManager";
+import { AppError, NotFoundError, ValidationError } from "../errors/index.js";
+import User from "../models/User.js";
+import { uploadImage } from "../utils/imagesManager.js";
 export class UserService {
     static getJwtSecret() {
         const jwtSecret = process.env.JWT_SECRET;

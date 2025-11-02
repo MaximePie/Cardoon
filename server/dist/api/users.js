@@ -1,10 +1,10 @@
 import express from "express";
-import authMiddleware from "../middleware/auth";
-import { asyncHandler } from "../middleware/errorHandler";
-import { validateImageUpload } from "../middleware/fileUpload";
-import { createSuccessResponse, validateBody, } from "../middleware/simpleValidation";
-import { UserService } from "../services/UserService";
-import { avatarUploadSchema, dailyGoalSchema, itemPurchaseSchema, itemUpgradeSchema, userLoginSchema, userRegistrationSchema, } from "../validation/schemas";
+import authMiddleware from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
+import { validateImageUpload } from "../middleware/fileUpload.js";
+import { createSuccessResponse, validateBody, } from "../middleware/simpleValidation.js";
+import { UserService } from "../services/UserService.js";
+import { avatarUploadSchema, dailyGoalSchema, itemPurchaseSchema, itemUpgradeSchema, userLoginSchema, userRegistrationSchema, } from "../validation/schemas.js";
 const router = express.Router();
 // Get current user with validation
 // Get current user

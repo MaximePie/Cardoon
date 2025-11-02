@@ -58,7 +58,6 @@ CardSchema.methods.invert = async function () {
         const userCard = await UserCard.findOne({ card: this._id });
         if (userCard) {
             const user = await User.findById(userCard.user);
-            console.log("Found user by searching UserCards:", user);
             if (user) {
                 owner = user;
             }

@@ -3,12 +3,12 @@
 
 echo "🔍 Running pre-commit checks..."
 
-# 1. Backend tests
-echo "🧪 Running backend tests..."
+# 1. Backend unit tests
+echo "🧪 Running backend unit tests..."
 cd server
-npm run test
+npm run test:unit
 if [ $? -ne 0 ]; then
-  echo "❌ Backend tests failed!"
+  echo "❌ Backend unit tests failed!"
   exit 1
 fi
 

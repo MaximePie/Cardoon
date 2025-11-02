@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-backend:
-    name: 🧪 Backend Tests
+    name: 🧪 Backend Unit Tests
     runs-on: ubuntu-latest
 
     defaults:
@@ -29,7 +29,7 @@ jobs:
       - name: 📦 Install backend dependencies
         run: npm ci
 
-      - name: 🧪 Run backend tests with coverage
+      - name: 🧪 Run backend unit tests with coverage
         run: npm run test:coverage:report
 
       - name: 📊 Upload backend coverage reports

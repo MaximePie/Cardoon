@@ -1,0 +1,15 @@
+{
+  "include": ["src/**/*.ts", "src/**/*.js"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/test/**/*",
+    "node_modules/**/*",
+    "coverage/**/*",
+    "dist/**/*"
+  ],
+  "reporter": ["html", "text", "lcov"],
+  "all": true,
+  "check-coverage": false,
+  "skip-full": false
+}

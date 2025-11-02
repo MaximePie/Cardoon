@@ -6,7 +6,7 @@ import {
   createSuccessResponse,
   validateBody,
 } from "../middleware/simpleValidation.js";
-import { UserService } from "../services/userService.js";
+import { UserService } from "../services/UserService.js";
 import { AuthenticatedRequest } from "../types/requests.js";
 import {
   avatarUploadSchema,

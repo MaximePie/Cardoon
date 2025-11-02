@@ -3,10 +3,28 @@
 
 echo "🔍 Running pre-commit checks..."
 
+# 1. Backend tests
+echo "🧪 Running backend tests..."
+cd server
+npm run test
+if [ $? -ne 0 ]; then
+  echo "❌ Backend tests failed!"
+  exit 1
+fi
+
+# 2. Backend TypeScript build
+echo "🔨 Building backend TypeScript..."
+yarn build
+if [ $? -ne 0 ]; then
+  echo "❌ Backend TypeScript build failed!"
+  exit 1
+fi
+cd ..
+
 # Navigate to Cardoon directory
 cd Cardoon
 
-# 1. Type checking with TypeScript
+# 3. Type checking with TypeScript
 echo "📝 Checking TypeScript types..."
 npm run type-check
 if [ $? -ne 0 ]; then
@@ -14,7 +32,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# 2. Lint and format staged files
+# 4. Lint and format staged files
 echo "🧹 Running ESLint and Prettier on staged files..."
 npx lint-staged
 if [ $? -ne 0 ]; then
@@ -22,11 +40,11 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# 3. Run tests
-echo "🧪 Running tests..."
+# 5. Run frontend tests
+echo "🧪 Running frontend tests..."
 npm run test:run
 if [ $? -ne 0 ]; then
-  echo "❌ Tests failed!"
+  echo "❌ Frontend tests failed!"
   exit 1
 fi
 echo -e "\a"

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import User from "./User.js";
-import UserCard from "./UserCard.js";
+import User from "./User";
+import UserCard from "./UserCard";
 const CardSchema = new mongoose.Schema({
     question: {
         type: String,

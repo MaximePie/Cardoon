@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import DailyGoal from "./DailyGoal.js";
-import UserCard from "./UserCard.js";
+import DailyGoal from "./DailyGoal";
+import UserCard from "./UserCard";
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,

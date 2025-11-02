@@ -1,6 +1,16 @@
-import Card from "../models/Card.js";
-import User from "../models/User.js";
-import UserCard from "../models/UserCard.js";
+import Card from "../models/Card";
+import User from "../models/User";
+import UserCard from "../models/UserCard";
+/**
+ * Remove all cards from the database and seed it with new cards
+ *
+ * Questions and answers are here :
+ * "Mad en avancé ?" => "Out of mind"
+ * "Not sure" => "On the fence"
+ * "Very happy" => "Over the moon"
+ * "Get Married" => "Tie the knot"
+ * "Lazy" => "Couch-potato"
+ */
 export const clearDBAndSeed = async (req, res) => {
     await Card.deleteMany({});
     const cards = await Card.insertMany([

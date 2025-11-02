@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 
 // Import UserService for coverage - this will execute the code and count it in coverage
-import { UserService } from "./UserService";
+import { UserService } from "./UserService.js";
 
 // Import other modules to ensure they're included in coverage
-import "../errors/AppError";
-import "../errors/NotFoundError";
-import "../errors/ValidationError";
-import "../models/User";
-import "../utils/imagesManager";
+import "../errors/AppError.js";
+import "../errors/NotFoundError.js";
+import "../errors/ValidationError.js";
+import "../models/User.js";
+import "../utils/imagesManager.js";
 
 describe("UserService Coverage", () => {
   it("should load UserService class and all methods", () => {

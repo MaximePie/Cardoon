@@ -639,23 +639,23 @@
   resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-5.2.8.tgz#73411c434b9162019b8ca18abd8245489809cca9"
   integrity sha512-oh9g4Cg3loVMz9MWeKWfDI+ooxxG1aRVetkiKIb2ESS2rrryGecQ/y4pAj4z5A5ebyw450dYRi/c4k/I3UBhHA==
 
-"@huggingface/inference@^3.6.1":
-  version "3.15.0"
-  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-3.15.0.tgz#6899e24bcd14bc121183ea45b0a43cee4c223b2b"
-  integrity sha512-C+Adt4fu4ztlq0Al9EOgEdK5Hl8ebV1eoDEWegJPdAJ97U8A1aqBbl1Sp4S4+wIy3nLApTrtcLuoizGZmLtDMA==
+"@huggingface/inference@^4.0.0":
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.0.tgz#8d5dc47efaf255ab364f6ba7586b82fd56d387cf"
+  integrity sha512-oqBHbYoLHpNlEUJp/MG28gCR0JOUmLi9iKKd0oJfTAgTqaDSLhoCsIdS1XfLHbT/CrzZch33cARTR3bO4q/2yQ==
   dependencies:
-    "@huggingface/jinja" "^0.5.0"
-    "@huggingface/tasks" "^0.19.9"
+    "@huggingface/jinja" "^0.5.1"
+    "@huggingface/tasks" "^0.19.58"
 
-"@huggingface/jinja@^0.5.0":
+"@huggingface/jinja@^0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.1.tgz#081d334ddcf6237f65561ae3d665bb713a8ff74f"
   integrity sha512-yUZLld4lrM9iFxHCwFQ7D1HW2MWMwSbeB7WzWqFYDWK+rEb+WldkLdAJxUPOmgICMHZLzZGVcVjFh3w/YGubng==
 
-"@huggingface/tasks@^0.19.9":
-  version "0.19.52"
-  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.52.tgz#bd8e2a8a224507bdf6485c40d35c3266f814e267"
-  integrity sha512-ERporbPcWOeeN22PG3UoC3n/kgk50/Gn03A1NPwO2fqlzaP01ADug0DazPi8W3HandT6LHycv7tAjo+sCOBRtw==
+"@huggingface/tasks@^0.19.58":
+  version "0.19.61"
+  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.61.tgz#69f8959c077ddb37e7a3025d1d22d027e07eed08"
+  integrity sha512-n7K4ml+lQAHB89OCIh8e/bPeOcACz94IMUW6U1BkjpScNW4HZy9E/m/nF05wU/m4OA6VNaLhgHAYoPoGLPE06A==
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"

@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import mongoose, { Document, Model, ObjectId } from "mongoose";
-import type { DailyGoal as DailyGoalType } from "./DailyGoal.js";
-import DailyGoal from "./DailyGoal.js";
-import { Item } from "./Item.js";
-import UserCard from "./UserCard.js";
+import type { DailyGoal as DailyGoalType } from "./DailyGoal";
+import DailyGoal from "./DailyGoal";
+import { Item } from "./Item";
+import UserCard from "./UserCard";
 
 interface PopulatedUserItem {
   base: Item;
@@ -277,7 +277,6 @@ UserSchema.methods.attachCard = async function (cardId: ObjectId) {
     nextReview: now.getTime() + 5 * 1000,
   });
   await userCard.save();
-  console.log("Attached card to user:", userCard);
   return userCard;
 };
 

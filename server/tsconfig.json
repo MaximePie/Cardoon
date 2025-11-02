@@ -11,6 +11,12 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["**/*.ts", "src/api/cards.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "vitest.config.ts"
+  ]
 }

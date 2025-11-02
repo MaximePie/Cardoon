@@ -169,14 +169,19 @@ describe("AdventurePage", () => {
     it("should render the hero stats and icons", () => {
       renderAdventurePage();
 
-      // Check for Material-UI icons to verify stats display
-      expect(screen.getByTestId("FavoriteIcon")).toBeInTheDocument();
-      expect(screen.getByTestId("WhatshotIcon")).toBeInTheDocument();
-      expect(screen.getByTestId("StarBorderPurple500Icon")).toBeInTheDocument();
+      // Check that stats are displayed correctly
+      expect(screen.getByText("25")).toBeInTheDocument(); // Attack damage
+      expect(screen.getByText("1")).toBeInTheDocument(); // Level
 
       // Check that hero stats are displayed
       const statsSection = document.querySelector(".AdventurePage__stats");
       expect(statsSection).toBeInTheDocument();
+
+      // Check for stats resources section
+      const statsResources = document.querySelector(
+        ".AdventurePage__stats-resources"
+      );
+      expect(statsResources).toBeInTheDocument();
     });
 
     it("should render hero and enemy characters with health bars and names", () => {
@@ -185,12 +190,18 @@ describe("AdventurePage", () => {
       // Check for hero avatar and info
       expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
       expect(screen.getByText("Hero")).toBeInTheDocument();
-      expect(screen.getByText("HP: 120 / 120")).toBeInTheDocument();
+      expect(screen.getByText(/120/)).toBeInTheDocument(); // Hero health (split text)
 
       // Check for enemy image and info
       expect(screen.getByAltText("Idle Enemy")).toBeInTheDocument();
       expect(screen.getByText("Night Borne")).toBeInTheDocument();
-      expect(screen.getByText("HP: 100 / 100")).toBeInTheDocument();
+
+      // Check for enemy health - use class selector to be specific
+      const enemyHealthElements = document.querySelectorAll(
+        ".AdventurePage__healthText"
+      );
+      expect(enemyHealthElements).toHaveLength(2); // Hero and enemy
+      expect(enemyHealthElements[1]).toHaveTextContent("100 / 100"); // Enemy health
 
       // Check for health bars (by class name since they don't have specific roles)
       const healthBars = document.querySelectorAll(".AdventurePage__healthBar");
@@ -263,16 +274,15 @@ describe("AdventurePage", () => {
     it("should display hero stats with icons", () => {
       renderAdventurePage();
 
-      // Check for Material-UI icons
-      expect(
-        document.querySelector('[data-testid="FavoriteIcon"]')
-      ).toBeInTheDocument();
-      expect(
-        document.querySelector('[data-testid="WhatshotIcon"]')
-      ).toBeInTheDocument();
-      expect(
-        document.querySelector('[data-testid="StarBorderPurple500Icon"]')
-      ).toBeInTheDocument();
+      // Check that attack damage and level are displayed
+      expect(screen.getByText("25")).toBeInTheDocument(); // Attack damage
+      expect(screen.getByText("1")).toBeInTheDocument(); // Level
+
+      // Check for stats structure
+      const statsSection = document.querySelector(
+        ".AdventurePage__stats-resources"
+      );
+      expect(statsSection).toBeInTheDocument();
     });
   });
 
@@ -1004,7 +1014,7 @@ describe("AdventurePage", () => {
       expect(statsResources).toBeInTheDocument();
 
       // The level should be visible in the stats
-      expect(screen.getByTestId("StarBorderPurple500Icon")).toBeInTheDocument();
+      expect(screen.getByText("1")).toBeInTheDocument(); // Level display
     });
 
     it("should handle enemy defeat and experience gain", () => {
@@ -1022,8 +1032,11 @@ describe("AdventurePage", () => {
     it("should reset enemy health when defeated", () => {
       renderAdventurePage();
 
-      // Check initial enemy health display
-      expect(screen.getByText("HP: 100 / 100")).toBeInTheDocument();
+      // Check initial enemy health display by targeting the specific health element
+      const enemyHealthElements = document.querySelectorAll(
+        ".AdventurePage__healthText"
+      );
+      expect(enemyHealthElements[1]).toHaveTextContent("100 / 100");
 
       // The enemy reset logic is tested through the health bar display
       const healthFills = document.querySelectorAll(

@@ -216,10 +216,6 @@ export const avatarUploadSchema = z.object({
     size: z.number().max(10 * 1024 * 1024, "Image size cannot exceed 10MB"), // 10MB limit
     originalFilename: z.string().optional(),
 });
-// User image update schema for form validation
-export const userImageUpdateSchema = z.object({
-    image: avatarUploadSchema,
-});
 /**
  * Common validation helpers
  */

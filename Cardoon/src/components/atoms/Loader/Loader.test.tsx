@@ -32,8 +32,8 @@ describe("Loader", () => {
       const { container } = render(<Loader className="custom-class" />);
       const loader = getLoaderElement(container);
 
-      expect(loader).toHaveClass("Loader", "custom-class");
-      expect(loader.className).toBe("Loader custom-class");
+      expect(loader).toHaveClass("Loader", "custom-class", "Loader--medium");
+      expect(loader.className).toBe("Loader custom-class Loader--medium");
     });
 
     it("should handle multiple classes", () => {
@@ -44,15 +44,21 @@ describe("Loader", () => {
     });
 
     it("should handle edge cases gracefully", () => {
-      // Empty string
+      // Empty string - normalize spaces
       const { container: container1 } = render(<Loader className="" />);
-      expect(getLoaderElement(container1).className.trim()).toBe("Loader");
+      const className1 = getLoaderElement(container1)
+        .className.replace(/\s+/g, " ")
+        .trim();
+      expect(className1).toBe("Loader Loader--medium");
 
       // Undefined
       const { container: container2 } = render(
         <Loader className={undefined} />
       );
-      expect(getLoaderElement(container2).className.trim()).toBe("Loader");
+      const className2 = getLoaderElement(container2)
+        .className.replace(/\s+/g, " ")
+        .trim();
+      expect(className2).toBe("Loader Loader--medium");
 
       // Special characters and spaces
       const { container: container3 } = render(

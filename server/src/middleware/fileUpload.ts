@@ -1,8 +1,16 @@
 import { NextFunction, Request, Response } from "express";
-import { IncomingForm } from "formidable";
+import formidable, { IncomingForm } from "formidable";
 import { ZodError, ZodSchema } from "zod";
 import { createErrorResponse } from "./simpleValidation.js";
-
+declare global {
+  namespace Express {
+    interface Request {
+      validatedFile?: unknown;
+      uploadedFile?: formidable.File;
+      formFields?: formidable.Fields;
+    }
+  }
+}
 /**
  * Middleware for handling file uploads with validation
  */
@@ -37,9 +45,9 @@ export function validateImageUpload<T>(schema: ZodSchema<T>) {
         });
 
         // Attach validated data and file to request
-        (req as any).validatedFile = validatedFile;
-        (req as any).uploadedFile = image;
-        (req as any).formFields = fields;
+        req.validatedFile = validatedFile;
+        req.uploadedFile = image;
+        req.formFields = fields;
 
         next();
       } catch (validationError) {

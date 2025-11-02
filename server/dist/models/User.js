@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-import DailyGoal from "./DailyGoal.js";
-import UserCard from "./UserCard.js";
+import DailyGoal from "./DailyGoal";
+import UserCard from "./UserCard";
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -204,7 +204,6 @@ UserSchema.methods.attachCard = async function (cardId) {
         nextReview: now.getTime() + 5 * 1000,
     });
     await userCard.save();
-    console.log("Attached card to user:", userCard);
     return userCard;
 };
 UserSchema.methods.getCards = async function () {

@@ -73,9 +73,7 @@ export default function UserHeader() {
         />
         {avatarPreview && (
           <div className="avatar-preview-actions">
-            <Button variant="primary" onClick={saveImage}>
-              Sauvegarder
-            </Button>
+            <Button onClick={saveImage}>Sauvegarder</Button>
             <Button
               variant="secondary"
               onClick={() => {

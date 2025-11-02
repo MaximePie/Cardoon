@@ -1,6 +1,6 @@
 import mongoose, { Document, Model, ObjectId } from "mongoose";
-import User, { IUser } from "./User.js";
-import UserCard from "./UserCard.js";
+import User, { IUser } from "./User";
+import UserCard from "./UserCard";
 
 /**
  * Interface for the Card document
@@ -95,7 +95,6 @@ CardSchema.methods.invert = async function (): Promise<ICard> {
     const userCard = await UserCard.findOne({ card: this._id });
     if (userCard) {
       const user = await User.findById(userCard.user);
-      console.log("Found user by searching UserCards:", user);
       if (user) {
         owner = user;
       }

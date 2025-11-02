@@ -1,7 +1,8 @@
+import { Request, Response } from "express";
 import { ObjectId } from "mongoose";
-import Card from "../models/Card.js";
-import User from "../models/User.js";
-import UserCard from "../models/UserCard.js";
+import Card from "../models/Card";
+import User from "../models/User";
+import UserCard from "../models/UserCard";
 
 /**
  * Remove all cards from the database and seed it with new cards
@@ -13,7 +14,6 @@ import UserCard from "../models/UserCard.js";
  * "Get Married" => "Tie the knot"
  * "Lazy" => "Couch-potato"
  */
-import { Request, Response } from "express";
 
 export const clearDBAndSeed = async (req: Request, res: Response) => {
   await Card.deleteMany({});

@@ -35,11 +35,6 @@ export const useUserCards = (): UserCardHookReturnType => {
           return 0;
         })
       );
-      // console.log(
-      //   data
-      //     .filter(({ card }) => !card.imageLink && !!card.category)
-      //     .map(({ card }) => `${card.question};${card.answer};${card.category}`)
-      // );
     }
   }, [data]);
 

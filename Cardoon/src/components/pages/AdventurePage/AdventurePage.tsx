@@ -1,4 +1,3 @@
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { motion } from "motion/react";
@@ -12,7 +11,7 @@ import { PopulatedUserCard } from "../../../types/common";
 import ExpBar from "../../atoms/ExpBar/ExpBar";
 import Card from "../../molecules/Card/Card";
 import useAdventure from "./useAdventure";
-
+const isDev = import.meta.env.DEV;
 const AdventurePage = () => {
   const { cardsInHand, hero, heroState, enemyState, currentEnemy, removeCard } =
     useAdventure();
@@ -22,10 +21,6 @@ const AdventurePage = () => {
       <div className="AdventurePage__profile">
         <div className="AdventurePage__stats">
           <div className="AdventurePage__stats-resources">
-            <span>
-              <FavoriteIcon color="error" fontSize="small" />{" "}
-              {hero.currentHealth} / {hero.maxHealth}
-            </span>
             <span>
               <WhatshotIcon color="error" fontSize="small" />{" "}
               {hero.attackDamage}
@@ -67,14 +62,16 @@ const AdventurePage = () => {
               alt="Hero Avatar"
               className="AdventurePage__characterImage"
             />
-            <p>{hero.name}</p>
-            <p>
-              HP: {hero.currentHealth} / {hero.maxHealth}{" "}
+            <p className="AdventurePage__name">
+              {hero.name}
               <span className="AdventurePage__status">
-                {devMode && <img src={devMode} alt="Dev Mode" />}
+                {isDev && <img src={devMode} alt="Dev Mode" />}
               </span>
             </p>
             <div className="AdventurePage__healthBar">
+              <span className="AdventurePage__healthText">
+                {hero.currentHealth} / {hero.maxHealth}
+              </span>
               <div
                 className="AdventurePage__healthBar__fill"
                 style={{
@@ -89,11 +86,11 @@ const AdventurePage = () => {
               alt="Idle Enemy"
               className="AdventurePage__characterImage"
             />
-            <p>{currentEnemy.name}</p>
-            <p>
-              HP: {currentEnemy.currentHealth} / {currentEnemy.maxHealth}
-            </p>
+            <p className="AdventurePage__name">{currentEnemy.name}</p>
             <div className="AdventurePage__healthBar">
+              <span className="AdventurePage__healthText">
+                {currentEnemy.currentHealth} / {currentEnemy.maxHealth}
+              </span>
               <div
                 className="AdventurePage__healthBar__fill"
                 style={{

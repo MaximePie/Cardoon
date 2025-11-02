@@ -72,6 +72,15 @@ This is a MERN stack
   - 🎯 Centralized query management with standardized keys
   - 📚 Full documentation in `docs/TANSTACK_QUERY_IMPLEMENTATION.md`
 
+### 30/10/2025
+
+- Added a sweet beep after pre-commit and pre-push hooks
+
+## 02/11/2025
+
+- Added first tests on backend
+- Restructured User controller that was complex, more are to come.
+
 ## TODOS
 
 - Add tests on back
@@ -81,3 +90,4 @@ This is a MERN stack
 - Yup, React hook forms
 - Extend TanStack Query to card creation and editing
 - Add storybook
+- Add router boundaries for unlogged users

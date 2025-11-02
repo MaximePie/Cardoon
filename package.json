@@ -4,12 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install-server": "cd server && yarn",
+    "install-server": "cd server && yarn install",
     "start-server-with-build": "cd server && yarn build && yarn start",
     "start-server": "cd server && yarn start",
+    "build-server": "cd server && yarn build",
     "install-client": "cd Cardoon && yarn",
     "build-client": "cd Cardoon && yarn build",
-    "start-client": "cd Cardoon && yarn start"
+    "start-client": "cd Cardoon && yarn start",
+    "test:frontend": "cd Cardoon && yarn test --run",
+    "test:coverage": "cd Cardoon && yarn test --run --coverage",
+    "test:coverage:open": "cd Cardoon && yarn test --run --coverage && echo '🔍 Opening coverage reports...' && (cd Cardoon && yarn serve coverage)",
+    "pre-commit": ".husky/pre-commit",
+    "pre-push": ".husky/pre-push"
   },
   "keywords": [],
   "author": "",

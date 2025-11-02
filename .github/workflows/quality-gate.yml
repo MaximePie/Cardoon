@@ -5,8 +5,8 @@ on:
     branches: [main, dev]
 
 jobs:
-  quality-gate:
-    name: 🎯 All Quality Checks
+  quality-gate-frontend:
+    name: 🎯 Frontend Quality Checks
     runs-on: ubuntu-latest
 
     defaults:
@@ -39,10 +39,22 @@ jobs:
       - name: 🏗️ Build check
         run: yarn build
 
-      - name: ✅ Quality Gate Summary
+      - name: ✅ Frontend Quality Summary
         run: |
-          echo "🎉 All quality checks passed!"
+          echo "🎉 Frontend quality checks passed!"
           echo "✅ ESLint: No linting errors"
           echo "✅ TypeScript: Type checking passed" 
-          echo "✅ Tests: All tests passing"
-          echo "✅ Build: Application builds successfully"
+          echo "✅ Tests: All frontend tests passing"
+          echo "✅ Build: Frontend builds successfully"
+
+  quality-gate-summary:
+    name: 🎯 Overall Quality Gate
+    runs-on: ubuntu-latest
+    needs: [quality-gate-frontend]
+
+    steps:
+      - name: ✅ Overall Quality Gate Summary
+        run: |
+          echo "🎉 ALL QUALITY CHECKS PASSED!"
+          echo "✅ Frontend: Linting + Type checking + Tests + Build"
+          echo "🚀 Ready for merge!"

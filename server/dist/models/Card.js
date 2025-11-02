@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import User from "./User.js";
-import UserCard from "./UserCard.js";
+import User from "./User";
+import UserCard from "./UserCard";
 const CardSchema = new mongoose.Schema({
     question: {
         type: String,
@@ -58,7 +58,6 @@ CardSchema.methods.invert = async function () {
         const userCard = await UserCard.findOne({ card: this._id });
         if (userCard) {
             const user = await User.findById(userCard.user);
-            console.log("Found user by searching UserCards:", user);
             if (user) {
                 owner = user;
             }

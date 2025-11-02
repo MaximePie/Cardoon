@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { NotFoundError, ValidationError } from "../errors/index.js";
-import { UserService } from "../services/UserService.js";
+import { NotFoundError, ValidationError } from "../errors/index";
+import { UserService } from "./userService";
 
 // Mock les dépendances externes
-vi.mock("../models/User.js", () => ({
+vi.mock("../models/User", () => ({
   default: {
     getUserByEmail: vi.fn(),
     getUserByUsername: vi.fn(),
@@ -53,7 +53,7 @@ describe("UserService", () => {
     });
 
     it("should throw error when JWT_SECRET is not configured", async () => {
-      const User = await import("../models/User.js");
+      const User = await import("../models/User");
       const bcrypt = await import("bcrypt");
 
       // Mock un utilisateur valide et un mot de passe correct
@@ -80,7 +80,7 @@ describe("UserService", () => {
 
   describe("getUserProfile", () => {
     it("should throw NotFoundError when user does not exist", async () => {
-      const User = await import("../models/User.js");
+      const User = await import("../models/User");
       vi.mocked(User.default.findById).mockResolvedValue(null);
 
       await expect(
@@ -95,7 +95,7 @@ describe("UserService", () => {
 
   describe("createUser", () => {
     it("should throw ValidationError when user already exists with email", async () => {
-      const User = await import("../models/User.js");
+      const User = await import("../models/User");
       vi.mocked(User.default.getUserByEmail).mockResolvedValue({
         id: "existing-user",
       } as any);
@@ -118,7 +118,7 @@ describe("UserService", () => {
     });
 
     it("should throw ValidationError when username is already taken", async () => {
-      const User = await import("../models/User.js");
+      const User = await import("../models/User");
       vi.mocked(User.default.getUserByEmail).mockResolvedValue(null);
       vi.mocked(User.default.getUserByUsername).mockResolvedValue({
         id: "existing-user",

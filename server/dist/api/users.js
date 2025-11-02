@@ -3,7 +3,7 @@ import authMiddleware from "../middleware/auth.js";
 import { asyncHandler } from "../middleware/errorHandler.js";
 import { validateImageUpload } from "../middleware/fileUpload.js";
 import { createSuccessResponse, validateBody, } from "../middleware/simpleValidation.js";
-import { UserService } from "../services/UserService.js";
+import { UserService } from "../services/userService.js";
 import { avatarUploadSchema, dailyGoalSchema, itemPurchaseSchema, itemUpgradeSchema, userLoginSchema, userRegistrationSchema, } from "../validation/schemas.js";
 const router = express.Router();
 // Get current user with validation

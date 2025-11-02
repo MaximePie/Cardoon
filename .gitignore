@@ -11,6 +11,7 @@ Cardoon/node_modules
 Cardoon/dist
 Cardoon/dist-ssr
 server/node_modules
+server/dist
 server/config/config.js
 *.local
 server/.env

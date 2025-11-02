@@ -1,12 +1,12 @@
 import express, { Response } from "express";
-import authMiddleware from "../middleware/auth";
-import { asyncHandler } from "../middleware/errorHandler";
-import { validateImageUpload } from "../middleware/fileUpload";
+import authMiddleware from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
+import { validateImageUpload } from "../middleware/fileUpload.js";
 import {
   createSuccessResponse,
   validateBody,
-} from "../middleware/simpleValidation";
-import { UserService } from "../services/UserService";
+} from "../middleware/simpleValidation.js";
+import { UserService } from "../services/UserService.js";
 import {
   AuthenticatedRequest,
   DailyGoalRequest,
@@ -14,7 +14,7 @@ import {
   UploadedFile,
   UserLoginRequest,
   UserRegistrationRequest,
-} from "../types/requests";
+} from "../types/requests.js";
 import {
   avatarUploadSchema,
   dailyGoalSchema,
@@ -22,7 +22,7 @@ import {
   itemUpgradeSchema,
   userLoginSchema,
   userRegistrationSchema,
-} from "../validation/schemas";
+} from "../validation/schemas.js";
 const router = express.Router();
 
 // Get current user with validation

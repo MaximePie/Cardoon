@@ -10,7 +10,10 @@
     "dev": "nodemon -x npx tsx ./src/app.ts",
     "dev:clean": "node ../scripts/kill-port.js 3000 && npm run dev",
     "kill-port": "node ../scripts/kill-port.js 3000",
-    "security-test": "node scripts/security-test.js"
+    "security-test": "node scripts/security-test.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -43,9 +46,12 @@
     "@types/formidable": "^3.4.5",
     "@types/helmet": "^4.0.0",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^24.9.2",
+    "@vitest/coverage-v8": "^4.0.6",
     "cross-env": "^10.1.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
-    "tsx": "^4.19.3"
+    "tsx": "^4.19.3",
+    "vitest": "^4.0.6"
   }
 }

@@ -23,7 +23,17 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# 4. Frontend tests with coverage
+# 4. Backend tests with coverage
+cd ../server
+echo "🧪 Running backend tests with coverage..."
+yarn test:coverage
+if [ $? -ne 0 ]; then
+  echo "❌ Backend tests failed!"
+  exit 1
+fi
+
+# 5. Frontend tests with coverage
+cd ../Cardoon
 echo "🧪 Running frontend tests with coverage..."
 yarn test --run --coverage
 if [ $? -ne 0 ]; then
@@ -31,7 +41,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# 5. Build check
+# 6. Build check
 echo "🏗️  Checking if build works..."
 yarn build
 if [ $? -ne 0 ]; then

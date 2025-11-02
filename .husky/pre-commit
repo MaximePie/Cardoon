@@ -22,7 +22,17 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# 5. Run frontend tests
+# 5. Run backend tests
+cd ../server
+echo "🧪 Running backend tests..."
+yarn test
+if [ $? -ne 0 ]; then
+  echo "❌ Backend tests failed!"
+  exit 1
+fi
+
+# 6. Run frontend tests
+cd ../Cardoon
 echo "🧪 Running frontend tests..."
 yarn test:run
 if [ $? -ne 0 ]; then

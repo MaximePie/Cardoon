@@ -26,7 +26,6 @@ export class UserService {
   }
 
   private static JWT_CONFIG = {
-    SECRET: this.getJwtSecret(),
     DEFAULT_EXPIRY: "1d",
     SHORT_EXPIRY: "15m",
   } as const;
@@ -35,11 +34,6 @@ export class UserService {
     credentials: LoginCredentials
   ): Promise<AuthResult> {
     const { email, username, password, rememberMe } = credentials;
-    const jwtSecret = process.env.JWT_SECRET;
-
-    if (!jwtSecret) {
-      throw new AppError("JWT_SECRET is not configured", 500);
-    }
 
     if ((!email && !username) || !password) {
       throw new ValidationError("Email/Username and password are required");
@@ -60,7 +54,7 @@ export class UserService {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ id: user.id }, jwtSecret, {
+    const token = jwt.sign({ id: user.id }, this.getJwtSecret(), {
       expiresIn: rememberMe
         ? this.JWT_CONFIG.DEFAULT_EXPIRY
         : this.JWT_CONFIG.SHORT_EXPIRY,

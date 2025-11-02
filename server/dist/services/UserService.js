@@ -1,4 +1,3 @@
-var _a;
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AppError, NotFoundError, ValidationError } from "../errors/index.js";
@@ -14,10 +13,6 @@ export class UserService {
     }
     static async authenticate(credentials) {
         const { email, username, password, rememberMe } = credentials;
-        const jwtSecret = process.env.JWT_SECRET;
-        if (!jwtSecret) {
-            throw new AppError("JWT_SECRET is not configured", 500);
-        }
         if ((!email && !username) || !password) {
             throw new ValidationError("Email/Username and password are required");
         }
@@ -33,13 +28,15 @@ export class UserService {
             throw new ValidationError("Invalid credentials");
         }
         // Generate JWT token
-        const token = jwt.sign({ id: user.id }, jwtSecret, {
+        const token = jwt.sign({ id: user.id }, this.getJwtSecret(), {
             expiresIn: rememberMe
                 ? this.JWT_CONFIG.DEFAULT_EXPIRY
                 : this.JWT_CONFIG.SHORT_EXPIRY,
         });
         await user.populate(["items.base", "currentDailyGoal"]);
-        return { token, user };
+        const safeUser = { ...user.toObject() };
+        delete safeUser.password;
+        return { token, user: safeUser };
     }
     static async getUserProfile(userId) {
         const user = await User.findById(userId);
@@ -116,9 +113,7 @@ export class UserService {
         return upgradedItem;
     }
 }
-_a = UserService;
 UserService.JWT_CONFIG = {
-    SECRET: _a.getJwtSecret(),
     DEFAULT_EXPIRY: "1d",
     SHORT_EXPIRY: "15m",
 };

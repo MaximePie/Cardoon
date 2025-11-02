@@ -47,14 +47,49 @@ jobs:
           echo "✅ Tests: All frontend tests passing"
           echo "✅ Build: Frontend builds successfully"
 
+  quality-gate-backend:
+    name: 🎯 Backend Quality Checks
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./server
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v5
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: "yarn"
+          cache-dependency-path: "server/yarn.lock"
+
+      - name: 📦 Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: 📝 TypeScript check
+        run: yarn build
+
+      - name: 🧪 Run tests
+        run: yarn test
+
+      - name: ✅ Backend Quality Summary
+        run: |
+          echo "🎉 Backend quality checks passed!"
+          echo "✅ TypeScript: Compilation successful"
+          echo "✅ Tests: All backend tests passing"
+
   quality-gate-summary:
     name: 🎯 Overall Quality Gate
     runs-on: ubuntu-latest
-    needs: [quality-gate-frontend]
+    needs: [quality-gate-frontend, quality-gate-backend]
 
     steps:
       - name: ✅ Overall Quality Gate Summary
         run: |
           echo "🎉 ALL QUALITY CHECKS PASSED!"
           echo "✅ Frontend: Linting + Type checking + Tests + Build"
+          echo "✅ Backend: Type checking + Tests"
           echo "🚀 Ready for merge!"

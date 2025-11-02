@@ -31,6 +31,8 @@ jobs:
 
       - name: 🧪 Run backend unit tests with coverage
         run: yarn test:coverage:report
+        env:
+          TSX_TSCONFIG_PATH: "./tsconfig.json"
 
       - name: 📊 Upload backend coverage reports
         uses: codecov/codecov-action@v4
@@ -50,12 +52,12 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "yarn"
           cache-dependency-path: "Cardoon/yarn.lock"
 
@@ -65,8 +67,8 @@ jobs:
       - name: 🧪 Run frontend tests with coverage
         run: yarn test --run --coverage
 
-      - name: 📊 Upload frontend coverage reports
-        uses: codecov/codecov-action@v4
+      - name: 📊 Upload coverage reports
+        uses: codecov/codecov-action@v5
         with:
           directory: ./Cardoon/coverage
           flags: frontend-unittests
@@ -108,12 +110,12 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "yarn"
           cache-dependency-path: "Cardoon/yarn.lock"
 
@@ -133,12 +135,12 @@ jobs:
 
     steps:
       - name: 📥 Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           cache: "yarn"
           cache-dependency-path: "server/yarn.lock"
 

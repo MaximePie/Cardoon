@@ -1,31 +1,22 @@
 import bcrypt from "bcrypt";
 import express from "express";
+import fs from "fs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
 import { validateImageUpload } from "../middleware/fileUpload.js";
 import { createErrorResponse, createSuccessResponse, validateBody, } from "../middleware/simpleValidation.js";
 import User from "../models/User.js";
+import { UserService } from "../services/userService.js";
 import { uploadImage } from "../utils/imagesManager.js";
 import { avatarUploadSchema, dailyGoalSchema, itemPurchaseSchema, itemUpgradeSchema, userLoginSchema, userRegistrationSchema, } from "../validation/schemas.js";
 const router = express.Router();
 // Get current user with validation
-router.get("/me", authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            res.status(404).json(createErrorResponse("User not found"));
-            return;
-        }
-        await user.createDailyGoal(user.dailyGoal, new Date());
-        await user.populate("items.base");
-        await user.populate("currentDailyGoal");
-        res.json(user);
-    }
-    catch (error) {
-        console.error("Get user error:", error);
-        res.status(500).json(createErrorResponse("Failed to retrieve user"));
-    }
-});
+// Get current user
+router.get("/me", authMiddleware, asyncHandler(async (req, res) => {
+    const user = await UserService.getUserProfile(req.user.id);
+    res.json(user);
+}));
 // Login with Zod validation
 router.post("/login", validateBody(userLoginSchema), async (req, res) => {
     try {
@@ -50,9 +41,15 @@ router.post("/login", validateBody(userLoginSchema), async (req, res) => {
             res.status(401).json(createErrorResponse("Invalid credentials"));
             return;
         }
+        const JWT_CONFIG = {
+            DEFAULT_EXPIRY: "30d",
+            SHORT_EXPIRY: "1d",
+        };
         // Generate JWT token
         const token = jwt.sign({ id: user.id }, jwtSecret, {
-            expiresIn: rememberMe ? "90d" : "1d",
+            expiresIn: rememberMe
+                ? JWT_CONFIG.DEFAULT_EXPIRY
+                : JWT_CONFIG.SHORT_EXPIRY,
         });
         await user.populate("items.base");
         await user.populate("currentDailyGoal");
@@ -63,9 +60,14 @@ router.post("/login", validateBody(userLoginSchema), async (req, res) => {
     }
     catch (error) {
         console.error("Login error:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred during login"));
+        const errorMessage = error instanceof Error
+            ? error.message
+            : "An error occurred during login";
+        if (error instanceof Error && error.name === "NotFoundError") {
+            res.status(404).json(createErrorResponse(errorMessage));
+            return;
+        }
+        res.status(500).json(createErrorResponse(errorMessage));
     }
 });
 // Register with Zod validation
@@ -94,9 +96,14 @@ router.post("/register", validateBody(userRegistrationSchema), async (req, res) 
     }
     catch (error) {
         console.error("Registration error:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred during registration"));
+        const errorMessage = error instanceof Error
+            ? error.message
+            : "An error occurred during registration";
+        if (error instanceof Error && error.name === "NotFoundError") {
+            res.status(404).json(createErrorResponse(errorMessage));
+            return;
+        }
+        res.status(500).json(createErrorResponse(errorMessage));
     }
 });
 // Update daily goal with validation
@@ -117,9 +124,14 @@ router.put("/daily-goal", authMiddleware, validateBody(dailyGoalSchema), async (
     }
     catch (error) {
         console.error("Error updating daily goal:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred while updating the daily goal"));
+        const errorMessage = error instanceof Error
+            ? error.message
+            : "An error occurred while updating the daily goal";
+        if (error instanceof Error && error.name === "NotFoundError") {
+            res.status(404).json(createErrorResponse(errorMessage));
+            return;
+        }
+        res.status(500).json(createErrorResponse(errorMessage));
     }
 });
 // Update user image with Zod validation
@@ -155,7 +167,6 @@ router.put("/me/image", authMiddleware, validateImageUpload(avatarUploadSchema),
         }
         finally {
             // Clean up temp file
-            const fs = await import("fs");
             fs.unlink(tempPath, (err) => {
                 if (err) {
                     console.error("Error deleting temp file:", err);
@@ -165,9 +176,14 @@ router.put("/me/image", authMiddleware, validateImageUpload(avatarUploadSchema),
     }
     catch (error) {
         console.error("Error updating image:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred while updating the image"));
+        const errorMessage = error instanceof Error
+            ? error.message
+            : "An error occurred while updating the image";
+        if (error instanceof Error && error.name === "NotFoundError") {
+            res.status(404).json(createErrorResponse(errorMessage));
+            return;
+        }
+        res.status(500).json(createErrorResponse(errorMessage));
     }
 });
 // Buy item with validation
@@ -192,6 +208,15 @@ router.post("/buyItem", authMiddleware, validateBody(itemPurchaseSchema), async 
         const errorMessage = error instanceof Error
             ? error.message
             : "An error occurred while processing the purchase";
+        // Avoid referencing potentially undefined global classes; check error.name instead
+        if (error instanceof Error && error.name === "ValidationError") {
+            res.status(400).json(createErrorResponse(errorMessage));
+            return;
+        }
+        if (error instanceof Error && error.name === "NotFoundError") {
+            res.status(404).json(createErrorResponse(errorMessage));
+            return;
+        }
         res.status(500).json(createErrorResponse(errorMessage));
     }
 });
@@ -215,6 +240,10 @@ router.post("/removeItem", authMiddleware, validateBody(itemPurchaseSchema), asy
         const errorMessage = error instanceof Error
             ? error.message
             : "An error occurred while removing the item";
+        if (error instanceof Error && error.name === "NotFoundError") {
+            res.status(404).json(createErrorResponse(errorMessage));
+            return;
+        }
         res.status(500).json(createErrorResponse(errorMessage));
     }
 });
@@ -238,6 +267,10 @@ router.post("/upgradeItem", authMiddleware, validateBody(itemUpgradeSchema), asy
         const errorMessage = error instanceof Error
             ? error.message
             : "An error occurred while upgrading the item";
+        if (error instanceof Error && error.name === "NotFoundError") {
+            res.status(404).json(createErrorResponse(errorMessage));
+            return;
+        }
         res.status(500).json(createErrorResponse(errorMessage));
     }
 });

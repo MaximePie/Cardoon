@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
-import express, { NextFunction, Request, Response } from "express";
+import express, { Response } from "express";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import authMiddleware from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
 import { validateImageUpload } from "../middleware/fileUpload.js";
 import {
   createErrorResponse,
@@ -10,6 +11,8 @@ import {
   validateBody,
 } from "../middleware/simpleValidation.js";
 import User from "../models/User.js";
+import { UserService } from "../services/userService.js";
+import { AuthenticatedRequest } from "../types/requests.js";
 import { uploadImage } from "../utils/imagesManager.js";
 import {
   avatarUploadSchema,
@@ -20,51 +23,6 @@ import {
   userRegistrationSchema,
 } from "../validation/schemas.js";
 const router = express.Router();
-
-interface AuthenticatedRequest extends express.Request {
-  user: {
-    id: string;
-  };
-  validatedBody?: any;
-  validatedParams?: any;
-  uploadedFile?: any;
-}
-class AppError extends Error {
-  public readonly statusCode: number;
-  public readonly isOperational: boolean;
-
-  constructor(message: string, statusCode: number, isOperational = true) {
-    super(message);
-    this.statusCode = statusCode;
-    this.isOperational = isOperational;
-
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-class NotFoundError extends AppError {
-  constructor(message: string) {
-    super(message, 404);
-  }
-}
-class UserService {
-  static async getUserProfile(userId: string) {
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new NotFoundError("User not found");
-    }
-
-    await user.createDailyGoal(user.dailyGoal, new Date());
-    await user.populate(["items.base", "currentDailyGoal"]);
-
-    return user;
-  }
-}
-
-const asyncHandler = (fn: Function) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
 
 // Get current user with validation
 // Get current user

@@ -6,7 +6,7 @@ import {
   createSuccessResponse,
   validateBody,
 } from "../middleware/simpleValidation.js";
-import { UserService } from "../services/UserService.js";
+import { UserService } from "../services/userService";
 import {
   AuthenticatedRequest,
   DailyGoalRequest,

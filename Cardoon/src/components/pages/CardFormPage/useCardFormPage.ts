@@ -2,22 +2,17 @@ import { useContext, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
-import { FetchedCategory, MistralResponse } from "./CardFormPage";
+import { FetchedCategory } from "./CardFormPage";
 
 interface hookReturnType {
-  isGenerationLoading: boolean;
   isModalOpen: boolean;
   categoriesWithCount: string[];
   newCard: Partial<Card>;
   isCreating: boolean;
   createError: string | undefined;
   setNewCard: React.Dispatch<React.SetStateAction<Partial<Card>>>;
-  subQuestions: { question: string; answer: string }[] | null;
-  subcategory: string;
-  setSubcategory: React.Dispatch<React.SetStateAction<string>>;
   openModal: () => void;
   closeModal: () => void;
-  generateQuestions: (e: React.MouseEvent<HTMLButtonElement>) => void;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -32,9 +27,6 @@ export default function useCardFormPage(): hookReturnType {
     error: createError,
     loading: isCreating,
   } = usePost(RESOURCES.CARDS);
-  const { asyncPost: postMistral } = usePost<MistralResponse>(
-    RESOURCES.MISTRAL
-  );
 
   const { data: categoriesData } = useFetch<FetchedCategory[]>(
     RESOURCES.CATEGORIES
@@ -54,22 +46,13 @@ export default function useCardFormPage(): hookReturnType {
     expectedAnswers: ["", "", ""],
   });
 
-  // Only used for generated questions, it's not supposed to become a category
-  const [subcategory, setSubcategory] = useState("");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [image, setImage] = useState<File | null>(null);
   const [shouldResetPaster, setShouldResetPaster] = useState(false);
-  const [subQuestions, setSubQuestions] = useState<
-    { question: string; answer: string }[] | null
-  >(null);
-  const [isGenerationLoading, setIsLoading] = useState(false);
-
   const closeModal = () => setIsModalOpen(false);
 
   const openModal = () => {
-    setSubQuestions(null);
     setIsModalOpen(true);
   };
 
@@ -131,50 +114,13 @@ export default function useCardFormPage(): hookReturnType {
     openSnackbarWithMessage("La carte a été ajoutée");
   };
 
-  const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const response = await postMistral({
-      category: newCard.category,
-      subcategory,
-      promptType: "generatedQuestions",
-    });
-
-    if (!response) {
-      openSnackbarWithMessage(
-        "Erreur lors de la génération des questions",
-        "error"
-      );
-      setIsLoading(false);
-      return;
-    }
-
-    /**
-     * Response looks like this :
-     * "```json\n[\n  { \"question\": \"Quel est le nom italien pour 'cochon'?\", \"answer\": \"Maiale\" },\n  { \"question\": \"Quel est le nom italien pour 'vache'?\", \"answer\": \"Mucca\" },\n  { \"question\": \"Quel est le nom italien pour 'cheval'?\", \"answer\": \"Cavallo\" },\n  { \"question\": \"Quel est le nom italien pour 'poule'?\", \"answer\": \"Gallina\" },\n  { \"question\": \"Quel est le nom italien pour 'mouton'?\", \"answer\": \"Pecora\" },\n  { \"question\": \"Quel est le nom italien pour 'canard'?\", \"answer\": \"Anatra\" },\n  { \"question\": \"Quel est le nom italien pour 'chèvre'?\", \"answer\": \"Capra\" },\n  { \"question\": \"Quel est le nom italien pour 'oie'?\", \"answer\": \"Oca\" },\n  { \"question\": \"Quel est le nom italien pour 'âne'?\", \"answer\": \"Asino\" },\n  { \"question\": \"Quel est le nom italien pour 'lapin'?\", \"answer\": \"Coniglio\" },\n  { \"question\": \"Quel est le nom italien pour 'coq'?\", \"answer\": \"Gallo\" },\n  { \"question\": \"Quel est le nom italien pour 'taureau'?\", \"answer\": \"Toro\" },\n  { \"question\": \"Quel est le nom italien pour 'poulet'?\", \"answer\": \"Pollo\" },\n  { \"question\": \"Quel est le nom italien pour 'agneau'?\", \"answer\": \"Agnello\" },\n  { \"question\": \"Quel est le nom italien pour 'poussin'?\", \"answer\": \"Pulcino\" },\n  { \"question\": \"Quel est le nom italien pour 'veau'?\", \"answer\": \"Vitello\" },\n  { \"question\": \"Quel est le nom italien pour 'chevreau'?\", \"answer\": \"Capretto\" },\n  { \"question\": \"Quel est le nom italien pour 'jument'?\", \"answer\": \"Giumenta\" },\n  { \"question\": \"Quel est le nom italien pour 'poulain'?\", \"answer\": \"Puledro\" },\n  { \"question\": \"Quel est le nom italien pour 'brebis'?\", \"answer\": \"Pecora\" }\n]\n```"
-     */
-    const jsonResponse = response.content
-      .replace(/```json/, "")
-      .replace(/```/, "")
-      .trim();
-    const parsedResponse = JSON.parse(jsonResponse);
-    setSubQuestions(parsedResponse);
-    setSubcategory("");
-
-    setIsLoading(false);
-  };
   return {
-    isGenerationLoading,
     isModalOpen,
     categoriesWithCount,
     newCard,
     setNewCard,
-    subQuestions,
-    subcategory,
-    setSubcategory,
     openModal,
     closeModal,
-    generateQuestions,
     onFileChange,
     onSubmit,
     onChange,

@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { ICard } from "./Card";
+import { ICard } from "./Card.js";
 
 /**
  * A user card has the following properties:

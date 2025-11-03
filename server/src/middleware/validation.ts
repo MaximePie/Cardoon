@@ -84,8 +84,8 @@ export function validateRequest<T>(
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const validationErrors: ValidationErrorDetail[] = error.errors.map(
-          (err) => ({
+        const validationErrors: ValidationErrorDetail[] = error.issues.map(
+          (err: any) => ({
             field: err.path.join("."),
             message: err.message,
             code: err.code,
@@ -195,7 +195,7 @@ export const validation = {
             };
             const currentData = getCurrentData();
 
-            const targetErrors = error.errors.map((err) => ({
+            const targetErrors = error.issues.map((err: any) => ({
               field: `${target}.${err.path.join(".")}`,
               message: err.message,
               code: err.code,

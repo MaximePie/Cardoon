@@ -154,9 +154,7 @@ export const itemSchema = z.object({
   imageUrl: z.string().url("Invalid URL format").optional().or(z.literal("")),
   effect: z.object({
     type: z.enum(["gold", "experience", "streak"], {
-      errorMap: () => ({
-        message: "Effect type must be 'gold', 'experience', or 'streak'",
-      }),
+      message: "Effect type must be 'gold', 'experience', or 'streak'",
     }),
     value: z.number().min(0.1, "Effect value must be at least 0.1"),
   }),

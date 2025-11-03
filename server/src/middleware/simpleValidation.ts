@@ -15,7 +15,7 @@ export function validateBody<T>(schema: ZodSchema<T>) {
         res.status(400).json({
           success: false,
           message: "Validation failed",
-          errors: error.errors.map((err) => ({
+          errors: error.issues.map((err: any) => ({
             field: err.path.join("."),
             message: err.message,
             code: err.code,
@@ -42,7 +42,7 @@ export function validateParams<T>(schema: ZodSchema<T>) {
         res.status(400).json({
           success: false,
           message: "Invalid parameters",
-          errors: error.errors.map((err) => ({
+          errors: error.issues.map((err: any) => ({
             field: err.path.join("."),
             message: err.message,
             code: err.code,
@@ -69,7 +69,7 @@ export function validateQuery<T>(schema: ZodSchema<T>) {
         res.status(400).json({
           success: false,
           message: "Invalid query parameters",
-          errors: error.errors.map((err) => ({
+          errors: error.issues.map((err: any) => ({
             field: err.path.join("."),
             message: err.message,
             code: err.code,
@@ -140,7 +140,7 @@ export function validateFile<T>(
         res.status(400).json({
           success: false,
           message: "File validation failed",
-          errors: error.errors.map((err) => ({
+          errors: error.issues.map((err: any) => ({
             field: err.path.join("."),
             message: err.message,
             code: err.code,

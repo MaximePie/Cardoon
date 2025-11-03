@@ -2,11 +2,12 @@
   "name": "server",
   "version": "1.0.0",
   "main": "app.js",
-  "type": "module",
   "scripts": {
     "app": "nodemon app.js",
     "start": "node ./dist/app.js",
+    "start:prod": "yarn build && yarn start",
     "build": "tsc",
+    "postinstall": "yarn build",
     "dev": "nodemon -x npx tsx ./src/app.ts",
     "dev:clean": "node ../scripts/kill-port.js 3000 && npm run dev",
     "kill-port": "node ../scripts/kill-port.js 3000",

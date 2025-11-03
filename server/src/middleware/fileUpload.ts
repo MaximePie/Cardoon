@@ -55,7 +55,7 @@ export function validateImageUpload<T>(schema: ZodSchema<T>) {
           res.status(400).json({
             success: false,
             message: "File validation failed",
-            errors: validationError.errors.map((err) => ({
+            errors: validationError.issues.map((err: any) => ({
               field: err.path.join("."),
               message: err.message,
               code: err.code,

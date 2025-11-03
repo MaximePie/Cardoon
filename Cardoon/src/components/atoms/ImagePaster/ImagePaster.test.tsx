@@ -1,4 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
+import { act } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ImagePaster } from "./ImagePaster";
 
@@ -60,7 +61,9 @@ describe("ImagePaster", () => {
       const { container } = render(<ImagePaster onUpload={mockOnUpload} />);
       const paster = container.querySelector(".ImagePaster");
 
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
 
       // Wait for async operations
       await vi.waitFor(() => {
@@ -83,7 +86,9 @@ describe("ImagePaster", () => {
       const { container } = render(<ImagePaster onUpload={mockOnUpload} />);
       const paster = container.querySelector(".ImagePaster");
 
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
 
       await vi.waitFor(() => {
         const img = container.querySelector("img");
@@ -110,7 +115,9 @@ describe("ImagePaster", () => {
         const { container } = render(<ImagePaster onUpload={mockOnUpload} />);
         const paster = container.querySelector(".ImagePaster");
 
-        await fireEvent.paste(paster!);
+        await act(async () => {
+          await fireEvent.paste(paster!);
+        });
 
         await vi.waitFor(() => {
           expect(mockOnUpload).toHaveBeenCalledTimes(1);
@@ -191,7 +198,9 @@ describe("ImagePaster", () => {
       );
       const paster = container.querySelector(".ImagePaster");
 
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
 
       // Wait for image to appear
       await vi.waitFor(() => {
@@ -199,7 +208,9 @@ describe("ImagePaster", () => {
       });
 
       // Now trigger reset
-      rerender(<ImagePaster onUpload={mockOnUpload} shouldReset={true} />);
+      act(() => {
+        rerender(<ImagePaster onUpload={mockOnUpload} shouldReset={true} />);
+      });
 
       // Preview should be cleared
       expect(container.querySelector("img")).not.toBeInTheDocument();
@@ -218,14 +229,18 @@ describe("ImagePaster", () => {
       );
       const paster = container.querySelector(".ImagePaster");
 
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
 
       await vi.waitFor(() => {
         expect(container.querySelector("img")).toBeInTheDocument();
       });
 
       // Re-render with shouldReset still false
-      rerender(<ImagePaster onUpload={mockOnUpload} shouldReset={false} />);
+      act(() => {
+        rerender(<ImagePaster onUpload={mockOnUpload} shouldReset={false} />);
+      });
 
       // Image should still be there
       expect(container.querySelector("img")).toBeInTheDocument();
@@ -248,13 +263,17 @@ describe("ImagePaster", () => {
       const paster = container.querySelector(".ImagePaster");
 
       // First paste
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
       await vi.waitFor(() => {
         expect(mockOnUpload).toHaveBeenCalledTimes(1);
       });
 
       // Second paste
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
       await vi.waitFor(() => {
         expect(mockOnUpload).toHaveBeenCalledTimes(2);
       });
@@ -279,7 +298,9 @@ describe("ImagePaster", () => {
       const { container } = render(<ImagePaster onUpload={mockOnUpload} />);
       const paster = container.querySelector(".ImagePaster");
 
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
 
       await vi.waitFor(() => {
         expect(mockOnUpload).toHaveBeenCalledTimes(1);
@@ -304,7 +325,9 @@ describe("ImagePaster", () => {
       );
 
       const paster = container.querySelector(".ImagePaster");
-      await fireEvent.paste(paster!);
+      await act(async () => {
+        await fireEvent.paste(paster!);
+      });
 
       await vi.waitFor(() => {
         expect(mockOnUpload).toHaveBeenCalledTimes(1);
@@ -329,7 +352,9 @@ describe("ImagePaster", () => {
       const pasters = container.querySelectorAll(".ImagePaster");
 
       // Paste on first instance
-      await fireEvent.paste(pasters[0]);
+      await act(async () => {
+        await fireEvent.paste(pasters[0]);
+      });
 
       await vi.waitFor(() => {
         expect(mockOnUpload1).toHaveBeenCalledTimes(1);

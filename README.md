@@ -76,10 +76,9 @@ This is a MERN stack
 
 - Added a sweet beep after pre-commit and pre-push hooks
 
-## 02/11/2025
+### 03/11/2025
 
-- Added first tests on backend
-- Restructured User controller that was complex, more are to come.
+- Go back in time...
 
 ## TODOS
 

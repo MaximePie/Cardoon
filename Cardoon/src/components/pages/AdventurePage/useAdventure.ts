@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { PopulatedUserCard, User } from "../../../types/common";
@@ -61,6 +61,12 @@ export default function useAdventure() {
 
   const [currentEnemy, setCurrentEnemy] = useState<Enemy>(enemies[0]);
 
+  // Refs to store timeout IDs for cleanup
+  const heroAttackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const enemyDefeatedTimeout = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
+
   const { put: updateUserCard, data: updateCardResponse } = usePut<PutResult>(
     ACTIONS.UPDATE_INTERVAL
   );
@@ -69,7 +75,11 @@ export default function useAdventure() {
     if (isCorrect) {
       // Hero only performs attack animation when answer is correct for visual feedback
       setHeroState("attacking");
-      setTimeout(() => {
+      // Clear any existing timeout
+      if (heroAttackTimeout.current) {
+        clearTimeout(heroAttackTimeout.current);
+      }
+      heroAttackTimeout.current = setTimeout(() => {
         setHeroState("idle");
       }, 500);
       const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
@@ -101,7 +111,11 @@ export default function useAdventure() {
 
   const onEnemyDefeated = useCallback(() => {
     setEnemyState("defeated");
-    setTimeout(() => {
+    // Clear any existing timeout
+    if (enemyDefeatedTimeout.current) {
+      clearTimeout(enemyDefeatedTimeout.current);
+    }
+    enemyDefeatedTimeout.current = setTimeout(() => {
       setEnemyState("idle");
     }, 1000);
 
@@ -152,6 +166,19 @@ export default function useAdventure() {
     setCardsInHand((prev) => prev.filter((c) => c._id !== card._id));
     getReviewUserCards();
   };
+
+  // Cleanup timeouts when component unmounts
+  useEffect(() => {
+    return () => {
+      if (heroAttackTimeout.current) {
+        clearTimeout(heroAttackTimeout.current);
+      }
+      if (enemyDefeatedTimeout.current) {
+        clearTimeout(enemyDefeatedTimeout.current);
+      }
+    };
+  }, []);
+
   return {
     cardsInHand,
     hero,

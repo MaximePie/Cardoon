@@ -1,6 +1,11 @@
+"use strict";
 // Users can buy items in the shop and use them in the game
-import mongoose from "mongoose";
-const ItemSchema = new mongoose.Schema({
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
+const ItemSchema = new mongoose_1.default.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
@@ -16,5 +21,5 @@ const ItemSchema = new mongoose.Schema({
     },
     upgradeCostMultiplier: { type: Number, default: 2 },
 });
-const ItemModel = mongoose.model("Item", ItemSchema);
-export default ItemModel;
+const ItemModel = mongoose_1.default.model("Item", ItemSchema);
+exports.default = ItemModel;

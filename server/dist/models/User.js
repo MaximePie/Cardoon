@@ -1,8 +1,13 @@
-import bcrypt from "bcrypt";
-import mongoose from "mongoose";
-import DailyGoal from "./DailyGoal.js";
-import UserCard from "./UserCard.js";
-const UserSchema = new mongoose.Schema({
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const mongoose_1 = __importDefault(require("mongoose"));
+const DailyGoal_js_1 = __importDefault(require("./DailyGoal.js"));
+const UserCard_js_1 = __importDefault(require("./UserCard.js"));
+const UserSchema = new mongoose_1.default.Schema({
     username: {
         type: String,
         required: true,
@@ -46,7 +51,7 @@ const UserSchema = new mongoose.Schema({
         default: 1,
     },
     currentDailyGoal: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "DailyGoal",
     },
     streak: {
@@ -56,7 +61,7 @@ const UserSchema = new mongoose.Schema({
     items: [
         {
             base: {
-                type: mongoose.Schema.Types.ObjectId,
+                type: mongoose_1.default.Schema.Types.ObjectId,
                 ref: "Item",
                 required: true,
             },
@@ -109,7 +114,7 @@ UserSchema.methods = {
         if (this.gold < userItem.currentCost) {
             throw new Error("Not enough gold to upgrade item");
         }
-        const item = await mongoose.model("Item").findById(userItem.base);
+        const item = await mongoose_1.default.model("Item").findById(userItem.base);
         if (!item) {
             throw new Error("Item not found");
         }
@@ -122,7 +127,7 @@ UserSchema.methods = {
     },
     buyItem: async function (itemId) {
         try {
-            const item = await mongoose.model("Item").findById(itemId);
+            const item = await mongoose_1.default.model("Item").findById(itemId);
             if (!item) {
                 throw new Error("Item not found");
             }
@@ -154,7 +159,7 @@ UserSchema.methods = {
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
         // Upsert (find or create) a daily goal for the given date and user
-        const dailyGoal = await DailyGoal.findOneAndUpdate({
+        const dailyGoal = await DailyGoal_js_1.default.findOneAndUpdate({
             userId: this._id,
             date: { $gte: startOfDay, $lte: endOfDay },
         }, {
@@ -176,7 +181,7 @@ UserSchema.methods = {
         if (!this.currentDailyGoal) {
             throw new Error("No current daily goal found");
         }
-        const dailyGoal = await DailyGoal.findById(this.currentDailyGoal);
+        const dailyGoal = await DailyGoal_js_1.default.findById(this.currentDailyGoal);
         if (!dailyGoal) {
             throw new Error("Daily goal not found");
         }
@@ -196,7 +201,7 @@ UserSchema.methods = {
 };
 UserSchema.methods.attachCard = async function (cardId) {
     const now = new Date();
-    const userCard = new UserCard({
+    const userCard = new UserCard_js_1.default({
         user: this._id,
         card: cardId,
         interval: 5,
@@ -204,22 +209,21 @@ UserSchema.methods.attachCard = async function (cardId) {
         nextReview: now.getTime() + 5 * 1000,
     });
     await userCard.save();
-    console.log("Attached card to user:", userCard);
     return userCard;
 };
 UserSchema.methods.getCards = async function () {
-    return UserCard.find({ user: this._id }).populate("card");
+    return UserCard_js_1.default.find({ user: this._id }).populate("card");
 };
 UserSchema.methods.getOutdatedCards = async function () {
     const now = new Date();
-    return UserCard.find({
+    return UserCard_js_1.default.find({
         user: this._id,
         nextReview: { $lt: now },
     }).populate("card");
 };
 UserSchema.statics.createUser = async function (email, password, username) {
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt_1.default.hash(password, saltRounds);
     return this.create({ username, password: hashedPassword, email });
 };
 UserSchema.statics.getUserByUsername = async function (username) {
@@ -276,5 +280,5 @@ UserSchema.methods.removeItem = async function (itemId) {
 UserSchema.statics.onItemRemoved = async function (itemId) {
     await this.updateMany({ items: itemId }, { $pull: { items: itemId } });
 };
-const User = mongoose.model("User", UserSchema);
-export default User;
+const User = mongoose_1.default.model("User", UserSchema);
+exports.default = User;

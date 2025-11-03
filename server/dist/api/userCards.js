@@ -1,46 +1,51 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // routes/api/books.js
-import express from "express";
-import authMiddleware from "../middleware/auth.js";
-import Card from "../models/Card.js";
-import User from "../models/User.js";
-import UserCard from "../models/UserCard.js";
-const router = express.Router();
+const express_1 = __importDefault(require("express"));
+const auth_js_1 = __importDefault(require("../middleware/auth.js"));
+const Card_js_1 = __importDefault(require("../models/Card.js"));
+const User_js_1 = __importDefault(require("../models/User.js"));
+const UserCard_js_1 = __importDefault(require("../models/UserCard.js"));
+const router = express_1.default.Router();
 // Return every user card without filtering by due date
 // @route   GET api/userCards/all
 // @desc    Get all user cards
 // @access  Private
-router.get("/all", authMiddleware, async (req, res) => {
-    const user = await User.findById(req.user.id);
+router.get("/all", auth_js_1.default, async (req, res) => {
+    const user = await User_js_1.default.findById(req.user.id);
     if (!user) {
         res.status(404).json({ msg: "User not found" });
         return;
     }
-    const userCards = await UserCard.find({ user: user.id }).populate("card");
+    const userCards = await UserCard_js_1.default.find({ user: user.id }).populate("card");
     res.json({ userCards });
 });
 // @route   GET api/books
 // @desc    Get all books
 // @access  Public
-router.get("/", authMiddleware, async (req, res) => {
-    const user = await User.findById(req.user.id);
+router.get("/", auth_js_1.default, async (req, res) => {
+    const user = await User_js_1.default.findById(req.user.id);
     if (!user) {
         res.status(404).json({ msg: "User not found" });
         return;
     }
     const cards = await user.getOutdatedCards();
-    const categories = await Card.getCategories();
+    const categories = await Card_js_1.default.getCategories();
     res.json({
         cards,
         categories,
     });
 });
 router.put("/updateInterval/:id", async (req, res) => {
-    const userCard = await UserCard.findById(req.params.id);
+    const userCard = await UserCard_js_1.default.findById(req.params.id);
     if (!userCard) {
         res.status(404).json({ msg: "User card not found" });
         return;
     }
-    const user = await User.findById(userCard.user);
+    const user = await User_js_1.default.findById(userCard.user);
     if (!user) {
         res.status(404).json({ msg: "User not found" });
         return;
@@ -71,9 +76,9 @@ router.put("/updateInterval/:id", async (req, res) => {
 // @route   DELETE api/userCards/:id
 // @desc    Delete a user card
 // @access  Private
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", auth_js_1.default, async (req, res) => {
     try {
-        const userCard = await UserCard.findById(req.params.id);
+        const userCard = await UserCard_js_1.default.findById(req.params.id);
         if (!userCard) {
             res.status(404).json({ msg: "User card not found" });
             return;
@@ -85,7 +90,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
             return;
         }
         // Supprimer la carte utilisateur
-        await UserCard.findByIdAndDelete(req.params.id);
+        await UserCard_js_1.default.findByIdAndDelete(req.params.id);
         res.json({ msg: "User card deleted successfully" });
     }
     catch (error) {
@@ -93,4 +98,4 @@ router.delete("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ msg: "Server error" });
     }
 });
-export default router;
+exports.default = router;

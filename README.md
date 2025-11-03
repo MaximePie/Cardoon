@@ -78,7 +78,7 @@ This is a MERN stack
 
 ### 03/11/2025
 
-- Had to go back in time because of a case naming error... :(
+- Go back in time...
 
 ## TODOS
 
@@ -89,3 +89,4 @@ This is a MERN stack
 - Yup, React hook forms
 - Extend TanStack Query to card creation and editing
 - Add storybook
+- Add router boundaries for unlogged users

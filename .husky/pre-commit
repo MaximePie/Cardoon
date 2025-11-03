@@ -6,27 +6,27 @@ echo "🔍 Running pre-commit checks..."
 # Navigate to Cardoon directory
 cd Cardoon
 
-# 1. Type checking with TypeScript
+# 3. Type checking with TypeScript
 echo "📝 Checking TypeScript types..."
-npm run type-check
+yarn type-check
 if [ $? -ne 0 ]; then
   echo "❌ TypeScript type check failed!"
   exit 1
 fi
 
-# 2. Lint and format staged files
+# 4. Lint and format staged files
 echo "🧹 Running ESLint and Prettier on staged files..."
-npx lint-staged
+yarn lint-staged
 if [ $? -ne 0 ]; then
   echo "❌ Linting failed!"
   exit 1
 fi
 
-# 3. Run tests
-echo "🧪 Running tests..."
-npm run test:run
+# 5. Run frontend tests
+echo "🧪 Running frontend tests..."
+yarn test:run
 if [ $? -ne 0 ]; then
-  echo "❌ Tests failed!"
+  echo "❌ Frontend tests failed!"
   exit 1
 fi
 echo -e "\a"

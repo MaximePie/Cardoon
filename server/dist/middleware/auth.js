@@ -1,7 +1,12 @@
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import { Router } from "express";
-dotenv.config();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const express_1 = require("express");
+dotenv_1.default.config();
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -22,7 +27,7 @@ const authMiddleware = (req, res, next) => {
         if (!jwtSecret) {
             throw new Error("JWT secret is undefined");
         }
-        const decodedToken = jwt.verify(token, jwtSecret);
+        const decodedToken = jsonwebtoken_1.default.verify(token, jwtSecret);
         req.user = decodedToken;
         next();
         return;
@@ -32,5 +37,5 @@ const authMiddleware = (req, res, next) => {
         return;
     }
 };
-const router = Router();
-export default authMiddleware;
+const router = (0, express_1.Router)();
+exports.default = authMiddleware;

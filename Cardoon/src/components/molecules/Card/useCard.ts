@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PopulatedUserCard } from "../../../types/common";
 // ✅ Version optimisée avec mise en cache
 const colorCache = new Map<string, string>();
@@ -50,6 +50,16 @@ export default function useCard(
   #ffffff  
 )`;
 
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   // If recto, set to false, else do nothing
   const onCardClick = () => {
     if (isRecto) {
@@ -58,7 +68,7 @@ export default function useCard(
       } else {
         setIsFlipping(true);
         flipCard(false);
-        setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
           setShowAnswer(true);
           setIsFlipping(false);
         }, 200);

@@ -1,248 +1,78 @@
-import bcrypt from "bcrypt";
-import express from "express";
-import jwt from "jsonwebtoken";
-import authMiddleware from "../middleware/auth.js";
-import { validateImageUpload } from "../middleware/fileUpload.js";
-import { createErrorResponse, createSuccessResponse, validateBody, } from "../middleware/simpleValidation.js";
-import User from "../models/User.js";
-import { uploadImage } from "../utils/imagesManager.js";
-import { avatarUploadSchema, dailyGoalSchema, itemPurchaseSchema, itemUpgradeSchema, userLoginSchema, userRegistrationSchema, } from "../validation/schemas.js";
-const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const auth_js_1 = __importDefault(require("../middleware/auth.js"));
+const errorHandler_js_1 = require("../middleware/errorHandler.js");
+const fileUpload_js_1 = require("../middleware/fileUpload.js");
+const simpleValidation_js_1 = require("../middleware/simpleValidation.js");
+const userService_js_1 = require("../services/userService.js");
+const schemas_js_1 = require("../validation/schemas.js");
+const router = express_1.default.Router();
 // Get current user with validation
-router.get("/me", authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) {
-            res.status(404).json(createErrorResponse("User not found"));
-            return;
-        }
-        await user.createDailyGoal(user.dailyGoal, new Date());
-        await user.populate("items.base");
-        await user.populate("currentDailyGoal");
-        res.json(user);
-    }
-    catch (error) {
-        console.error("Get user error:", error);
-        res.status(500).json(createErrorResponse("Failed to retrieve user"));
-    }
-});
+// Get current user
+router.get("/me", auth_js_1.default, (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const user = await userService_js_1.UserService.getUserProfile(req.user.id);
+    res.json(user);
+}));
 // Login with Zod validation
-router.post("/login", validateBody(userLoginSchema), async (req, res) => {
-    try {
-        const { email, password, rememberMe } = req.validatedBody;
-        const jwtSecret = process.env.JWT_SECRET;
-        if (!jwtSecret) {
-            res
-                .status(500)
-                .json(createErrorResponse("JWT_SECRET is not configured"));
-            return;
-        }
-        // Get user by email or username
-        const user = email
-            ? await User.getUserByEmail(email.trim().toLowerCase())
-            : await User.getUserByUsername(req.validatedBody.username.trim());
-        if (!user) {
-            res.status(401).json(createErrorResponse("Invalid credentials"));
-            return;
-        }
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            res.status(401).json(createErrorResponse("Invalid credentials"));
-            return;
-        }
-        // Generate JWT token
-        const token = jwt.sign({ id: user.id }, jwtSecret, {
-            expiresIn: rememberMe ? "90d" : "1d",
-        });
-        await user.populate("items.base");
-        await user.populate("currentDailyGoal");
-        res
-            .status(200)
-            .setHeader("Authorization", `Bearer ${token}`)
-            .json({ token, user });
-    }
-    catch (error) {
-        console.error("Login error:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred during login"));
-    }
-});
-// Register with Zod validation
-router.post("/register", validateBody(userRegistrationSchema), async (req, res) => {
-    try {
-        const { email, password, username } = req.validatedBody;
-        // Check if user already exists
-        const existingUser = await User.getUserByEmail(email);
-        if (existingUser) {
-            res
-                .status(400)
-                .json(createErrorResponse("User already exists with this email"));
-            return;
-        }
-        // Check if username is taken
-        const existingUsername = await User.getUserByUsername(username);
-        if (existingUsername) {
-            res.status(400).json(createErrorResponse("Username is already taken"));
-            return;
-        }
-        const newUser = await User.createUser(email, password, username);
-        // Remove password from response
-        const userResponse = { ...newUser.toObject() };
-        delete userResponse.password;
-        res.status(201).json(userResponse);
-    }
-    catch (error) {
-        console.error("Registration error:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred during registration"));
-    }
-});
-// Update daily goal with validation
-router.put("/daily-goal", authMiddleware, validateBody(dailyGoalSchema), async (req, res) => {
-    try {
-        const { target } = req.validatedBody;
-        const userId = req.user.id;
-        const user = await User.findById(userId);
-        if (!user) {
-            res.status(404).json(createErrorResponse("User not found"));
-            return;
-        }
-        await user.updateDailyGoal(target);
-        await user.populate("currentDailyGoal");
-        res
-            .status(200)
-            .json(createSuccessResponse(user, "Daily goal updated successfully"));
-    }
-    catch (error) {
-        console.error("Error updating daily goal:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred while updating the daily goal"));
-    }
-});
-// Update user image with Zod validation
-router.put("/me/image", authMiddleware, validateImageUpload(avatarUploadSchema), async (req, res) => {
-    try {
-        const userId = req.user.id;
-        const user = await User.findById(userId);
-        if (!user) {
-            res.status(404).json(createErrorResponse("User not found"));
-            return;
-        }
-        // File has already been validated by the middleware
-        const validatedFile = req.validatedFile;
-        const uploadedFile = req.uploadedFile;
-        const tempPath = uploadedFile.filepath;
-        try {
-            // Upload image to S3
-            const imageUrl = await uploadImage({
-                filepath: tempPath,
-                originalFilename: validatedFile.originalFilename || "avatar.jpg",
-                contentType: validatedFile.mimetype,
-            });
-            // Update user with new image URL
-            user.image = imageUrl;
-            await user.save();
-            res
-                .status(200)
-                .json(createSuccessResponse({ imageUrl }, "Image updated successfully"));
-        }
-        catch (uploadError) {
-            console.error("Error uploading image:", uploadError);
-            res.status(500).json(createErrorResponse("Error uploading image"));
-        }
-        finally {
-            // Clean up temp file
-            const fs = await import("fs");
-            fs.unlink(tempPath, (err) => {
-                if (err) {
-                    console.error("Error deleting temp file:", err);
-                }
-            });
-        }
-    }
-    catch (error) {
-        console.error("Error updating image:", error);
-        res
-            .status(500)
-            .json(createErrorResponse("An error occurred while updating the image"));
-    }
-});
-// Buy item with validation
-router.post("/buyItem", authMiddleware, validateBody(itemPurchaseSchema), async (req, res) => {
-    try {
-        const { itemId } = req.validatedBody;
-        const userId = req.user.id;
-        const user = await User.findById(userId);
-        if (!user) {
-            res.status(404).json(createErrorResponse("User not found"));
-            return;
-        }
-        await user.buyItem(itemId);
-        // Return updated user data
-        await user.populate("items.base");
-        res
-            .status(200)
-            .json(createSuccessResponse(user, "Item purchased successfully"));
-    }
-    catch (error) {
-        console.error("Error purchasing item:", error);
-        const errorMessage = error instanceof Error
-            ? error.message
-            : "An error occurred while processing the purchase";
-        res.status(500).json(createErrorResponse(errorMessage));
-    }
-});
-// Remove item with validation
-router.post("/removeItem", authMiddleware, validateBody(itemPurchaseSchema), async (req, res) => {
-    try {
-        const { itemId } = req.validatedBody;
-        const userId = req.user.id;
-        const user = await User.findById(userId);
-        if (!user) {
-            res.status(404).json(createErrorResponse("User not found"));
-            return;
-        }
-        await user.removeItem(itemId);
-        res
-            .status(200)
-            .json(createSuccessResponse(null, "Item removed successfully"));
-    }
-    catch (error) {
-        console.error("Error removing item:", error);
-        const errorMessage = error instanceof Error
-            ? error.message
-            : "An error occurred while removing the item";
-        res.status(500).json(createErrorResponse(errorMessage));
-    }
-});
-// Upgrade item with validation
-router.post("/upgradeItem", authMiddleware, validateBody(itemUpgradeSchema), async (req, res) => {
-    try {
-        const { itemId } = req.validatedBody;
-        const userId = req.user.id;
-        const user = await User.findById(userId);
-        if (!user) {
-            res.status(404).json(createErrorResponse("User not found"));
-            return;
-        }
-        const upgradedItem = await user.upgradeItem(itemId);
-        res
-            .status(200)
-            .json(createSuccessResponse(upgradedItem, "Item upgraded successfully"));
-    }
-    catch (error) {
-        console.error("Error upgrading item:", error);
-        const errorMessage = error instanceof Error
-            ? error.message
-            : "An error occurred while upgrading the item";
-        res.status(500).json(createErrorResponse(errorMessage));
-    }
-});
+router.post("/login", (0, simpleValidation_js_1.validateBody)(schemas_js_1.userLoginSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const { token, user } = await userService_js_1.UserService.authenticate(req.validatedBody);
+    res
+        .status(200)
+        .setHeader("Authorization", `Bearer ${token}`)
+        .json({ token, user });
+}));
+// Register
+router.post("/register", (0, simpleValidation_js_1.validateBody)(schemas_js_1.userRegistrationSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const { email, password, username } = req.validatedBody;
+    const user = await userService_js_1.UserService.createUser(email, password, username);
+    res.status(201).json(user);
+}));
+// Update daily goal
+router.put("/daily-goal", auth_js_1.default, (0, simpleValidation_js_1.validateBody)(schemas_js_1.dailyGoalSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const { target } = req.validatedBody;
+    const user = await userService_js_1.UserService.updateDailyGoal(req.user.id, target);
+    res
+        .status(200)
+        .json((0, simpleValidation_js_1.createSuccessResponse)(user, "Daily goal updated successfully"));
+}));
+// Update user image
+router.put("/me/image", auth_js_1.default, (0, fileUpload_js_1.validateImageUpload)(schemas_js_1.avatarUploadSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const uploadedFile = req.uploadedFile;
+    const result = await userService_js_1.UserService.updateUserImage(req.user.id, uploadedFile);
+    res
+        .status(200)
+        .json((0, simpleValidation_js_1.createSuccessResponse)(result, "Image updated successfully"));
+}));
+// Buy item
+router.post("/buyItem", auth_js_1.default, (0, simpleValidation_js_1.validateBody)(schemas_js_1.itemPurchaseSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const { itemId } = req.validatedBody;
+    const user = await userService_js_1.UserService.purchaseItem(req.user.id, itemId);
+    res
+        .status(200)
+        .json((0, simpleValidation_js_1.createSuccessResponse)(user, "Item purchased successfully"));
+}));
+// Remove item
+router.post("/removeItem", auth_js_1.default, (0, simpleValidation_js_1.validateBody)(schemas_js_1.itemPurchaseSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const { itemId } = req.validatedBody;
+    await userService_js_1.UserService.removeItem(req.user.id, itemId);
+    res
+        .status(200)
+        .json((0, simpleValidation_js_1.createSuccessResponse)(null, "Item removed successfully"));
+}));
+// Upgrade item
+router.post("/upgradeItem", auth_js_1.default, (0, simpleValidation_js_1.validateBody)(schemas_js_1.itemUpgradeSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const { itemId } = req.validatedBody;
+    const upgradedItem = await userService_js_1.UserService.upgradeItem(req.user.id, itemId);
+    res
+        .status(200)
+        .json((0, simpleValidation_js_1.createSuccessResponse)(upgradedItem, "Item upgraded successfully"));
+}));
 // Verify token
-router.get("/verify-token", authMiddleware, (req, res) => {
-    res.json(createSuccessResponse({ valid: true }, "Token is valid"));
+router.get("/verify-token", auth_js_1.default, (req, res) => {
+    res.json((0, simpleValidation_js_1.createSuccessResponse)({ valid: true }, "Token is valid"));
 });
-export default router;
+exports.default = router;

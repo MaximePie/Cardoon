@@ -16,6 +16,7 @@ server/config/config.js
 server/.env
 Cardoon/.env
 Cardoon/coverage
+server/coverage
 
 # Editor directories and files
 .vscode/*

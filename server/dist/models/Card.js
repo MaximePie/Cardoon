@@ -1,7 +1,12 @@
-import mongoose from "mongoose";
-import User from "./User.js";
-import UserCard from "./UserCard.js";
-const CardSchema = new mongoose.Schema({
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
+const User_js_1 = __importDefault(require("./User.js"));
+const UserCard_js_1 = __importDefault(require("./UserCard.js"));
+const CardSchema = new mongoose_1.default.Schema({
     question: {
         type: String,
         required: true,
@@ -23,7 +28,7 @@ const CardSchema = new mongoose.Schema({
         type: [String],
     },
     ownedBy: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         default: null,
     },
@@ -36,7 +41,7 @@ const CardSchema = new mongoose.Schema({
         default: false,
     },
     originalCardId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "Card",
         default: null,
     },
@@ -53,12 +58,11 @@ CardSchema.methods.getChildren = async function () {
     return children;
 };
 CardSchema.methods.invert = async function () {
-    let owner = await User.findById(this.ownedBy);
+    let owner = await User_js_1.default.findById(this.ownedBy);
     if (!owner) {
-        const userCard = await UserCard.findOne({ card: this._id });
+        const userCard = await UserCard_js_1.default.findOne({ card: this._id });
         if (userCard) {
-            const user = await User.findById(userCard.user);
-            console.log("Found user by searching UserCards:", user);
+            const user = await User_js_1.default.findById(userCard.user);
             if (user) {
                 owner = user;
             }
@@ -77,7 +81,7 @@ CardSchema.methods.invert = async function () {
         isInverted: true,
         originalCardId: this._id,
         ownedBy: owner._id,
-        _id: new mongoose.Types.ObjectId(), // Create a new ID for the inverted card
+        _id: new mongoose_1.default.Types.ObjectId(), // Create a new ID for the inverted card
     });
     const card = await invertedCard.save();
     // this.hasInvertedChild = true;
@@ -90,9 +94,9 @@ CardSchema.methods.invert = async function () {
     }
     else {
         console.warn("No owner found for the original card:", this._id, "Trying to find user by searching UserCards having this card");
-        const userCard = await UserCard.findOne({ card: this._id });
+        const userCard = await UserCard_js_1.default.findOne({ card: this._id });
         if (userCard) {
-            const user = await User.findById(userCard.user);
+            const user = await User_js_1.default.findById(userCard.user);
             if (user) {
                 user.attachCard(card._id);
             }
@@ -103,5 +107,5 @@ CardSchema.methods.invert = async function () {
     }
     return card;
 };
-const Card = mongoose.model("Card", CardSchema);
-export default Card;
+const Card = mongoose_1.default.model("Card", CardSchema);
+exports.default = Card;

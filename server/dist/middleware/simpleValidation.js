@@ -1,8 +1,16 @@
-import { ZodError } from "zod";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateBody = validateBody;
+exports.validateParams = validateParams;
+exports.validateQuery = validateQuery;
+exports.createSuccessResponse = createSuccessResponse;
+exports.createErrorResponse = createErrorResponse;
+exports.validateFile = validateFile;
+const zod_1 = require("zod");
 /**
  * Simple validation middleware without complex types
  */
-export function validateBody(schema) {
+function validateBody(schema) {
     return (req, res, next) => {
         try {
             const validatedData = schema.parse(req.body);
@@ -10,11 +18,11 @@ export function validateBody(schema) {
             next();
         }
         catch (error) {
-            if (error instanceof ZodError) {
+            if (error instanceof zod_1.ZodError) {
                 res.status(400).json({
                     success: false,
                     message: "Validation failed",
-                    errors: error.errors.map((err) => ({
+                    errors: error.issues.map((err) => ({
                         field: err.path.join("."),
                         message: err.message,
                         code: err.code,
@@ -29,7 +37,7 @@ export function validateBody(schema) {
         }
     };
 }
-export function validateParams(schema) {
+function validateParams(schema) {
     return (req, res, next) => {
         try {
             const validatedData = schema.parse(req.params);
@@ -37,11 +45,11 @@ export function validateParams(schema) {
             next();
         }
         catch (error) {
-            if (error instanceof ZodError) {
+            if (error instanceof zod_1.ZodError) {
                 res.status(400).json({
                     success: false,
                     message: "Invalid parameters",
-                    errors: error.errors.map((err) => ({
+                    errors: error.issues.map((err) => ({
                         field: err.path.join("."),
                         message: err.message,
                         code: err.code,
@@ -56,7 +64,7 @@ export function validateParams(schema) {
         }
     };
 }
-export function validateQuery(schema) {
+function validateQuery(schema) {
     return (req, res, next) => {
         try {
             const validatedData = schema.parse(req.query);
@@ -64,11 +72,11 @@ export function validateQuery(schema) {
             next();
         }
         catch (error) {
-            if (error instanceof ZodError) {
+            if (error instanceof zod_1.ZodError) {
                 res.status(400).json({
                     success: false,
                     message: "Invalid query parameters",
-                    errors: error.errors.map((err) => ({
+                    errors: error.issues.map((err) => ({
                         field: err.path.join("."),
                         message: err.message,
                         code: err.code,
@@ -84,14 +92,14 @@ export function validateQuery(schema) {
     };
 }
 // Helper functions for responses
-export function createSuccessResponse(data, message) {
+function createSuccessResponse(data, message) {
     return {
         success: true,
         ...(message && { message }),
         ...(data !== undefined && { data }),
     };
 }
-export function createErrorResponse(message, errors) {
+function createErrorResponse(message, errors) {
     return {
         success: false,
         message,
@@ -101,7 +109,7 @@ export function createErrorResponse(message, errors) {
 /**
  * Middleware for validating file uploads from FormData
  */
-export function validateFile(schema, fileFieldName = "image") {
+function validateFile(schema, fileFieldName = "image") {
     return (req, res, next) => {
         // This middleware should be used after formidable has parsed the form
         // The parsed files will be available in req.files
@@ -126,11 +134,11 @@ export function validateFile(schema, fileFieldName = "image") {
             next();
         }
         catch (error) {
-            if (error instanceof ZodError) {
+            if (error instanceof zod_1.ZodError) {
                 res.status(400).json({
                     success: false,
                     message: "File validation failed",
-                    errors: error.errors.map((err) => ({
+                    errors: error.issues.map((err) => ({
                         field: err.path.join("."),
                         message: err.message,
                         code: err.code,

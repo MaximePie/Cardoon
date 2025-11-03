@@ -1,33 +1,38 @@
-import express from "express";
-import { z } from "zod";
-import { createErrorResponse, createSuccessResponse, validateBody, validateParams, validateQuery, } from "../middleware/simpleValidation.js";
-const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const zod_1 = require("zod");
+const simpleValidation_js_1 = require("../middleware/simpleValidation.js");
+const router = express_1.default.Router();
 // Simple validation schemas for demonstration
-const createUserSchema = z.object({
-    name: z.string().min(1, "Name is required").max(50, "Name too long"),
-    email: z.string().email("Invalid email format"),
-    age: z
+const createUserSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1, "Name is required").max(50, "Name too long"),
+    email: zod_1.z.string().email("Invalid email format"),
+    age: zod_1.z
         .number()
         .int()
         .min(18, "Must be at least 18 years old")
         .max(120, "Invalid age"),
 });
-const updateUserSchema = z.object({
-    name: z.string().min(1).max(50).optional(),
-    email: z.string().email().optional(),
-    age: z.number().int().min(18).max(120).optional(),
+const updateUserSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1).max(50).optional(),
+    email: zod_1.z.string().email().optional(),
+    age: zod_1.z.number().int().min(18).max(120).optional(),
 });
-const userIdSchema = z.object({
-    id: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId format"),
+const userIdSchema = zod_1.z.object({
+    id: zod_1.z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid ObjectId format"),
 });
-const searchSchema = z.object({
-    q: z.string().optional(),
-    page: z.string().optional(),
-    limit: z.string().optional(),
+const searchSchema = zod_1.z.object({
+    q: zod_1.z.string().optional(),
+    page: zod_1.z.string().optional(),
+    limit: zod_1.z.string().optional(),
 });
 // Example routes demonstrating Zod validation
 // Create user with body validation
-router.post("/demo", validateBody(createUserSchema), (req, res) => {
+router.post("/demo", (0, simpleValidation_js_1.validateBody)(createUserSchema), (req, res) => {
     try {
         const userData = req.validatedBody;
         console.log("✅ Validated user data:", userData);
@@ -37,15 +42,15 @@ router.post("/demo", validateBody(createUserSchema), (req, res) => {
             ...userData,
             createdAt: new Date().toISOString(),
         };
-        res.json(createSuccessResponse(newUser, "User created successfully"));
+        res.json((0, simpleValidation_js_1.createSuccessResponse)(newUser, "User created successfully"));
     }
     catch (error) {
         console.error("Error creating user:", error);
-        res.status(500).json(createErrorResponse("Failed to create user"));
+        res.status(500).json((0, simpleValidation_js_1.createErrorResponse)("Failed to create user"));
     }
 });
 // Update user with params and body validation
-router.put("/demo/:id", validateParams(userIdSchema), validateBody(updateUserSchema), (req, res) => {
+router.put("/demo/:id", (0, simpleValidation_js_1.validateParams)(userIdSchema), (0, simpleValidation_js_1.validateBody)(updateUserSchema), (req, res) => {
     try {
         const { id } = req.validatedParams;
         const updateData = req.validatedBody;
@@ -56,15 +61,15 @@ router.put("/demo/:id", validateParams(userIdSchema), validateBody(updateUserSch
             ...updateData,
             updatedAt: new Date().toISOString(),
         };
-        res.json(createSuccessResponse(updatedUser, "User updated successfully"));
+        res.json((0, simpleValidation_js_1.createSuccessResponse)(updatedUser, "User updated successfully"));
     }
     catch (error) {
         console.error("Error updating user:", error);
-        res.status(500).json(createErrorResponse("Failed to update user"));
+        res.status(500).json((0, simpleValidation_js_1.createErrorResponse)("Failed to update user"));
     }
 });
 // Search with query validation
-router.get("/demo/search", validateQuery(searchSchema), (req, res) => {
+router.get("/demo/search", (0, simpleValidation_js_1.validateQuery)(searchSchema), (req, res) => {
     try {
         const { q, page = "1", limit = "10" } = req.validatedQuery;
         // Convert and validate page/limit
@@ -79,19 +84,19 @@ router.get("/demo/search", validateQuery(searchSchema), (req, res) => {
             total: 0,
             data: [],
         };
-        res.json(createSuccessResponse(results, "Search completed"));
+        res.json((0, simpleValidation_js_1.createSuccessResponse)(results, "Search completed"));
     }
     catch (error) {
         console.error("Search error:", error);
-        res.status(500).json(createErrorResponse("Search failed"));
+        res.status(500).json((0, simpleValidation_js_1.createErrorResponse)("Search failed"));
     }
 });
 // Test route with validation error
-router.post("/demo/test-validation", validateBody(z.object({
-    required: z.string().min(1, "This field is required"),
-    email: z.string().email("Must be a valid email"),
-    number: z.number().positive("Must be positive"),
+router.post("/demo/test-validation", (0, simpleValidation_js_1.validateBody)(zod_1.z.object({
+    required: zod_1.z.string().min(1, "This field is required"),
+    email: zod_1.z.string().email("Must be a valid email"),
+    number: zod_1.z.number().positive("Must be positive"),
 })), (req, res) => {
-    res.json(createSuccessResponse(req.validatedBody, "Validation passed!"));
+    res.json((0, simpleValidation_js_1.createSuccessResponse)(req.validatedBody, "Validation passed!"));
 });
-export default router;
+exports.default = router;

@@ -1,11 +1,21 @@
-import { ZodError } from "zod";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validation = void 0;
+exports.validateRequest = validateRequest;
+exports.asyncValidation = asyncValidation;
+exports.customValidation = customValidation;
+exports.sanitizeInput = sanitizeInput;
+exports.logValidation = logValidation;
+exports.createValidationError = createValidationError;
+exports.createSuccessResponse = createSuccessResponse;
+const zod_1 = require("zod");
 /**
  * Create validation middleware for request validation
  * @param schema - Zod schema to validate against
  * @param target - Which part of the request to validate (body, query, params)
  * @param options - Additional validation options
  */
-export function validateRequest(schema, target = "body", options = {}) {
+function validateRequest(schema, target = "body", options = {}) {
     const { stripUnknown = true, allowUnknown = false, transform = true, } = options;
     return (req, res, next) => {
         try {
@@ -41,8 +51,8 @@ export function validateRequest(schema, target = "body", options = {}) {
             next();
         }
         catch (error) {
-            if (error instanceof ZodError) {
-                const validationErrors = error.errors.map((err) => ({
+            if (error instanceof zod_1.ZodError) {
+                const validationErrors = error.issues.map((err) => ({
                     field: err.path.join("."),
                     message: err.message,
                     code: err.code,
@@ -69,7 +79,7 @@ export function validateRequest(schema, target = "body", options = {}) {
 /**
  * Middleware factory for common validation patterns
  */
-export const validation = {
+exports.validation = {
     /**
      * Validate request body
      */
@@ -120,7 +130,7 @@ export const validation = {
                     }
                 }
                 catch (error) {
-                    if (error instanceof ZodError) {
+                    if (error instanceof zod_1.ZodError) {
                         const getCurrentData = () => {
                             switch (target) {
                                 case "body":
@@ -134,7 +144,7 @@ export const validation = {
                             }
                         };
                         const currentData = getCurrentData();
-                        const targetErrors = error.errors.map((err) => ({
+                        const targetErrors = error.issues.map((err) => ({
                             field: `${target}.${err.path.join(".")}`,
                             message: err.message,
                             code: err.code,
@@ -160,7 +170,7 @@ export const validation = {
 /**
  * Async validation wrapper for complex validations
  */
-export function asyncValidation(asyncValidator) {
+function asyncValidation(asyncValidator) {
     return async (req, res, next) => {
         try {
             const result = await asyncValidator(req.body);
@@ -184,7 +194,7 @@ export function asyncValidation(asyncValidator) {
 /**
  * Custom validation middleware for specific business rules
  */
-export function customValidation(validator, errorMessage = "Custom validation failed") {
+function customValidation(validator, errorMessage = "Custom validation failed") {
     return async (req, res, next) => {
         try {
             const isValid = await validator(req);
@@ -208,7 +218,7 @@ export function customValidation(validator, errorMessage = "Custom validation fa
 /**
  * Sanitization middleware
  */
-export function sanitizeInput(options = {}) {
+function sanitizeInput(options = {}) {
     const { trim = true, lowercase = [], uppercase = [], removeHtml = false, } = options;
     return (req, res, next) => {
         // Helper function to sanitize a value
@@ -259,7 +269,7 @@ export function sanitizeInput(options = {}) {
 /**
  * Validation logging middleware
  */
-export function logValidation(options = {}) {
+function logValidation(options = {}) {
     const { logSuccess = false, logErrors = true, includeData = false } = options;
     return (req, res, next) => {
         const originalSend = res.json;
@@ -295,7 +305,7 @@ function getNestedValue(obj, path) {
 /**
  * Utility function to create standardized error responses
  */
-export function createValidationError(message, errors) {
+function createValidationError(message, errors) {
     return {
         success: false,
         message,
@@ -305,7 +315,7 @@ export function createValidationError(message, errors) {
 /**
  * Utility function to create standardized success responses
  */
-export function createSuccessResponse(data, message) {
+function createSuccessResponse(data, message) {
     return {
         success: true,
         ...(message && { message }),

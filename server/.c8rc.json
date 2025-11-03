@@ -1,0 +1,22 @@
+{
+  "include": ["src/**/*.ts", "src/**/*.js"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.coverage.test.ts",
+    "src/test/**/*",
+    "src/validation/**/*",
+    "src/utils/imagesManager.ts",
+    "src/config/**/*",
+    "src/middleware/**/*",
+    "src/api/**/*",
+    "src/controllers/**/*",
+    "node_modules/**/*",
+    "coverage/**/*",
+    "dist/**/*"
+  ],
+  "reporter": ["html", "text", "lcov"],
+  "all": true,
+  "check-coverage": false,
+  "skip-full": false
+}

@@ -1,16 +1,22 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.uploadImage = exports.parseFile = void 0;
 // Used to upload images to S3 bucket
-import AWS from "aws-sdk";
-import dotenv from "dotenv";
-import formidable from "formidable";
-import fs from "fs";
-dotenv.config();
-export const parseFile = async (req) => {
+const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const formidable_1 = __importDefault(require("formidable"));
+const fs_1 = __importDefault(require("fs"));
+dotenv_1.default.config();
+const parseFile = async (req) => {
     return new Promise((resolve, reject) => {
         const options = {
             maxFileSize: 10 * 1024 * 1024, // 10 MBs converted to bytes
             allowEmptyFiles: false,
         };
-        const form = formidable(options);
+        const form = (0, formidable_1.default)(options);
         form.parse(req, (err, fields, files) => {
             if (err) {
                 reject(err.message);
@@ -26,9 +32,10 @@ export const parseFile = async (req) => {
         });
     });
 };
-export const uploadImage = (file) => {
-    const fileStream = fs.createReadStream(file.filepath);
-    const s3 = new AWS.S3({
+exports.parseFile = parseFile;
+const uploadImage = (file) => {
+    const fileStream = fs_1.default.createReadStream(file.filepath);
+    const s3 = new aws_sdk_1.default.S3({
         accessKeyId: process.env.AWS_ACCESS_KEY,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
         region: process.env.AWS_REGION,
@@ -58,3 +65,4 @@ export const uploadImage = (file) => {
         });
     });
 };
+exports.uploadImage = uploadImage;

@@ -16,7 +16,7 @@ import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
 import usersValidatedRoutes from "./api/users.js";
-// import usersRoutes from "./api/users.js"; // Temporarily disabled due to validation errors
+// import usersRoutes from "./api/users"; // Temporarily disabled due to validation errors
 
 dotenv.config();
 const app = express();

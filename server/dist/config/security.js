@@ -1,8 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.securityConfig = exports.helmetConfig = void 0;
 /**
  * Security configuration for Helmet middleware
  * This configuration provides comprehensive security headers for the Express app
  */
-export const helmetConfig = {
+exports.helmetConfig = {
     // Content Security Policy
     contentSecurityPolicy: {
         directives: {
@@ -55,7 +58,7 @@ console.log("NODE_ENV:", process.env.NODE_ENV, "isDevelopment:", isDevelopment);
 /**
  * Additional security middleware configuration
  */
-export const securityConfig = {
+exports.securityConfig = {
     // Rate limiting settings (to be used with express-rate-limit)
     // Disabled in development environment for easier testing
     rateLimit: {

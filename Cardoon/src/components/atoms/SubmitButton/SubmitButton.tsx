@@ -26,7 +26,6 @@ export default function SubmitButton({
       setInitialSize({ width, height });
     }
   }, [buttonRef, initialSize]);
-  console.log(initialSize);
 
   return (
     <motion.button

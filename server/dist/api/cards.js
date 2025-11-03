@@ -1,38 +1,43 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 // routes/api/books.js
-import express from "express";
-import { IncomingForm } from "formidable";
-import mongoose from "mongoose";
-import authMiddleware from "../middleware/auth.js";
-import Card from "../models/Card.js";
-import User from "../models/User.js";
-import UserCard from "../models/UserCard.js";
-import { uploadImage } from "../utils/imagesManager.js";
-const router = express.Router();
+const express_1 = __importDefault(require("express"));
+const formidable_1 = require("formidable");
+const mongoose_1 = __importDefault(require("mongoose"));
+const auth_js_1 = __importDefault(require("../middleware/auth.js"));
+const Card_js_1 = __importDefault(require("../models/Card.js"));
+const User_js_1 = __importDefault(require("../models/User.js"));
+const UserCard_js_1 = __importDefault(require("../models/UserCard.js"));
+const imagesManager_js_1 = require("../utils/imagesManager.js");
+const router = express_1.default.Router();
 router.get("/categories", async (req, res) => {
-    const categories = await Card.aggregate([
+    const categories = await Card_js_1.default.aggregate([
         { $group: { _id: "$category", count: { $sum: 1 } } },
         { $project: { _id: 0, category: "$_id", count: 1 } },
     ]);
     res.json(categories);
 });
 router.get("/", async (req, res) => {
-    const cards = await Card.find();
+    const cards = await Card_js_1.default.find();
     res.json(cards);
 });
 router.get("/:id", (req, res) => {
-    Card.findById(req.params.id)
+    Card_js_1.default.findById(req.params.id)
         .then((card) => res.json(card))
         .catch((err) => res.status(404).json({ noCardFound: "No CardFound found" }));
 });
-router.post("/invert", authMiddleware, async (req, res) => {
+router.post("/invert", auth_js_1.default, async (req, res) => {
     console.log("Received invert request:", req.body);
     try {
         const { cardId } = req.body;
-        if (!cardId || !mongoose.Types.ObjectId.isValid(cardId)) {
+        if (!cardId || !mongoose_1.default.Types.ObjectId.isValid(cardId)) {
             res.status(400).json({ error: "Invalid or missing cardId" });
             return;
         }
-        const originalCard = await Card.findById(cardId);
+        const originalCard = await Card_js_1.default.findById(cardId);
         if (!originalCard) {
             res.status(404).json({ error: "Original card not found" });
             return;
@@ -47,8 +52,8 @@ router.post("/invert", authMiddleware, async (req, res) => {
     res.status(501).json({ error: "Error inverting card" });
     return;
 });
-router.post("/", authMiddleware, async (req, res) => {
-    const form = new IncomingForm();
+router.post("/", auth_js_1.default, async (req, res) => {
+    const form = new formidable_1.IncomingForm();
     form.parse(req, async (err, fields, files) => {
         if (err) {
             return res.status(400).json({ error: "Error parsing the files" });
@@ -67,7 +72,7 @@ router.post("/", authMiddleware, async (req, res) => {
             let imageLink = (fields.imageLink ?? []).length > 0
                 ? fields.imageLink[0]
                 : null;
-            const user = await User.findById(req.user.id);
+            const user = await User_js_1.default.findById(req.user.id);
             if (!user) {
                 return res.status(404).json({ error: "User not found" });
             }
@@ -85,7 +90,7 @@ router.post("/", authMiddleware, async (req, res) => {
                 }
                 else {
                     if (image) {
-                        imageLink = await uploadImage({
+                        imageLink = await (0, imagesManager_js_1.uploadImage)({
                             filepath: image.filepath,
                             originalFilename: image.originalFilename ?? "default_filename",
                             contentType: image.mimetype || "image/jpeg",
@@ -104,7 +109,7 @@ router.post("/", authMiddleware, async (req, res) => {
                 parentId,
                 expectedAnswers,
             };
-            const createdCard = await Card.create(newCard);
+            const createdCard = await Card_js_1.default.create(newCard);
             await user.attachCard(createdCard._id);
             res.json({ ...createdCard.toObject(), imageLink });
         }
@@ -119,7 +124,7 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 router.put("/:id", async (req, res) => {
     try {
-        const form = new IncomingForm();
+        const form = new formidable_1.IncomingForm();
         // const [fields, files] = await form.parse(req);
         form.parse(req, async (err, fields, files) => {
             if (err) {
@@ -146,7 +151,7 @@ router.put("/:id", async (req, res) => {
                 }
                 else {
                     if (image) {
-                        imageLink = await uploadImage({
+                        imageLink = await (0, imagesManager_js_1.uploadImage)({
                             filepath: image.filepath,
                             originalFilename: image.originalFilename ?? "default_filename",
                             contentType: image.mimetype || "image/jpeg",
@@ -163,7 +168,7 @@ router.put("/:id", async (req, res) => {
                 imageLink,
                 category,
             };
-            const card = await Card.findByIdAndUpdate(req.params.id, newCard, {
+            const card = await Card_js_1.default.findByIdAndUpdate(req.params.id, newCard, {
                 new: true,
             });
             if (!card) {
@@ -181,16 +186,16 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
     try {
         const id = req.params.id;
-        const card = await Card.findByIdAndDelete(id);
+        const card = await Card_js_1.default.findByIdAndDelete(id);
         if (!card) {
             res.status(404).json({ error: "No such card" });
             return;
         }
-        await UserCard.deleteMany({ card: card._id });
+        await UserCard_js_1.default.deleteMany({ card: card._id });
         res.json({ msg: "Card entry deleted successfully" });
     }
     catch (err) {
         res.status(500).json({ error: "Error deleting the card" });
     }
 });
-export default router;
+exports.default = router;

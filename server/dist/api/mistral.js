@@ -1,12 +1,17 @@
-import express from "express";
-import { Mistral } from "@mistralai/mistralai";
-import authMiddleware from "../middleware/auth.js";
-const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const mistralai_1 = require("@mistralai/mistralai");
+const auth_js_1 = __importDefault(require("../middleware/auth.js"));
+const router = express_1.default.Router();
 const apiKey = process.env.MISTRAL_API_KEY || "";
 if (!apiKey) {
     console.error("MISTRAL_API_KEY is not set in the environment variables.");
 }
-const client = new Mistral({ apiKey: apiKey });
+const client = new mistralai_1.Mistral({ apiKey: apiKey });
 const sanitizeInput = (input) => {
     // Remove any unwanted characters or patterns
     return input
@@ -14,7 +19,7 @@ const sanitizeInput = (input) => {
         .replace(/\n/g, " ")
         .replace(/[^a-zA-Z0-9\s.,!?]/g, "");
 };
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", auth_js_1.default, async (req, res) => {
     const { promptType } = req.body;
     let prompt = "";
     // promptType is either "generatedQuestions" or "Subquestions"
@@ -98,4 +103,4 @@ router.post("/", authMiddleware, async (req, res) => {
         return;
     }
 });
-export default router;
+exports.default = router;

@@ -1,12 +1,17 @@
-import express from "express";
-import { IncomingForm } from "formidable";
-import authMiddleware from "../middleware/auth.js";
-import Item from "../models/Item.js";
-import User from "../models/User.js";
-import { uploadImage } from "../utils/imagesManager.js";
-const router = express.Router();
-router.get("/", authMiddleware, async (req, res) => {
-    const user = await User.findById(req.user.id);
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const formidable_1 = require("formidable");
+const auth_js_1 = __importDefault(require("../middleware/auth.js"));
+const Item_js_1 = __importDefault(require("../models/Item.js"));
+const User_js_1 = __importDefault(require("../models/User.js"));
+const imagesManager_js_1 = require("../utils/imagesManager.js");
+const router = express_1.default.Router();
+router.get("/", auth_js_1.default, async (req, res) => {
+    const user = await User_js_1.default.findById(req.user.id);
     if (!user) {
         res.status(404).json({ msg: "User not found" });
         return;
@@ -16,15 +21,15 @@ router.get("/", authMiddleware, async (req, res) => {
         return;
     }
     try {
-        const items = await Item.find();
+        const items = await Item_js_1.default.find();
         res.status(200).json(items);
     }
     catch (error) {
         console.error("Error fetching items:", error);
     }
 });
-router.post("/", authMiddleware, async (req, res) => {
-    const user = await User.findById(req.user.id);
+router.post("/", auth_js_1.default, async (req, res) => {
+    const user = await User_js_1.default.findById(req.user.id);
     if (!user) {
         res.status(404).json({ msg: "User not found" });
         return;
@@ -34,7 +39,7 @@ router.post("/", authMiddleware, async (req, res) => {
         return;
     }
     try {
-        const form = new IncomingForm();
+        const form = new formidable_1.IncomingForm();
         form.parse(req, async (err, fields, files) => {
             if (err) {
                 console.error("Error parsing form:", err);
@@ -70,7 +75,7 @@ router.post("/", authMiddleware, async (req, res) => {
             const imageFile = Array.isArray(files.imageFile)
                 ? files.imageFile[0]
                 : files.imageFile;
-            const existingItem = await Item.findOne({
+            const existingItem = await Item_js_1.default.findOne({
                 name,
             });
             if (existingItem) {
@@ -85,12 +90,12 @@ router.post("/", authMiddleware, async (req, res) => {
                 res.status(400).json({ msg: "Invalid image file" });
                 return;
             }
-            const imageLink = await uploadImage({
+            const imageLink = await (0, imagesManager_js_1.uploadImage)({
                 filepath: imageFile.filepath,
                 originalFilename: imageFile.originalFilename,
                 contentType: imageFile.mimetype || "image/jpeg",
             });
-            const newItem = new Item({
+            const newItem = new Item_js_1.default({
                 name,
                 description,
                 price: priceRaw,
@@ -111,12 +116,12 @@ router.post("/", authMiddleware, async (req, res) => {
         return;
     }
 });
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", auth_js_1.default, async (req, res) => {
     if (req.user.role !== "admin") {
         res.status(403).json({ msg: "Access denied" });
     }
     try {
-        const item = await Item.findOneAndDelete({
+        const item = await Item_js_1.default.findOneAndDelete({
             _id: req.params.id,
         });
         if (item) {
@@ -124,7 +129,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
             if (_id) {
                 res.status(404).json({ msg: "Item not found" });
             }
-            await User.onItemRemoved(item._id);
+            await User_js_1.default.onItemRemoved(item._id);
             res.json({ msg: "Item removed" });
         }
         else {
@@ -136,4 +141,4 @@ router.delete("/:id", authMiddleware, async (req, res) => {
         res.status(500).json({ msg: "Server error" });
     }
 });
-export default router;
+exports.default = router;

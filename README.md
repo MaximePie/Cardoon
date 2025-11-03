@@ -76,6 +76,10 @@ This is a MERN stack
 
 - Added a sweet beep after pre-commit and pre-push hooks
 
+### 03/11/2025
+
+- Had to go back in time because of a case naming error... :(
+
 ## TODOS
 
 - Add tests on back

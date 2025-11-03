@@ -1,18 +1,18 @@
 // app.js
 import express from "express";
-import cardsRoutes from "./api/cards";
-import connectDB from "./config/db";
-import { helmetConfig, securityConfig } from "./config/security";
+import cardsRoutes from "./api/cards.js";
+import connectDB from "./config/db.js";
+import { helmetConfig, securityConfig } from "./config/security.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import demoValidationRoutes from "./api/demo-validation";
-import itemsRoutes from "./api/items";
-import mistralRoutes from "./api/mistral";
-import userCardsRoutes from "./api/userCards";
-import usersValidatedRoutes from "./api/users";
+import demoValidationRoutes from "./api/demo-validation.js";
+import itemsRoutes from "./api/items.js";
+import mistralRoutes from "./api/mistral.js";
+import userCardsRoutes from "./api/userCards.js";
+import usersValidatedRoutes from "./api/users.js";
 // import usersRoutes from "./api/users"; // Temporarily disabled due to validation errors
 dotenv.config();
 const app = express();

@@ -1,0 +1,144 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const formidable_1 = require("formidable");
+const auth_js_1 = __importDefault(require("../middleware/auth.js"));
+const Item_js_1 = __importDefault(require("../models/Item.js"));
+const User_js_1 = __importDefault(require("../models/User.js"));
+const imagesManager_js_1 = require("../utils/imagesManager.js");
+const router = express_1.default.Router();
+router.get("/", auth_js_1.default, async (req, res) => {
+    const user = await User_js_1.default.findById(req.user.id);
+    if (!user) {
+        res.status(404).json({ msg: "User not found" });
+        return;
+    }
+    if (user.role !== "admin") {
+        res.status(403).json({ msg: "Access denied" });
+        return;
+    }
+    try {
+        const items = await Item_js_1.default.find();
+        res.status(200).json(items);
+    }
+    catch (error) {
+        console.error("Error fetching items:", error);
+    }
+});
+router.post("/", auth_js_1.default, async (req, res) => {
+    const user = await User_js_1.default.findById(req.user.id);
+    if (!user) {
+        res.status(404).json({ msg: "User not found" });
+        return;
+    }
+    if (user.role !== "admin") {
+        res.status(403).json({ msg: "Access denied" });
+        return;
+    }
+    try {
+        const form = new formidable_1.IncomingForm();
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                console.error("Error parsing form:", err);
+                res.status(400).json({ msg: "Error parsing form" });
+                return;
+            }
+            const requiredFields = [
+                "name",
+                "description",
+                "price",
+                "type",
+                "effectValue",
+                "effectType",
+            ];
+            const data = Object.fromEntries(requiredFields.map((k) => [k, fields[k]?.[0] ?? null]));
+            const missing = requiredFields.find((k) => !data[k]);
+            if (missing) {
+                res.status(400).json({ msg: `Missing field: ${missing}` });
+                return;
+            }
+            const { name, description, priceRaw, type, effectValueRaw, effectType } = data;
+            const price = Number(priceRaw);
+            const effectValue = Number(effectValueRaw);
+            if (Number.isNaN(price) || Number.isNaN(effectValue)) {
+                res.status(400).json({ msg: "Price and effectValue must be numbers" });
+                return;
+            }
+            const validTypes = ["head", "weapon", "armor", "accessory"];
+            if (!validTypes.includes(type)) {
+                res.status(400).json({ msg: "Invalid item type" });
+                return;
+            }
+            const imageFile = Array.isArray(files.imageFile)
+                ? files.imageFile[0]
+                : files.imageFile;
+            const existingItem = await Item_js_1.default.findOne({
+                name,
+            });
+            if (existingItem) {
+                res.status(400).json({ msg: "Item already exists" });
+                return;
+            }
+            if (!name || !description || !price) {
+                res.status(400).json({ msg: "Please fill in all fields" });
+                return;
+            }
+            if (!imageFile || !imageFile.filepath || !imageFile.originalFilename) {
+                res.status(400).json({ msg: "Invalid image file" });
+                return;
+            }
+            const imageLink = await (0, imagesManager_js_1.uploadImage)({
+                filepath: imageFile.filepath,
+                originalFilename: imageFile.originalFilename,
+                contentType: imageFile.mimetype || "image/jpeg",
+            });
+            const newItem = new Item_js_1.default({
+                name,
+                description,
+                price: priceRaw,
+                image: imageLink,
+                effect: {
+                    type: effectType,
+                    value: effectValue,
+                },
+                type,
+            });
+            await newItem.save();
+            res.status(200).json(newItem);
+        });
+    }
+    catch (error) {
+        console.error("Error creating item:", error);
+        res.status(500).json({ msg: "Server error" });
+        return;
+    }
+});
+router.delete("/:id", auth_js_1.default, async (req, res) => {
+    if (req.user.role !== "admin") {
+        res.status(403).json({ msg: "Access denied" });
+    }
+    try {
+        const item = await Item_js_1.default.findOneAndDelete({
+            _id: req.params.id,
+        });
+        if (item) {
+            const { _id } = item;
+            if (_id) {
+                res.status(404).json({ msg: "Item not found" });
+            }
+            await User_js_1.default.onItemRemoved(item._id);
+            res.json({ msg: "Item removed" });
+        }
+        else {
+            res.status(404).json({ msg: "Item not found" });
+        }
+    }
+    catch (error) {
+        console.error("Error deleting item:", error);
+        res.status(500).json({ msg: "Server error" });
+    }
+});
+exports.default = router;

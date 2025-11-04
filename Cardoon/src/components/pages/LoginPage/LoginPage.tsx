@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "../../../hooks/contexts/useUser";
+import { useUser } from "../../../context/UserContext/useUserContext";
 import { ACTIONS, usePost } from "../../../hooks/server";
 import { User } from "../../../types/common";
 import Input from "../../atoms/Input/Input";

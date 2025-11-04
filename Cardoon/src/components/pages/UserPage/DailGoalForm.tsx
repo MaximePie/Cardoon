@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { useUser } from "../../../hooks/contexts/useUser";
+import { useUser } from "../../../context/UserContext/useUserContext";
 import { RESOURCES, usePut } from "../../../hooks/server";
 import { User } from "../../../types/common";
 

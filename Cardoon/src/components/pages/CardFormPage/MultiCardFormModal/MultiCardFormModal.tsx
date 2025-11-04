@@ -1,12 +1,13 @@
 import { Modal } from "@mui/material";
 import React, { useContext, useState } from "react";
+import { useCategoriesContext } from "../../../../context/CategoriesContext";
 import { SnackbarContext } from "../../../../context/SnackbarContext";
-import { RESOURCES, useFetch, usePost } from "../../../../hooks/server";
+import { RESOURCES, usePost } from "../../../../hooks/server";
 import Button from "../../../atoms/Button/Button";
 import CategoryInput from "../../../atoms/Input/CategoryInput/CategoryInput";
 import Input from "../../../atoms/Input/Input";
 import Loader from "../../../atoms/Loader/Loader";
-import { FetchedCategory, MistralResponse } from "../CardFormPage";
+import { MistralResponse } from "../CardFormPage";
 import QuestionLine from "../QuestionLine/QuestionLine";
 
 interface CardFormModalProps {
@@ -23,21 +24,15 @@ export default function MultiCardFormModal({
   );
   const [subcategory, setSubcategory] = React.useState<string>("");
   const [isGenerationLoading, setIsLoading] = useState(false);
-  React.useState<boolean>(false);
   const [subQuestions, setSubQuestions] = React.useState<
     { question: string; answer: string }[]
   >([]);
   const { asyncPost: postMistral } = usePost<MistralResponse>(
     RESOURCES.MISTRAL
   );
-  const { data: categoriesData } = useFetch<FetchedCategory[]>(
-    RESOURCES.CATEGORIES
-  );
+  const { categoriesWithCount, isLoading: isCategoriesLoading } =
+    useCategoriesContext();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
-  const categoriesWithCount =
-    categoriesData?.map(
-      ({ category: category, count }) => `${category} (${count})`
-    ) || [];
 
   const generateQuestions = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -90,6 +85,7 @@ export default function MultiCardFormModal({
                 newCard={newCard}
                 setNewCard={setNewCard}
                 isRequired={true}
+                isLoading={isCategoriesLoading}
               />
             </div>
             <div>

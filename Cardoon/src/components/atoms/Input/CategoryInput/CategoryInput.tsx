@@ -9,6 +9,7 @@ interface CategoryInputProps {
   setNewCard: (newCard: Partial<Card>) => void;
   label?: string;
   isRequired?: boolean;
+  isLoading?: boolean;
 }
 export default function CategoryInput({
   categoriesWithCount,
@@ -16,6 +17,7 @@ export default function CategoryInput({
   setNewCard,
   label = "Catégorie",
   isRequired = false,
+  isLoading = false,
 }: CategoryInputProps) {
   return (
     <>
@@ -30,6 +32,7 @@ export default function CategoryInput({
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label={label} />}
         value={newCard.category}
+        loading={isLoading}
         onChange={(_, newValue) => {
           if (typeof newValue === "string") {
             let newCategory = newValue.replace("Créer: ", "");

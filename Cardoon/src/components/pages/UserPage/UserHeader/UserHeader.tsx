@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useUser } from "../../../../hooks/contexts/useUser";
+import { useUser } from "../../../../context/UserContext/useUserContext";
 import Button from "../../../atoms/Button/Button";
 import ExpBar from "../../../atoms/ExpBar/ExpBar";
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useUser } from "../../../hooks/contexts/useUser";
+import { useUser } from "../../../context/UserContext/useUserContext";
 import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
 import goldIcon from "../../../images/coin.png";
 import { PopulatedUserCard, User } from "../../../types/common";

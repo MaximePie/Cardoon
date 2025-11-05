@@ -1,6 +1,7 @@
 import Delete from "@mui/icons-material/Delete";
 import { IconButton, Modal } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { useCategoriesContext } from "../../../context/CategoriesContext";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import {
   ACTIONS,
@@ -14,14 +15,12 @@ import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
-import { FetchedCategory } from "../../pages/CardFormPage/CardFormPage";
 import SubQuestionsTab from "./SubQuestionsTab/SubQuestionsTab";
 
 interface EditCardFormProps {
   isOpen: boolean;
   close: () => void;
   editedCard: PopulatedUserCard;
-  categories: FetchedCategory[];
   afterDelete: () => void;
 }
 
@@ -29,7 +28,6 @@ export default function EditCardForm({
   isOpen,
   close,
   editedCard,
-  categories,
   afterDelete,
 }: EditCardFormProps) {
   const {
@@ -37,7 +35,7 @@ export default function EditCardForm({
   } = editedCard;
 
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
-
+  const { categoriesWithCount } = useCategoriesContext();
   const { put } = usePut(RESOURCES.CARDS);
   const {
     post: invertCardPost,
@@ -85,10 +83,6 @@ export default function EditCardForm({
       expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
     });
   }, [isOpen, question, answer, imageLink, category, expectedAnswers]);
-
-  const categoriesWithCount = categories.map(
-    (category) => `${category.category} (${category.count})`
-  );
 
   const onCategoryChange = (newCategory: string) => {
     setNewCard({ ...newCard, category: newCategory });

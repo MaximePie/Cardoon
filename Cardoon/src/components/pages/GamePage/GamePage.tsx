@@ -10,7 +10,6 @@ import Card from "../../molecules/Card/Card";
 import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { GameFooter } from "../../molecules/Footer/Footer";
 import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
-import { FetchedCategory } from "../CardFormPage/CardFormPage";
 
 interface PutResult {
   user: User;
@@ -19,7 +18,6 @@ interface PutResult {
 const GamePage = () => {
   const { data, loading, error } = useFetch<{
     cards: PopulatedUserCard[];
-    categories: FetchedCategory[];
   }>(RESOURCES.REVIEW_USERCARDS);
   const { user, setUser } = useUser();
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
@@ -27,7 +25,6 @@ const GamePage = () => {
   );
   const [editedCard, setEditedCard] = useState<PopulatedUserCard | null>(null);
   const [isEditModalActive, setEditModalActiveState] = useState(false);
-  const [categories, setCategories] = useState<FetchedCategory[]>([]);
   const { addScore, earnGold } = useUser();
 
   const [flash, setFlash] = useState(false);
@@ -50,7 +47,6 @@ const GamePage = () => {
         return 0;
       });
       setUserCards(shuffled);
-      setCategories(data.categories);
     }
   }, [data]);
 
@@ -153,7 +149,6 @@ const GamePage = () => {
           isOpen={isEditModalActive}
           editedCard={editedCard}
           afterDelete={() => removeCard(editedCard._id)}
-          categories={categories}
         />
       )}
       <div className="Cards">

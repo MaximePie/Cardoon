@@ -47,11 +47,10 @@ export const useReviewUserCards = (userId: string | number) => {
  * return <CardsList cards={cards} />;
  * ```
  */
-export const useUserCards = (userId?: string | number) => {
-  console.log("useUserCards called with userId:", userId);
+export const useUserCards = (userId: string | number) => {
   return useQuery({
-    queryKey: QueryKeys.userCards(userId),
-    queryFn: () => getUserCards(userId),
+    queryKey: QueryKeys.userCards(userId.toString()),
+    queryFn: () => getUserCards(userId.toString()),
     enabled: !!userId, // Ne lance la requête que si userId existe
     staleTime: 2 * 60 * 1000, // 2 minutes pour les cartes (données fréquemment modifiées)
   });
@@ -412,7 +411,7 @@ export const useUserCardsManager = (
     onInvertError?: (error: Error) => void;
   } = {}
 ) => {
-  const cardsQuery = useUserCards(userId);
+  const cardsQuery = useUserCards(userId.toString());
   const reviewUserCardsQuery = useReviewUserCards(userId);
   const deleteCardMutation = useDeleteCard(userId, {
     onSuccess: options.onDeleteSuccess,

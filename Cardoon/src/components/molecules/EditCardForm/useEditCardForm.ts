@@ -37,7 +37,7 @@ export default function useEditCardForm({
 
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { categoriesWithCount } = useCategoriesContext();
-  const { put, error: putError } = usePut(RESOURCES.CARDS);
+  const { put } = usePut(RESOURCES.CARDS);
   const {
     post: invertCardPost,
     data: invertedCardData,
@@ -152,27 +152,29 @@ export default function useEditCardForm({
       });
     }
 
-    await put(editedCard.card._id, data);
+    try {
+      await put(editedCard.card._id, data);
 
-    // Check if the PUT request failed
-    if (putError) {
+      // Only proceed with UI changes if the PUT succeeded
+      reset({
+        question: "",
+        answer: "",
+        imageLink: "",
+        category: "",
+        expectedAnswers: ["", "", ""],
+      });
+      close();
+      openSnackbarWithMessage("La carte a été mise à jour");
+    } catch (error) {
+      // Handle PUT request failure
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       openSnackbarWithMessage(
-        `Erreur lors de la mise à jour de la carte: ${putError}`,
+        `Erreur lors de la mise à jour de la carte: ${errorMessage}`,
         "error"
       );
       return;
     }
-
-    // Only proceed with UI changes if the PUT succeeded
-    reset({
-      question: "",
-      answer: "",
-      imageLink: "",
-      category: "",
-      expectedAnswers: ["", "", ""],
-    });
-    close();
-    openSnackbarWithMessage("La carte a été mise à jour");
   };
 
   // Wrapper pour handleSubmit de react-hook-form

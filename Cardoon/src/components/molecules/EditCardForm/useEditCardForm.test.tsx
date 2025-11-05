@@ -14,7 +14,6 @@ const mockInvertCardPost = vi.fn();
 vi.mock("../../../hooks/server", () => ({
   usePut: () => ({
     put: mockPut,
-    error: null,
   }),
   useDelete: () => ({
     deleteResource: mockDeleteResource,
@@ -285,6 +284,31 @@ describe("useEditCardForm", () => {
           mockSnackbarContext.openSnackbarWithMessage
         ).toHaveBeenCalledWith("La carte a été mise à jour");
         expect(mockProps.close).toHaveBeenCalled();
+      });
+    });
+
+    it("should handle submission errors", async () => {
+      const errorMessage = "Network error";
+      mockPut.mockRejectedValueOnce(new Error(errorMessage));
+
+      const { result } = renderHook(() => useEditCardForm(mockProps), {
+        wrapper: TestWrapper,
+      });
+
+      await act(async () => {
+        await result.current.submit({
+          preventDefault: vi.fn(),
+        } as unknown as React.FormEvent<HTMLFormElement>);
+      });
+
+      await waitFor(() => {
+        expect(
+          mockSnackbarContext.openSnackbarWithMessage
+        ).toHaveBeenCalledWith(
+          `Erreur lors de la mise à jour de la carte: ${errorMessage}`,
+          "error"
+        );
+        expect(mockProps.close).not.toHaveBeenCalled();
       });
     });
   });

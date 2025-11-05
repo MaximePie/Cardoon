@@ -16,6 +16,8 @@ const mockUserContextValue = {
   },
   allUserCards: [],
   reviewUserCards: [],
+  isReviewUserCardsLoading: false,
+  reviewUserCardsError: null,
   getReviewUserCards: vi.fn(),
   getAllUserCards: vi.fn(),
   setUser: vi.fn(),

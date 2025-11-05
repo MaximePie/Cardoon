@@ -12,8 +12,6 @@ export const CategoriesContextProvider = ({
     data?.map(({ category: category, count }) => `${category} (${count})`) ||
     [];
 
-  console.log("CategoriesContextProvider rendered, data:", data);
-
   return (
     <CategoriesContext.Provider
       value={{ categories: data, categoriesWithCount, error, isLoading }}

@@ -6,7 +6,7 @@ const filter = createFilterOptions<string>();
 interface CategoryInputProps {
   categoriesWithCount: string[];
   newCard: Partial<Card>;
-  setNewCard: (newCard: Partial<Card>) => void;
+  onChange: (newCategory: string) => void;
   label?: string;
   isRequired?: boolean;
   isLoading?: boolean;
@@ -14,7 +14,7 @@ interface CategoryInputProps {
 export default function CategoryInput({
   categoriesWithCount,
   newCard,
-  setNewCard,
+  onChange,
   label = "Catégorie",
   isRequired = false,
   isLoading = false,
@@ -37,7 +37,7 @@ export default function CategoryInput({
           if (typeof newValue === "string") {
             let newCategory = newValue.replace("Créer: ", "");
             newCategory = newCategory.replace(/\s*\(\d+\)$/, "");
-            setNewCard({ ...newCard, category: newCategory });
+            onChange(newCategory);
           }
         }}
         filterOptions={(options, params) => {

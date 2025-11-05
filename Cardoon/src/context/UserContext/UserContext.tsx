@@ -11,7 +11,7 @@ export const UserContextProvider = ({
   children: React.ReactNode;
 }) => {
   const { fetch, data, error: userError } = useFetch<User>(ACTIONS.ME);
-  const { fetch: fetchAllCards, data: userCardsData } = useFetch<{
+  const { data: userCardsData } = useFetch<{
     userCards: PopulatedUserCard[];
   }>(RESOURCES.USERCARDS);
   const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
@@ -73,10 +73,6 @@ export const UserContextProvider = ({
     return user.items.some((item) => item.base._id === itemId);
   };
 
-  const getAllUserCards = useCallback(async () => {
-    await fetchAllCards();
-  }, [fetchAllCards]);
-
   const getReviewUserCards = useCallback(async () => {
     await refetchReviewUserCards();
   }, [refetchReviewUserCards]);
@@ -96,10 +92,6 @@ export const UserContextProvider = ({
     }
   };
 
-  useEffect(() => {
-    getAllUserCards();
-  }, [getAllUserCards]);
-
   return (
     <UserContext.Provider
       value={{
@@ -116,7 +108,6 @@ export const UserContextProvider = ({
         removeGold,
         refresh,
         allUserCards: allUserCards || [],
-        getAllUserCards,
         getReviewUserCards,
         updateImage,
       }}

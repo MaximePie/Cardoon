@@ -116,8 +116,9 @@ export const usePut = <T>(resource: string) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
-  const put = async (id: string, payload: unknown) => {
+  const put = async (id: string, payload: unknown): Promise<T> => {
     setLoading(true);
+    setError(undefined);
     try {
       const response = await axios.put(url + "/" + id, payload, {
         headers: {
@@ -126,15 +127,19 @@ export const usePut = <T>(resource: string) => {
       });
       setData(response.data);
       setLoading(false);
+      return response.data;
     } catch (err: unknown) {
-      setError(extractErrorMessage(err));
+      const errorMessage = extractErrorMessage(err);
+      setError(errorMessage);
       setLoading(false);
+      throw new Error(errorMessage);
     }
   };
 
   // Only use for connected user, no id required
-  const putUser = async (payload: unknown) => {
+  const putUser = async (payload: unknown): Promise<T> => {
     setLoading(true);
+    setError(undefined);
     try {
       const token = Cookies.get("token");
       const response = await axios.put(url, payload, {
@@ -142,9 +147,12 @@ export const usePut = <T>(resource: string) => {
       });
       setData(response.data);
       setLoading(false);
+      return response.data;
     } catch (err: unknown) {
-      setError(extractErrorMessage(err));
+      const errorMessage = extractErrorMessage(err);
+      setError(errorMessage);
       setLoading(false);
+      throw new Error(errorMessage);
     }
   };
 

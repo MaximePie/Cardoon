@@ -80,6 +80,60 @@ This is a MERN stack
 
 - Go back in time...
 
+### 05/11/2025
+
+- Use React Hook Form on EditCardForm
+
+## React Hook Form Integration Status
+
+### ✅ Forms Using React Hook Form
+
+| Component      | Location                                    | Form Type          | Status                                  |
+| -------------- | ------------------------------------------- | ------------------ | --------------------------------------- |
+| `EditCardForm` | `src/components/molecules/EditCardForm.tsx` | Card editing modal | ✅ **Fully integrated** with validation |
+
+### ❌ Forms Using Manual State Management
+
+#### 📄 Page Components
+
+| Component      | Location                                | Form Type         | Priority  | Notes                        |
+| -------------- | --------------------------------------- | ----------------- | --------- | ---------------------------- |
+| `LoginPage`    | `src/components/pages/LoginPage.tsx`    | Authentication    | 🔴 High   | User login form              |
+| `RegisterPage` | `src/components/pages/RegisterPage.tsx` | User registration | 🔴 High   | User signup form             |
+| `CardFormPage` | `src/components/pages/CardFormPage.tsx` | Card creation     | 🟡 Medium | Main card creation interface |
+| `UserPage`     | `src/components/pages/UserPage.tsx`     | User settings     | 🟢 Low    | Profile management           |
+
+#### 🎯 Modal Components
+
+| Component            | Location                                          | Form Type          | Priority  | Notes              |
+| -------------------- | ------------------------------------------------- | ------------------ | --------- | ------------------ |
+| `MultiCardFormModal` | `src/components/molecules/MultiCardFormModal.tsx` | AI card generation | 🟡 Medium | Bulk card creation |
+
+#### 🧩 Form Components
+
+| Component         | Location                                       | Form Type      | Priority | Notes               |
+| ----------------- | ---------------------------------------------- | -------------- | -------- | ------------------- |
+| `SubQuestionsTab` | `src/components/molecules/SubQuestionsTab.tsx` | Sub-questions  | 🟢 Low   | Question management |
+| `DailGoalForm`    | `src/components/pages/UserPage.tsx`            | Daily goals    | 🟢 Low   | Settings form       |
+| `AdminPage` forms | `src/components/pages/AdminPage.tsx`           | Admin controls | 🟢 Low   | Item management     |
+
+### 📊 Summary
+
+- **Total Forms**: 9 identified
+- **✅ Using React Hook Form**: 1 (11%)
+- **❌ Using Manual State**: 8 (89%)
+
+### 🎯 Migration Priority
+
+1. **🔴 High Priority**: Authentication forms (`LoginPage`, `RegisterPage`)
+2. **🟡 Medium Priority**: Card creation forms (`CardFormPage`, `MultiCardFormModal`)
+3. **🟢 Low Priority**: Settings and admin forms
+
+### 📚 Documentation
+
+- [React Hook Form Integration Guide](docs/REACT_HOOK_FORM_INTEGRATION.md)
+- [Tests Update Guide](docs/TESTS_REACT_HOOK_FORM_UPDATE.md)
+
 ## TODOS
 
 - Add tests on back

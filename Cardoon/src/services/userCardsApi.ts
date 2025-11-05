@@ -115,6 +115,37 @@ export const getUserCards = async (
   }
 };
 
+export const getReviewUserCards = async (
+  _userId?: string | number
+): Promise<PopulatedUserCard[]> => {
+  try {
+    // L'endpoint backend utilise l'authentification pour déterminer l'utilisateur
+    // Pas besoin de passer l'userId dans l'URL
+    const url = `${backUrl}/api/userCards`;
+
+    const response = await axios.get(url, createAuthenticatedAxios());
+
+    // Le backend retourne un objet avec une propriété userCards
+    const cards = response.data.cards;
+
+    if (!Array.isArray(cards)) {
+      throw new Error("Format de réponse inattendu du serveur");
+    }
+
+    return cards;
+  } catch (error) {
+    const errorMessage = extractErrorMessage(error);
+    console.error(
+      "Erreur lors de la récupération des cartes de révision utilisateur:",
+      errorMessage
+    );
+    throw createStatusPreservingError(
+      `Impossible de récupérer les cartes de révision: ${errorMessage}`,
+      error
+    );
+  }
+};
+
 /**
  * Supprime une carte utilisateur
  *

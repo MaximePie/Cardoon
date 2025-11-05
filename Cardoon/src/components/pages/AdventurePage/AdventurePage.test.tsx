@@ -131,6 +131,8 @@ describe("AdventurePage", () => {
   const mockUserContextValue = {
     user: mockUser,
     reviewUserCards: mockCards,
+    isReviewUserCardsLoading: false,
+    reviewUserCardsError: null,
     allUserCards: [],
     setUser: vi.fn(),
     logout: vi.fn(),

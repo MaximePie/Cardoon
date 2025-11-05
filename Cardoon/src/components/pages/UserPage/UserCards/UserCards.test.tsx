@@ -118,7 +118,9 @@ describe("UserCards", () => {
 
   const mockUserCardsManager = {
     cards: mockUserCards,
+    reviewUserCards: [],
     isLoading: false,
+    isReviewUserCardsLoading: false,
     deleteCard: mockDeleteCard,
     deleteCards: mockDeleteCards,
     isDeletingCard: false,
@@ -128,9 +130,11 @@ describe("UserCards", () => {
     deleteError: null,
     editError: null,
     invertError: null,
+    reviewUserCardsError: null,
     editCard: mockEditCard,
     invertCard: mockInvertCard,
     refetch: vi.fn(),
+    refetchReviewUserCards: vi.fn(),
     isStale: false,
   };
 
@@ -160,8 +164,9 @@ describe("UserCards", () => {
       hasItem: vi.fn(),
       logout: vi.fn(),
       refresh: vi.fn(),
-      getAllUserCards: vi.fn(),
       updateImage: vi.fn(),
+      isReviewUserCardsLoading: false,
+      reviewUserCardsError: null,
     });
 
     vi.mocked(useIsMobileHook.default).mockReturnValue({ isMobile: false });
@@ -552,8 +557,9 @@ describe("UserCards", () => {
         hasItem: vi.fn(),
         logout: vi.fn(),
         refresh: vi.fn(),
-        getAllUserCards: vi.fn(),
         updateImage: vi.fn(),
+        isReviewUserCardsLoading: false,
+        reviewUserCardsError: null,
       });
 
       vi.mocked(useUserCardsManager).mockReturnValue({

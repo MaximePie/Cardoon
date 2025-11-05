@@ -30,6 +30,8 @@ import { usePut } from "../../../hooks/server";
 const createMockUserContext = (user: User, overrides = {}) => ({
   user,
   reviewUserCards: [],
+  isReviewUserCardsLoading: false,
+  reviewUserCardsError: null,
   getReviewUserCards: vi.fn(),
   setUser: vi.fn(),
   logout: vi.fn(),
@@ -80,11 +82,14 @@ describe("UserPage", () => {
   const mockRefetch = vi.fn();
   const mockUserCardsManagerReturn = {
     cards: [],
+    reviewUserCards: [],
     isLoading: false,
+    isReviewUserCardsLoading: false,
     isDeletingCard: false,
     isEditingCard: false,
     isInvertingCard: false,
     error: null,
+    reviewUserCardsError: null,
     deleteError: null,
     editError: null,
     invertError: null,
@@ -93,6 +98,12 @@ describe("UserPage", () => {
     editCard: vi.fn(),
     invertCard: vi.fn(),
     refetch: mockRefetch.mockResolvedValue({
+      data: [],
+      isError: false,
+      isLoading: false,
+      isSuccess: true,
+    }),
+    refetchReviewUserCards: vi.fn().mockResolvedValue({
       data: [],
       isError: false,
       isLoading: false,

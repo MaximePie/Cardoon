@@ -16,10 +16,20 @@ import { QueryKeys } from "../../lib/queryClient";
 import {
   deleteUserCard,
   editUserCard,
+  getReviewUserCards,
   getUserCards,
   invertCard,
 } from "../../services/userCardsApi";
 import { Card, PopulatedUserCard } from "../../types/common";
+
+export const useReviewUserCards = (userId: string | number) => {
+  return useQuery({
+    queryKey: QueryKeys.reviewUserCards(userId),
+    queryFn: () => getReviewUserCards(userId),
+    enabled: !!userId, // Ne lance la requête que si userId existe
+    staleTime: 2 * 60 * 1000, // 2 minutes pour les cartes (données fréquemment modifiées)
+  });
+};
 
 /**
  * Hook pour récupérer les cartes d'un utilisateur
@@ -39,8 +49,8 @@ import { Card, PopulatedUserCard } from "../../types/common";
  */
 export const useUserCards = (userId: string | number) => {
   return useQuery({
-    queryKey: QueryKeys.userCards(userId),
-    queryFn: () => getUserCards(userId),
+    queryKey: QueryKeys.userCards(userId.toString()),
+    queryFn: () => getUserCards(userId.toString()),
     enabled: !!userId, // Ne lance la requête que si userId existe
     staleTime: 2 * 60 * 1000, // 2 minutes pour les cartes (données fréquemment modifiées)
   });
@@ -401,7 +411,8 @@ export const useUserCardsManager = (
     onInvertError?: (error: Error) => void;
   } = {}
 ) => {
-  const cardsQuery = useUserCards(userId);
+  const cardsQuery = useUserCards(userId.toString());
+  const reviewUserCardsQuery = useReviewUserCards(userId);
   const deleteCardMutation = useDeleteCard(userId, {
     onSuccess: options.onDeleteSuccess,
     onError: options.onDeleteError,
@@ -425,9 +436,11 @@ export const useUserCardsManager = (
   return {
     // 📊 Données
     cards: cardsQuery.data || [],
+    reviewUserCards: reviewUserCardsQuery.data || [], // All user cards to review
 
     // 🔄 États de loading
     isLoading: cardsQuery.isLoading,
+    isReviewUserCardsLoading: reviewUserCardsQuery.isLoading,
     isDeletingCard: deleteCardMutation.isPending,
     isEditingCard: editCardMutation.isPending,
     isInvertingCard: invertCardMutation.isPending,
@@ -437,6 +450,7 @@ export const useUserCardsManager = (
     deleteError: deleteCardMutation.error,
     editError: editCardMutation.error,
     invertError: invertCardMutation.error,
+    reviewUserCardsError: reviewUserCardsQuery.error,
 
     // 🎯 Actions
     deleteCard: deleteCardMutation.mutate,
@@ -447,5 +461,6 @@ export const useUserCardsManager = (
     // 🔧 Utilitaires
     refetch: cardsQuery.refetch,
     isStale: cardsQuery.isStale,
+    refetchReviewUserCards: reviewUserCardsQuery.refetch,
   };
 };

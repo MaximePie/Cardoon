@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../../../context/UserContext/useUserContext";
-import { ACTIONS, RESOURCES, useFetch, usePut } from "../../../hooks/server";
+import { ACTIONS, usePut } from "../../../hooks/server";
 import goldIcon from "../../../images/coin.png";
 import { PopulatedUserCard, User } from "../../../types/common";
 import { shuffleArray } from "../../../utils";
@@ -16,16 +16,21 @@ interface PutResult {
   userCard: PopulatedUserCard;
 }
 const GamePage = () => {
-  const { data, loading, error } = useFetch<{
-    cards: PopulatedUserCard[];
-  }>(RESOURCES.REVIEW_USERCARDS);
-  const { user, setUser } = useUser();
+  const {
+    user,
+    userError,
+    setUser,
+    addScore,
+    earnGold,
+    reviewUserCards,
+    isReviewUserCardsLoading,
+    reviewUserCardsError,
+  } = useUser();
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
-    data?.cards || []
+    reviewUserCards || []
   );
   const [editedCard, setEditedCard] = useState<PopulatedUserCard | null>(null);
   const [isEditModalActive, setEditModalActiveState] = useState(false);
-  const { addScore, earnGold } = useUser();
 
   const [flash, setFlash] = useState(false);
   const { put, data: updateCardResponse } = usePut<PutResult>(
@@ -38,9 +43,9 @@ const GamePage = () => {
   }, [updateCardResponse, setUser]);
 
   useEffect(() => {
-    if (data) {
+    if (reviewUserCards) {
       const shuffled = (
-        shuffleArray([...data.cards]) as PopulatedUserCard[]
+        shuffleArray([...reviewUserCards]) as PopulatedUserCard[]
       ).sort((a: PopulatedUserCard, b: PopulatedUserCard) => {
         if (a.card.parentId && !b.card.parentId) return -1;
         if (!a.card.parentId && b.card.parentId) return 1;
@@ -48,7 +53,7 @@ const GamePage = () => {
       });
       setUserCards(shuffled);
     }
-  }, [data]);
+  }, [reviewUserCards]);
 
   const addCoinsAnimation = (cardRect: DOMRect) => {
     const footerElement = document.querySelector("#Footer__coins");
@@ -113,9 +118,10 @@ const GamePage = () => {
     setUserCards([...userCards.filter((card) => card._id !== id)]);
   };
 
-  if (loading)
+  if (isReviewUserCardsLoading)
     return (
       <div className="GamePage__loader">
+        <p>Chargement des cartes...</p>
         <Loader />
       </div>
     );
@@ -132,13 +138,12 @@ const GamePage = () => {
       </div>
     );
   }
-
-  if (error === "Invalid token") {
+  if (userError === "Invalid token") {
     return <TokenErrorPage />;
   }
 
-  if (error) {
-    return <p>Erreur: {error}</p>;
+  if (reviewUserCardsError) {
+    return <p>Erreur: {reviewUserCardsError.message}</p>;
   }
 
   return (

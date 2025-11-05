@@ -16,6 +16,8 @@ const mockUserContextValue = {
   },
   allUserCards: [],
   reviewUserCards: [],
+  isReviewUserCardsLoading: false,
+  reviewUserCardsError: null,
   getReviewUserCards: vi.fn(),
   getAllUserCards: vi.fn(),
   setUser: vi.fn(),
@@ -70,9 +72,6 @@ describe("useUser", () => {
       expect(result.current.removeGold).toBe(mockUserContextValue.removeGold);
       expect(result.current.hasItem).toBe(mockUserContextValue.hasItem);
       expect(result.current.refresh).toBe(mockUserContextValue.refresh);
-      expect(result.current.getAllUserCards).toBe(
-        mockUserContextValue.getAllUserCards
-      );
     });
 
     it("should provide access to user cards", () => {
@@ -246,16 +245,6 @@ describe("useUser", () => {
       result.current.refresh();
 
       expect(mockUserContextValue.refresh).toHaveBeenCalled();
-    });
-
-    it("should call getAllUserCards method when invoked", async () => {
-      const { result } = renderHook(() => useUser(), {
-        wrapper: UserContextProvider,
-      });
-
-      await result.current.getAllUserCards();
-
-      expect(mockUserContextValue.getAllUserCards).toHaveBeenCalled();
     });
   });
 

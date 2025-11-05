@@ -3,10 +3,12 @@ import { PopulatedUserCard, User } from "../../types/common";
 
 export interface UserContextType {
   user: User;
+  userError?: string | undefined;
   allUserCards: PopulatedUserCard[];
-  getAllUserCards: () => Promise<void>;
   getReviewUserCards: () => Promise<void>;
   reviewUserCards: PopulatedUserCard[];
+  isReviewUserCardsLoading: boolean;
+  reviewUserCardsError: Error | null;
   setUser: (user: User) => void;
   logout: () => void;
   addScore: (score: number) => void;
@@ -38,13 +40,14 @@ export const emptyUser: User = {
 export const UserContext = createContext<UserContextType>({
   user: emptyUser,
   reviewUserCards: [],
+  isReviewUserCardsLoading: false,
+  reviewUserCardsError: null,
   setUser: () => {},
   logout: () => {},
   addScore: () => {},
   earnGold: () => {},
   removeGold: () => {},
   hasItem: () => false,
-  getAllUserCards: async () => {},
   getReviewUserCards: async () => {},
   refresh: () => {},
   updateImage: async (_imageFile: File) => {},

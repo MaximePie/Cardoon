@@ -90,8 +90,8 @@ export default function EditCardForm({
     (category) => `${category.category} (${category.count})`
   );
 
-  const onCategoryChange = (updatedCard: Partial<typeof newCard>) => {
-    setNewCard({ ...newCard, ...updatedCard });
+  const onCategoryChange = (newCategory: string) => {
+    setNewCard({ ...newCard, category: newCategory });
   };
 
   const handleDeleteClick = async (e: React.MouseEvent) => {
@@ -225,8 +225,10 @@ export default function EditCardForm({
               />
               <CategoryInput
                 categoriesWithCount={categoriesWithCount}
-                newCard={newCard}
-                setNewCard={onCategoryChange}
+                value={newCard.category || ""}
+                onChange={onCategoryChange}
+                label="Catégorie"
+                isRequired={true}
               />
               <div className="EditCardForm__buttons">
                 <SubmitButton disabled={false}>Enregistrer</SubmitButton>

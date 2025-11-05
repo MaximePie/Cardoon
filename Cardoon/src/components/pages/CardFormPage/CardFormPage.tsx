@@ -82,8 +82,11 @@ export default function CardFormPage() {
           ))}
           <CategoryInput
             categoriesWithCount={categoriesWithCount}
-            newCard={newCard}
-            setNewCard={setNewCard}
+            value={newCard.category || ""}
+            onChange={(newCategory) =>
+              setNewCard({ ...newCard, category: newCategory })
+            }
+            label="Catégorie"
             isRequired={true}
           />
 

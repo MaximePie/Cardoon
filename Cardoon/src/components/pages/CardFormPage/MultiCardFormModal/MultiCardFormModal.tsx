@@ -41,7 +41,7 @@ export default function MultiCardFormModal({
               <CategoryInput
                 label="Je veux apprendre ..."
                 categoriesWithCount={categoriesWithCount}
-                newCard={newCard}
+                value={newCard.category || ""}
                 onChange={updateCategory}
                 isRequired={true}
                 isLoading={isCategoriesLoading}

@@ -1,8 +1,8 @@
 import { useContext, useState } from "react";
+import { useCategoriesContext } from "../../../context/CategoriesContext";
 import { SnackbarContext } from "../../../context/SnackbarContext";
-import { RESOURCES, useFetch, usePost } from "../../../hooks/server";
+import { RESOURCES, usePost } from "../../../hooks/server";
 import { Card } from "../../../types/common";
-import { FetchedCategory } from "./CardFormPage";
 
 interface hookReturnType {
   isModalOpen: boolean;
@@ -28,13 +28,15 @@ export default function useCardFormPage(): hookReturnType {
     loading: isCreating,
   } = usePost(RESOURCES.CARDS);
 
-  const { data: categoriesData } = useFetch<FetchedCategory[]>(
-    RESOURCES.CATEGORIES
-  );
-  const categoriesWithCount =
-    categoriesData?.map(
-      ({ category: category, count }) => `${category} (${count})`
-    ) || [];
+  // const { data: categoriesData } = useFetch<FetchedCategory[]>(
+  //   RESOURCES.CATEGORIES
+  // );
+  // const categoriesWithCount =
+  //   categoriesData?.map(
+  //     ({ category: category, count }) => `${category} (${count})`
+  //   ) || [];
+
+  const { categoriesWithCount } = useCategoriesContext();
 
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 

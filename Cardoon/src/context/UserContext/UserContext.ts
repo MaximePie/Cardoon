@@ -7,6 +7,8 @@ export interface UserContextType {
   getAllUserCards: () => Promise<void>;
   getReviewUserCards: () => Promise<void>;
   reviewUserCards: PopulatedUserCard[];
+  isReviewUserCardsLoading: boolean;
+  reviewUserCardsError: string | undefined;
   setUser: (user: User) => void;
   logout: () => void;
   addScore: (score: number) => void;
@@ -38,6 +40,8 @@ export const emptyUser: User = {
 export const UserContext = createContext<UserContextType>({
   user: emptyUser,
   reviewUserCards: [],
+  isReviewUserCardsLoading: false,
+  reviewUserCardsError: undefined,
   setUser: () => {},
   logout: () => {},
   addScore: () => {},

@@ -13,7 +13,12 @@ export const UserContextProvider = ({
   const { fetch: fetchAllCards, data: userCardsData } = useFetch<{
     userCards: PopulatedUserCard[];
   }>(RESOURCES.USERCARDS);
-  const { fetch: fetchReviewUserCards, data: reviewUserCardsData } = useFetch<{
+  const {
+    fetch: fetchReviewUserCards,
+    data: reviewUserCardsData,
+    loading: isReviewUserCardsLoading,
+    error: reviewUserCardsError,
+  } = useFetch<{
     cards: PopulatedUserCard[];
   }>(RESOURCES.REVIEW_USERCARDS);
   const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
@@ -94,10 +99,16 @@ export const UserContextProvider = ({
     }
   };
 
+  useEffect(() => {
+    getAllUserCards();
+  }, [getAllUserCards]);
+
   return (
     <UserContext.Provider
       value={{
         reviewUserCards,
+        isReviewUserCardsLoading,
+        reviewUserCardsError,
         user,
         hasItem,
         setUser,

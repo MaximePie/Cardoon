@@ -83,7 +83,7 @@ describe("useCategories", () => {
     expect(result.current.data).toBeUndefined();
   });
 
-  it("should return all categories including null names", async () => {
+  it("should filter out categories with null names", async () => {
     const mockCategories = [
       { category: "Category A", count: 5 },
       { category: null, count: 1 },
@@ -101,9 +101,13 @@ describe("useCategories", () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    // The current implementation returns all categories (including null ones)
-    expect(result.current.data).toEqual(mockCategories);
-    expect(result.current.data?.some((cat) => cat.category === null)).toBe(
+    // The current implementation filters out null categories and sorts alphabetically
+    const expectedCategories = [
+      { category: "Category A", count: 5 },
+      { category: "Category B", count: 3 },
+    ];
+    expect(result.current.data).toEqual(expectedCategories);
+    expect(result.current.data?.every((cat) => cat.category !== null)).toBe(
       true
     );
   });
@@ -145,6 +149,33 @@ describe("useCategories", () => {
 
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toContain("404");
+  });
+
+  it("should sort categories alphabetically", async () => {
+    const mockCategories = [
+      { category: "Zebra", count: 2 },
+      { category: "Apple", count: 5 },
+      { category: "Banana", count: 3 },
+    ];
+
+    vi.mocked(axios.get).mockResolvedValue({ data: mockCategories });
+    vi.mocked(createAuthenticatedAxios).mockReturnValue({
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const { result } = renderHook(() => useCategories(), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    // Should be sorted alphabetically
+    const expectedOrder = [
+      { category: "Apple", count: 5 },
+      { category: "Banana", count: 3 },
+      { category: "Zebra", count: 2 },
+    ];
+    expect(result.current.data).toEqual(expectedOrder);
   });
 
   it("should start with loading state", () => {

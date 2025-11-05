@@ -2,8 +2,8 @@ import { useContext } from "react";
 import { CategoriesContext, CategoriesContextType } from "./CategoriesContext";
 
 /**
- * Hook personnalisé pour utiliser le UserContext
- * Fournit une meilleure expérience développeur avec vérification d'erreur
+ * Custom hook to access the CategoriesContext
+ * @return {CategoriesContextType} The context value
  */
 export const useCategoriesContext = (): CategoriesContextType => {
   const context = useContext(CategoriesContext);

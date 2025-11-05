@@ -9,8 +9,7 @@ export const CategoriesContextProvider = ({
 }) => {
   const { data, error, isLoading } = useCategories();
   const categoriesWithCount =
-    data?.map(({ category: category, count }) => `${category} (${count})`) ||
-    [];
+    data?.map(({ category, count }) => `${category} (${count})`) || [];
 
   return (
     <CategoriesContext.Provider

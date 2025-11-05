@@ -34,47 +34,45 @@ export default function MultiCardFormModal({
       aria-describedby="modal-modal-description"
     >
       <div className="CardFormPage__modal">
-        <div className="CardFormPage__modal">
-          <h2>Création de questions par IA</h2>
-          <form>
-            <div>
-              <CategoryInput
-                label="Je veux apprendre ..."
-                categoriesWithCount={categoriesWithCount}
-                value={newCard.category || ""}
-                onChange={updateCategory}
-                isRequired={true}
-                isLoading={isCategoriesLoading}
-              />
-            </div>
-            <div>
-              <Input
-                label="Plus particulièrement"
-                type="text"
-                onChange={(e) => setSubcategory(e.target.value)}
-                placeholder="Sous-catégorie"
-                value={subcategory}
-              />
-            </div>
-            <Button
-              onClick={generateQuestions}
-              disabled={!newCard.category || isGenerationLoading}
-            >
-              Générer
-            </Button>
-          </form>
-          <div className="CardFormPage__modal-questions">
-            {isGenerationLoading && <Loader />}
-            {subQuestions?.map(({ question, answer }, index) => (
-              <QuestionLine
-                key={`${index}-${question}`}
-                question={question}
-                answer={answer}
-                category={newCard.category}
-                aria-label={`Question générée ${index + 1} sur ${subQuestions.length}`}
-              />
-            ))}
+        <h2>Création de questions par IA</h2>
+        <form>
+          <div>
+            <CategoryInput
+              label="Je veux apprendre ..."
+              categoriesWithCount={categoriesWithCount}
+              value={newCard.category || ""}
+              onChange={updateCategory}
+              isRequired={true}
+              isLoading={isCategoriesLoading}
+            />
           </div>
+          <div>
+            <Input
+              label="Plus particulièrement"
+              type="text"
+              onChange={(e) => setSubcategory(e.target.value)}
+              placeholder="Sous-catégorie"
+              value={subcategory}
+            />
+          </div>
+          <Button
+            onClick={generateQuestions}
+            disabled={!newCard.category || isGenerationLoading}
+          >
+            Générer
+          </Button>
+        </form>
+        <div className="CardFormPage__modal-questions">
+          {isGenerationLoading && <Loader />}
+          {subQuestions?.map(({ question, answer }, index) => (
+            <QuestionLine
+              key={`${index}-${question}`}
+              question={question}
+              answer={answer}
+              category={newCard.category}
+              aria-label={`Question générée ${index + 1} sur ${subQuestions.length}`}
+            />
+          ))}
         </div>
       </div>
     </Modal>

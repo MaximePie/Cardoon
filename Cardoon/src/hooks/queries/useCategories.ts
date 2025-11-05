@@ -51,8 +51,7 @@ export const useCategories = () => {
           createAuthenticatedAxios()
         );
 
-        const categories = response.data;
-        categories
+        const categories = response.data
           .filter(({ category }) => category !== null)
           .sort((a, b) => a.category.localeCompare(b.category));
         return categories;

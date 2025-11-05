@@ -28,14 +28,6 @@ export default function useCardFormPage(): hookReturnType {
     loading: isCreating,
   } = usePost(RESOURCES.CARDS);
 
-  // const { data: categoriesData } = useFetch<FetchedCategory[]>(
-  //   RESOURCES.CATEGORIES
-  // );
-  // const categoriesWithCount =
-  //   categoriesData?.map(
-  //     ({ category: category, count }) => `${category} (${count})`
-  //   ) || [];
-
   const { categoriesWithCount } = useCategoriesContext();
 
   const { openSnackbarWithMessage } = useContext(SnackbarContext);

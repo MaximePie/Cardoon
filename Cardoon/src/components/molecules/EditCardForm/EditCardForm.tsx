@@ -22,8 +22,9 @@ export default function EditCardForm({
   afterDelete,
 }: EditCardFormProps) {
   const {
-    newCard,
-    setNewCard,
+    updateField,
+    errors,
+    formValues,
     activeTab,
     setActiveTab,
     handleClose,
@@ -46,7 +47,7 @@ export default function EditCardForm({
         {activeTab === "subquestions" && (
           <SubQuestionsTab
             editedCard={editedCard}
-            newCard={newCard}
+            newCard={formValues}
             goBack={() => setActiveTab("question")}
           />
         )}
@@ -79,49 +80,70 @@ export default function EditCardForm({
               <Input
                 label="Question"
                 type="text"
-                value={newCard.question}
-                onChange={function (
-                  e: React.ChangeEvent<HTMLInputElement>
-                ): void {
-                  setNewCard({ ...newCard, question: e.target.value });
+                value={formValues.question || ""}
+                name="question"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  updateField("question", e.target.value);
                 }}
+                isRequired={true}
               />
+              {errors.question && (
+                <span style={{ color: "red" }}>{errors.question.message}</span>
+              )}
+
               <Input
                 label="Réponse"
                 type="text"
-                value={newCard.answer}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setNewCard({ ...newCard, answer: e.target.value })
-                }
+                value={formValues.answer || ""}
+                name="answer"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  updateField("answer", e.target.value);
+                }}
+                isRequired={true}
               />
-              {newCard.expectedAnswers?.map((expectedAnswer, index) => (
-                <Input
-                  key={index}
-                  label={`Réponse attendue ${index + 1}`}
-                  type="text"
-                  value={expectedAnswer}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                    const updatedAnswers = [...(newCard.expectedAnswers ?? [])];
-                    updatedAnswers[index] = e.target.value;
-                    setNewCard({ ...newCard, expectedAnswers: updatedAnswers });
-                  }}
-                />
-              ))}
+              {errors.answer && (
+                <span style={{ color: "red" }}>{errors.answer.message}</span>
+              )}
+
+              {formValues.expectedAnswers?.map(
+                (expectedAnswer: string, index: number) => (
+                  <Input
+                    key={index}
+                    label={`Réponse attendue ${index + 1}`}
+                    type="text"
+                    value={expectedAnswer || ""}
+                    name={`expectedAnswers.${index}`}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      const updatedAnswers = [
+                        ...(formValues.expectedAnswers ?? []),
+                      ];
+                      updatedAnswers[index] = e.target.value;
+                      updateField("expectedAnswers", updatedAnswers);
+                    }}
+                  />
+                )
+              )}
+
               <Input
                 label="URL d'image"
                 type="text"
-                value={newCard.imageLink}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setNewCard({ ...newCard, imageLink: e.target.value })
-                }
+                value={formValues.imageLink || ""}
+                name="imageLink"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  updateField("imageLink", e.target.value);
+                }}
               />
+
               <CategoryInput
                 categoriesWithCount={categoriesWithCount}
-                value={newCard.category || ""}
+                value={formValues.category || ""}
                 onChange={onCategoryChange}
                 label="Catégorie"
                 isRequired={true}
               />
+              {errors.category && (
+                <span style={{ color: "red" }}>{errors.category.message}</span>
+              )}
               <div className="EditCardForm__buttons">
                 <SubmitButton disabled={false}>Enregistrer</SubmitButton>
                 <Button

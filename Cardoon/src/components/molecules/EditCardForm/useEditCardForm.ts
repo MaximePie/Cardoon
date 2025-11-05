@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { useCategoriesContext } from "../../../context/CategoriesContext";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import {
@@ -9,6 +10,14 @@ import {
   usePut,
 } from "../../../hooks/server";
 import { PopulatedUserCard } from "../../../types/common";
+
+interface EditCardFormData {
+  question: string;
+  answer: string;
+  imageLink: string;
+  category: string;
+  expectedAnswers: string[];
+}
 
 interface UseEditCardFormProps {
   isOpen: boolean;
@@ -42,20 +51,34 @@ export default function useEditCardForm({
     null
   );
 
+  // Configuration React Hook Form
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+    setError,
+    clearErrors,
+  } = useForm<EditCardFormData>({
+    mode: "onChange", // Validation en temps réel
+    defaultValues: {
+      question: question || "",
+      answer: answer || "",
+      imageLink: imageLink || "",
+      category: category || "",
+      expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
+    },
+  });
+
+  const watchedValues = watch();
+
   useEffect(() => {
     if (invertedCardData) {
       setInvertedCard(invertedCardData.invertedCard);
       openSnackbarWithMessage("La carte inverse a bien été créée");
     }
   }, [invertedCardData, setInvertedCard, openSnackbarWithMessage]);
-
-  const [newCard, setNewCard] = useState({
-    question,
-    answer,
-    imageLink,
-    category,
-    expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
-  });
 
   const [activeTab, setActiveTab] = useState<"question" | "subquestions">(
     "question"
@@ -66,18 +89,26 @@ export default function useEditCardForm({
     close();
   };
 
+  // Réinitialiser le formulaire quand la modal s'ouvre
   useEffect(() => {
-    setNewCard({
-      question,
-      answer,
-      imageLink,
-      category,
-      expectedAnswers: (expectedAnswers ?? []).concat(["", "", ""]).slice(0, 3),
-    });
-  }, [isOpen, question, answer, imageLink, category, expectedAnswers]);
+    if (isOpen) {
+      reset({
+        question: question || "",
+        answer: answer || "",
+        imageLink: imageLink || "",
+        category: category || "",
+        expectedAnswers: (expectedAnswers ?? [])
+          .concat(["", "", ""])
+          .slice(0, 3),
+      });
+    }
+  }, [isOpen, question, answer, imageLink, category, expectedAnswers, reset]);
 
   const onCategoryChange = (newCategory: string) => {
-    setNewCard({ ...newCard, category: newCategory });
+    setValue("category", newCategory);
+    if (newCategory) {
+      clearErrors("category");
+    }
   };
 
   const handleDeleteClick = async (e: React.MouseEvent) => {
@@ -92,41 +123,39 @@ export default function useEditCardForm({
     afterDelete();
   };
 
-  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData();
+  const onSubmit = async (formData: EditCardFormData) => {
+    const data = new FormData();
 
-    if (!newCard.question || !newCard.answer) {
-      openSnackbarWithMessage(
-        "Veuillez remplir les champs question et réponse",
-        "error"
-      );
+    // Validation supplémentaire pour la catégorie
+    if (!formData.category) {
+      setError("category", {
+        type: "required",
+        message: "Veuillez sélectionner une catégorie",
+      });
       return;
     }
 
-    if (!newCard.category) {
-      openSnackbarWithMessage("Veuillez sélectionner une catégorie", "error");
-      return;
+    data.append("question", formData.question);
+    data.append("answer", formData.answer);
+    data.append("category", formData.category);
+    if (formData.imageLink) {
+      data.append("imageLink", formData.imageLink);
     }
 
-    formData.append("question", newCard.question);
-    formData.append("answer", newCard.answer);
-    formData.append("category", newCard.category);
-    if (newCard.imageLink) {
-      formData.append("imageLink", newCard.imageLink);
-    }
-
-    await put(editedCard.card._id, formData);
-    setNewCard({
-      ...newCard,
+    await put(editedCard.card._id, data);
+    reset({
       question: "",
       answer: "",
       imageLink: "",
+      category: "",
       expectedAnswers: ["", "", ""],
     });
     close();
     openSnackbarWithMessage("La carte a été mise à jour");
   };
+
+  // Wrapper pour handleSubmit de react-hook-form
+  const submit = handleSubmit(onSubmit);
 
   // Send to the server a request to create an inverted card
   const invertCard = async () => {
@@ -141,9 +170,27 @@ export default function useEditCardForm({
     await invertCardPost({ cardId: editedCard.card._id });
   };
 
+  // Fonction helper pour mettre à jour les champs avec validation
+  const updateField = (
+    fieldName: keyof EditCardFormData,
+    value: string | string[]
+  ) => {
+    if (fieldName === "expectedAnswers") {
+      setValue(fieldName, value as string[]);
+    } else {
+      setValue(
+        fieldName as "question" | "answer" | "imageLink" | "category",
+        value as string
+      );
+    }
+  };
+
   return {
-    newCard,
-    setNewCard,
+    // React Hook Form
+    updateField,
+    errors,
+    formValues: watchedValues,
+    // Actions
     activeTab,
     setActiveTab,
     handleClose,
@@ -151,6 +198,7 @@ export default function useEditCardForm({
     handleDeleteClick,
     submit,
     invertCard,
+    // Data
     categoriesWithCount,
     invertedCard,
     invertLoading,

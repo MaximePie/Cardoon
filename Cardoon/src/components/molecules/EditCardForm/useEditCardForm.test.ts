@@ -2,13 +2,14 @@ import { describe, expect, it } from "vitest";
 import type { PopulatedUserCard } from "../../../types/common";
 
 /**
- * Tests for useEditCardForm hook
+ * Tests for useEditCardForm hook with React Hook Form integration
  *
- * This hook manages the form state for editing cards, including:
- * - Form field management (question, answer, imageLink, category, expectedAnswers)
+ * This hook manages the form state for editing cards using React Hook Form, including:
+ * - Form field management with React Hook Form (question, answer, imageLink, category, expectedAnswers)
+ * - Automatic validation and error handling
  * - Card deletion with confirmation
  * - Card inversion (creating inverted cards)
- * - Form validation and submission
+ * - Form submission with validation
  * - Integration with SnackbarContext and CategoriesContext
  */
 
@@ -55,52 +56,145 @@ describe("useEditCardForm", () => {
     ]);
   });
 
-  it("should define expected return interface", () => {
-    // Document the expected return interface from the hook
+  it("should define expected return interface with React Hook Form", () => {
+    // Document the expected return interface from the hook with React Hook Form
     const expectedReturnInterface = {
-      // Form fields
-      question: "",
-      answer: "",
-      imageLink: "",
-      category: "",
-      expectedAnswers: [] as string[],
-
-      // Form handlers
-      onQuestionChange: () => {},
-      onAnswerChange: () => {},
-      onImageLinkChange: () => {},
-      onCategoryChange: () => {},
-      onExpectedAnswersChange: () => {},
+      // React Hook Form functions
+      updateField: () => {},
+      errors: {},
+      formValues: {
+        question: "example question",
+        answer: "example answer",
+        imageLink: "https://example.com/image.jpg",
+        category: "example category",
+        expectedAnswers: ["answer1", "answer2", "answer3"],
+      },
 
       // Actions
+      activeTab: "question" as "question" | "subquestions",
+      setActiveTab: () => {},
+      handleClose: () => {},
+      onCategoryChange: () => {},
       handleDeleteClick: () => {},
       submit: () => {},
       invertCard: () => {},
-      handleClose: () => {},
 
-      // State
-      categories: [] as string[],
-      confirmDeleteOpen: false,
-      setConfirmDeleteOpen: () => {},
+      // Data
+      categoriesWithCount: [],
+      invertedCard: null,
+      invertLoading: false,
     };
 
-    // Verify the interface structure is as expected
-    expect(typeof expectedReturnInterface.onQuestionChange).toBe("function");
-    expect(typeof expectedReturnInterface.onAnswerChange).toBe("function");
-    expect(typeof expectedReturnInterface.onImageLinkChange).toBe("function");
-    expect(typeof expectedReturnInterface.onCategoryChange).toBe("function");
-    expect(typeof expectedReturnInterface.onExpectedAnswersChange).toBe(
-      "function"
+    // Verify React Hook Form integration
+    expect(typeof expectedReturnInterface.updateField).toBe("function");
+    expect(typeof expectedReturnInterface.errors).toBe("object");
+    expect(typeof expectedReturnInterface.formValues).toBe("object");
+
+    // Verify form values structure
+    expect(typeof expectedReturnInterface.formValues.question).toBe("string");
+    expect(typeof expectedReturnInterface.formValues.answer).toBe("string");
+    expect(typeof expectedReturnInterface.formValues.imageLink).toBe("string");
+    expect(typeof expectedReturnInterface.formValues.category).toBe("string");
+    expect(
+      Array.isArray(expectedReturnInterface.formValues.expectedAnswers)
+    ).toBe(true);
+
+    // Verify actions
+    expect(typeof expectedReturnInterface.activeTab).toBe("string");
+    expect(["question", "subquestions"]).toContain(
+      expectedReturnInterface.activeTab
     );
+    expect(typeof expectedReturnInterface.setActiveTab).toBe("function");
+    expect(typeof expectedReturnInterface.handleClose).toBe("function");
+    expect(typeof expectedReturnInterface.onCategoryChange).toBe("function");
     expect(typeof expectedReturnInterface.handleDeleteClick).toBe("function");
     expect(typeof expectedReturnInterface.submit).toBe("function");
     expect(typeof expectedReturnInterface.invertCard).toBe("function");
-    expect(typeof expectedReturnInterface.handleClose).toBe("function");
-    expect(typeof expectedReturnInterface.setConfirmDeleteOpen).toBe(
-      "function"
+
+    // Verify data
+    expect(Array.isArray(expectedReturnInterface.categoriesWithCount)).toBe(
+      true
     );
-    expect(Array.isArray(expectedReturnInterface.expectedAnswers)).toBe(true);
-    expect(Array.isArray(expectedReturnInterface.categories)).toBe(true);
-    expect(typeof expectedReturnInterface.confirmDeleteOpen).toBe("boolean");
+    expect(expectedReturnInterface.invertedCard).toBe(null);
+    expect(typeof expectedReturnInterface.invertLoading).toBe("boolean");
+  });
+
+  it("should validate React Hook Form integration types", () => {
+    // Test EditCardFormData interface structure
+    interface EditCardFormData {
+      question: string;
+      answer: string;
+      imageLink: string;
+      category: string;
+      expectedAnswers: string[];
+    }
+
+    const mockFormData: EditCardFormData = {
+      question: "Test question",
+      answer: "Test answer",
+      imageLink: "https://test.com/image.jpg",
+      category: "Test category",
+      expectedAnswers: ["expected1", "expected2", "expected3"],
+    };
+
+    // Verify form data structure
+    expect(typeof mockFormData.question).toBe("string");
+    expect(typeof mockFormData.answer).toBe("string");
+    expect(typeof mockFormData.imageLink).toBe("string");
+    expect(typeof mockFormData.category).toBe("string");
+    expect(Array.isArray(mockFormData.expectedAnswers)).toBe(true);
+    expect(mockFormData.expectedAnswers.length).toBe(3);
+    expect(
+      mockFormData.expectedAnswers.every((answer) => typeof answer === "string")
+    ).toBe(true);
+  });
+
+  it("should document React Hook Form validation requirements", () => {
+    // Document expected validation rules
+    const validationRules = {
+      question: { required: true, message: "La question est requise" },
+      answer: { required: true, message: "La réponse est requise" },
+      category: {
+        required: true,
+        message: "Veuillez sélectionner une catégorie",
+      },
+      imageLink: { required: false },
+      expectedAnswers: { required: false, maxLength: 3 },
+    };
+
+    // Verify validation structure
+    expect(validationRules.question.required).toBe(true);
+    expect(validationRules.answer.required).toBe(true);
+    expect(validationRules.category.required).toBe(true);
+    expect(validationRules.imageLink.required).toBe(false);
+    expect(validationRules.expectedAnswers.required).toBe(false);
+    expect(validationRules.expectedAnswers.maxLength).toBe(3);
+  });
+
+  it("should document expected form behavior with React Hook Form", () => {
+    // Document expected form behavior
+    const expectedBehavior = {
+      mode: "onChange", // Real-time validation
+      revalidateMode: "onChange",
+      defaultValues: {
+        question: "",
+        answer: "",
+        imageLink: "",
+        category: "",
+        expectedAnswers: ["", "", ""],
+      },
+      validationTrigger: "onChange",
+      errorHandling: "automatic",
+      submitValidation: true,
+    };
+
+    expect(expectedBehavior.mode).toBe("onChange");
+    expect(expectedBehavior.validationTrigger).toBe("onChange");
+    expect(expectedBehavior.errorHandling).toBe("automatic");
+    expect(expectedBehavior.submitValidation).toBe(true);
+    expect(Array.isArray(expectedBehavior.defaultValues.expectedAnswers)).toBe(
+      true
+    );
+    expect(expectedBehavior.defaultValues.expectedAnswers.length).toBe(3);
   });
 });

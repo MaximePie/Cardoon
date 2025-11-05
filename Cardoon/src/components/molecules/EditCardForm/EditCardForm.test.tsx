@@ -2,9 +2,10 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PopulatedUserCard } from "../../../types/common";
 import EditCardForm from "./EditCardForm";
+import useEditCardForm from "./useEditCardForm";
 
-// Mock the useEditCardForm hook
-const mockSetNewCard = vi.fn();
+// Mock the useEditCardForm hook with React Hook Form integration
+const mockUpdateField = vi.fn();
 const mockSetActiveTab = vi.fn();
 const mockHandleClose = vi.fn();
 const mockOnCategoryChange = vi.fn();
@@ -14,14 +15,17 @@ const mockInvertCard = vi.fn();
 
 vi.mock("./useEditCardForm", () => ({
   default: vi.fn(() => ({
-    newCard: {
+    // React Hook Form integration
+    updateField: mockUpdateField,
+    errors: {},
+    formValues: {
       question: "Test Question",
       answer: "Test Answer",
       imageLink: "https://example.com/image.jpg",
       category: "Test Category",
       expectedAnswers: ["Expected 1", "Expected 2", "Expected 3"],
     },
-    setNewCard: mockSetNewCard,
+    // Actions (unchanged)
     activeTab: "question",
     setActiveTab: mockSetActiveTab,
     handleClose: mockHandleClose,
@@ -29,8 +33,10 @@ vi.mock("./useEditCardForm", () => ({
     handleDeleteClick: mockHandleDeleteClick,
     submit: mockSubmit,
     invertCard: mockInvertCard,
+    // Data (unchanged)
     categoriesWithCount: ["Histoire (5)", "Science (3)", "Sport (2)"],
     invertedCard: null,
+    invertLoading: false,
   })),
 }));
 
@@ -290,34 +296,22 @@ describe("EditCardForm", () => {
       expect(categoryInput).toHaveTextContent("Catégorie *");
     });
 
-    it("should call setNewCard when question input changes", () => {
+    it("should call updateField when question input changes", () => {
       render(<EditCardForm {...defaultProps} />);
 
       const questionInput = screen.getByTestId("input-question");
       fireEvent.change(questionInput, { target: { value: "New Question" } });
 
-      expect(mockSetNewCard).toHaveBeenCalledWith({
-        question: "New Question",
-        answer: "Test Answer",
-        imageLink: "https://example.com/image.jpg",
-        category: "Test Category",
-        expectedAnswers: ["Expected 1", "Expected 2", "Expected 3"],
-      });
+      expect(mockUpdateField).toHaveBeenCalledWith("question", "New Question");
     });
 
-    it("should call setNewCard when answer input changes", () => {
+    it("should call updateField when answer input changes", () => {
       render(<EditCardForm {...defaultProps} />);
 
       const answerInput = screen.getByTestId("input-réponse");
       fireEvent.change(answerInput, { target: { value: "New Answer" } });
 
-      expect(mockSetNewCard).toHaveBeenCalledWith({
-        question: "Test Question",
-        answer: "New Answer",
-        imageLink: "https://example.com/image.jpg",
-        category: "Test Category",
-        expectedAnswers: ["Expected 1", "Expected 2", "Expected 3"],
-      });
+      expect(mockUpdateField).toHaveBeenCalledWith("answer", "New Answer");
     });
 
     it("should call onCategoryChange when category changes", () => {
@@ -470,13 +464,11 @@ describe("EditCardForm", () => {
         target: { value: "Updated Expected 1" },
       });
 
-      expect(mockSetNewCard).toHaveBeenCalledWith({
-        question: "Test Question",
-        answer: "Test Answer",
-        imageLink: "https://example.com/image.jpg",
-        category: "Test Category",
-        expectedAnswers: ["Updated Expected 1", "Expected 2", "Expected 3"],
-      });
+      expect(mockUpdateField).toHaveBeenCalledWith("expectedAnswers", [
+        "Updated Expected 1",
+        "Expected 2",
+        "Expected 3",
+      ]);
     });
 
     it("should update second expected answer independently", () => {
@@ -487,13 +479,11 @@ describe("EditCardForm", () => {
         target: { value: "Updated Expected 2" },
       });
 
-      expect(mockSetNewCard).toHaveBeenCalledWith({
-        question: "Test Question",
-        answer: "Test Answer",
-        imageLink: "https://example.com/image.jpg",
-        category: "Test Category",
-        expectedAnswers: ["Expected 1", "Updated Expected 2", "Expected 3"],
-      });
+      expect(mockUpdateField).toHaveBeenCalledWith("expectedAnswers", [
+        "Expected 1",
+        "Updated Expected 2",
+        "Expected 3",
+      ]);
     });
   });
 
@@ -506,13 +496,121 @@ describe("EditCardForm", () => {
         target: { value: "https://new-image.com/pic.jpg" },
       });
 
-      expect(mockSetNewCard).toHaveBeenCalledWith({
-        question: "Test Question",
-        answer: "Test Answer",
-        imageLink: "https://new-image.com/pic.jpg",
-        category: "Test Category",
-        expectedAnswers: ["Expected 1", "Expected 2", "Expected 3"],
+      expect(mockUpdateField).toHaveBeenCalledWith(
+        "imageLink",
+        "https://new-image.com/pic.jpg"
+      );
+    });
+  });
+
+  describe("React Hook Form Integration", () => {
+    it("should use formValues from React Hook Form", () => {
+      render(<EditCardForm {...defaultProps} />);
+
+      // Verify that the form uses formValues from the hook
+      expect(screen.getByTestId("input-question")).toHaveValue("Test Question");
+      expect(screen.getByTestId("input-réponse")).toHaveValue("Test Answer");
+      expect(screen.getByTestId("input-url-d'image")).toHaveValue(
+        "https://example.com/image.jpg"
+      );
+    });
+
+    it("should call updateField instead of direct state mutation", () => {
+      render(<EditCardForm {...defaultProps} />);
+
+      const questionInput = screen.getByTestId("input-question");
+      fireEvent.change(questionInput, { target: { value: "Updated via RHF" } });
+
+      // Verify that updateField is called (React Hook Form pattern)
+      expect(mockUpdateField).toHaveBeenCalledWith(
+        "question",
+        "Updated via RHF"
+      );
+    });
+
+    it("should handle array updates for expectedAnswers through updateField", () => {
+      render(<EditCardForm {...defaultProps} />);
+
+      const expectedAnswer3 = screen.getByTestId("input-réponse-attendue-3");
+      fireEvent.change(expectedAnswer3, {
+        target: { value: "RHF Updated Answer 3" },
       });
+
+      expect(mockUpdateField).toHaveBeenCalledWith("expectedAnswers", [
+        "Expected 1",
+        "Expected 2",
+        "RHF Updated Answer 3",
+      ]);
+    });
+
+    it("should render without errors when formValues are undefined", () => {
+      // Test defensive programming for form values
+      const hookWithUndefinedValues = {
+        updateField: mockUpdateField,
+        errors: {},
+        formValues: {
+          question: "",
+          answer: "",
+          imageLink: "",
+          category: "",
+          expectedAnswers: [],
+        },
+        activeTab: "question" as const,
+        setActiveTab: mockSetActiveTab,
+        handleClose: mockHandleClose,
+        onCategoryChange: mockOnCategoryChange,
+        handleDeleteClick: mockHandleDeleteClick,
+        submit: mockSubmit,
+        invertCard: mockInvertCard,
+        categoriesWithCount: [],
+        invertedCard: null,
+        invertLoading: false,
+      };
+
+      // Mock the hook to return undefined values
+      vi.mocked(useEditCardForm).mockReturnValueOnce(hookWithUndefinedValues);
+
+      expect(() => {
+        render(<EditCardForm {...defaultProps} />);
+      }).not.toThrow();
+    });
+  });
+
+  describe("Validation Error Display", () => {
+    it("should display validation errors when present", () => {
+      const hookWithErrors = {
+        updateField: mockUpdateField,
+        errors: {
+          question: { type: "required", message: "Question is required" },
+          answer: { type: "required", message: "Answer is required" },
+          category: { type: "required", message: "Category is required" },
+        },
+        formValues: {
+          question: "",
+          answer: "",
+          imageLink: "",
+          category: "",
+          expectedAnswers: ["", "", ""],
+        },
+        activeTab: "question" as const,
+        setActiveTab: mockSetActiveTab,
+        handleClose: mockHandleClose,
+        onCategoryChange: mockOnCategoryChange,
+        handleDeleteClick: mockHandleDeleteClick,
+        submit: mockSubmit,
+        invertCard: mockInvertCard,
+        categoriesWithCount: [],
+        invertedCard: null,
+        invertLoading: false,
+      };
+
+      vi.mocked(useEditCardForm).mockReturnValueOnce(hookWithErrors);
+
+      render(<EditCardForm {...defaultProps} />);
+
+      expect(screen.getByText("Question is required")).toBeInTheDocument();
+      expect(screen.getByText("Answer is required")).toBeInTheDocument();
+      expect(screen.getByText("Category is required")).toBeInTheDocument();
     });
   });
 

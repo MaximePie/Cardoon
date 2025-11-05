@@ -18,6 +18,7 @@ interface PutResult {
 const GamePage = () => {
   const {
     user,
+    userError,
     setUser,
     addScore,
     earnGold,
@@ -137,13 +138,13 @@ const GamePage = () => {
       </div>
     );
   }
-
-  if (reviewUserCardsError === "Invalid token") {
+  console.log(userError);
+  if (userError === "Invalid token") {
     return <TokenErrorPage />;
   }
 
   if (reviewUserCardsError) {
-    return <p>Erreur: {reviewUserCardsError}</p>;
+    return <p>Erreur: {reviewUserCardsError.message}</p>;
   }
 
   return (

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
+import { useUserCardsManager } from "../../hooks/queries/useUserCards";
 import { ACTIONS, RESOURCES, useFetch, usePut } from "../../hooks/server";
 import { PopulatedUserCard, User } from "../../types/common";
 import { UserContext, emptyUser } from "./UserContext";
@@ -9,25 +10,28 @@ export const UserContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { fetch, data } = useFetch<User>(ACTIONS.ME);
+  const { fetch, data, error: userError } = useFetch<User>(ACTIONS.ME);
   const { fetch: fetchAllCards, data: userCardsData } = useFetch<{
     userCards: PopulatedUserCard[];
   }>(RESOURCES.USERCARDS);
-  const {
-    fetch: fetchReviewUserCards,
-    data: reviewUserCardsData,
-    loading: isReviewUserCardsLoading,
-    error: reviewUserCardsError,
-  } = useFetch<{
-    cards: PopulatedUserCard[];
-  }>(RESOURCES.REVIEW_USERCARDS);
+  // const {
+  //   fetch: fetchReviewUserCards,
+  //   loading: isReviewUserCardsLoading,
+  //   error: reviewUserCardsError,
+  // } = useFetch<{
+  //   cards: PopulatedUserCard[];
+  // }>(RESOURCES.REVIEW_USERCARDS);
   const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
 
   const allUserCards = userCardsData?.userCards ?? [];
-  const reviewUserCards = reviewUserCardsData?.cards ?? [];
 
   const [user, setUser] = useState<User>(emptyUser);
-
+  const {
+    reviewUserCards,
+    isReviewUserCardsLoading,
+    reviewUserCardsError,
+    refetchReviewUserCards,
+  } = useUserCardsManager(user._id || "");
   useEffect(() => {
     // Check for user token in cookies
     const token = document.cookie
@@ -81,8 +85,8 @@ export const UserContextProvider = ({
   }, [fetchAllCards]);
 
   const getReviewUserCards = useCallback(async () => {
-    await fetchReviewUserCards();
-  }, [fetchReviewUserCards]);
+    await refetchReviewUserCards();
+  }, [refetchReviewUserCards]);
 
   const updateImage = async (imageFile: File) => {
     try {
@@ -110,6 +114,7 @@ export const UserContextProvider = ({
         isReviewUserCardsLoading,
         reviewUserCardsError,
         user,
+        userError,
         hasItem,
         setUser,
         logout,

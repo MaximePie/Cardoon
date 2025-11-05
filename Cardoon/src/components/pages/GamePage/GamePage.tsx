@@ -138,7 +138,6 @@ const GamePage = () => {
       </div>
     );
   }
-  console.log(userError);
   if (userError === "Invalid token") {
     return <TokenErrorPage />;
   }

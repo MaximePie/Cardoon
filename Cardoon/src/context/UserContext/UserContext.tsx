@@ -14,13 +14,6 @@ export const UserContextProvider = ({
   const { fetch: fetchAllCards, data: userCardsData } = useFetch<{
     userCards: PopulatedUserCard[];
   }>(RESOURCES.USERCARDS);
-  // const {
-  //   fetch: fetchReviewUserCards,
-  //   loading: isReviewUserCardsLoading,
-  //   error: reviewUserCardsError,
-  // } = useFetch<{
-  //   cards: PopulatedUserCard[];
-  // }>(RESOURCES.REVIEW_USERCARDS);
   const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
 
   const allUserCards = userCardsData?.userCards ?? [];

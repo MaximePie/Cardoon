@@ -239,7 +239,7 @@ export const QueryKeys = {
 
   // 🃏 Requêtes cartes
   cards: ["cards"] as const,
-  userCards: (userId?: string | number) => ["users", userId, "cards"] as const,
+  userCards: (userId: string | number) => ["users", userId, "cards"] as const,
   reviewUserCards: (userId: string | number) =>
     ["users", userId, "reviewCards"] as const, // To review cards
   card: (id: string | number) => ["cards", id] as const,

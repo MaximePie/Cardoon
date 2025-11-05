@@ -84,7 +84,6 @@ export const getUserCards = async (
   _userId?: string | number
 ): Promise<PopulatedUserCard[]> => {
   try {
-    console.log("Fetching user cards...");
     // L'endpoint backend utilise l'authentification pour déterminer l'utilisateur
     // Pas besoin de passer l'userId dans l'URL
     const url = `${backUrl}/api/userCards/all`;
@@ -132,11 +131,9 @@ export const getReviewUserCards = async (
     if (!Array.isArray(cards)) {
       throw new Error("Format de réponse inattendu du serveur");
     }
-    console.log("Fetched review user cards:", cards);
 
     return cards;
   } catch (error) {
-    console.log("Error fetching review user cards:", error);
     const errorMessage = extractErrorMessage(error);
     console.error(
       "Erreur lors de la récupération des cartes de révision utilisateur:",

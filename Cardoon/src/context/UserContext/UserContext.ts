@@ -5,7 +5,6 @@ export interface UserContextType {
   user: User;
   userError?: string | undefined;
   allUserCards: PopulatedUserCard[];
-  getAllUserCards: () => Promise<void>;
   getReviewUserCards: () => Promise<void>;
   reviewUserCards: PopulatedUserCard[];
   isReviewUserCardsLoading: boolean;
@@ -49,7 +48,6 @@ export const UserContext = createContext<UserContextType>({
   earnGold: () => {},
   removeGold: () => {},
   hasItem: () => false,
-  getAllUserCards: async () => {},
   getReviewUserCards: async () => {},
   refresh: () => {},
   updateImage: async (_imageFile: File) => {},

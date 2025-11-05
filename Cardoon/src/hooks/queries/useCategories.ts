@@ -3,10 +3,16 @@ import axios from "axios";
 import { createAuthenticatedAxios } from "../../services/userCardsApi";
 import { extractErrorMessage } from "../../utils";
 // Get API URL from environment, with fallback for test environments
-const backUrl = import.meta.env.VITE_API_URL || process.env.VITE_API_URL;
+const backUrl =
+  import.meta.env.VITE_API_URL ||
+  (typeof process !== "undefined" ? process.env.VITE_API_URL : undefined);
 
 // During tests we allow backUrl to be undefined (tests should mock API calls)
-if (!backUrl && process.env.NODE_ENV !== "test") {
+if (
+  !backUrl &&
+  typeof process !== "undefined" &&
+  process.env.NODE_ENV !== "test"
+) {
   throw new Error("VITE_API_URL is not defined. Configure API base URL.");
 }
 

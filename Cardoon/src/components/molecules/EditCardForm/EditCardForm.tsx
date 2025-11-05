@@ -105,18 +105,25 @@ export default function EditCardForm({
     const formData = new FormData();
 
     if (!newCard.question || !newCard.answer) {
+      openSnackbarWithMessage(
+        "Veuillez remplir les champs question et réponse",
+        "error"
+      );
+      return;
+    }
+
+    if (!newCard.category) {
+      openSnackbarWithMessage("Veuillez sélectionner une catégorie", "error");
       return;
     }
 
     formData.append("question", newCard.question);
     formData.append("answer", newCard.answer);
+    formData.append("category", newCard.category);
     if (newCard.imageLink) {
       formData.append("imageLink", newCard.imageLink);
     }
 
-    if (newCard.category) {
-      formData.append("category", newCard.category);
-    }
     await put(editedCard.card._id, formData);
     setNewCard({
       ...newCard,

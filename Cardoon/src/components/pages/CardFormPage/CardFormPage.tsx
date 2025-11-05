@@ -3,10 +3,8 @@ import Button from "../../atoms/Button/Button";
 import { ImagePaster } from "../../atoms/ImagePaster/ImagePaster";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import Input from "../../atoms/Input/Input";
-import Loader from "../../atoms/Loader/Loader";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 import MultiCardFormModal from "./MultiCardFormModal/MultiCardFormModal";
-import QuestionLine from "./QuestionLine/QuestionLine";
 import useCardFormPage from "./useCardFormPage";
 
 export interface FetchedCategory {
@@ -25,7 +23,6 @@ export type MistralResponse = {
  */
 export default function CardFormPage() {
   const {
-    isGenerationLoading,
     isCreating,
     createError,
     setImage,
@@ -33,13 +30,9 @@ export default function CardFormPage() {
     categoriesWithCount,
     newCard,
     setNewCard,
-    subQuestions,
-    subcategory,
-    setSubcategory,
     isModalOpen,
     openModal,
     closeModal,
-    generateQuestions,
     onFileChange,
     onSubmit,
     onChange,
@@ -47,49 +40,7 @@ export default function CardFormPage() {
 
   return (
     <div className="CardFormPage">
-      <MultiCardFormModal open={isModalOpen} onClose={closeModal}>
-        <div className="CardFormPage__modal">
-          <h2>Création de questions par IA</h2>
-          <form>
-            <div>
-              <CategoryInput
-                label="Je veux apprendre ..."
-                categoriesWithCount={categoriesWithCount}
-                newCard={newCard}
-                setNewCard={setNewCard}
-                isRequired={true}
-              />
-            </div>
-            <div>
-              <Input
-                label="Plus particulièrement"
-                type="text"
-                onChange={(e) => setSubcategory(e.target.value)}
-                placeholder="Sous-catégorie"
-                value={subcategory}
-              />
-            </div>
-            <Button
-              onClick={generateQuestions}
-              disabled={!newCard.category || isGenerationLoading}
-            >
-              Générer
-            </Button>
-          </form>
-          <div className="CardFormPage__modal-questions">
-            {isGenerationLoading && <Loader />}
-            {subQuestions?.map(({ question, answer }, index) => (
-              <QuestionLine
-                key={`${index}-${question}`}
-                question={question}
-                answer={answer}
-                category={newCard.category}
-                aria-label={`Question générée ${index + 1} sur ${subQuestions.length}`}
-              />
-            ))}
-          </div>
-        </div>
-      </MultiCardFormModal>
+      <MultiCardFormModal open={isModalOpen} onClose={closeModal} />
       <form onSubmit={onSubmit} className="CardFormPage__form">
         <h1 className="CardFormPage__header">Ajouter une carte</h1>
         <div className="CardFormPage__body">
@@ -131,8 +82,11 @@ export default function CardFormPage() {
           ))}
           <CategoryInput
             categoriesWithCount={categoriesWithCount}
-            newCard={newCard}
-            setNewCard={setNewCard}
+            value={newCard.category || ""}
+            onChange={(newCategory) =>
+              setNewCard({ ...newCard, category: newCategory })
+            }
+            label="Catégorie"
             isRequired={true}
           />
 

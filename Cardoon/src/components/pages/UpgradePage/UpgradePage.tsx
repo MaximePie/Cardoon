@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../../../hooks/contexts/useUser";
+import { useUser } from "../../../context/UserContext/useUserContext";
 import { RESOURCES, useFetch } from "../../../hooks/server";
 import { Item as ItemType, UserItem } from "../../../types/common";
 import { GameFooter } from "../../molecules/Footer/Footer";

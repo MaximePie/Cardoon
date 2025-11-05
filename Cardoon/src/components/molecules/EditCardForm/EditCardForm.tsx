@@ -1,6 +1,7 @@
 import Delete from "@mui/icons-material/Delete";
 import { IconButton, Modal } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { useCategoriesContext } from "../../../context/CategoriesContext";
 import { SnackbarContext } from "../../../context/SnackbarContext";
 import {
   ACTIONS,
@@ -14,14 +15,12 @@ import Button from "../../atoms/Button/Button";
 import CategoryInput from "../../atoms/Input/CategoryInput/CategoryInput";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
-import { FetchedCategory } from "../../pages/CardFormPage/CardFormPage";
 import SubQuestionsTab from "./SubQuestionsTab/SubQuestionsTab";
 
 interface EditCardFormProps {
   isOpen: boolean;
   close: () => void;
   editedCard: PopulatedUserCard;
-  categories: FetchedCategory[];
   afterDelete: () => void;
 }
 
@@ -29,7 +28,6 @@ export default function EditCardForm({
   isOpen,
   close,
   editedCard,
-  categories,
   afterDelete,
 }: EditCardFormProps) {
   const {
@@ -37,7 +35,7 @@ export default function EditCardForm({
   } = editedCard;
 
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
-
+  const { categoriesWithCount } = useCategoriesContext();
   const { put } = usePut(RESOURCES.CARDS);
   const {
     post: invertCardPost,
@@ -86,12 +84,8 @@ export default function EditCardForm({
     });
   }, [isOpen, question, answer, imageLink, category, expectedAnswers]);
 
-  const categoriesWithCount = categories.map(
-    (category) => `${category.category} (${category.count})`
-  );
-
-  const onCategoryChange = (updatedCard: Partial<typeof newCard>) => {
-    setNewCard({ ...newCard, ...updatedCard });
+  const onCategoryChange = (newCategory: string) => {
+    setNewCard({ ...newCard, category: newCategory });
   };
 
   const handleDeleteClick = async (e: React.MouseEvent) => {
@@ -111,18 +105,25 @@ export default function EditCardForm({
     const formData = new FormData();
 
     if (!newCard.question || !newCard.answer) {
+      openSnackbarWithMessage(
+        "Veuillez remplir les champs question et réponse",
+        "error"
+      );
+      return;
+    }
+
+    if (!newCard.category) {
+      openSnackbarWithMessage("Veuillez sélectionner une catégorie", "error");
       return;
     }
 
     formData.append("question", newCard.question);
     formData.append("answer", newCard.answer);
+    formData.append("category", newCard.category);
     if (newCard.imageLink) {
       formData.append("imageLink", newCard.imageLink);
     }
 
-    if (newCard.category) {
-      formData.append("category", newCard.category);
-    }
     await put(editedCard.card._id, formData);
     setNewCard({
       ...newCard,
@@ -225,8 +226,10 @@ export default function EditCardForm({
               />
               <CategoryInput
                 categoriesWithCount={categoriesWithCount}
-                newCard={newCard}
-                setNewCard={onCategoryChange}
+                value={newCard.category || ""}
+                onChange={onCategoryChange}
+                label="Catégorie"
+                isRequired={true}
               />
               <div className="EditCardForm__buttons">
                 <SubmitButton disabled={false}>Enregistrer</SubmitButton>

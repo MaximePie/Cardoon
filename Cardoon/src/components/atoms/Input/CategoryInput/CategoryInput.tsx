@@ -1,21 +1,22 @@
 import { Autocomplete, createFilterOptions, TextField } from "@mui/material";
-import { Card } from "../../../../types/common";
 import { Hint } from "../../Hint/Hint";
 const filter = createFilterOptions<string>();
 
 interface CategoryInputProps {
   categoriesWithCount: string[];
-  newCard: Partial<Card>;
-  setNewCard: (newCard: Partial<Card>) => void;
+  value: string;
+  onChange: (newCategory: string) => void;
   label?: string;
   isRequired?: boolean;
+  isLoading?: boolean;
 }
 export default function CategoryInput({
   categoriesWithCount,
-  newCard,
-  setNewCard,
+  value,
+  onChange,
   label = "Catégorie",
   isRequired = false,
+  isLoading = false,
 }: CategoryInputProps) {
   return (
     <>
@@ -29,12 +30,13 @@ export default function CategoryInput({
         options={categoriesWithCount || []}
         sx={{ width: 300 }}
         renderInput={(params) => <TextField {...params} label={label} />}
-        value={newCard.category}
+        value={value}
+        loading={isLoading}
         onChange={(_, newValue) => {
           if (typeof newValue === "string") {
             let newCategory = newValue.replace("Créer: ", "");
             newCategory = newCategory.replace(/\s*\(\d+\)$/, "");
-            setNewCard({ ...newCard, category: newCategory });
+            onChange(newCategory);
           }
         }}
         filterOptions={(options, params) => {

@@ -54,7 +54,7 @@ const createStatusPreservingError = (
 /**
  * Configuration axios pour les requêtes authentifiées
  */
-const createAuthenticatedAxios = () => {
+export const createAuthenticatedAxios = () => {
   const token = Cookies.get("token");
   const headers: Record<string, string> = {
     "Content-Type": "application/json",

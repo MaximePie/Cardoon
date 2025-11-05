@@ -4,7 +4,7 @@ import NorthIcon from "@mui/icons-material/North";
 import UserIcon from "@mui/icons-material/Person";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import { Link } from "react-router-dom";
-import { useUser } from "../../../hooks/contexts/useUser";
+import { useUser } from "../../../context/UserContext/useUserContext";
 import useIsMobile from "../../../hooks/useIsMobile";
 interface NavbarLink {
   to: string;

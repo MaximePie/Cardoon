@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { useCallback, useEffect, useState } from "react";
 import { extractErrorMessage } from "../utils";
 
+// Deprecated, use tanstack query instead for future implementations
 const backUrl = import.meta.env.VITE_API_URL;
 
 // Resources

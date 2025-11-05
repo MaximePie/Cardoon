@@ -2,14 +2,14 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SnackbarContextProvider } from "../../../../context/SnackbarContext";
-import * as userHooks from "../../../../hooks/contexts/useUser";
+import * as userHooks from "../../../../context/UserContext/useUserContext";
 import { useUserCardsManager } from "../../../../hooks/queries/useUserCards";
 import * as useIsMobileHook from "../../../../hooks/useIsMobile";
 import { Card, PopulatedUserCard, User } from "../../../../types/common";
 import UserCards from "./UserCards";
 
 // Mock hooks
-vi.mock("../../../../hooks/contexts/useUser", () => ({
+vi.mock("../../../../context/UserContext/useUserContext", () => ({
   useUser: vi.fn(),
 }));
 

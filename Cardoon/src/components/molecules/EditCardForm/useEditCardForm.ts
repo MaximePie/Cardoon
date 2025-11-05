@@ -37,7 +37,7 @@ export default function useEditCardForm({
 
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { categoriesWithCount } = useCategoriesContext();
-  const { put } = usePut(RESOURCES.CARDS);
+  const { put, error: putError } = usePut(RESOURCES.CARDS);
   const {
     post: invertCardPost,
     data: invertedCardData,
@@ -142,7 +142,28 @@ export default function useEditCardForm({
       data.append("imageLink", formData.imageLink);
     }
 
+    // Append expectedAnswers - clean empty strings and append each answer separately
+    if (formData.expectedAnswers) {
+      const cleanedExpectedAnswers = formData.expectedAnswers
+        .map((answer) => answer.trim())
+        .filter(Boolean);
+      cleanedExpectedAnswers.forEach((expectedAnswer) => {
+        data.append("expectedAnswers", expectedAnswer);
+      });
+    }
+
     await put(editedCard.card._id, data);
+
+    // Check if the PUT request failed
+    if (putError) {
+      openSnackbarWithMessage(
+        `Erreur lors de la mise à jour de la carte: ${putError}`,
+        "error"
+      );
+      return;
+    }
+
+    // Only proceed with UI changes if the PUT succeeded
     reset({
       question: "",
       answer: "",

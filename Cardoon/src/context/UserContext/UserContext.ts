@@ -26,6 +26,7 @@ export interface UserContextType {
   editCard: (updatedCard: Partial<Card>) => Promise<void>;
   invertCard: (cardId: string) => Promise<void>;
   isInvertingCard: boolean;
+  clearAllErrors: () => void;
 }
 
 export const emptyUser: User = {
@@ -54,6 +55,7 @@ export const UserContext = createContext<UserContextType>({
   setUser: () => {},
   logout: () => {},
   addScore: () => {},
+  clearAllErrors: () => {},
   earnGold: () => {},
   removeGold: () => {},
   hasItem: () => false,

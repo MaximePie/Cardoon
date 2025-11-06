@@ -31,6 +31,7 @@ export const UserContextProvider = ({
     editCard: editCardMutation,
     invertCard: invertCardMutation,
     isInvertingCard,
+    resetQueries,
   } = useUserCardsManager(user._id || "", {
     onDeleteSuccess: () => {
       openSnackbarWithMessage("Carte supprimée avec succès !", "success");
@@ -112,6 +113,10 @@ export const UserContextProvider = ({
     await refetchReviewUserCards();
   }, [refetchReviewUserCards]);
 
+  const clearAllErrors = () => {
+    resetQueries();
+  };
+
   const updateImage = async (imageFile: File) => {
     try {
       const formData = new FormData();
@@ -169,6 +174,7 @@ export const UserContextProvider = ({
         editCard,
         invertCard,
         isInvertingCard,
+        clearAllErrors,
       }}
     >
       {children}

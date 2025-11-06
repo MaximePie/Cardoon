@@ -167,10 +167,19 @@ describe("UserCards", () => {
       updateImage: vi.fn(),
       isReviewUserCardsLoading: false,
       reviewUserCardsError: null,
+      // ✅ Ajouter les méthodes de cartes manquantes
+      isLoadingCards: false,
+      cardsError: null,
+      deleteCard: mockUserCardsManager.deleteCard,
+      deleteCards: mockUserCardsManager.deleteCards,
+      editCard: mockUserCardsManager.editCard,
+      invertCard: mockUserCardsManager.invertCard,
+      isDeletingCard: mockUserCardsManager.isDeletingCard,
+      isEditingCard: mockUserCardsManager.isEditingCard,
+      isInvertingCard: mockUserCardsManager.isInvertingCard,
     });
 
     vi.mocked(useIsMobileHook.default).mockReturnValue({ isMobile: false });
-    vi.mocked(useUserCardsManager).mockReturnValue(mockUserCardsManager);
 
     // Mock window.confirm properly
     vi.spyOn(window, "confirm").mockReturnValue(true);
@@ -240,39 +249,25 @@ describe("UserCards", () => {
 
   describe("Search Functionality", () => {
     it("should filter cards based on question", async () => {
-      const { rerender } = renderUserCards();
+      renderUserCards();
 
       const searchInput = screen.getByPlaceholderText(
         "Rechercher une carte..."
       );
 
-      // Simulate search filtering by updating the mock to return only filtered cards
-      fireEvent.change(searchInput, { target: { value: "capitale" } });
+      // Simulate search filtering by changing the input value
+      fireEvent.change(searchInput, { target: { value: "Hamlet" } });
 
-      // Mock the filtered result
-      vi.mocked(useUserCardsManager).mockReturnValue({
-        ...mockUserCardsManager,
-        cards: [mockUserCards[0]], // Only the first card matches "capitale"
-      });
-
-      rerender(
-        <QueryClientProvider client={testQueryClient}>
-          <SnackbarContextProvider>
-            <UserCards />
-          </SnackbarContextProvider>
-        </QueryClientProvider>
-      );
-
+      // Wait for the component to update and filter the cards
       await waitFor(() => {
+        // Seule la carte avec "Hamlet" devrait être visible
+        expect(screen.getByText("Qui a écrit Hamlet ?")).toBeInTheDocument();
         expect(screen.getByText(/Vos cartes \(1\)/)).toBeInTheDocument();
+        // Les autres cartes ne devraient pas être visibles
+        expect(
+          screen.queryByText("Quelle est la capitale de la France ?")
+        ).not.toBeInTheDocument();
       });
-
-      expect(
-        screen.getByText("Quelle est la capitale de la France ?")
-      ).toBeInTheDocument();
-      expect(
-        screen.queryByText("Qui a écrit Hamlet ?")
-      ).not.toBeInTheDocument();
     });
 
     it("should filter cards based on answer", async () => {
@@ -284,11 +279,7 @@ describe("UserCards", () => {
 
       fireEvent.change(searchInput, { target: { value: "Shakespeare" } });
 
-      // Mock the filtered result
-      vi.mocked(useUserCardsManager).mockReturnValue({
-        ...mockUserCardsManager,
-        cards: [mockUserCards[1]], // Only the second card has "Shakespeare" as answer
-      });
+      // Pas besoin de mock spécifique - le filtrage se fait dans le composant
 
       rerender(
         <QueryClientProvider client={testQueryClient}>
@@ -316,11 +307,7 @@ describe("UserCards", () => {
       );
       fireEvent.change(searchInput, { target: { value: "HAMLET" } });
 
-      // Mock the filtered result
-      vi.mocked(useUserCardsManager).mockReturnValue({
-        ...mockUserCardsManager,
-        cards: [mockUserCards[1]], // Only the second card matches "HAMLET"
-      });
+      // Pas besoin de mock spécifique - le filtrage se fait dans le composant
 
       rerender(
         <QueryClientProvider client={testQueryClient}>
@@ -455,9 +442,30 @@ describe("UserCards", () => {
 
   describe("Loading States", () => {
     it("should show loading message when loading", () => {
-      vi.mocked(useUserCardsManager).mockReturnValue({
-        ...mockUserCardsManager,
-        isLoading: true,
+      vi.mocked(userHooks.useUser).mockReturnValue({
+        user: mockUser,
+        allUserCards: mockUserCards,
+        reviewUserCards: [],
+        getReviewUserCards: vi.fn(),
+        setUser: vi.fn(),
+        addScore: vi.fn(),
+        earnGold: vi.fn(),
+        removeGold: vi.fn(),
+        hasItem: vi.fn(),
+        logout: vi.fn(),
+        refresh: vi.fn(),
+        updateImage: vi.fn(),
+        isReviewUserCardsLoading: false,
+        reviewUserCardsError: null,
+        isLoadingCards: true,
+        cardsError: null,
+        deleteCard: mockUserCardsManager.deleteCard,
+        deleteCards: mockUserCardsManager.deleteCards,
+        editCard: mockUserCardsManager.editCard,
+        invertCard: mockUserCardsManager.invertCard,
+        isDeletingCard: mockUserCardsManager.isDeletingCard,
+        isEditingCard: mockUserCardsManager.isEditingCard,
+        isInvertingCard: mockUserCardsManager.isInvertingCard,
       });
 
       renderUserCards();
@@ -468,9 +476,30 @@ describe("UserCards", () => {
     });
 
     it("should show error message when there is an error", () => {
-      vi.mocked(useUserCardsManager).mockReturnValue({
-        ...mockUserCardsManager,
-        error: new Error("Test error"),
+      vi.mocked(userHooks.useUser).mockReturnValue({
+        user: mockUser,
+        allUserCards: mockUserCards,
+        reviewUserCards: [],
+        getReviewUserCards: vi.fn(),
+        setUser: vi.fn(),
+        addScore: vi.fn(),
+        earnGold: vi.fn(),
+        removeGold: vi.fn(),
+        hasItem: vi.fn(),
+        logout: vi.fn(),
+        refresh: vi.fn(),
+        updateImage: vi.fn(),
+        isReviewUserCardsLoading: false,
+        reviewUserCardsError: null,
+        isLoadingCards: false,
+        cardsError: new Error("Test error"),
+        deleteCard: mockUserCardsManager.deleteCard,
+        deleteCards: mockUserCardsManager.deleteCards,
+        editCard: mockUserCardsManager.editCard,
+        invertCard: mockUserCardsManager.invertCard,
+        isDeletingCard: mockUserCardsManager.isDeletingCard,
+        isEditingCard: mockUserCardsManager.isEditingCard,
+        isInvertingCard: mockUserCardsManager.isInvertingCard,
       });
 
       renderUserCards();
@@ -483,9 +512,30 @@ describe("UserCards", () => {
 
   describe("Empty States", () => {
     it("should show empty state message when no cards", () => {
-      vi.mocked(useUserCardsManager).mockReturnValue({
-        ...mockUserCardsManager,
-        cards: [],
+      vi.mocked(userHooks.useUser).mockReturnValue({
+        user: mockUser,
+        allUserCards: [],
+        reviewUserCards: [],
+        getReviewUserCards: vi.fn(),
+        setUser: vi.fn(),
+        addScore: vi.fn(),
+        earnGold: vi.fn(),
+        removeGold: vi.fn(),
+        hasItem: vi.fn(),
+        logout: vi.fn(),
+        refresh: vi.fn(),
+        updateImage: vi.fn(),
+        isReviewUserCardsLoading: false,
+        reviewUserCardsError: null,
+        isLoadingCards: false,
+        cardsError: null,
+        deleteCard: mockUserCardsManager.deleteCard,
+        deleteCards: mockUserCardsManager.deleteCards,
+        editCard: mockUserCardsManager.editCard,
+        invertCard: mockUserCardsManager.invertCard,
+        isDeletingCard: mockUserCardsManager.isDeletingCard,
+        isEditingCard: mockUserCardsManager.isEditingCard,
+        isInvertingCard: mockUserCardsManager.isInvertingCard,
       });
 
       renderUserCards();
@@ -560,11 +610,16 @@ describe("UserCards", () => {
         updateImage: vi.fn(),
         isReviewUserCardsLoading: false,
         reviewUserCardsError: null,
-      });
-
-      vi.mocked(useUserCardsManager).mockReturnValue({
-        ...mockUserCardsManager,
-        cards: [],
+        // ✅ Ajouter les méthodes de cartes manquantes
+        isLoadingCards: false,
+        cardsError: null,
+        deleteCard: vi.fn(),
+        deleteCards: vi.fn(),
+        editCard: vi.fn(),
+        invertCard: vi.fn(),
+        isDeletingCard: false,
+        isEditingCard: false,
+        isInvertingCard: false,
       });
 
       renderUserCards();

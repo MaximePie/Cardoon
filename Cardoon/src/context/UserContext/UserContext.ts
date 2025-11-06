@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { PopulatedUserCard, User } from "../../types/common";
+import { Card, PopulatedUserCard, User } from "../../types/common";
 
 export interface UserContextType {
   user: User;
@@ -17,6 +17,15 @@ export interface UserContextType {
   hasItem: (itemId: string) => boolean;
   refresh: () => void;
   updateImage: (imageFile: File) => Promise<void>;
+  isLoadingCards: boolean;
+  deleteCard: (cardId: string) => Promise<void>;
+  deleteCards: (cardIds: string[]) => Promise<void>;
+  isDeletingCard: boolean;
+  isEditingCard: boolean;
+  cardsError: Error | null;
+  editCard: (updatedCard: Partial<Card>) => Promise<void>;
+  invertCard: (cardId: string) => Promise<void>;
+  isInvertingCard: boolean;
 }
 
 export const emptyUser: User = {
@@ -52,4 +61,13 @@ export const UserContext = createContext<UserContextType>({
   refresh: () => {},
   updateImage: async (_imageFile: File) => {},
   allUserCards: [],
+  isLoadingCards: false,
+  deleteCard: (_cardId: string) => Promise.resolve(),
+  deleteCards: (_cardIds: string[]) => Promise.resolve(),
+  isDeletingCard: false,
+  isEditingCard: false,
+  cardsError: null,
+  editCard: (_updatedCard: Partial<Card>) => Promise.resolve(),
+  invertCard: (_cardId: string) => Promise.resolve(),
+  isInvertingCard: false,
 });

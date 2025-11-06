@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useUserCardsManager } from "../../hooks/queries/useUserCards";
-import { ACTIONS, RESOURCES, useFetch, usePut } from "../../hooks/server";
-import { PopulatedUserCard, User } from "../../types/common";
+import { ACTIONS, useFetch, usePut } from "../../hooks/server";
+import { Card, User } from "../../types/common";
+import { SnackbarContext } from "../SnackbarContext";
 import { UserContext, emptyUser } from "./UserContext";
 
 export const UserContextProvider = ({
@@ -11,12 +12,8 @@ export const UserContextProvider = ({
   children: React.ReactNode;
 }) => {
   const { fetch, data, error: userError } = useFetch<User>(ACTIONS.ME);
-  const { data: userCardsData } = useFetch<{
-    userCards: PopulatedUserCard[];
-  }>(RESOURCES.USERCARDS);
   const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
-
-  const allUserCards = userCardsData?.userCards ?? [];
+  const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const [user, setUser] = useState<User>(emptyUser);
   const {
@@ -24,7 +21,45 @@ export const UserContextProvider = ({
     isReviewUserCardsLoading,
     reviewUserCardsError,
     refetchReviewUserCards,
-  } = useUserCardsManager(user._id || "");
+    cards: allUserCards,
+    isLoading: isLoadingCards,
+    deleteCard: deleteCardMutation,
+    deleteCards: deleteCardsMutation,
+    isDeletingCard,
+    isEditingCard,
+    error: cardsError,
+    editCard: editCardMutation,
+    invertCard: invertCardMutation,
+    isInvertingCard,
+  } = useUserCardsManager(user._id || "", {
+    onDeleteSuccess: () => {
+      openSnackbarWithMessage("Carte supprimée avec succès !", "success");
+    },
+    onDeleteError: (error) => {
+      openSnackbarWithMessage(
+        `Erreur lors de la suppression: ${error.message}`,
+        "error"
+      );
+    },
+    onEditSuccess: () => {
+      openSnackbarWithMessage("Carte modifiée avec succès !", "success");
+    },
+    onEditError: (error) => {
+      openSnackbarWithMessage(
+        `Erreur lors de la modification: ${error.message}`,
+        "error"
+      );
+    },
+    onInvertSuccess: () => {
+      openSnackbarWithMessage("Carte inversée avec succès !", "success");
+    },
+    onInvertError: (error) => {
+      openSnackbarWithMessage(
+        `Erreur lors de l'inversion: ${error.message}`,
+        "error"
+      );
+    },
+  });
   useEffect(() => {
     // Check for user token in cookies
     const token = document.cookie
@@ -92,6 +127,21 @@ export const UserContextProvider = ({
     }
   };
 
+  const deleteCard = async (cardId: string) => {
+    return await deleteCardMutation(cardId);
+  };
+  const deleteCards = async (cardIds: string[]) => {
+    return await deleteCardsMutation(cardIds);
+  };
+
+  const editCard = async (updatedCard: Partial<Card>) => {
+    return await editCardMutation(updatedCard);
+  };
+
+  const invertCard = async (cardId: string) => {
+    return await invertCardMutation(cardId);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -110,6 +160,15 @@ export const UserContextProvider = ({
         allUserCards: allUserCards || [],
         getReviewUserCards,
         updateImage,
+        isLoadingCards,
+        deleteCard,
+        deleteCards,
+        isDeletingCard,
+        isEditingCard,
+        cardsError,
+        editCard,
+        invertCard,
+        isInvertingCard,
       }}
     >
       {children}

@@ -135,6 +135,7 @@ describe("UserCards", () => {
     invertCard: mockInvertCard,
     refetch: vi.fn(),
     refetchReviewUserCards: vi.fn(),
+    resetQueries: vi.fn(),
     isStale: false,
   };
 
@@ -177,6 +178,7 @@ describe("UserCards", () => {
       isDeletingCard: mockUserCardsManager.isDeletingCard,
       isEditingCard: mockUserCardsManager.isEditingCard,
       isInvertingCard: mockUserCardsManager.isInvertingCard,
+      clearAllErrors: vi.fn(),
     });
 
     vi.mocked(useIsMobileHook.default).mockReturnValue({ isMobile: false });
@@ -466,6 +468,7 @@ describe("UserCards", () => {
         isDeletingCard: mockUserCardsManager.isDeletingCard,
         isEditingCard: mockUserCardsManager.isEditingCard,
         isInvertingCard: mockUserCardsManager.isInvertingCard,
+        clearAllErrors: vi.fn(),
       });
 
       renderUserCards();
@@ -500,6 +503,7 @@ describe("UserCards", () => {
         isDeletingCard: mockUserCardsManager.isDeletingCard,
         isEditingCard: mockUserCardsManager.isEditingCard,
         isInvertingCard: mockUserCardsManager.isInvertingCard,
+        clearAllErrors: vi.fn(),
       });
 
       renderUserCards();
@@ -536,6 +540,7 @@ describe("UserCards", () => {
         isDeletingCard: mockUserCardsManager.isDeletingCard,
         isEditingCard: mockUserCardsManager.isEditingCard,
         isInvertingCard: mockUserCardsManager.isInvertingCard,
+        clearAllErrors: vi.fn(),
       });
 
       renderUserCards();
@@ -620,6 +625,7 @@ describe("UserCards", () => {
         isDeletingCard: false,
         isEditingCard: false,
         isInvertingCard: false,
+        clearAllErrors: vi.fn(),
       });
 
       renderUserCards();

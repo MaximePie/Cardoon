@@ -138,7 +138,12 @@ const GamePage = () => {
       </div>
     );
   }
-  if (userError === "Invalid token") {
+
+  // Hybrid error handling for token errors, temporary solution (userError will be removed later)
+  if (
+    userError === "Invalid token" ||
+    (reviewUserCardsError?.message.includes("Invalid token") ?? false)
+  ) {
     return <TokenErrorPage />;
   }
 

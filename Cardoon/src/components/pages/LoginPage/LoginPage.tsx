@@ -16,7 +16,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser, refresh } = useUser();
+  const { setUser, refresh, clearAllErrors } = useUser();
   const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isErroneous, setIsErroneous] = useState(false);
 
@@ -33,6 +33,11 @@ export default function LoginForm() {
       setFormError(undefined);
     }
   }, [email, password]);
+
+  // Remove the remaining Errors from other requests and pages
+  useEffect(() => {
+    clearAllErrors();
+  }, [clearAllErrors]);
 
   useEffect(() => {
     if (data) {

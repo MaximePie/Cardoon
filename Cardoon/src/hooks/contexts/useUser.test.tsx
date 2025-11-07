@@ -19,7 +19,6 @@ const mockUserContextValue = {
   isReviewUserCardsLoading: false,
   reviewUserCardsError: null,
   getReviewUserCards: vi.fn(),
-  getAllUserCards: vi.fn(),
   setUser: vi.fn(),
   logout: vi.fn(),
   addScore: vi.fn(),
@@ -28,6 +27,17 @@ const mockUserContextValue = {
   hasItem: vi.fn(() => false),
   refresh: vi.fn(),
   updateImage: vi.fn(),
+  // Nouvelles propriétés ajoutées pour la gestion des cartes
+  isLoadingCards: false,
+  deleteCard: vi.fn(),
+  deleteCards: vi.fn(),
+  isDeletingCard: false,
+  isEditingCard: false,
+  cardsError: null,
+  editCard: vi.fn(),
+  invertCard: vi.fn(),
+  isInvertingCard: false,
+  clearAllErrors: vi.fn(),
 };
 
 const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({

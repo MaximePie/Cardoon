@@ -144,6 +144,17 @@ describe("AdventurePage", () => {
     getAllUserCards: vi.fn(),
     getReviewUserCards: mockGetReviewUserCards,
     updateImage: vi.fn(),
+    isLoadingCards: false,
+    deleteCard: vi.fn(),
+    deleteCards: vi.fn(),
+    isDeletingCard: false,
+    isEditingCard: false,
+    cardsError: null,
+    editCard: vi.fn(),
+    invertCard: vi.fn(),
+    isInvertingCard: false,
+    clearAllErrors: vi.fn(),
+    userError: undefined,
   };
 
   beforeEach(() => {

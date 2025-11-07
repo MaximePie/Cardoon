@@ -9,10 +9,8 @@ import {
   TextField,
 } from "@mui/material";
 import { AnimatePresence, motion } from "motion/react";
-import { useContext, useState } from "react";
-import { SnackbarContext } from "../../../../context/SnackbarContext";
+import { useState } from "react";
 import { useUser } from "../../../../context/UserContext";
-import { useUserCardsManager } from "../../../../hooks/queries/useUserCards";
 import useIsMobile from "../../../../hooks/useIsMobile";
 import { Card } from "../../../../types/common";
 import Button from "../../../atoms/Button/Button";
@@ -24,51 +22,22 @@ const CONFIRMATION_MESSAGES = {
 
 // 🎴 Composant gestion des cartes utilisateur
 export default function UserCards() {
-  const { user } = useUser();
-  const { openSnackbarWithMessage } = useContext(SnackbarContext);
-  const { isMobile } = useIsMobile();
-  const [selectedCards, setSelectedCard] = useState<string[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const {
-    cards: allUserCards,
-    isLoading: isLoadingCards,
+    user,
+    allUserCards,
+    isLoadingCards,
     deleteCard,
     deleteCards,
     isDeletingCard,
     isEditingCard,
-    error: cardsError,
+    cardsError,
     editCard,
     invertCard,
     isInvertingCard,
-  } = useUserCardsManager(user._id, {
-    onDeleteSuccess: () => {
-      openSnackbarWithMessage("Carte supprimée avec succès !", "success");
-    },
-    onDeleteError: (error) => {
-      openSnackbarWithMessage(
-        `Erreur lors de la suppression: ${error.message}`,
-        "error"
-      );
-    },
-    onEditSuccess: () => {
-      openSnackbarWithMessage("Carte modifiée avec succès !", "success");
-    },
-    onEditError: (error) => {
-      openSnackbarWithMessage(
-        `Erreur lors de la modification: ${error.message}`,
-        "error"
-      );
-    },
-    onInvertSuccess: () => {
-      openSnackbarWithMessage("Carte inversée avec succès !", "success");
-    },
-    onInvertError: (error) => {
-      openSnackbarWithMessage(
-        `Erreur lors de l'inversion: ${error.message}`,
-        "error"
-      );
-    },
-  });
+  } = useUser();
+  const { isMobile } = useIsMobile();
+  const [selectedCards, setSelectedCard] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   if (!user) {
     return null; // Ou un indicateur de chargement

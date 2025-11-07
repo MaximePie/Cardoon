@@ -411,6 +411,7 @@ export const useUserCardsManager = (
     onInvertError?: (error: Error) => void;
   } = {}
 ) => {
+  const queryClient = useQueryClient();
   const cardsQuery = useUserCards(userId.toString());
   const reviewUserCardsQuery = useReviewUserCards(userId);
   const deleteCardMutation = useDeleteCard(userId, {
@@ -462,5 +463,9 @@ export const useUserCardsManager = (
     refetch: cardsQuery.refetch,
     isStale: cardsQuery.isStale,
     refetchReviewUserCards: reviewUserCardsQuery.refetch,
+    resetQueries: () => {
+      queryClient.removeQueries({ queryKey: ["user-cards"] });
+      queryClient.removeQueries({ queryKey: ["review-user-cards"] });
+    },
   };
 };

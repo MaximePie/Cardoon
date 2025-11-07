@@ -37,7 +37,7 @@ export default function LoginForm() {
   // Remove the remaining Errors from other requests and pages
   useEffect(() => {
     clearAllErrors();
-  }, []);
+  }, [clearAllErrors]);
 
   useEffect(() => {
     if (data) {

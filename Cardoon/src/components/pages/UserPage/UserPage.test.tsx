@@ -41,8 +41,18 @@ const createMockUserContext = (user: User, overrides = {}) => ({
   hasItem: vi.fn(),
   refresh: vi.fn(),
   allUserCards: [],
-  getAllUserCards: vi.fn(),
   updateImage: vi.fn(),
+  // Nouvelles propriétés ajoutées pour la gestion des cartes
+  isLoadingCards: false,
+  deleteCard: vi.fn(),
+  deleteCards: vi.fn(),
+  isDeletingCard: false,
+  isEditingCard: false,
+  cardsError: null,
+  editCard: vi.fn(),
+  invertCard: vi.fn(),
+  isInvertingCard: false,
+  clearAllErrors: vi.fn(),
   ...overrides,
 });
 
@@ -80,6 +90,7 @@ describe("UserPage", () => {
   const mockDeleteCard = vi.fn();
   const mockDeleteCards = vi.fn();
   const mockRefetch = vi.fn();
+  const mockResetQueries = vi.fn();
   const mockUserCardsManagerReturn = {
     cards: [],
     reviewUserCards: [],
@@ -109,6 +120,7 @@ describe("UserPage", () => {
       isLoading: false,
       isSuccess: true,
     }),
+    resetQueries: mockResetQueries,
     isStale: false,
   };
 

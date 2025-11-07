@@ -3,7 +3,7 @@ import { Card, PopulatedUserCard, User } from "../../types/common";
 
 export interface UserContextType {
   user: User;
-  userError?: string | undefined;
+  userError?: Error | null;
   allUserCards: PopulatedUserCard[];
   getReviewUserCards: () => Promise<void>;
   reviewUserCards: PopulatedUserCard[];
@@ -11,6 +11,7 @@ export interface UserContextType {
   reviewUserCardsError: Error | null;
   setUser: (user: User) => void;
   logout: () => void;
+  login: () => void;
   addScore: (score: number) => void;
   earnGold: (gold: number) => void;
   removeGold: (gold: number) => void;
@@ -54,6 +55,7 @@ export const UserContext = createContext<UserContextType>({
   reviewUserCardsError: null,
   setUser: () => {},
   logout: () => {},
+  login: () => {},
   addScore: () => {},
   clearAllErrors: () => {},
   earnGold: () => {},

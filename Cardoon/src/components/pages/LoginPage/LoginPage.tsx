@@ -16,7 +16,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser, refresh, clearAllErrors } = useUser();
+  const { setUser, login, clearAllErrors } = useUser();
   const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isErroneous, setIsErroneous] = useState(false);
 
@@ -50,11 +50,11 @@ export default function LoginForm() {
       // Store it as a cookie with lifetime 90days
       document.cookie = `token=${data.token};max-age=${60 * 60 * 24 * 90}`;
       setUser(data.user);
-      refresh();
+      login();
 
       navigate("/");
     }
-  }, [data, setUser, navigate, refresh]);
+  }, [data, setUser, navigate, login]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

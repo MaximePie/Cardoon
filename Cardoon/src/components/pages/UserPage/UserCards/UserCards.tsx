@@ -35,6 +35,7 @@ export default function UserCards() {
     invertCard,
     isInvertingCard,
   } = useUser();
+  console.log(cardsError?.message);
   const { isMobile } = useIsMobile();
   const [selectedCards, setSelectedCard] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -88,7 +89,6 @@ export default function UserCards() {
   const handleInvertCard = (cardId: string) => {
     invertCard(cardId);
   };
-
   return (
     <section className="UserPage__tab-content" aria-labelledby="cards-tab">
       <AnimatePresence>

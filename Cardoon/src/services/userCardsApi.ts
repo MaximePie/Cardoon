@@ -14,7 +14,8 @@
 
 import axios from "axios";
 import Cookies from "js-cookie";
-import { PopulatedUserCard } from "../types/common";
+import { ACTIONS } from "../hooks/server";
+import { PopulatedUserCard, User } from "../types/common";
 import { extractErrorMessage } from "../utils";
 
 // Get API URL from environment, with fallback for test environments
@@ -144,6 +145,35 @@ export const getReviewUserCards = async (
       error
     );
   }
+};
+
+// "To /me" query - Récupère l'utilisateur via le token dans les cookies
+export const getMe = async (): Promise<User> => {
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="));
+  console.log("Token found:", token);
+
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+  const url = `${ACTIONS.ME}`;
+
+  const response = await axios.get(url, {
+    headers: {
+      Authorization: `Bearer ${token.split("=")[1]}`,
+    },
+  });
+
+  if (response.status !== 200) {
+    if (response.status === 401) {
+      throw new Error("Invalid token");
+    }
+    throw new Error("Failed to fetch user data");
+  }
+
+  const data = response.data;
+  return data as User;
 };
 
 /**

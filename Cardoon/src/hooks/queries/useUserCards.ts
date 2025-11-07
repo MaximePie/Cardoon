@@ -16,6 +16,7 @@ import { QueryKeys } from "../../lib/queryClient";
 import {
   deleteUserCard,
   editUserCard,
+  getMe,
   getReviewUserCards,
   getUserCards,
   invertCard,
@@ -466,6 +467,42 @@ export const useUserCardsManager = (
     resetQueries: () => {
       queryClient.removeQueries({ queryKey: ["user-cards"] });
       queryClient.removeQueries({ queryKey: ["review-user-cards"] });
+    },
+  };
+};
+
+const useMeQuery = () => {
+  // Vérifier si un token existe
+  const hasToken = document.cookie.includes("token=");
+  console.log("Has token:", hasToken);
+
+  return useQuery({
+    queryKey: ["user", "me"], // Clé fixe car on récupère toujours l'utilisateur connecté
+    queryFn: () => getMe(),
+    enabled: hasToken, // Ne lance la query que si un token existe
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: (failureCount, error: Error) => {
+      // Ne pas retry sur les erreurs 401 (token invalid)
+      if (error?.message?.includes("Invalid token")) {
+        return false;
+      }
+      return failureCount < 3;
+    },
+  });
+};
+
+export const useUserManager = () => {
+  const queryClient = useQueryClient();
+  // Implementation of user fetching logic
+  const meQuery = useMeQuery();
+
+  return {
+    user: meQuery.data,
+    isLoading: meQuery.isLoading,
+    error: meQuery.error,
+    refetch: meQuery.refetch,
+    resetQueries: () => {
+      queryClient.removeQueries({ queryKey: ["user", "me"] });
     },
   };
 };

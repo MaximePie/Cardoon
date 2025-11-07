@@ -4,7 +4,7 @@ import Divider from "@mui/material/Divider/Divider";
 import { useState } from "react";
 import UserCards from "./UserCards/UserCards";
 import UserHeader from "./UserHeader/UserHeader";
-import UserProfile from "./UserProfile";
+import UserProfile from "./UserProfile/UserProfile";
 
 type UserPageTab = "profile" | "cards";
 

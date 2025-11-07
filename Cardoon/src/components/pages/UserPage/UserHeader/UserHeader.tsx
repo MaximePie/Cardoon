@@ -4,8 +4,8 @@ import Button from "../../../atoms/Button/Button";
 import ExpBar from "../../../atoms/ExpBar/ExpBar";
 
 export default function UserHeader() {
-  const { user, updateImage } = useUser();
-  const { username } = user;
+  const { user } = useUser();
+  const { username } = user.data;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -48,7 +48,7 @@ export default function UserHeader() {
 
   const saveImage = async () => {
     if (!selectedFile) return;
-    updateImage(selectedFile);
+    user.updateImage(selectedFile);
   };
 
   return (
@@ -67,7 +67,9 @@ export default function UserHeader() {
         />
         <img
           className="UserPage__header-avatar"
-          src={avatarPreview || user.image || "https://picsum.photos/200/300"}
+          src={
+            avatarPreview || user.data.image || "https://picsum.photos/200/300"
+          }
           alt={`Avatar de ${username}`}
           onClick={handleAvatarClick}
         />

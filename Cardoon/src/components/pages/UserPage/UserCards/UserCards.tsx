@@ -24,16 +24,20 @@ const CONFIRMATION_MESSAGES = {
 export default function UserCards() {
   const {
     user,
-    allUserCards,
-    isLoadingCards,
-    deleteCard,
-    deleteCards,
-    isDeletingCard,
-    isEditingCard,
-    cardsError,
-    editCard,
-    invertCard,
-    isInvertingCard,
+    cards: {
+      allUserCards: {
+        data: allUserCards,
+        isLoading: isLoadingCards,
+        deleteCard,
+        deleteCards,
+        isDeletingCard,
+        isEditingCard,
+        error: cardsError,
+        editCard,
+        invertCard,
+        isInvertingCard,
+      },
+    },
   } = useUser();
   console.log(cardsError?.message);
   const { isMobile } = useIsMobile();

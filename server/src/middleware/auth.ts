@@ -1,6 +1,6 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Request, Response, NextFunction, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 dotenv.config();
 

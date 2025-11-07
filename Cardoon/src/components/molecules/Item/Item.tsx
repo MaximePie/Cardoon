@@ -13,7 +13,9 @@ interface ItemProps {
 
 const ItemComponent = ({ item, type, afterPurchase }: ItemProps) => {
   const { post: postBuyItem } = usePost<UserItem>(ACTIONS.BUY_ITEM);
-  const { user, removeGold } = useUser();
+  const {
+    user: { data: user, removeGold },
+  } = useUser();
   const { post: postUpgradeItem } = usePost<UserItem>(ACTIONS.UPGRADE_ITEM);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const upgradeItem = async (itemId: string) => {

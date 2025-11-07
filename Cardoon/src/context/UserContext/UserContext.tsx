@@ -15,9 +15,15 @@ export const UserContextProvider = ({
 }) => {
   const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
-  const { user, error: userError } = useUserManager();
+  const {
+    user,
+    error: userError,
+    resetQueries: refetchUser,
+  } = useUserManager();
 
   const [currentUser, setUser] = useState<User>(user || emptyUser);
+
+  console.log("User is", user);
 
   const {
     reviewUserCards,
@@ -35,7 +41,6 @@ export const UserContextProvider = ({
     invertCard: invertCardMutation,
     isInvertingCard,
     resetQueries,
-    refetch: refetchUser,
   } = useUserCardsManager(user?._id || "", {
     onDeleteSuccess: () => {
       openSnackbarWithMessage("Carte supprimée avec succès !", "success");
@@ -190,31 +195,41 @@ export const UserContextProvider = ({
   return (
     <UserContext.Provider
       value={{
-        reviewUserCards,
-        isReviewUserCardsLoading,
-        reviewUserCardsError,
-        user: currentUser,
-        userError,
-        hasItem,
-        setUser,
-        logout,
-        login,
-        addScore,
-        earnGold,
-        removeGold,
-        refresh,
-        allUserCards: allUserCards || [],
-        getReviewUserCards,
-        updateImage: updateImage,
-        isLoadingCards,
-        deleteCard,
-        deleteCards,
-        isDeletingCard,
-        isEditingCard,
-        cardsError,
-        editCard,
-        invertCard,
-        isInvertingCard,
+        cards: {
+          reviewUserCards: {
+            data: reviewUserCards,
+            isLoading: isReviewUserCardsLoading,
+            error: reviewUserCardsError,
+            getReviewUserCards,
+          },
+          allUserCards: {
+            data: allUserCards,
+            isLoading: isLoadingCards,
+            error: cardsError,
+            deleteCard,
+            deleteCards,
+            isDeletingCard,
+            isEditingCard,
+            cardsError,
+            editCard,
+            invertCard,
+            isInvertingCard,
+          },
+        },
+        user: {
+          data: currentUser,
+          isLoading: !currentUser || (!!userError && !shouldRedirectToLogin),
+          error: userError,
+          hasItem,
+          setUser,
+          logout,
+          login,
+          addScore,
+          earnGold,
+          removeGold,
+          refresh,
+          updateImage,
+        },
         clearAllErrors,
       }}
     >

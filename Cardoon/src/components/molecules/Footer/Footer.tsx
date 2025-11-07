@@ -22,7 +22,9 @@ export const DailyGoalProgressBar = ({
 }) => {
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { showConfetti } = useContext(ConfettiContext);
-  const { user, setUser } = useUser();
+  const {
+    user: { data: user, setUser },
+  } = useUser();
   const lastProcessedGoal = useRef<string | null>(null);
   const isInitialMount = useRef(true);
   const previousStatus = useRef<string | null>(null);
@@ -149,7 +151,9 @@ export const DailyGoalProgressBar = ({
 };
 
 export const GameFooter = (props: GameFooterProps) => {
-  const { user, setUser } = useUser();
+  const {
+    user: { data: user, setUser },
+  } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const { showConfetti } = useContext(ConfettiContext);
   const { setFlash, isFlashModeOn, currentPage } = props;

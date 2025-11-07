@@ -500,7 +500,6 @@ export const useUserManager = () => {
     user: meQuery.data,
     isLoading: meQuery.isLoading,
     error: meQuery.error,
-    refetch: meQuery.refetch,
     resetQueries: () => {
       queryClient.removeQueries({ queryKey: ["user", "me"] });
     },

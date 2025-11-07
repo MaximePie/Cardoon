@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { PopulatedUserCard, User } from "../../../types/common";
@@ -51,7 +51,12 @@ const baseHero = {
 };
 
 export default function useAdventure() {
-  const { reviewUserCards, getReviewUserCards } = useUser();
+  const { cards } = useUser();
+  const reviewUserCards = useMemo(
+    () => cards.reviewUserCards.data || [],
+    [cards.reviewUserCards.data]
+  );
+  const getReviewUserCards = cards.reviewUserCards.getReviewUserCards;
   const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>(
     reviewUserCards.slice(0, 5)
   );

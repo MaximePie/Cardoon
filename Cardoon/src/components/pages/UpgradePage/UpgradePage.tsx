@@ -6,7 +6,9 @@ import { GameFooter } from "../../molecules/Footer/Footer";
 import Item from "../../molecules/Item/Item";
 
 export default function UpgradePage() {
-  const { user, hasItem, refresh } = useUser();
+  const {
+    user: { data: user, hasItem, refresh },
+  } = useUser();
 
   const { fetch, data } = useFetch<ItemType[]>(RESOURCES.ITEMS);
   const [items, setItems] = useState<ItemType[]>(data || []);

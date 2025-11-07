@@ -14,7 +14,6 @@
 
 import axios from "axios";
 import Cookies from "js-cookie";
-import { ACTIONS } from "../hooks/server";
 import { PopulatedUserCard, User } from "../types/common";
 import { extractErrorMessage } from "../utils";
 
@@ -157,7 +156,7 @@ export const getMe = async (): Promise<User> => {
   if (!token) {
     throw new Error("No authentication token found");
   }
-  const url = `${ACTIONS.ME}`;
+  const url = `${backUrl}/api/users/me`;
 
   const response = await axios.get(url, {
     headers: {

@@ -4,39 +4,50 @@ import { describe, expect, it, vi } from "vitest";
 import { UserContext, emptyUser } from "../../context/UserContext/UserContext";
 import { useUser } from "../../context/UserContext/useUserContext";
 
-// Mock du UserContext
+// Mock du UserContext avec la nouvelle structure
 const mockUserContextValue = {
-  user: {
-    ...emptyUser,
-    _id: "123",
-    username: "testuser",
-    score: 100,
-    gold: 50,
-    streak: 5,
+  cards: {
+    reviewUserCards: {
+      data: [],
+      isLoading: false,
+      error: null,
+      getReviewUserCards: vi.fn(),
+    },
+    allUserCards: {
+      data: [],
+      isLoading: false,
+      error: null,
+      deleteCard: vi.fn(),
+      deleteCards: vi.fn(),
+      isDeletingCard: false,
+      isEditingCard: false,
+      cardsError: null,
+      editCard: vi.fn(),
+      invertCard: vi.fn(),
+      isInvertingCard: false,
+    },
   },
-  allUserCards: [],
-  reviewUserCards: [],
-  isReviewUserCardsLoading: false,
-  reviewUserCardsError: null,
-  getReviewUserCards: vi.fn(),
-  setUser: vi.fn(),
-  logout: vi.fn(),
-  addScore: vi.fn(),
-  earnGold: vi.fn(),
-  removeGold: vi.fn(),
-  hasItem: vi.fn(() => false),
-  refresh: vi.fn(),
-  updateImage: vi.fn(),
-  // Nouvelles propriétés ajoutées pour la gestion des cartes
-  isLoadingCards: false,
-  deleteCard: vi.fn(),
-  deleteCards: vi.fn(),
-  isDeletingCard: false,
-  isEditingCard: false,
-  cardsError: null,
-  editCard: vi.fn(),
-  invertCard: vi.fn(),
-  isInvertingCard: false,
+  user: {
+    data: {
+      ...emptyUser,
+      _id: "123",
+      username: "testuser",
+      score: 100,
+      gold: 50,
+      streak: 5,
+    },
+    isLoading: false,
+    error: null,
+    hasItem: vi.fn(() => false),
+    setUser: vi.fn(),
+    logout: vi.fn(),
+    login: vi.fn(),
+    addScore: vi.fn(),
+    earnGold: vi.fn(),
+    removeGold: vi.fn(),
+    refresh: vi.fn(),
+    updateImage: vi.fn(),
+  },
   clearAllErrors: vi.fn(),
 };
 
@@ -63,11 +74,11 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      expect(result.current.user._id).toBe("123");
-      expect(result.current.user.username).toBe("testuser");
-      expect(result.current.user.score).toBe(100);
-      expect(result.current.user.gold).toBe(50);
-      expect(result.current.user.streak).toBe(5);
+      expect(result.current.user.data._id).toBe("123");
+      expect(result.current.user.data.username).toBe("testuser");
+      expect(result.current.user.data.score).toBe(100);
+      expect(result.current.user.data.gold).toBe(50);
+      expect(result.current.user.data.streak).toBe(5);
     });
 
     it("should provide access to user methods", () => {
@@ -75,13 +86,25 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      expect(result.current.setUser).toBe(mockUserContextValue.setUser);
-      expect(result.current.logout).toBe(mockUserContextValue.logout);
-      expect(result.current.addScore).toBe(mockUserContextValue.addScore);
-      expect(result.current.earnGold).toBe(mockUserContextValue.earnGold);
-      expect(result.current.removeGold).toBe(mockUserContextValue.removeGold);
-      expect(result.current.hasItem).toBe(mockUserContextValue.hasItem);
-      expect(result.current.refresh).toBe(mockUserContextValue.refresh);
+      expect(result.current.user.setUser).toBe(
+        mockUserContextValue.user.setUser
+      );
+      expect(result.current.user.logout).toBe(mockUserContextValue.user.logout);
+      expect(result.current.user.addScore).toBe(
+        mockUserContextValue.user.addScore
+      );
+      expect(result.current.user.earnGold).toBe(
+        mockUserContextValue.user.earnGold
+      );
+      expect(result.current.user.removeGold).toBe(
+        mockUserContextValue.user.removeGold
+      );
+      expect(result.current.user.hasItem).toBe(
+        mockUserContextValue.user.hasItem
+      );
+      expect(result.current.user.refresh).toBe(
+        mockUserContextValue.user.refresh
+      );
     });
 
     it("should provide access to user cards", () => {
@@ -89,10 +112,10 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      expect(result.current.allUserCards).toBe(
-        mockUserContextValue.allUserCards
+      expect(result.current.cards.allUserCards.data).toBe(
+        mockUserContextValue.cards.allUserCards.data
       );
-      expect(result.current.allUserCards).toEqual([]);
+      expect(result.current.cards.allUserCards.data).toEqual([]);
     });
   });
 
@@ -140,15 +163,24 @@ describe("useUser", () => {
       const differentUserContextValue = {
         ...mockUserContextValue,
         user: {
-          ...emptyUser,
-          _id: "456",
-          username: "anotheruser",
-          score: 200,
-          gold: 100,
-          streak: 10,
-          role: "admin" as const,
+          ...mockUserContextValue.user,
+          data: {
+            ...emptyUser,
+            _id: "456",
+            username: "anotheruser",
+            score: 200,
+            gold: 100,
+            streak: 10,
+            role: "admin" as const,
+          },
         },
-        allUserCards: mockUserCards,
+        cards: {
+          ...mockUserContextValue.cards,
+          allUserCards: {
+            ...mockUserContextValue.cards.allUserCards,
+            data: mockUserCards,
+          },
+        },
       };
 
       const DifferentUserProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -163,12 +195,12 @@ describe("useUser", () => {
         wrapper: DifferentUserProvider,
       });
 
-      expect(result.current.user._id).toBe("456");
-      expect(result.current.user.username).toBe("anotheruser");
-      expect(result.current.user.score).toBe(200);
-      expect(result.current.user.role).toBe("admin");
-      expect(result.current.allUserCards).toHaveLength(2);
-      expect(result.current.allUserCards[0].card.question).toBe(
+      expect(result.current.user.data._id).toBe("456");
+      expect(result.current.user.data.username).toBe("anotheruser");
+      expect(result.current.user.data.score).toBe(200);
+      expect(result.current.user.data.role).toBe("admin");
+      expect(result.current.cards.allUserCards.data).toHaveLength(2);
+      expect(result.current.cards.allUserCards.data[0].card.question).toBe(
         "Test question 1"
       );
     });
@@ -176,7 +208,10 @@ describe("useUser", () => {
     it("should handle empty user state", () => {
       const emptyUserContextValue = {
         ...mockUserContextValue,
-        user: emptyUser,
+        user: {
+          ...mockUserContextValue.user,
+          data: emptyUser,
+        },
       };
 
       const EmptyUserProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -191,7 +226,7 @@ describe("useUser", () => {
         wrapper: EmptyUserProvider,
       });
 
-      expect(result.current.user).toEqual(emptyUser);
+      expect(result.current.user.data).toEqual(emptyUser);
     });
   });
 
@@ -201,9 +236,9 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      result.current.addScore(50);
+      result.current.user.addScore(50);
 
-      expect(mockUserContextValue.addScore).toHaveBeenCalledWith(50);
+      expect(mockUserContextValue.user.addScore).toHaveBeenCalledWith(50);
     });
 
     it("should call earnGold method when invoked", () => {
@@ -211,9 +246,9 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      result.current.earnGold(25);
+      result.current.user.earnGold(25);
 
-      expect(mockUserContextValue.earnGold).toHaveBeenCalledWith(25);
+      expect(mockUserContextValue.user.earnGold).toHaveBeenCalledWith(25);
     });
 
     it("should call removeGold method when invoked", () => {
@@ -221,9 +256,9 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      result.current.removeGold(10);
+      result.current.user.removeGold(10);
 
-      expect(mockUserContextValue.removeGold).toHaveBeenCalledWith(10);
+      expect(mockUserContextValue.user.removeGold).toHaveBeenCalledWith(10);
     });
 
     it("should call hasItem method when invoked", () => {
@@ -231,9 +266,9 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      const hasItem = result.current.hasItem("item123");
+      const hasItem = result.current.user.hasItem("item123");
 
-      expect(mockUserContextValue.hasItem).toHaveBeenCalledWith("item123");
+      expect(mockUserContextValue.user.hasItem).toHaveBeenCalledWith("item123");
       expect(hasItem).toBe(false);
     });
 
@@ -242,9 +277,9 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      result.current.logout();
+      result.current.user.logout();
 
-      expect(mockUserContextValue.logout).toHaveBeenCalled();
+      expect(mockUserContextValue.user.logout).toHaveBeenCalled();
     });
 
     it("should call refresh method when invoked", () => {
@@ -252,9 +287,9 @@ describe("useUser", () => {
         wrapper: UserContextProvider,
       });
 
-      result.current.refresh();
+      result.current.user.refresh();
 
-      expect(mockUserContextValue.refresh).toHaveBeenCalled();
+      expect(mockUserContextValue.user.refresh).toHaveBeenCalled();
     });
   });
 
@@ -274,20 +309,23 @@ describe("useUser", () => {
         wrapper: DynamicProvider,
       });
 
-      expect(result.current.user.username).toBe("testuser");
+      expect(result.current.user.data.username).toBe("testuser");
 
       // Simulate context update
       contextValue = {
         ...mockUserContextValue,
         user: {
           ...mockUserContextValue.user,
-          username: "updateduser",
+          data: {
+            ...mockUserContextValue.user.data,
+            username: "updateduser",
+          },
         },
       };
 
       rerender();
 
-      expect(result.current.user.username).toBe("updateduser");
+      expect(result.current.user.data.username).toBe("updateduser");
     });
   });
 
@@ -297,9 +335,9 @@ describe("useUser", () => {
       const { result } = renderHook(() => useUser());
 
       // The hook should return the default context value
-      expect(result.current.user).toEqual(emptyUser);
-      expect(typeof result.current.setUser).toBe("function");
-      expect(typeof result.current.logout).toBe("function");
+      expect(result.current.user.data).toEqual(emptyUser);
+      expect(typeof result.current.user.setUser).toBe("function");
+      expect(typeof result.current.user.logout).toBe("function");
     });
 
     it("should handle items array correctly", () => {
@@ -307,10 +345,13 @@ describe("useUser", () => {
         ...mockUserContextValue,
         user: {
           ...mockUserContextValue.user,
-          items: [
-            { base: { _id: "item1" }, quantity: 1 },
-            { base: { _id: "item2" }, quantity: 2 },
-          ] as unknown as typeof emptyUser.items,
+          data: {
+            ...mockUserContextValue.user.data,
+            items: [
+              { base: { _id: "item1" }, quantity: 1 },
+              { base: { _id: "item2" }, quantity: 2 },
+            ] as unknown as typeof emptyUser.items,
+          },
         },
       };
 
@@ -326,7 +367,7 @@ describe("useUser", () => {
         wrapper: UserWithItemsProvider,
       });
 
-      expect(result.current.user.items).toHaveLength(2);
+      expect(result.current.user.data.items).toHaveLength(2);
     });
   });
 

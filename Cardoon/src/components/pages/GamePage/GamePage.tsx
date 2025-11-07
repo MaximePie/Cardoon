@@ -17,14 +17,14 @@ interface PutResult {
 }
 const GamePage = () => {
   const {
-    user,
-    userError,
-    setUser,
-    addScore,
-    earnGold,
-    reviewUserCards,
-    isReviewUserCardsLoading,
-    reviewUserCardsError,
+    user: { data: user, addScore, earnGold, setUser, error: userError },
+    cards: {
+      reviewUserCards: {
+        data: reviewUserCards,
+        isLoading: isReviewUserCardsLoading,
+        error: reviewUserCardsError,
+      },
+    },
   } = useUser();
   const [userCards, setUserCards] = useState<PopulatedUserCard[]>(
     reviewUserCards || []
@@ -141,7 +141,7 @@ const GamePage = () => {
 
   // Hybrid error handling for token errors, temporary solution (userError will be removed later)
   if (
-    userError === "Invalid token" ||
+    userError?.message.includes("Invalid token") ||
     (reviewUserCardsError?.message.includes("Invalid token") ?? false)
   ) {
     return <TokenErrorPage />;

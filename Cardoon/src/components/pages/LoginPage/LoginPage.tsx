@@ -16,7 +16,10 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser, login, clearAllErrors } = useUser();
+  const {
+    user: { setUser, login },
+    clearAllErrors,
+  } = useUser();
   const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isErroneous, setIsErroneous] = useState(false);
 

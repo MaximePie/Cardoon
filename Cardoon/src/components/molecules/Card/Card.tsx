@@ -2,6 +2,7 @@ import Edit from "@mui/icons-material/Edit";
 import { Chip, IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import { motion } from "motion/react";
 import { PopulatedUserCard } from "../../../types/common";
 import useCard from "./useCard";
 
@@ -36,7 +37,13 @@ const Card = ({
   } = useCard(card, onAnswer, isFlashModeOn);
   return (
     <>
-      <div
+      <motion.div
+        key={userCardId}
+        // Fade-in with slide from bottom animation
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        exit={{ opacity: 0, y: 20, width: 0 }}
         className={cardClassNames}
         style={{ background: cardBackground }}
         onClick={onCardClick}
@@ -111,7 +118,7 @@ const Card = ({
             </>
           )
         )}
-      </div>
+      </motion.div>
     </>
   );
 };

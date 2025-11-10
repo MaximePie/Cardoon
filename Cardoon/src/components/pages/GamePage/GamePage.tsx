@@ -1,3 +1,4 @@
+import { AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../context/UserContext/useUserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
@@ -153,15 +154,17 @@ const GamePage = () => {
         />
       )}
       <div className="Cards">
-        {userCards.map((userCard: PopulatedUserCard) => (
-          <Card
-            key={userCard._id}
-            card={userCard}
-            onUpdate={onUpdate}
-            onEditClick={() => openEditCardForm(userCard)}
-            isFlashModeOn={flash}
-          />
-        ))}
+        <AnimatePresence>
+          {userCards.map((userCard: PopulatedUserCard) => (
+            <Card
+              key={userCard._id}
+              card={userCard}
+              onUpdate={onUpdate}
+              onEditClick={() => openEditCardForm(userCard)}
+              isFlashModeOn={flash}
+            />
+          ))}
+        </AnimatePresence>
       </div>
       <GameFooter
         isFlashModeOn={flash}

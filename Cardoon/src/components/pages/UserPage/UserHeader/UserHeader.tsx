@@ -5,10 +5,11 @@ import ExpBar from "../../../atoms/ExpBar/ExpBar";
 
 export default function UserHeader() {
   const { user } = useUser();
-  const { username } = user.data;
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  if (!user.data) return null;
+  const { username } = user.data;
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -29,7 +30,6 @@ export default function UserHeader() {
         return;
       }
 
-      console.log("Fichier sélectionné:", file);
       setSelectedFile(file);
 
       // Créer un aperçu de l'image

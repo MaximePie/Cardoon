@@ -28,9 +28,6 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    if (!jwtSecret) {
-      throw new Error("JWT secret is undefined");
-    }
     const decodedToken = jwt.verify(token, jwtSecret);
     (req as AuthenticatedRequest).user = decodedToken;
     next();

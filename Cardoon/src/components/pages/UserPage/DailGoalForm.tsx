@@ -11,6 +11,10 @@ const useDailyGoal = () => {
   const [draftDailyGoal, setDraftDailyGoal] = useState<number>(
     user.data.dailyGoal || 0
   );
+
+  useEffect(() => {
+    setDraftDailyGoal(user.data.dailyGoal || 0);
+  }, [user.data.dailyGoal]);
   const {
     putUser,
     data: postResult,
@@ -27,7 +31,9 @@ const useDailyGoal = () => {
         "success"
       );
     }
-  }, [postResult, user, openSnackbarWithMessage]);
+    // Disabled user dependency because user.setUser is stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postResult, openSnackbarWithMessage]);
 
   // 📝 Gestionnaire de changement avec validation
   const handleDraftChange = (e: React.ChangeEvent<HTMLInputElement>) => {

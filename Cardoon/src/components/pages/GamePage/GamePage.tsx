@@ -126,7 +126,7 @@ const GamePage = () => {
       </div>
     );
 
-  if (!user) {
+  if (!user?._id) {
     return (
       <div>
         <h1>

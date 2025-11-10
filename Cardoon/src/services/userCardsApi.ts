@@ -151,7 +151,6 @@ export const getMe = async (): Promise<User> => {
   const token = document.cookie
     .split("; ")
     .find((row) => row.startsWith("token="));
-  console.log("Token found:", token);
 
   if (!token) {
     throw new Error("No authentication token found");

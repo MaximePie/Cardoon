@@ -12,7 +12,6 @@ const userService_js_1 = require("../services/userService.js");
 const schemas_js_1 = require("../validation/schemas.js");
 const router = express_1.default.Router();
 // Get current user with validation
-// Get current user
 router.get("/me", auth_js_1.default, (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
     const user = await userService_js_1.UserService.getUserProfile(req.user.id);
     res.json(user);

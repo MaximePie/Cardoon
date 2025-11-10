@@ -5,6 +5,7 @@ import DailyGoalForm from "../DailGoalForm";
 
 export default function UserProfile() {
   const { user } = useUser();
+  if (!user.data) return null;
   const { gold, currentDailyGoal } = user.data;
 
   return (

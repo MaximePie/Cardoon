@@ -474,7 +474,6 @@ export const useUserCardsManager = (
 const useMeQuery = () => {
   // Vérifier si un token existe
   const hasToken = document.cookie.includes("token=");
-  console.log("Has token:", hasToken);
 
   return useQuery({
     queryKey: ["user", "me"], // Clé fixe car on récupère toujours l'utilisateur connecté

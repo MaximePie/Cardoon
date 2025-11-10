@@ -19,11 +19,10 @@ export const UserContextProvider = ({
     user,
     error: userError,
     resetQueries: refetchUser,
+    isLoading: isUserLoading,
   } = useUserManager();
 
   const [currentUser, setUser] = useState<User>(user || emptyUser);
-
-  console.log("User is", user);
 
   const {
     reviewUserCards,
@@ -71,6 +70,12 @@ export const UserContextProvider = ({
     },
   });
 
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [user]);
+
   // Détection plus robuste des erreurs de token
   const isTokenError = (error: Error | null) => {
     if (!error) return false;
@@ -83,37 +88,18 @@ export const UserContextProvider = ({
 
   const shouldRedirectToLogin =
     isTokenError(userError) || isTokenError(cardsError);
-
+  // Clear the cookie
+  const logout = useCallback(() => {
+    document.cookie = "token=;max-age=0";
+    setUser(emptyUser);
+    // Redirect to /
+    document.location.href = "/login";
+  }, []);
   useEffect(() => {
     if (shouldRedirectToLogin) {
-      console.log("Token invalide, redirection vers la page de login.");
       logout();
     }
-  }, [shouldRedirectToLogin]);
-
-  // useEffect(() => {
-  //   // Check for user token in cookies
-  //   const token = document.cookie
-  //     .split("; ")
-  //     .find((row) => row.startsWith("token="));
-
-  //   if (token) {
-  //     axios.defaults.headers.common["Authorization"] = `Bearer ${
-  //       token.split("=")[1]
-  //     }`;
-  //     fetch();
-  //   }
-  // }, [fetch]);
-
-  // const refresh = () => {
-  //   fetch();
-  // };
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setUser(data);
-  //   }
-  // }, [data]);
+  }, [shouldRedirectToLogin, logout]);
 
   const addScore = (score: number) => {
     setUser({ ...currentUser, score: (currentUser?.score ?? 0) + score });
@@ -129,13 +115,6 @@ export const UserContextProvider = ({
       ...currentUser,
       gold: Math.max(0, (currentUser?.gold ?? 0) - gold),
     });
-  };
-  // Clear the cookie
-  const logout = () => {
-    document.cookie = "token=;max-age=0";
-    setUser(emptyUser);
-    // Redirect to /
-    document.location.href = "/login";
   };
 
   const hasItem = (itemId: string) => {
@@ -218,7 +197,7 @@ export const UserContextProvider = ({
         },
         user: {
           data: currentUser,
-          isLoading: !currentUser || (!!userError && !shouldRedirectToLogin),
+          isLoading: isUserLoading && !shouldRedirectToLogin,
           error: userError,
           hasItem,
           setUser,

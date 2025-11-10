@@ -24,17 +24,22 @@ const CONFIRMATION_MESSAGES = {
 export default function UserCards() {
   const {
     user,
-    allUserCards,
-    isLoadingCards,
-    deleteCard,
-    deleteCards,
-    isDeletingCard,
-    isEditingCard,
-    cardsError,
-    editCard,
-    invertCard,
-    isInvertingCard,
+    cards: {
+      allUserCards: {
+        data: allUserCards,
+        isLoading: isLoadingCards,
+        deleteCard,
+        deleteCards,
+        isDeletingCard,
+        isEditingCard,
+        error: cardsError,
+        editCard,
+        invertCard,
+        isInvertingCard,
+      },
+    },
   } = useUser();
+  console.log(cardsError?.message);
   const { isMobile } = useIsMobile();
   const [selectedCards, setSelectedCard] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -88,7 +93,6 @@ export default function UserCards() {
   const handleInvertCard = (cardId: string) => {
     invertCard(cardId);
   };
-
   return (
     <section className="UserPage__tab-content" aria-labelledby="cards-tab">
       <AnimatePresence>

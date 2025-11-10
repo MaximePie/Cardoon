@@ -6,11 +6,15 @@ import { User } from "../../../types/common";
 
 // 📝 Hook personnalisé pour la gestion de l'objectif quotidien
 const useDailyGoal = () => {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const [draftDailyGoal, setDraftDailyGoal] = useState<number>(
-    user.dailyGoal || 0
+    user.data.dailyGoal || 0
   );
+
+  useEffect(() => {
+    setDraftDailyGoal(user.data.dailyGoal || 0);
+  }, [user.data.dailyGoal]);
   const {
     putUser,
     data: postResult,
@@ -20,14 +24,16 @@ const useDailyGoal = () => {
   // 🔄 Synchronisation avec la réponse du serveur
   useEffect(() => {
     if (postResult) {
-      setUser(postResult);
+      user.setUser(postResult);
       setDraftDailyGoal(postResult.dailyGoal);
       openSnackbarWithMessage(
         `Objectif quotidien mis à jour : ${postResult.dailyGoal}`,
         "success"
       );
     }
-  }, [postResult, setUser, openSnackbarWithMessage]);
+    // Disabled user dependency because user.setUser is stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [postResult, openSnackbarWithMessage]);
 
   // 📝 Gestionnaire de changement avec validation
   const handleDraftChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +60,7 @@ const useDailyGoal = () => {
   return {
     draftDailyGoal,
     isSubmitting: loading,
-    currentDailyGoal: user.currentDailyGoal,
+    currentDailyGoal: user.data.currentDailyGoal,
     handleDraftChange,
     handleSubmit,
   };

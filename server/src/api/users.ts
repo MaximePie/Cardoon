@@ -26,7 +26,6 @@ import {
 const router = express.Router();
 
 // Get current user with validation
-// Get current user
 router.get(
   "/me",
   authMiddleware,

@@ -13,7 +13,9 @@ export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<undefined | string>(undefined);
-  const { setUser } = useUser();
+  const {
+    user: { setUser },
+  } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
 
   const { post, data: user } = usePost<User>(ACTIONS.REGISTER);

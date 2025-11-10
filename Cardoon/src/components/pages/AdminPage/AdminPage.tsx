@@ -10,7 +10,9 @@ const VALID_ITEM_TYPES = ["head", "weapon", "armor", "accessory"] as const;
 type ItemType = (typeof VALID_ITEM_TYPES)[number];
 
 export const ShopAdminPage = () => {
-  const { user } = useUser();
+  const {
+    user: { data: user },
+  } = useUser();
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const [newItem, setNewItem] = useState<Item>({
     _id: "",

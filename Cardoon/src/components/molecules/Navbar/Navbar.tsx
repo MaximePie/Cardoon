@@ -13,7 +13,9 @@ interface NavbarLink {
 }
 
 const Navbar = () => {
-  const { user, logout } = useUser();
+  const {
+    user: { logout, data: user },
+  } = useUser();
   const { isMobile } = useIsMobile();
   const links: NavbarLink[] = [
     { to: "/", label: "Entraînement", icon: <SportsEsportsIcon /> },

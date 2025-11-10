@@ -1,6 +1,7 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { UserContext } from "../../../context/UserContext";
+import { UserContext, UserContextType } from "../../../context/UserContext";
 import { PopulatedUserCard, User } from "../../../types/common";
 import AdventurePage from "./AdventurePage";
 
@@ -44,6 +45,12 @@ vi.mock("../../../hooks/server", () => ({
   },
   usePut: vi.fn(),
   useFetch: vi.fn(),
+}));
+
+// Mock TanStack Query hooks used in useUserManager and useUserCardsManager
+vi.mock("../../../hooks/queries/useUserCards", () => ({
+  useUserManager: vi.fn(),
+  useUserCardsManager: vi.fn(),
 }));
 
 // Import the mocked hook
@@ -128,33 +135,43 @@ describe("AdventurePage", () => {
   const mockPut = vi.fn();
   const mockGetReviewUserCards = vi.fn();
 
-  const mockUserContextValue = {
-    user: mockUser,
-    reviewUserCards: mockCards,
-    isReviewUserCardsLoading: false,
-    reviewUserCardsError: null,
-    allUserCards: [],
-    setUser: vi.fn(),
-    logout: vi.fn(),
-    addScore: vi.fn(),
-    earnGold: vi.fn(),
-    removeGold: vi.fn(),
-    hasItem: vi.fn(),
-    refresh: vi.fn(),
-    getAllUserCards: vi.fn(),
-    getReviewUserCards: mockGetReviewUserCards,
-    updateImage: vi.fn(),
-    isLoadingCards: false,
-    deleteCard: vi.fn(),
-    deleteCards: vi.fn(),
-    isDeletingCard: false,
-    isEditingCard: false,
-    cardsError: null,
-    editCard: vi.fn(),
-    invertCard: vi.fn(),
-    isInvertingCard: false,
-    clearAllErrors: vi.fn(),
-    userError: undefined,
+  const mockUserContextValue: UserContextType = {
+    cards: {
+      reviewUserCards: {
+        data: mockCards,
+        isLoading: false,
+        error: null,
+        getReviewUserCards: mockGetReviewUserCards,
+      },
+      allUserCards: {
+        data: [],
+        isLoading: false,
+        cardsError: null,
+        deleteCard: vi.fn(),
+        deleteCards: vi.fn(),
+        editCard: vi.fn(),
+        error: null,
+        invertCard: vi.fn(),
+        isDeletingCard: false,
+        isEditingCard: false,
+        isInvertingCard: false,
+      },
+    },
+    user: {
+      data: mockUser,
+      isLoading: false,
+      error: null,
+      hasItem: (_itemId: string) => false,
+      setUser: (_user: User) => {},
+      login: () => {},
+      addScore: (_score: number) => {},
+      logout: () => {},
+      earnGold: (_gold: number) => {},
+      removeGold: (_gold: number) => {},
+      refresh: () => {},
+      updateImage: async (_imageFile: File) => {},
+    },
+    clearAllErrors: () => {},
   };
 
   beforeEach(() => {
@@ -168,13 +185,60 @@ describe("AdventurePage", () => {
       loading: false,
       error: undefined,
     });
+
+    // Mock TanStack Query hooks
+    const mockUseUserManager = vi.fn(() => ({
+      user: mockUser,
+      isLoading: false,
+      error: null,
+      refetch: vi.fn(),
+      resetQueries: vi.fn(),
+    }));
+
+    const mockUseUserCardsManager = vi.fn(() => ({
+      cards: [],
+      reviewUserCards: mockCards,
+      isLoading: false,
+      isReviewUserCardsLoading: false,
+      isDeletingCard: false,
+      isEditingCard: false,
+      isInvertingCard: false,
+      error: null,
+      deleteError: null,
+      editError: null,
+      invertError: null,
+      reviewUserCardsError: null,
+      deleteCard: vi.fn(),
+      deleteCards: vi.fn(),
+      editCard: vi.fn(),
+      invertCard: vi.fn(),
+      refetch: vi.fn(),
+      isStale: false,
+      refetchReviewUserCards: mockGetReviewUserCards,
+      resetQueries: vi.fn(),
+    }));
+
+    // Apply mocks
+    vi.doMock("../../../hooks/queries/useUserCards", () => ({
+      useUserManager: mockUseUserManager,
+      useUserCardsManager: mockUseUserCardsManager,
+    }));
   });
 
   const renderAdventurePage = (contextValue = mockUserContextValue) => {
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: { retry: false },
+        mutations: { retry: false },
+      },
+    });
+
     return render(
-      <UserContext.Provider value={contextValue}>
-        <AdventurePage />
-      </UserContext.Provider>
+      <QueryClientProvider client={queryClient}>
+        <UserContext.Provider value={contextValue}>
+          <AdventurePage />
+        </UserContext.Provider>
+      </QueryClientProvider>
     );
   };
 
@@ -243,15 +307,28 @@ describe("AdventurePage", () => {
 
       const contextWithManyCards = {
         ...mockUserContextValue,
-        reviewUserCards: manyCards,
+        cards: {
+          ...mockUserContextValue.cards,
+          reviewUserCards: {
+            ...mockUserContextValue.cards.reviewUserCards,
+            data: manyCards,
+          },
+        },
       };
 
       renderAdventurePage(contextWithManyCards);
 
-      // Should only show 5 cards
-      for (let i = 1; i <= 5; i++) {
+      // Should show at most 5 cards (or all available if less than 5)
+      const cardElements = screen.getAllByTestId(/^card-/);
+      expect(cardElements.length).toBeLessThanOrEqual(5);
+
+      // Verify first 5 cards exist if we have them
+      const expectedCards = Math.min(manyCards.length, 5);
+      for (let i = 1; i <= expectedCards; i++) {
         expect(screen.getByTestId(`card-card${i}`)).toBeInTheDocument();
       }
+
+      // Verify cards beyond 5 don't exist
       expect(screen.queryByTestId("card-card6")).not.toBeInTheDocument();
       expect(screen.queryByTestId("card-card7")).not.toBeInTheDocument();
     });
@@ -406,7 +483,13 @@ describe("AdventurePage", () => {
     it("should handle empty review cards gracefully", () => {
       const contextWithNoCards = {
         ...mockUserContextValue,
-        reviewUserCards: [],
+        cards: {
+          ...mockUserContextValue.cards,
+          reviewUserCards: {
+            ...mockUserContextValue.cards.reviewUserCards,
+            data: [],
+          },
+        },
       };
 
       renderAdventurePage(contextWithNoCards);
@@ -414,8 +497,9 @@ describe("AdventurePage", () => {
       // Should still render the page structure with hero
       expect(screen.getByText("Hero")).toBeInTheDocument();
 
-      // But no cards should be visible
-      expect(screen.queryByTestId(/^card-/)).not.toBeInTheDocument();
+      // But no cards should be visible - use queryAllByTestId to check for empty array
+      const cardElements = screen.queryAllByTestId(/^card-/);
+      expect(cardElements).toHaveLength(0);
     });
 
     it("should update cards when usePut returns data", () => {

@@ -26,32 +26,43 @@ vi.mock("../../../hooks/queries/useUserCards", () => ({
 import { useUserCardsManager } from "../../../hooks/queries/useUserCards";
 import { usePut } from "../../../hooks/server";
 
-// Helper function to create complete user context mock
+// Helper function to create complete user context mock with new structure
 const createMockUserContext = (user: User, overrides = {}) => ({
-  user,
-  reviewUserCards: [],
-  isReviewUserCardsLoading: false,
-  reviewUserCardsError: null,
-  getReviewUserCards: vi.fn(),
-  setUser: vi.fn(),
-  logout: vi.fn(),
-  addScore: vi.fn(),
-  earnGold: vi.fn(),
-  removeGold: vi.fn(),
-  hasItem: vi.fn(),
-  refresh: vi.fn(),
-  allUserCards: [],
-  updateImage: vi.fn(),
-  // Nouvelles propriétés ajoutées pour la gestion des cartes
-  isLoadingCards: false,
-  deleteCard: vi.fn(),
-  deleteCards: vi.fn(),
-  isDeletingCard: false,
-  isEditingCard: false,
-  cardsError: null,
-  editCard: vi.fn(),
-  invertCard: vi.fn(),
-  isInvertingCard: false,
+  user: {
+    data: user,
+    isLoading: false,
+    error: null,
+    hasItem: vi.fn(() => false),
+    setUser: vi.fn(),
+    logout: vi.fn(),
+    login: vi.fn(),
+    addScore: vi.fn(),
+    earnGold: vi.fn(),
+    removeGold: vi.fn(),
+    refresh: vi.fn(),
+    updateImage: vi.fn(),
+  },
+  cards: {
+    reviewUserCards: {
+      data: [],
+      isLoading: false,
+      error: null,
+      getReviewUserCards: vi.fn(),
+    },
+    allUserCards: {
+      data: [],
+      isLoading: false,
+      error: null,
+      deleteCard: vi.fn(),
+      deleteCards: vi.fn(),
+      isDeletingCard: false,
+      isEditingCard: false,
+      cardsError: null,
+      editCard: vi.fn(),
+      invertCard: vi.fn(),
+      isInvertingCard: false,
+    },
+  },
   clearAllErrors: vi.fn(),
   ...overrides,
 });
@@ -145,7 +156,12 @@ describe("UserPage", () => {
     });
 
     vi.mocked(userHooks.useUser).mockReturnValue(
-      createMockUserContext(mockUser, { setUser: mockSetUser })
+      createMockUserContext(mockUser, {
+        user: {
+          ...createMockUserContext(mockUser).user,
+          setUser: mockSetUser,
+        },
+      })
     );
 
     vi.mocked(usePut).mockReturnValue(mockUsePutReturn);
@@ -267,7 +283,12 @@ describe("UserPage", () => {
       };
 
       vi.mocked(userHooks.useUser).mockReturnValue(
-        createMockUserContext(userWithoutDailyGoal, { setUser: mockSetUser })
+        createMockUserContext(userWithoutDailyGoal, {
+          user: {
+            ...createMockUserContext(userWithoutDailyGoal).user,
+            setUser: mockSetUser,
+          },
+        })
       );
 
       renderUserPage();
@@ -282,7 +303,12 @@ describe("UserPage", () => {
       };
 
       vi.mocked(userHooks.useUser).mockReturnValue(
-        createMockUserContext(userWithHighGoal, { setUser: mockSetUser })
+        createMockUserContext(userWithHighGoal, {
+          user: {
+            ...createMockUserContext(userWithHighGoal).user,
+            setUser: mockSetUser,
+          },
+        })
       );
 
       renderUserPage();
@@ -301,7 +327,12 @@ describe("UserPage", () => {
       };
 
       vi.mocked(userHooks.useUser).mockReturnValue(
-        createMockUserContext(adminUser, { setUser: mockSetUser })
+        createMockUserContext(adminUser, {
+          user: {
+            ...createMockUserContext(adminUser).user,
+            setUser: mockSetUser,
+          },
+        })
       );
 
       renderUserPage();
@@ -327,7 +358,12 @@ describe("UserPage", () => {
       };
 
       vi.mocked(userHooks.useUser).mockReturnValue(
-        createMockUserContext(userWithCompletedGoal, { setUser: mockSetUser })
+        createMockUserContext(userWithCompletedGoal, {
+          user: {
+            ...createMockUserContext(userWithCompletedGoal).user,
+            setUser: mockSetUser,
+          },
+        })
       );
 
       renderUserPage();

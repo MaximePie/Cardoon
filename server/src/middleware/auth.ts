@@ -1,6 +1,6 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Request, Response, NextFunction, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 dotenv.config();
 
@@ -28,9 +28,6 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    if (!jwtSecret) {
-      throw new Error("JWT secret is undefined");
-    }
     const decodedToken = jwt.verify(token, jwtSecret);
     (req as AuthenticatedRequest).user = decodedToken;
     next();

@@ -1,7 +1,9 @@
-import axios from "axios";
 import { useCallback, useContext, useEffect, useState } from "react";
-import { useUserCardsManager } from "../../hooks/queries/useUserCards";
-import { ACTIONS, useFetch, usePut } from "../../hooks/server";
+import {
+  useUserCardsManager,
+  useUserManager,
+} from "../../hooks/queries/useUserCards";
+import { ACTIONS, usePut } from "../../hooks/server";
 import { Card, User } from "../../types/common";
 import { SnackbarContext } from "../SnackbarContext";
 import { UserContext, emptyUser } from "./UserContext";
@@ -11,11 +13,17 @@ export const UserContextProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { fetch, data, error: userError } = useFetch<User>(ACTIONS.ME);
   const { putUser: saveUserImage } = usePut<User>(ACTIONS.UPDATE_ME_IMAGE);
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
+  const {
+    user,
+    error: userError,
+    resetQueries: refetchUser,
+    isLoading: isUserLoading,
+  } = useUserManager();
 
-  const [user, setUser] = useState<User>(emptyUser);
+  const [currentUser, setUser] = useState<User>(user || emptyUser);
+
   const {
     reviewUserCards,
     isReviewUserCardsLoading,
@@ -32,7 +40,7 @@ export const UserContextProvider = ({
     invertCard: invertCardMutation,
     isInvertingCard,
     resetQueries,
-  } = useUserCardsManager(user._id || "", {
+  } = useUserCardsManager(user?._id || "", {
     onDeleteSuccess: () => {
       openSnackbarWithMessage("Carte supprimée avec succès !", "success");
     },
@@ -61,52 +69,56 @@ export const UserContextProvider = ({
       );
     },
   });
-  useEffect(() => {
-    // Check for user token in cookies
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="));
-
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${
-        token.split("=")[1]
-      }`;
-      fetch();
-    }
-  }, [fetch]);
-
-  const refresh = () => {
-    fetch();
-  };
 
   useEffect(() => {
-    if (data) {
-      setUser(data);
+    if (user) {
+      setUser(user);
     }
-  }, [data]);
+  }, [user]);
 
-  const addScore = (score: number) => {
-    setUser({ ...user, score: (user?.score ?? 0) + score });
+  // Détection plus robuste des erreurs de token
+  const isTokenError = (error: Error | null) => {
+    if (!error) return false;
+    return (
+      error.message.includes("Invalid token") ||
+      error.message.includes("No authentication token found") ||
+      error.message.includes("Unauthorized")
+    );
   };
 
-  const earnGold = (gold: number) => {
-    const totalGold = gold * (user?.currentGoldMultiplier ?? 1);
-    setUser({ ...user, gold: (user?.gold ?? 0) + totalGold });
-  };
-
-  const removeGold = (gold: number) => {
-    setUser({ ...user, gold: Math.max(0, (user?.gold ?? 0) - gold) });
-  };
+  const shouldRedirectToLogin =
+    isTokenError(userError) || isTokenError(cardsError);
   // Clear the cookie
-  const logout = () => {
+  const logout = useCallback(() => {
     document.cookie = "token=;max-age=0";
     setUser(emptyUser);
     // Redirect to /
-    document.location.href = "/";
+    document.location.href = "/login";
+  }, []);
+  useEffect(() => {
+    if (shouldRedirectToLogin) {
+      logout();
+    }
+  }, [shouldRedirectToLogin, logout]);
+
+  const addScore = (score: number) => {
+    setUser({ ...currentUser, score: (currentUser?.score ?? 0) + score });
+  };
+
+  const earnGold = (gold: number) => {
+    const totalGold = gold * (currentUser?.currentGoldMultiplier ?? 1);
+    setUser({ ...currentUser, gold: (currentUser?.gold ?? 0) + totalGold });
+  };
+
+  const removeGold = (gold: number) => {
+    setUser({
+      ...currentUser,
+      gold: Math.max(0, (currentUser?.gold ?? 0) - gold),
+    });
   };
 
   const hasItem = (itemId: string) => {
-    return user.items.some((item) => item.base._id === itemId);
+    return currentUser.items.some((item) => item.base._id === itemId);
   };
 
   const getReviewUserCards = useCallback(async () => {
@@ -125,7 +137,7 @@ export const UserContextProvider = ({
       await saveUserImage(formData);
 
       // Refresh l'utilisateur pour s'assurer qu'on a les dernières données
-      await fetch();
+      // await fetch();
     } catch (error) {
       console.error("Error updating image:", error);
       throw error;
@@ -147,33 +159,56 @@ export const UserContextProvider = ({
     return await invertCardMutation(cardId);
   };
 
+  // Refetch all the cards, user data and userCards
+  const refresh = () => {
+    getReviewUserCards();
+    resetQueries();
+  };
+
+  const login = () => {
+    refetchUser();
+    refetchReviewUserCards();
+    resetQueries();
+  };
+
   return (
     <UserContext.Provider
       value={{
-        reviewUserCards,
-        isReviewUserCardsLoading,
-        reviewUserCardsError,
-        user,
-        userError,
-        hasItem,
-        setUser,
-        logout,
-        addScore,
-        earnGold,
-        removeGold,
-        refresh,
-        allUserCards: allUserCards || [],
-        getReviewUserCards,
-        updateImage,
-        isLoadingCards,
-        deleteCard,
-        deleteCards,
-        isDeletingCard,
-        isEditingCard,
-        cardsError,
-        editCard,
-        invertCard,
-        isInvertingCard,
+        cards: {
+          reviewUserCards: {
+            data: reviewUserCards,
+            isLoading: isReviewUserCardsLoading,
+            error: reviewUserCardsError,
+            getReviewUserCards,
+          },
+          allUserCards: {
+            data: allUserCards,
+            isLoading: isLoadingCards,
+            error: cardsError,
+            deleteCard,
+            deleteCards,
+            isDeletingCard,
+            isEditingCard,
+            cardsError,
+            editCard,
+            invertCard,
+            isInvertingCard,
+          },
+        },
+        user: {
+          data: currentUser,
+          isLoading: isUserLoading && !shouldRedirectToLogin,
+          error: userError,
+          hasItem,
+          setUser,
+          logout,
+          login,
+          addScore,
+          earnGold,
+          removeGold,
+          refresh,
+          updateImage,
+        },
         clearAllErrors,
       }}
     >

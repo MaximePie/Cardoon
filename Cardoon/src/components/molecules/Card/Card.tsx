@@ -2,7 +2,7 @@ import Edit from "@mui/icons-material/Edit";
 import { Chip, IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { PopulatedUserCard } from "../../../types/common";
 import useCard from "./useCard";
 
@@ -55,66 +55,70 @@ const Card = ({
       >
         {isRecto ? (
           <>
-            <Stack
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {category && (
-                <Chip
-                  className="Card__category"
-                  label={category}
-                  size="small"
-                />
-              )}
-              <p>
-                {question}{" "}
-                {expectedAnswers?.length ? `(${expectedAnswers.length})` : ""}
-              </p>
-              {imageLink && (
-                <>
-                  <img
-                    src={imageLink}
-                    alt="Card image"
-                    style={{ width: "100%", borderRadius: "8px" }}
+            <AnimatePresence propagate>
+              <Stack
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {category && (
+                  <Chip
+                    className="Card__category"
+                    label={category}
+                    size="small"
                   />
-                </>
-              )}
-            </Stack>
+                )}
+                <p>
+                  {question}{" "}
+                  {expectedAnswers?.length ? `(${expectedAnswers.length})` : ""}
+                </p>
+                {imageLink && (
+                  <>
+                    <img
+                      src={imageLink}
+                      alt="Card image"
+                      style={{ width: "100%", borderRadius: "8px" }}
+                    />
+                  </>
+                )}
+              </Stack>
+            </AnimatePresence>
           </>
         ) : (
           showAnswer && (
             <>
-              <Chip className="Card__score" label={`🧠 ${interval}`} />
-              <IconButton
-                color="primary"
-                onClick={onEditClick}
-                className="Card__edit"
-                size="small"
-              >
-                <Edit />
-              </IconButton>
-              <p>
-                {answer}
+              <AnimatePresence propagate>
+                <Chip className="Card__score" label={`🧠 ${interval}`} />
+                <IconButton
+                  color="primary"
+                  onClick={onEditClick}
+                  className="Card__edit"
+                  size="small"
+                >
+                  <Edit />
+                </IconButton>
+                <p>
+                  {answer}
 
-                {expectedAnswers?.length && expectedAnswers.length > 0 ? (
-                  <ul>
-                    {expectedAnswers.map((expectedAnswer, index) => (
-                      <li key={index}>{expectedAnswer}</li>
-                    ))}
-                  </ul>
-                ) : undefined}
-              </p>
-              <Stack spacing={1} direction="row">
-                <Button color="success" onClick={succeed}>
-                  ok
-                </Button>
-                <Button color="secondary" onClick={fail}>
-                  pas ok
-                </Button>
-              </Stack>
+                  {expectedAnswers?.length && expectedAnswers.length > 0 ? (
+                    <ul>
+                      {expectedAnswers.map((expectedAnswer, index) => (
+                        <li key={index}>{expectedAnswer}</li>
+                      ))}
+                    </ul>
+                  ) : undefined}
+                </p>
+                <Stack spacing={1} direction="row">
+                  <Button color="success" onClick={succeed}>
+                    ok
+                  </Button>
+                  <Button color="secondary" onClick={fail}>
+                    pas ok
+                  </Button>
+                </Stack>
+              </AnimatePresence>
             </>
           )
         )}

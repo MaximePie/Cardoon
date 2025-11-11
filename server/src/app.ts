@@ -25,7 +25,7 @@ const app = express();
 app.use(cors(securityConfig.cors));
 
 // Handle preflight OPTIONS requests explicitly
-app.options("*", cors(securityConfig.cors));
+app.options("/*", cors(securityConfig.cors));
 
 // Security middleware with Helmet
 app.use(helmet(helmetConfig));

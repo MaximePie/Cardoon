@@ -23,9 +23,12 @@ const users_js_1 = __importDefault(require("./api/users.js"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 // CORS configuration - MUST be before other middlewares
-app.use((0, cors_1.default)(security_js_1.securityConfig.cors));
-// Handle preflight OPTIONS requests explicitly
-app.options("/*", (0, cors_1.default)(security_js_1.securityConfig.cors));
+// The cors middleware automatically handles OPTIONS preflight requests
+app.use((0, cors_1.default)({
+    ...security_js_1.securityConfig.cors,
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
+}));
 // Security middleware with Helmet
 app.use((0, helmet_1.default)(security_js_1.helmetConfig));
 // Rate limiting

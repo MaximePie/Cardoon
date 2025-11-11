@@ -22,10 +22,14 @@ dotenv.config();
 const app = express();
 
 // CORS configuration - MUST be before other middlewares
-app.use(cors(securityConfig.cors));
-
-// Handle preflight OPTIONS requests explicitly
-app.options("*", cors(securityConfig.cors));
+// The cors middleware automatically handles OPTIONS preflight requests
+app.use(
+  cors({
+    ...securityConfig.cors,
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
+  })
+);
 
 // Security middleware with Helmet
 app.use(helmet(helmetConfig));

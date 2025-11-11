@@ -1,6 +1,6 @@
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import adventureBackground from "../../../assets/adventure-background.svg";
 import enemyDefeated from "../../../assets/Enemies/NightBorne_death..gif";
 import enemyIdle from "../../../assets/Enemies/NightBorne_idle.gif";
@@ -101,15 +101,17 @@ const AdventurePage = () => {
           </div>
         </div>
         <div className="AdventurePage__Cards">
-          {cardsInHand.map((userCard: PopulatedUserCard) => (
-            <Card
-              key={userCard._id}
-              card={userCard}
-              onUpdate={removeCard}
-              isFlashModeOn={false}
-              onEditClick={() => {}}
-            />
-          ))}
+          <AnimatePresence mode="sync">
+            {cardsInHand.map((userCard: PopulatedUserCard) => (
+              <Card
+                key={userCard._id}
+                card={userCard}
+                onUpdate={removeCard}
+                isFlashModeOn={false}
+                onEditClick={() => {}}
+              />
+            ))}
+          </AnimatePresence>
         </div>
       </div>
     </div>

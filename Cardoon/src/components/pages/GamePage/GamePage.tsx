@@ -1,5 +1,5 @@
+import { AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useUser } from "../../../context/UserContext/useUserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import goldIcon from "../../../images/coin.png";
@@ -10,6 +10,7 @@ import Card from "../../molecules/Card/Card";
 import EditCardForm from "../../molecules/EditCardForm/EditCardForm";
 import { GameFooter } from "../../molecules/Footer/Footer";
 import { TokenErrorPage } from "../../pages/TokenErrorPage/TokenErrorPage";
+import HomePage from "../HomePage/HomePage";
 
 interface PutResult {
   user: User;
@@ -127,16 +128,7 @@ const GamePage = () => {
     );
 
   if (!user?._id) {
-    return (
-      <div>
-        <h1>
-          Bienvenue sur Cardoon, commencez par créer un compte ou vous connecter
-          !
-        </h1>
-        <Link to="/login">Se connecter</Link>
-        <Link to="/register">S&apos;inscrire</Link>
-      </div>
-    );
+    return <HomePage />;
   }
 
   // Hybrid error handling for token errors, temporary solution (userError will be removed later)
@@ -162,15 +154,17 @@ const GamePage = () => {
         />
       )}
       <div className="Cards">
-        {userCards.map((userCard: PopulatedUserCard) => (
-          <Card
-            key={userCard._id}
-            card={userCard}
-            onUpdate={onUpdate}
-            onEditClick={() => openEditCardForm(userCard)}
-            isFlashModeOn={flash}
-          />
-        ))}
+        <AnimatePresence>
+          {userCards.map((userCard: PopulatedUserCard) => (
+            <Card
+              key={userCard._id}
+              card={userCard}
+              onUpdate={onUpdate}
+              onEditClick={() => openEditCardForm(userCard)}
+              isFlashModeOn={flash}
+            />
+          ))}
+        </AnimatePresence>
       </div>
       <GameFooter
         isFlashModeOn={flash}

@@ -8,6 +8,7 @@
 @use "../components/atoms/ExpBar/ExpBar" as ExpBar;
 @use "../components/pages/LoginPage/LoginPage" as LoginPage;
 @use "../components/pages/UpgradePage/UpgradePage" as UpgradePage;
+@use "../components/pages/HomePage/HomePage" as HomePage;
 @use "../components/pages/GamePage/GamePageStyle" as GamePage;
 @use "../components/pages/RegisterPage/RegisterPage" as RegisterPage;
 @use "../components/pages/TokenErrorPage/TokenErrorPage" as NotFoundPage;

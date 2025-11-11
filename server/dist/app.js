@@ -25,7 +25,7 @@ const app = (0, express_1.default)();
 // CORS configuration - MUST be before other middlewares
 app.use((0, cors_1.default)(security_js_1.securityConfig.cors));
 // Handle preflight OPTIONS requests explicitly
-app.options("*", (0, cors_1.default)(security_js_1.securityConfig.cors));
+app.options("/*", (0, cors_1.default)(security_js_1.securityConfig.cors));
 // Security middleware with Helmet
 app.use((0, helmet_1.default)(security_js_1.helmetConfig));
 // Rate limiting

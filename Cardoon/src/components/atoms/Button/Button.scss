@@ -53,4 +53,14 @@
       background: $disabled-color;
     }
   }
+
+  &--to a {
+    color: inherit;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

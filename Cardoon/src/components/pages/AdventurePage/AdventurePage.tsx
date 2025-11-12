@@ -101,7 +101,7 @@ const AdventurePage = () => {
           </div>
         </div>
         <div className="AdventurePage__Cards">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             {cardsInHand.map((userCard: PopulatedUserCard) => (
               <Card
                 key={userCard._id}

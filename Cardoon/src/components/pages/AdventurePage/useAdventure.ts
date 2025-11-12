@@ -56,10 +56,9 @@ export default function useAdventure() {
     () => cards.reviewUserCards.data || [],
     [cards.reviewUserCards.data]
   );
-  const getReviewUserCards = cards.reviewUserCards.getReviewUserCards;
-  const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>(
-    reviewUserCards.slice(0, 5)
-  );
+
+  const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>([]);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [hero, setHero] = useState<Hero>(baseHero);
   const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
   const [enemyState, setEnemyState] = useState<"idle" | "defeated">("idle");
@@ -72,9 +71,7 @@ export default function useAdventure() {
     null
   );
 
-  const { put: updateUserCard, data: updateCardResponse } = usePut<PutResult>(
-    ACTIONS.UPDATE_INTERVAL
-  );
+  const { put: updateUserCard } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
 
   const attack = (enemy: Enemy, isCorrect: boolean) => {
     if (isCorrect) {
@@ -144,13 +141,38 @@ export default function useAdventure() {
     }
   }, [currentEnemy.currentHealth, onEnemyDefeated]);
 
+  const syncCards = useCallback(() => {
+    if (reviewUserCards.length === 0) return;
+
+    // Initialisation une seule fois
+    if (!isInitialized) {
+      setCardsInHand(reviewUserCards.slice(0, 5));
+      setIsInitialized(true);
+      return;
+    }
+
+    // Ajouter des cartes seulement si on en a moins de 5
+    setCardsInHand((currentCards) => {
+      if (currentCards.length >= 5) return currentCards;
+
+      const currentCardIds = new Set(currentCards.map((c) => c._id));
+      const availableCards = reviewUserCards.filter(
+        (card) => !currentCardIds.has(card._id)
+      );
+
+      if (availableCards.length > 0) {
+        const cardsToAdd = availableCards.slice(0, 5 - currentCards.length);
+        return [...currentCards, ...cardsToAdd];
+      }
+
+      return currentCards;
+    });
+  }, [reviewUserCards, isInitialized]);
+
+  // Déclencher la synchronisation quand les données changent
   useEffect(() => {
-    setCardsInHand(
-      reviewUserCards
-        .filter((card) => updateCardResponse?.userCard._id !== card._id)
-        .slice(0, 5)
-    );
-  }, [reviewUserCards, updateCardResponse]);
+    syncCards();
+  }, [syncCards]);
 
   const levelUp = () => {
     setHero((prev) => ({
@@ -166,10 +188,17 @@ export default function useAdventure() {
   };
 
   const removeCard = (card: PopulatedUserCard, isCorrect: boolean) => {
+    console.log("🎯 Removing card:", card._id, "Is correct:", isCorrect);
     attack(currentEnemy, isCorrect);
-    updateUserCard(card._id, { isCorrectAnswer: isCorrect });
+
+    // 🔥 SOLUTION: Enlever la carte immédiatement sans recharger toutes les données
     setCardsInHand((prev) => prev.filter((c) => c._id !== card._id));
-    getReviewUserCards();
+
+    // Mettre à jour sur le serveur sans recharger toutes les cartes
+    updateUserCard(card._id, { isCorrectAnswer: isCorrect });
+
+    // 🔥 SUPPRIMÉ: getReviewUserCards() qui causait le problème
+    // Les nouvelles cartes seront ajoutées automatiquement par le useEffect
   };
 
   // Cleanup timeouts when component unmounts

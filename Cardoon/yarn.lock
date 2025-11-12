@@ -640,22 +640,22 @@
   integrity sha512-oh9g4Cg3loVMz9MWeKWfDI+ooxxG1aRVetkiKIb2ESS2rrryGecQ/y4pAj4z5A5ebyw450dYRi/c4k/I3UBhHA==
 
 "@huggingface/inference@^4.0.0":
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.0.tgz#8d5dc47efaf255ab364f6ba7586b82fd56d387cf"
-  integrity sha512-oqBHbYoLHpNlEUJp/MG28gCR0JOUmLi9iKKd0oJfTAgTqaDSLhoCsIdS1XfLHbT/CrzZch33cARTR3bO4q/2yQ==
+  version "4.13.2"
+  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.2.tgz#009746c6fd2b627e8e7c8ebd5aed53d1a2ecfb27"
+  integrity sha512-cqs/2Ni3nTiE/iIsaC4gvZboXS/4FFItL+/1WMaP8PFQEpoH1V8bjFodNvkzzFthIxuYziD9tr0N28Db2iE/zQ==
   dependencies:
     "@huggingface/jinja" "^0.5.1"
-    "@huggingface/tasks" "^0.19.58"
+    "@huggingface/tasks" "^0.19.63"
 
 "@huggingface/jinja@^0.5.1":
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.1.tgz#081d334ddcf6237f65561ae3d665bb713a8ff74f"
   integrity sha512-yUZLld4lrM9iFxHCwFQ7D1HW2MWMwSbeB7WzWqFYDWK+rEb+WldkLdAJxUPOmgICMHZLzZGVcVjFh3w/YGubng==
 
-"@huggingface/tasks@^0.19.58":
-  version "0.19.61"
-  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.61.tgz#69f8959c077ddb37e7a3025d1d22d027e07eed08"
-  integrity sha512-n7K4ml+lQAHB89OCIh8e/bPeOcACz94IMUW6U1BkjpScNW4HZy9E/m/nF05wU/m4OA6VNaLhgHAYoPoGLPE06A==
+"@huggingface/tasks@^0.19.63":
+  version "0.19.63"
+  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.63.tgz#a4fef3ea92d6a1ab396b56f308747be32d5e0787"
+  integrity sha512-hmd8e5fdjRiIJE7/EYWXS+Pm2SAu89xjZEgfZddN10ubWqlelXLyj2YgHZrVDEVkVA+5+ImMZUpQIez7b2//fw==
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"
@@ -1750,9 +1750,9 @@ axe-core@^4.10.0:
   integrity sha512-ilYanEU8vxxBexpJd8cWM4ElSQq4QctCLKih0TSfjIfCQTeyH/6zVrmIJfLPrKTKJRbiG+cfnZbQIjAlJmF1jQ==
 
 axios@^1.7.9:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.1.tgz#45b62dc8fe04e0e92274e08b98e910ba3d7963a7"
-  integrity sha512-hU4EGxxt+j7TQijx1oYdAjw4xuIp1wRQSsbMFwSthCWeBQur1eF+qJ5iQ5sN3Tw8YRzQNKb8jszgBdMDVqwJcw==
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.13.2.tgz#9ada120b7b5ab24509553ec3e40123521117f687"
+  integrity sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==
   dependencies:
     follow-redirects "^1.15.6"
     form-data "^4.0.4"
@@ -4516,7 +4516,16 @@ string-argv@^0.3.2:
   resolved "https://registry.yarnpkg.com/string-argv/-/string-argv-0.3.2.tgz#2b6d0ef24b656274d957d54e0a4bbf6153dc02b6"
   integrity sha512-aqD2Q0144Z+/RqG52NeHEkZauTAUWJO8c6yTftGJKO3Tja5tUgIfmIl6kExvhtxSDP7fXB6DvzkfMpCd/F3G+Q==
 
-"string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
+string-width@^4.1.0:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -4619,7 +4628,14 @@ string.prototype.trimstart@^1.0.8:
     define-properties "^1.2.1"
     es-object-atoms "^1.0.0"
 
-"strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
+  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==

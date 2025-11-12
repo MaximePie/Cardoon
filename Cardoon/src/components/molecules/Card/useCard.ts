@@ -46,7 +46,7 @@ export default function useCard(
   });
   const cardBackground = `linear-gradient(  
   130deg,  
-  ${stringToRgb(category || "")},  
+  ${stringToRgb(category || "")},   
   #ffffff  
 )`;
 

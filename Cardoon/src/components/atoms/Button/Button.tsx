@@ -54,13 +54,7 @@ export default function Button({
         onClick={onClick}
         type="submit"
       >
-        {to ? (
-          <Link to={to} target="_blank" rel="noopener noreferrer">
-            {children}
-          </Link>
-        ) : (
-          children
-        )}
+        {to ? <Link to={to}>{children}</Link> : children}
         {isLoading && <span className="Button__loader" />}
         {icon && <span className="Button__icon">{icon}</span>}
       </button>

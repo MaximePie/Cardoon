@@ -384,7 +384,7 @@ describe("AdventurePage", () => {
       fireEvent.click(correctButton);
 
       expect(mockPut).toHaveBeenCalledWith("card1", { isCorrectAnswer: true });
-      expect(mockGetReviewUserCards).toHaveBeenCalled();
+      // 🔥 SUPPRIMÉ: getReviewUserCards n'est plus appelée dans removeCard
     });
 
     it("should call updateUserCard when answering incorrectly", async () => {
@@ -394,7 +394,7 @@ describe("AdventurePage", () => {
       fireEvent.click(wrongButton);
 
       expect(mockPut).toHaveBeenCalledWith("card2", { isCorrectAnswer: false });
-      expect(mockGetReviewUserCards).toHaveBeenCalled();
+      // 🔥 SUPPRIMÉ: getReviewUserCards n'est plus appelée dans removeCard
     });
 
     it("should remove card from hand after answering", async () => {
@@ -502,26 +502,24 @@ describe("AdventurePage", () => {
       expect(cardElements).toHaveLength(0);
     });
 
-    it("should update cards when usePut returns data", () => {
-      const updatedCard = {
-        user: mockUser,
-        userCard: mockCards[0],
-      };
-
-      // Mock usePut to return data
-      vi.mocked(usePut).mockReturnValue({
-        put: mockPut,
-        putUser: vi.fn(),
-        data: updatedCard,
-        loading: false,
-        error: undefined,
-      });
-
+    it("should remove card immediately when user answers", async () => {
       renderAdventurePage();
 
-      // The updated card should be filtered out from cardsInHand
-      // This tests the useEffect that filters cards based on updateCardResponse
-      expect(screen.queryByTestId("card-card1")).not.toBeInTheDocument();
+      // Verify all cards are initially present
+      expect(screen.getByTestId("card-card1")).toBeInTheDocument();
+      expect(screen.getByTestId("card-card2")).toBeInTheDocument();
+      expect(screen.getByTestId("card-card3")).toBeInTheDocument();
+
+      // Click on the correct button for card1
+      const correctButton = screen.getByTestId("correct-card1");
+      fireEvent.click(correctButton);
+
+      // 🔥 NOUVEAU COMPORTEMENT: La carte est supprimée immédiatement dans removeCard
+      await waitFor(() => {
+        expect(screen.queryByTestId("card-card1")).not.toBeInTheDocument();
+      });
+
+      // Other cards should still be present
       expect(screen.getByTestId("card-card2")).toBeInTheDocument();
       expect(screen.getByTestId("card-card3")).toBeInTheDocument();
     });

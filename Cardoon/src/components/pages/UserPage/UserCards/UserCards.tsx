@@ -39,7 +39,6 @@ export default function UserCards() {
       },
     },
   } = useUser();
-  console.log(cardsError?.message);
   const { isMobile } = useIsMobile();
   const [selectedCards, setSelectedCard] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");

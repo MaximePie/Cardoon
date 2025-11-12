@@ -189,16 +189,37 @@ export default function useAdventure() {
 
   const removeCard = (card: PopulatedUserCard, isCorrect: boolean) => {
     console.log("🎯 Removing card:", card._id, "Is correct:", isCorrect);
+    console.log("🎯 Available cards:", reviewUserCards.length);
     attack(currentEnemy, isCorrect);
 
-    // 🔥 SOLUTION: Enlever la carte immédiatement sans recharger toutes les données
-    setCardsInHand((prev) => prev.filter((c) => c._id !== card._id));
+    // 🔥 NOUVELLE SOLUTION: Supprimer ET ajouter une nouvelle carte en même temps
+    setCardsInHand((prev) => {
+      // 1. Enlever la carte supprimée
+      const remainingCards = prev.filter((c) => c._id !== card._id);
+      console.log("🎯 Remaining cards after removal:", remainingCards.length);
+
+      // 2. Trouver les cartes disponibles (pas déjà en main)
+      const currentCardIds = new Set(remainingCards.map((c) => c._id));
+      const availableCards = reviewUserCards.filter(
+        (availableCard) =>
+          !currentCardIds.has(availableCard._id) &&
+          availableCard._id !== card._id
+      );
+
+      console.log("🎯 Available cards to add:", availableCards.length);
+
+      // 3. Ajouter une nouvelle carte si disponible
+      if (availableCards.length > 0 && remainingCards.length < 5) {
+        const newCard = availableCards[0]; // Prendre la première carte disponible
+        console.log("🎯 Adding new card:", newCard._id);
+        return [...remainingCards, newCard];
+      }
+
+      return remainingCards;
+    });
 
     // Mettre à jour sur le serveur sans recharger toutes les cartes
     updateUserCard(card._id, { isCorrectAnswer: isCorrect });
-
-    // 🔥 SUPPRIMÉ: getReviewUserCards() qui causait le problème
-    // Les nouvelles cartes seront ajoutées automatiquement par le useEffect
   };
 
   // Cleanup timeouts when component unmounts

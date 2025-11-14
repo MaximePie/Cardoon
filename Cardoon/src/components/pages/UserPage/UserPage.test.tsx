@@ -41,6 +41,7 @@ const createMockUserContext = (user: User, overrides = {}) => ({
     removeGold: vi.fn(),
     refresh: vi.fn(),
     updateImage: vi.fn(),
+    updateDailyGoal: vi.fn(),
   },
   cards: {
     reviewUserCards: {
@@ -89,6 +90,7 @@ describe("UserPage", () => {
   const mockSetUser = vi.fn();
   const mockPutUser = vi.fn();
   const mockPut = vi.fn();
+  const mockUpdateDailyGoal = vi.fn();
   const mockUsePutReturn = {
     putUser: mockPutUser,
     put: mockPut,
@@ -160,6 +162,7 @@ describe("UserPage", () => {
         user: {
           ...createMockUserContext(mockUser).user,
           setUser: mockSetUser,
+          updateDailyGoal: mockUpdateDailyGoal,
         },
       })
     );
@@ -249,7 +252,7 @@ describe("UserPage", () => {
       expect(input).toHaveValue(0);
     });
 
-    it("should call putUser when form is submitted", () => {
+    it("should call updateDailyGoal when form is submitted", () => {
       renderUserPage();
 
       const input = screen.getByDisplayValue("10");
@@ -260,7 +263,7 @@ describe("UserPage", () => {
         .closest("form");
       fireEvent.submit(form!);
 
-      expect(mockPutUser).toHaveBeenCalledWith({ target: 20 });
+      expect(mockUpdateDailyGoal).toHaveBeenCalledWith(20);
     });
 
     it("should submit form with current draft value", () => {
@@ -271,7 +274,7 @@ describe("UserPage", () => {
         .closest("form");
       fireEvent.submit(form!);
 
-      expect(mockPutUser).toHaveBeenCalledWith({ target: 10 });
+      expect(mockUpdateDailyGoal).toHaveBeenCalledWith(10);
     });
   });
 
@@ -287,6 +290,7 @@ describe("UserPage", () => {
           user: {
             ...createMockUserContext(userWithoutDailyGoal).user,
             setUser: mockSetUser,
+            updateDailyGoal: mockUpdateDailyGoal,
           },
         })
       );
@@ -307,6 +311,7 @@ describe("UserPage", () => {
           user: {
             ...createMockUserContext(userWithHighGoal).user,
             setUser: mockSetUser,
+            updateDailyGoal: mockUpdateDailyGoal,
           },
         })
       );
@@ -331,6 +336,7 @@ describe("UserPage", () => {
           user: {
             ...createMockUserContext(adminUser).user,
             setUser: mockSetUser,
+            updateDailyGoal: mockUpdateDailyGoal,
           },
         })
       );
@@ -362,6 +368,7 @@ describe("UserPage", () => {
           user: {
             ...createMockUserContext(userWithCompletedGoal).user,
             setUser: mockSetUser,
+            updateDailyGoal: mockUpdateDailyGoal,
           },
         })
       );
@@ -393,7 +400,7 @@ describe("UserPage", () => {
         .closest("form");
       fireEvent.submit(form!);
 
-      expect(mockPutUser).toHaveBeenCalledWith({ target: 30 });
+      expect(mockUpdateDailyGoal).toHaveBeenCalledWith(30);
     });
 
     it("should prevent form submission default behavior", () => {
@@ -411,7 +418,7 @@ describe("UserPage", () => {
       form!.dispatchEvent(submitEvent);
 
       // The component should have called preventDefault
-      expect(mockPutUser).toHaveBeenCalled();
+      expect(mockUpdateDailyGoal).toHaveBeenCalled();
     });
   });
 

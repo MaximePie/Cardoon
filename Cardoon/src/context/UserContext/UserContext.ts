@@ -36,6 +36,7 @@ export interface UserContextType {
     removeGold: (gold: number) => void;
     refresh: () => void;
     updateImage: (imageFile: File) => Promise<void>;
+    updateDailyGoal: (newDailyGoal: number) => Promise<void>;
   };
   clearAllErrors: () => void;
 }
@@ -93,6 +94,7 @@ export const UserContext = createContext<UserContextType>({
     removeGold: (_gold: number) => {},
     refresh: () => {},
     updateImage: async (_imageFile: File) => {},
+    updateDailyGoal: async (_newDailyGoal: number) => {},
   },
   clearAllErrors: () => {},
 });

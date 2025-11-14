@@ -167,6 +167,7 @@ describe("UserCards", () => {
         removeGold: vi.fn(),
         refresh: vi.fn(),
         updateImage: vi.fn(),
+        updateDailyGoal: vi.fn(),
       },
       cards: {
         allUserCards: {
@@ -469,6 +470,7 @@ describe("UserCards", () => {
           removeGold: vi.fn(),
           refresh: vi.fn(),
           updateImage: vi.fn(),
+          updateDailyGoal: vi.fn(),
         },
         cards: {
           allUserCards: {
@@ -516,6 +518,7 @@ describe("UserCards", () => {
           removeGold: vi.fn(),
           refresh: vi.fn(),
           updateImage: vi.fn(),
+          updateDailyGoal: vi.fn(),
         },
         cards: {
           allUserCards: {
@@ -565,6 +568,7 @@ describe("UserCards", () => {
           removeGold: vi.fn(),
           refresh: vi.fn(),
           updateImage: vi.fn(),
+          updateDailyGoal: vi.fn(),
         },
         cards: {
           allUserCards: {
@@ -661,6 +665,7 @@ describe("UserCards", () => {
           removeGold: vi.fn(),
           refresh: vi.fn(),
           updateImage: vi.fn(),
+          updateDailyGoal: vi.fn(),
         },
         cards: {
           allUserCards: {

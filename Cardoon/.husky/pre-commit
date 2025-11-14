@@ -5,7 +5,7 @@ echo "🔍 Running pre-commit checks..."
 
 # 1. Type checking with TypeScript
 echo "📝 Checking TypeScript types..."
-npm run type-check
+yarn type-check
 if [ $? -ne 0 ]; then
   echo "❌ TypeScript type check failed!"
   exit 1
@@ -21,7 +21,7 @@ fi
 
 # 3. Run tests
 echo "🧪 Running tests..."
-npm run test:run
+yarn test:ci
 if [ $? -ne 0 ]; then
   echo "❌ Tests failed!"
   exit 1

@@ -16,6 +16,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "test:ci": "vitest run --silent --reporter=dot",
     "test:coverage": "vitest run --coverage",
     "generate-docs": "node scripts/generate-docs.js",
     "docs": "node scripts/simple-docs.js",

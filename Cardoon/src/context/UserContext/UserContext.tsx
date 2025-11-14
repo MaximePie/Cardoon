@@ -180,7 +180,7 @@ export const UserContextProvider = ({
       );
       return;
     }
-    updateUser({ dailyGoal: newDailyGoal });
+    updateUser(newDailyGoal);
   };
 
   return (

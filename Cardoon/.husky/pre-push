@@ -5,7 +5,7 @@ echo "🚀 Running pre-push checks..."
 
 # 1. Run full linting
 echo "🧹 Running full ESLint check..."
-npm run lint
+yarn lint
 if [ $? -ne 0 ]; then
   echo "❌ Full lint check failed!"
   exit 1
@@ -13,7 +13,7 @@ fi
 
 # 2. Type checking
 echo "📝 Checking TypeScript types..."
-npm run type-check
+yarn type-check
 if [ $? -ne 0 ]; then
   echo "❌ TypeScript type check failed!"
   exit 1
@@ -21,7 +21,7 @@ fi
 
 # 3. Build check
 echo "🏗️  Checking if build works..."
-npm run build
+yarn build
 if [ $? -ne 0 ]; then
   echo "❌ Build failed!"
   exit 1

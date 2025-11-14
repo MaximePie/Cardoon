@@ -21,6 +21,7 @@ import {
   getUserCards,
   invertCard,
 } from "../../services/userCardsApi";
+import { updateUserDailyGoal } from "../../services/userDailyGoalApi";
 import { Card, PopulatedUserCard } from "../../types/common";
 
 export const useReviewUserCards = (userId: string | number) => {
@@ -490,15 +491,35 @@ const useMeQuery = () => {
   });
 };
 
+// Update the user's daily goal with mutation and update the cache accordingly
+export const useUserDailyGoalUpdate = (userId: string | number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["user", "update", "dailyGoal"],
+    mutationFn: (newDailyGoal: number) => {
+      if (typeof newDailyGoal === "number") {
+        return updateUserDailyGoal(userId, newDailyGoal);
+      } else {
+        throw new Error("dailyGoal is required and must be a number");
+      }
+    },
+    onSuccess: (updatedUser) => {
+      // Met à jour le cache de l'utilisateur
+      queryClient.setQueryData(["user", "me"], updatedUser);
+    },
+  });
+};
+
 export const useUserManager = () => {
   const queryClient = useQueryClient();
   // Implementation of user fetching logic
   const meQuery = useMeQuery();
-
+  const updateUserMutation = useUserDailyGoalUpdate(meQuery.data?._id || "");
   return {
     user: meQuery.data,
     isLoading: meQuery.isLoading,
     error: meQuery.error,
+    updateUserDailyGoal: updateUserMutation.mutate,
     resetQueries: () => {
       queryClient.removeQueries({ queryKey: ["user", "me"] });
     },

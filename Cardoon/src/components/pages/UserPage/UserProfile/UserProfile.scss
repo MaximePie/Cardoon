@@ -31,4 +31,20 @@
       color: #666;
     }
   }
+
+  &__daily-goal-progress {
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+    width: 300px;
+
+    h4 {
+      margin-bottom: 15px;
+    }
+
+    p {
+      display: flex;
+      justify-content: center;
+    }
+  }
 }

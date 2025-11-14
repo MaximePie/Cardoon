@@ -20,6 +20,7 @@ export const UserContextProvider = ({
     error: userError,
     resetQueries: refetchUser,
     isLoading: isUserLoading,
+    updateUserDailyGoal: updateUser,
   } = useUserManager();
 
   const [currentUser, setUser] = useState<User>(user || emptyUser);
@@ -171,6 +172,17 @@ export const UserContextProvider = ({
     resetQueries();
   };
 
+  const updateDailyGoal = async (newDailyGoal: number) => {
+    if (newDailyGoal < 0 || newDailyGoal > 1000) {
+      openSnackbarWithMessage(
+        "Le nombre de cartes par jour doit être compris entre 0 et 1000.",
+        "error"
+      );
+      return;
+    }
+    updateUser(newDailyGoal);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -208,6 +220,7 @@ export const UserContextProvider = ({
           removeGold,
           refresh,
           updateImage,
+          updateDailyGoal,
         },
         clearAllErrors,
       }}

@@ -186,12 +186,6 @@ export const dailyGoalSchema = z.object({
     .int()
     .min(1, "Daily goal target must be at least 1")
     .max(100, "Daily goal target cannot exceed 100"),
-  date: z
-    .string()
-    .datetime("Invalid date format")
-    .or(z.date())
-    .optional()
-    .transform((val) => (val ? new Date(val) : new Date())),
 });
 
 // Daily goal progress update schema

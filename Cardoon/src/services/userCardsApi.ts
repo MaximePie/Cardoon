@@ -16,6 +16,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { PopulatedUserCard, User } from "../types/common";
 import { extractErrorMessage } from "../utils";
+import { createStatusPreservingError } from "./utils";
 
 // Get API URL from environment, with fallback for test environments
 const backUrl = import.meta.env.VITE_API_URL || process.env.VITE_API_URL;
@@ -24,32 +25,6 @@ const backUrl = import.meta.env.VITE_API_URL || process.env.VITE_API_URL;
 if (!backUrl && process.env.NODE_ENV !== "test") {
   throw new Error("VITE_API_URL is not defined. Configure API base URL.");
 }
-
-/**
- * Creates an error that preserves HTTP status information for retry logic
- * @param message - Error message
- * @param originalError - Original axios error
- * @returns Error with preserved status information
- */
-const createStatusPreservingError = (
-  message: string,
-  originalError: unknown
-): Error => {
-  const error = new Error(message) as Error & {
-    status?: number;
-    response?: { status?: number };
-  };
-
-  if (axios.isAxiosError(originalError)) {
-    const status = originalError.response?.status;
-    if (status) {
-      error.status = status;
-      error.response = { status };
-    }
-  }
-
-  return error;
-};
 
 /**
  * Configuration axios pour les requêtes authentifiées

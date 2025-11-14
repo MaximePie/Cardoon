@@ -1,3 +1,5 @@
+import CircularProgress from "@mui/joy/CircularProgress";
+import { Card } from "@mui/material";
 import { useUser } from "../../../../context/UserContext";
 import coinImage from "../../../../images/coin.png";
 import { formattedNumber } from "../../../../utils/numbers";
@@ -30,16 +32,24 @@ export default function UserProfile() {
       </section>
 
       {currentDailyGoal && (
-        <div className="UserPage__daily-goal-progress">
+        <Card variant="outlined" className="UserProfile__daily-goal-progress">
           <h4>Objectif quotidien actuel</h4>
           <p>
-            <strong>Progrès :</strong> {currentDailyGoal.progress} /{" "}
-            {currentDailyGoal.target}
+            <CircularProgress
+              determinate
+              value={
+                currentDailyGoal.target > 0
+                  ? (currentDailyGoal.progress / currentDailyGoal.target) * 100
+                  : 0
+              }
+              size="lg"
+            >
+              {currentDailyGoal.progress} / {currentDailyGoal.target}
+            </CircularProgress>
           </p>
-        </div>
+          <DailyGoalForm />
+        </Card>
       )}
-
-      <DailyGoalForm />
     </section>
   );
 }

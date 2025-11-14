@@ -11,7 +11,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import demoValidationRoutes from "./api/demo-validation.js";
 import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
@@ -75,9 +74,7 @@ app.use((req, res, next) => {
 });
 app.use("/api/cards", cardsRoutes);
 app.use("/api/userCards", userCardsRoutes);
-// app.use("/api/users", usersRoutes); // Temporarily disabled
-app.use("/api/users", usersValidatedRoutes); // New validated users API
-app.use("/api/validation", demoValidationRoutes); // Demo validation routes
+app.use("/api/users", usersValidatedRoutes);
 app.use("/api/mistral", mistralRoutes);
 app.use("/api/items", itemsRoutes);
 export const errorHandler = (

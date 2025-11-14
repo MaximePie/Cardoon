@@ -496,9 +496,9 @@ export const useUserDailyGoalUpdate = (userId: string | number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["user", "update", "dailyGoal"],
-    mutationFn: (data: Partial<{ dailyGoal: number }>) => {
-      if (typeof data.dailyGoal === "number") {
-        return updateUserDailyGoal(userId, data.dailyGoal);
+    mutationFn: (newDailyGoal: number) => {
+      if (typeof newDailyGoal === "number") {
+        return updateUserDailyGoal(userId, newDailyGoal);
       } else {
         throw new Error("dailyGoal is required and must be a number");
       }

@@ -34,7 +34,14 @@ const useDailyGoal = () => {
       return;
     }
 
-    user.updateDailyGoal(draftDailyGoal);
+    try {
+      user.updateDailyGoal(draftDailyGoal);
+    } catch (error) {
+      openSnackbarWithMessage(
+        "Une erreur est survenue lors de la mise à jour de l'objectif quotidien.",
+        "error"
+      );
+    }
   };
 
   return {

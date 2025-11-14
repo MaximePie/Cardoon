@@ -38,7 +38,9 @@ export default function UserProfile() {
             <CircularProgress
               determinate
               value={
-                (currentDailyGoal.progress / currentDailyGoal.target) * 100
+                currentDailyGoal.target > 0
+                  ? (currentDailyGoal.progress / currentDailyGoal.target) * 100
+                  : 0
               }
               size="lg"
             >

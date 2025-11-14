@@ -1,6 +1,8 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
+import { QueryKeys } from "../../../lib/queryClient";
 import { PopulatedUserCard, User } from "../../../types/common";
 interface PutResult {
   user: User;
@@ -51,7 +53,8 @@ const baseHero = {
 };
 
 export default function useAdventure() {
-  const { cards } = useUser();
+  const { cards, user } = useUser();
+  const queryClient = useQueryClient();
   const reviewUserCards = useMemo(
     () => cards.reviewUserCards.data || [],
     [cards.reviewUserCards.data]
@@ -187,7 +190,7 @@ export default function useAdventure() {
     }));
   };
 
-  const removeCard = (card: PopulatedUserCard, isCorrect: boolean) => {
+  const removeCard = async (card: PopulatedUserCard, isCorrect: boolean) => {
     console.log("🎯 Removing card:", card._id, "Is correct:", isCorrect);
     console.log("🎯 Available cards:", reviewUserCards.length);
     attack(currentEnemy, isCorrect);
@@ -218,8 +221,26 @@ export default function useAdventure() {
       return remainingCards;
     });
 
-    // Mettre à jour sur le serveur sans recharger toutes les cartes
-    updateUserCard(card._id, { isCorrectAnswer: isCorrect });
+    try {
+      // Mettre à jour sur le serveur
+      await updateUserCard(card._id, { isCorrectAnswer: isCorrect });
+
+      // 🚀 SOLUTION: Mise à jour optimiste du cache sans refetch
+      // Retirer la carte du cache local des reviewUserCards car elle ne doit plus apparaître
+      queryClient.setQueryData(
+        QueryKeys.reviewUserCards(user.data?._id),
+        (oldCards: PopulatedUserCard[] | undefined) => {
+          if (!oldCards) return [];
+          // Filtrer la carte qui vient d'être mise à jour
+          return oldCards.filter((c) => c._id !== card._id);
+        }
+      );
+
+      console.log("🎯 Card removed from reviewUserCards cache optimistically");
+    } catch (error) {
+      console.error("🎯 Error updating card:", error);
+      // En cas d'erreur, on pourrait restaurer le cache, mais pour l'instant on laisse comme ça
+    }
   };
 
   // Cleanup timeouts when component unmounts

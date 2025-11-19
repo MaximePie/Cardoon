@@ -271,8 +271,8 @@ describe("AdventurePage", () => {
       expect(screen.getByText(/120/)).toBeInTheDocument(); // Hero health (split text)
 
       // Check for enemy image and info
-      expect(screen.getByAltText("Idle Enemy")).toBeInTheDocument();
-      expect(screen.getByText("Night Borne")).toBeInTheDocument();
+      expect(screen.getByAltText("Night Borne")).toBeInTheDocument();
+      expect(screen.getByText(/Night Borne/)).toBeInTheDocument();
 
       // Check for enemy health - use class selector to be specific
       const enemyHealthElements = document.querySelectorAll(
@@ -595,7 +595,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       // Check enemy image is rendered
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toBeInTheDocument();
       expect(enemyImage).toHaveAttribute(
         "src",
@@ -609,7 +609,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
-      expect(screen.getByAltText("Idle Enemy")).toBeInTheDocument();
+      expect(screen.getByAltText("Night Borne")).toBeInTheDocument();
     });
 
     it("should have accessible buttons", () => {
@@ -625,14 +625,14 @@ describe("AdventurePage", () => {
 
       // Check for character names
       expect(screen.getByText("Hero")).toBeInTheDocument();
-      expect(screen.getByText("Night Borne")).toBeInTheDocument();
+      expect(screen.getByText(/Night Borne/)).toBeInTheDocument();
 
       // Check for health displays using more specific queries
       const heroSection = screen
         .getByText("Hero")
         .closest(".AdventurePage__Hero");
       const enemySection = screen
-        .getByText("Night Borne")
+        .getByText(/Night Borne/)
         .closest(".AdventurePage__Enemy");
 
       expect(heroSection).toBeInTheDocument();
@@ -969,7 +969,7 @@ describe("AdventurePage", () => {
     it("should display enemy in idle state initially", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toBeInTheDocument();
       expect(enemyImage).toHaveAttribute(
         "src",
@@ -980,7 +980,7 @@ describe("AdventurePage", () => {
     it("should handle enemy defeat animation", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toHaveAttribute(
         "src",
         expect.stringContaining("NightBorne_idle.gif")
@@ -996,7 +996,7 @@ describe("AdventurePage", () => {
     it("should use correct enemy asset imports", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
 
       // Check that enemy image uses the imported idle asset
       expect(enemyImage).toHaveAttribute(
@@ -1154,7 +1154,7 @@ describe("AdventurePage", () => {
       );
 
       // Test enemy assets
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toHaveAttribute(
         "src",
         expect.stringContaining("NightBorne_idle.gif")

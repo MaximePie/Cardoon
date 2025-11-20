@@ -1,20 +1,24 @@
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { AnimatePresence, motion } from "motion/react";
 import adventureBackground from "../../../assets/adventure-background.svg";
-import enemyDefeated from "../../../assets/Enemies/NightBorne_death..gif";
-import enemyIdle from "../../../assets/Enemies/NightBorne_idle.gif";
 import heroAttack from "../../../assets/Hero/attack1.gif";
 import devMode from "../../../assets/Hero/devmode.svg";
 import heroIdle from "../../../assets/Hero/idle.gif";
 import { PopulatedUserCard } from "../../../types/common";
 import ExpBar from "../../atoms/ExpBar/ExpBar";
 import Card from "../../molecules/Card/Card";
+import { getEnemyAssets } from "./enemyAssets";
 import useAdventure from "./useAdventure";
 const isDev = import.meta.env.DEV;
 const AdventurePage = () => {
   const { cardsInHand, hero, heroState, enemyState, currentEnemy, removeCard } =
     useAdventure();
+
+  const enemyAssets = getEnemyAssets(currentEnemy.id);
+  const BonusIcon = currentEnemy.bonus.icon;
 
   return (
     <div>
@@ -24,6 +28,13 @@ const AdventurePage = () => {
             <span>
               <WhatshotIcon color="error" fontSize="small" />{" "}
               {hero.attackDamage}
+            </span>
+            <span>
+              <HealthAndSafetyIcon color="warning" fontSize="small" />{" "}
+              {hero.regenerationRate}
+            </span>
+            <span>
+              <FavoriteIcon color="success" fontSize="small" /> {hero.maxHealth}
             </span>
             <span>
               <StarBorderPurple500Icon color="warning" fontSize="small" />{" "}
@@ -82,11 +93,25 @@ const AdventurePage = () => {
           </motion.div>
           <div className="AdventurePage__Enemy">
             <img
-              src={enemyState === "idle" ? enemyIdle : enemyDefeated}
-              alt="Idle Enemy"
+              src={
+                enemyState === "idle" ? enemyAssets.idle : enemyAssets.defeated
+              }
+              alt={currentEnemy.name}
               className="AdventurePage__characterImage"
             />
-            <p className="AdventurePage__name">{currentEnemy.name}</p>
+            <p className="AdventurePage__name">
+              {currentEnemy.name}
+              <span className="AdventurePage__bonusType">
+                (+{currentEnemy.bonus.amount}
+                {BonusIcon && (
+                  <BonusIcon
+                    className=""
+                    color={currentEnemy.bonus.iconColor}
+                  />
+                )}
+                )
+              </span>
+            </p>
             <div className="AdventurePage__healthBar">
               <span className="AdventurePage__healthText">
                 {currentEnemy.currentHealth} / {currentEnemy.maxHealth}

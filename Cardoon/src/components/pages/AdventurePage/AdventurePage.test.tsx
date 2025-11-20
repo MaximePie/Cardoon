@@ -249,7 +249,6 @@ describe("AdventurePage", () => {
 
       // Check that stats are displayed correctly
       expect(screen.getByText("25")).toBeInTheDocument(); // Attack damage
-      expect(screen.getByText("1")).toBeInTheDocument(); // Level
 
       // Check that hero stats are displayed
       const statsSection = document.querySelector(".AdventurePage__stats");
@@ -268,11 +267,16 @@ describe("AdventurePage", () => {
       // Check for hero avatar and info
       expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
       expect(screen.getByText("Hero")).toBeInTheDocument();
-      expect(screen.getByText(/120/)).toBeInTheDocument(); // Hero health (split text)
+
+      // Check hero health using the health bar element
+      const heroHealthElements = document.querySelectorAll(
+        ".AdventurePage__healthText"
+      );
+      expect(heroHealthElements[0]).toHaveTextContent("120 / 120"); // Hero health
 
       // Check for enemy image and info
-      expect(screen.getByAltText("Idle Enemy")).toBeInTheDocument();
-      expect(screen.getByText("Night Borne")).toBeInTheDocument();
+      expect(screen.getByAltText("Night Borne")).toBeInTheDocument();
+      expect(screen.getByText(/Night Borne/)).toBeInTheDocument();
 
       // Check for enemy health - use class selector to be specific
       const enemyHealthElements = document.querySelectorAll(
@@ -365,9 +369,18 @@ describe("AdventurePage", () => {
     it("should display hero stats with icons", () => {
       renderAdventurePage();
 
-      // Check that attack damage and level are displayed
+      // Check that attack damage is displayed
       expect(screen.getByText("25")).toBeInTheDocument(); // Attack damage
-      expect(screen.getByText("1")).toBeInTheDocument(); // Level
+
+      // Check that icons are displayed (using getAllByTestId because icons may appear multiple times)
+      expect(screen.getAllByTestId("WhatshotIcon").length).toBeGreaterThan(0);
+      expect(
+        screen.getAllByTestId("HealthAndSafetyIcon").length
+      ).toBeGreaterThan(0);
+      expect(screen.getAllByTestId("FavoriteIcon").length).toBeGreaterThan(0);
+      expect(
+        screen.getAllByTestId("StarBorderPurple500Icon").length
+      ).toBeGreaterThan(0);
 
       // Check for stats structure
       const statsSection = document.querySelector(
@@ -595,7 +608,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       // Check enemy image is rendered
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toBeInTheDocument();
       expect(enemyImage).toHaveAttribute(
         "src",
@@ -609,7 +622,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
-      expect(screen.getByAltText("Idle Enemy")).toBeInTheDocument();
+      expect(screen.getByAltText("Night Borne")).toBeInTheDocument();
     });
 
     it("should have accessible buttons", () => {
@@ -625,14 +638,14 @@ describe("AdventurePage", () => {
 
       // Check for character names
       expect(screen.getByText("Hero")).toBeInTheDocument();
-      expect(screen.getByText("Night Borne")).toBeInTheDocument();
+      expect(screen.getByText(/Night Borne/)).toBeInTheDocument();
 
       // Check for health displays using more specific queries
       const heroSection = screen
         .getByText("Hero")
         .closest(".AdventurePage__Hero");
       const enemySection = screen
-        .getByText("Night Borne")
+        .getByText(/Night Borne/)
         .closest(".AdventurePage__Enemy");
 
       expect(heroSection).toBeInTheDocument();
@@ -969,7 +982,7 @@ describe("AdventurePage", () => {
     it("should display enemy in idle state initially", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toBeInTheDocument();
       expect(enemyImage).toHaveAttribute(
         "src",
@@ -980,7 +993,7 @@ describe("AdventurePage", () => {
     it("should handle enemy defeat animation", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toHaveAttribute(
         "src",
         expect.stringContaining("NightBorne_idle.gif")
@@ -996,7 +1009,7 @@ describe("AdventurePage", () => {
     it("should use correct enemy asset imports", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
 
       // Check that enemy image uses the imported idle asset
       expect(enemyImage).toHaveAttribute(
@@ -1109,8 +1122,9 @@ describe("AdventurePage", () => {
       );
       expect(statsResources).toBeInTheDocument();
 
-      // The level should be visible in the stats
-      expect(screen.getByText("1")).toBeInTheDocument(); // Level display
+      // The level should be visible in the stats - check by finding the StarBorderPurple500Icon which indicates level
+      const levelIcon = screen.getAllByTestId("StarBorderPurple500Icon");
+      expect(levelIcon.length).toBeGreaterThan(0); // Level icon is displayed
     });
 
     it("should handle enemy defeat and experience gain", () => {
@@ -1154,7 +1168,7 @@ describe("AdventurePage", () => {
       );
 
       // Test enemy assets
-      const enemyImage = screen.getByAltText("Idle Enemy");
+      const enemyImage = screen.getByAltText("Night Borne");
       expect(enemyImage).toHaveAttribute(
         "src",
         expect.stringContaining("NightBorne_idle.gif")

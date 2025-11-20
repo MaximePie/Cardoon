@@ -1,3 +1,7 @@
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { SvgIconProps } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "../../../context/UserContext";
@@ -9,23 +13,84 @@ interface PutResult {
   userCard: PopulatedUserCard;
 }
 
+export type EnemyType = "NightBorne" | "Skeleton";
+
 interface Enemy {
+  id: EnemyType;
   name: string;
   maxHealth: number;
   currentHealth: number;
   attackDamage: number;
   defense: number;
   experience: number; // Given exp when defeated
+  bonus: {
+    type: "hp" | "attack" | "regeneration";
+    amount: number;
+    icon: React.ComponentType<SvgIconProps>;
+    iconColor: SvgIconProps["color"];
+  };
 }
 
-const enemies = [
+const enemies: Enemy[] = [
   {
+    id: "NightBorne",
     name: "Night Borne",
     maxHealth: 100,
     currentHealth: 100,
     attackDamage: 15,
     defense: 5,
     experience: 50,
+    bonus: {
+      type: "hp",
+      amount: 1,
+      icon: FavoriteIcon,
+      iconColor: "primary",
+    },
+  },
+  {
+    id: "NightBorne",
+    name: "Night Borne",
+    maxHealth: 100,
+    currentHealth: 100,
+    attackDamage: 15,
+    defense: 5,
+    experience: 50,
+    bonus: {
+      type: "regeneration",
+      amount: 1,
+      icon: HealthAndSafetyIcon,
+      iconColor: "success",
+    },
+  },
+  {
+    id: "NightBorne",
+    name: "Night Borne",
+    maxHealth: 100,
+    currentHealth: 100,
+    attackDamage: 15,
+    defense: 5,
+    experience: 50,
+    bonus: {
+      type: "attack",
+      amount: 1,
+      icon: WhatshotIcon,
+      iconColor: "error",
+    },
+  },
+  {
+    id: "Skeleton",
+    name: "Skeleton",
+    maxHealth: 150,
+    currentHealth: 150,
+    attackDamage: 20,
+    defense: 8,
+    experience: 75,
+    bonus: {
+      type: "attack",
+      amount: 1,
+      icon: WhatshotIcon,
+      iconColor: "error",
+    },
   },
   // Ajoutez plus d'ennemis ici si nécessaire
 ];
@@ -34,6 +99,7 @@ interface Hero {
   name: string;
   maxHealth: number;
   currentHealth: number;
+  regenerationRate: number;
   attackDamage: number;
   defense: number;
   level: number;
@@ -45,7 +111,8 @@ const baseHero = {
   name: "Hero",
   maxHealth: 120,
   currentHealth: 120,
-  attackDamage: process.env.NODE_ENV === "development" ? 1000 : 25,
+  regenerationRate: 1,
+  attackDamage: process.env.NODE_ENV === "development" ? 80 : 25,
   defense: 10,
   level: 1,
   experience: 0,
@@ -106,6 +173,7 @@ export default function useAdventure() {
     }
   };
 
+  // Loose condition
   useEffect(() => {
     if (hero.currentHealth <= 0) {
       // Reset hero and enemy
@@ -125,18 +193,32 @@ export default function useAdventure() {
     }, 1000);
 
     const newExperience = hero.experience + currentEnemy.experience;
-
-    setHero((prev) => ({
-      ...prev,
+    const newHero = {
+      ...hero,
       experience: newExperience,
-    }));
+      attack:
+        currentEnemy.bonus.type === "attack"
+          ? hero.attackDamage + currentEnemy.bonus.amount
+          : hero.attackDamage,
+      maxHealth:
+        currentEnemy.bonus.type === "hp"
+          ? hero.maxHealth + currentEnemy.bonus.amount
+          : hero.maxHealth,
+    };
+
+    setHero(newHero);
     // Check for level up
     if (newExperience >= hero.experienceToNextLevel) {
       levelUp();
     }
     // Reset enemy
-    setCurrentEnemy(enemies[0]);
-  }, [currentEnemy.experience, hero.experience, hero.experienceToNextLevel]);
+    setCurrentEnemy(enemies[Math.floor(Math.random() * enemies.length)]);
+  }, [
+    currentEnemy.experience,
+    currentEnemy.bonus.amount,
+    currentEnemy.bonus.type,
+    hero,
+  ]);
 
   useEffect(() => {
     if (currentEnemy.currentHealth <= 0) {
@@ -191,15 +273,11 @@ export default function useAdventure() {
   };
 
   const removeCard = async (card: PopulatedUserCard, isCorrect: boolean) => {
-    console.log("🎯 Removing card:", card._id, "Is correct:", isCorrect);
-    console.log("🎯 Available cards:", reviewUserCards.length);
     attack(currentEnemy, isCorrect);
 
-    // 🔥 NOUVELLE SOLUTION: Supprimer ET ajouter une nouvelle carte en même temps
     setCardsInHand((prev) => {
       // 1. Enlever la carte supprimée
       const remainingCards = prev.filter((c) => c._id !== card._id);
-      console.log("🎯 Remaining cards after removal:", remainingCards.length);
 
       // 2. Trouver les cartes disponibles (pas déjà en main)
       const currentCardIds = new Set(remainingCards.map((c) => c._id));
@@ -209,12 +287,9 @@ export default function useAdventure() {
           availableCard._id !== card._id
       );
 
-      console.log("🎯 Available cards to add:", availableCards.length);
-
       // 3. Ajouter une nouvelle carte si disponible
       if (availableCards.length > 0 && remainingCards.length < 5) {
         const newCard = availableCards[0]; // Prendre la première carte disponible
-        console.log("🎯 Adding new card:", newCard._id);
         return [...remainingCards, newCard];
       }
 

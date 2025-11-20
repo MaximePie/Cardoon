@@ -1,3 +1,5 @@
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { AnimatePresence, motion } from "motion/react";
@@ -16,6 +18,7 @@ const AdventurePage = () => {
     useAdventure();
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
+  const BonusIcon = currentEnemy.bonus.icon;
 
   return (
     <div>
@@ -25,6 +28,13 @@ const AdventurePage = () => {
             <span>
               <WhatshotIcon color="error" fontSize="small" />{" "}
               {hero.attackDamage}
+            </span>
+            <span>
+              <HealthAndSafetyIcon color="warning" fontSize="small" />{" "}
+              {hero.regenerationRate}
+            </span>
+            <span>
+              <FavoriteIcon color="success" fontSize="small" /> {hero.maxHealth}
             </span>
             <span>
               <StarBorderPurple500Icon color="warning" fontSize="small" />{" "}
@@ -90,8 +100,17 @@ const AdventurePage = () => {
               className="AdventurePage__characterImage"
             />
             <p className="AdventurePage__name">
-              {currentEnemy.name} (+{currentEnemy.bonus.amount}
-              {currentEnemy.bonus.type})
+              {currentEnemy.name}
+              <span className="AdventurePage__bonusType">
+                (+{currentEnemy.bonus.amount}
+                {BonusIcon && (
+                  <BonusIcon
+                    className=""
+                    color={currentEnemy.bonus.iconColor}
+                  />
+                )}
+                )
+              </span>
             </p>
             <div className="AdventurePage__healthBar">
               <span className="AdventurePage__healthText">

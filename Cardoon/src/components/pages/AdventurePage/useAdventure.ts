@@ -1,3 +1,7 @@
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
+import WhatshotIcon from "@mui/icons-material/Whatshot";
+import { SvgIconProps } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useUser } from "../../../context/UserContext";
@@ -22,6 +26,8 @@ interface Enemy {
   bonus: {
     type: "hp" | "attack" | "regeneration";
     amount: number;
+    icon: React.ComponentType<SvgIconProps>;
+    iconColor: SvgIconProps["color"];
   };
 }
 
@@ -37,6 +43,8 @@ const enemies: Enemy[] = [
     bonus: {
       type: "hp",
       amount: 1,
+      icon: FavoriteIcon,
+      iconColor: "primary",
     },
   },
   {
@@ -50,6 +58,8 @@ const enemies: Enemy[] = [
     bonus: {
       type: "regeneration",
       amount: 1,
+      icon: HealthAndSafetyIcon,
+      iconColor: "success",
     },
   },
   {
@@ -63,6 +73,8 @@ const enemies: Enemy[] = [
     bonus: {
       type: "attack",
       amount: 1,
+      icon: WhatshotIcon,
+      iconColor: "error",
     },
   },
   {
@@ -76,6 +88,8 @@ const enemies: Enemy[] = [
     bonus: {
       type: "attack",
       amount: 1,
+      icon: WhatshotIcon,
+      iconColor: "error",
     },
   },
   // Ajoutez plus d'ennemis ici si nécessaire
@@ -85,6 +99,7 @@ interface Hero {
   name: string;
   maxHealth: number;
   currentHealth: number;
+  regenerationRate: number;
   attackDamage: number;
   defense: number;
   level: number;
@@ -260,7 +275,6 @@ export default function useAdventure() {
   const removeCard = async (card: PopulatedUserCard, isCorrect: boolean) => {
     attack(currentEnemy, isCorrect);
 
-    // 🔥 NOUVELLE SOLUTION: Supprimer ET ajouter une nouvelle carte en même temps
     setCardsInHand((prev) => {
       // 1. Enlever la carte supprimée
       const remainingCards = prev.filter((c) => c._id !== card._id);

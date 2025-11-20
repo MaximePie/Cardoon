@@ -120,6 +120,18 @@
     height: 24px;
   }
 
+  &__bonusType {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 5px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      margin-left: 3px;
+    }
+  }
+
   &__Cards {
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.651);
     display: flex;

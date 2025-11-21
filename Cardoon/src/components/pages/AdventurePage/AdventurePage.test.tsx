@@ -1024,8 +1024,8 @@ describe("AdventurePage", () => {
     it("should display level information", () => {
       renderAdventurePage();
 
-      // Check for level text
-      expect(screen.getByText("Forêt toxique - Niveau 1")).toBeInTheDocument();
+      // Check for level text - it's now separated in different elements
+      expect(screen.getByText("Forêt toxique")).toBeInTheDocument();
     });
 
     it("should display restructured stats layout", () => {

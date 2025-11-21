@@ -1,57 +1,41 @@
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
-import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
-import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { AnimatePresence, motion } from "motion/react";
 import adventureBackground from "../../../assets/adventure-background.svg";
 import heroAttack from "../../../assets/Hero/attack1.gif";
 import devMode from "../../../assets/Hero/devmode.svg";
 import heroIdle from "../../../assets/Hero/idle.gif";
 import { PopulatedUserCard } from "../../../types/common";
-import ExpBar from "../../atoms/ExpBar/ExpBar";
 import Card from "../../molecules/Card/Card";
 import { getEnemyAssets } from "./enemyAssets";
+import { HeroStats } from "./HeroStats";
 import useAdventure from "./useAdventure";
+
 const isDev = import.meta.env.DEV;
+
 const AdventurePage = () => {
-  const { cardsInHand, hero, heroState, enemyState, currentEnemy, removeCard } =
-    useAdventure();
+  const {
+    cardsInHand,
+    hero,
+    heroState,
+    enemyState,
+    currentEnemy,
+    removeCard,
+    bonusAnimation,
+  } = useAdventure();
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
   const BonusIcon = currentEnemy.bonus.icon;
 
   return (
     <div>
-      <div className="AdventurePage__profile">
-        <div className="AdventurePage__stats">
-          <div className="AdventurePage__stats-resources">
-            <span>
-              <WhatshotIcon color="error" fontSize="small" />{" "}
-              {hero.attackDamage}
-            </span>
-            <span>
-              <HealthAndSafetyIcon color="warning" fontSize="small" />{" "}
-              {hero.regenerationRate}
-            </span>
-            <span>
-              <FavoriteIcon color="success" fontSize="small" /> {hero.maxHealth}
-            </span>
-            <span>
-              <StarBorderPurple500Icon color="warning" fontSize="small" />{" "}
-              {hero.level}
-            </span>
-          </div>
-          <div className="AdventurePage__stats-level">
-            <p>Forêt toxique - Niveau 1</p>
-          </div>
-          <div className="AdventurePage__stats-expBar">
-            <ExpBar
-              currentExp={hero.experience}
-              maxExp={hero.experienceToNextLevel}
-            />
-          </div>
-        </div>
-      </div>
+      <HeroStats
+        attackDamage={hero.attackDamage}
+        regenerationRate={hero.regenerationRate}
+        maxHealth={hero.maxHealth}
+        level={hero.level}
+        experience={hero.experience}
+        experienceToNextLevel={hero.experienceToNextLevel}
+        bonusAnimation={bonusAnimation}
+      />
       <div className="AdventurePage__body">
         <div
           className="AdventurePage__background"

@@ -112,7 +112,7 @@ const baseHero = {
   maxHealth: 120,
   currentHealth: 120,
   regenerationRate: 1,
-  attackDamage: process.env.NODE_ENV === "development" ? 80 : 25,
+  attackDamage: process.env.NODE_ENV === "development" ? 200 : 25,
   defense: 10,
   level: 1,
   experience: 0,
@@ -127,6 +127,10 @@ export default function useAdventure() {
     [cards.reviewUserCards.data]
   );
 
+  const [bonusAnimation, setBonusAnimation] = useState<{
+    type: "hp" | "attack" | "regeneration";
+    amount: number;
+  } | null>(null);
   const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [hero, setHero] = useState<Hero>(baseHero);
@@ -171,6 +175,13 @@ export default function useAdventure() {
         currentHealth: Math.max(0, prev.currentHealth - damage * 1.5),
       }));
     }
+    setHero((prev) => ({
+      ...prev,
+      currentHealth: Math.min(
+        prev.maxHealth,
+        prev.currentHealth + prev.regenerationRate
+      ),
+    }));
   };
 
   // Loose condition
@@ -193,20 +204,35 @@ export default function useAdventure() {
     }, 1000);
 
     const newExperience = hero.experience + currentEnemy.experience;
-    const newHero = {
-      ...hero,
+
+    // Apply bonus based on type
+    const bonusUpdates: Partial<Hero> = {
       experience: newExperience,
-      attack:
-        currentEnemy.bonus.type === "attack"
-          ? hero.attackDamage + currentEnemy.bonus.amount
-          : hero.attackDamage,
-      maxHealth:
-        currentEnemy.bonus.type === "hp"
-          ? hero.maxHealth + currentEnemy.bonus.amount
-          : hero.maxHealth,
     };
 
-    setHero(newHero);
+    if (currentEnemy.bonus.type === "attack") {
+      bonusUpdates.attackDamage = hero.attackDamage + currentEnemy.bonus.amount;
+    } else if (currentEnemy.bonus.type === "hp") {
+      bonusUpdates.maxHealth = hero.maxHealth + currentEnemy.bonus.amount;
+      bonusUpdates.currentHealth =
+        hero.currentHealth + currentEnemy.bonus.amount;
+    } else if (currentEnemy.bonus.type === "regeneration") {
+      bonusUpdates.regenerationRate =
+        hero.regenerationRate + currentEnemy.bonus.amount;
+    }
+
+    setHero((prev) => ({ ...prev, ...bonusUpdates }));
+
+    // Trigger bonus animation
+    setBonusAnimation({
+      type: currentEnemy.bonus.type,
+      amount: currentEnemy.bonus.amount,
+    });
+
+    setTimeout(() => {
+      setBonusAnimation(null);
+    }, 1000);
+
     // Check for level up
     if (newExperience >= hero.experienceToNextLevel) {
       levelUp();
@@ -339,5 +365,6 @@ export default function useAdventure() {
     attack,
     levelUp,
     removeCard,
+    bonusAnimation,
   };
 }

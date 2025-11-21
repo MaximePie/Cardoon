@@ -25,6 +25,12 @@ export default defineConfig({
         "src/main.tsx",
         "src/vite-env.d.ts",
         "**/*.d.ts",
+        "eslint.config.js",
+        "vite.config.ts",
+        "vitest.config.ts",
+        "scripts/**",
+        "dist/**",
+        "coverage/**",
       ],
       thresholds: {
         global: {

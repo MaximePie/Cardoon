@@ -8,6 +8,7 @@ import {
 } from "../middleware/simpleValidation.js";
 import { UserService } from "../services/userService.js";
 import {
+  AddHeroBonusRequest,
   AuthenticatedRequest,
   DailyGoalRequest,
   ItemRequest,
@@ -16,6 +17,7 @@ import {
   UserRegistrationRequest,
 } from "../types/requests.js";
 import {
+  addHeroBonusSchema,
   avatarUploadSchema,
   dailyGoalSchema,
   itemPurchaseSchema,
@@ -127,6 +129,20 @@ router.post(
     res
       .status(200)
       .json(createSuccessResponse(upgradedItem, "Item upgraded successfully"));
+  })
+);
+
+// Add Bonus to Hero after defeating an enemy
+router.post(
+  "/addHeroBonus",
+  authMiddleware,
+  validateBody(addHeroBonusSchema),
+  asyncHandler(async (req: AddHeroBonusRequest, res: Response) => {
+    const { type, amount } = req.validatedBody!;
+    const result = await UserService.addHeroBonus(type, amount, req.user.id);
+    res
+      .status(200)
+      .json(createSuccessResponse(result, "Hero bonus added successfully"));
   })
 );
 

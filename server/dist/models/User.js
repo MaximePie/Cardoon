@@ -84,6 +84,32 @@ const UserSchema = new mongoose_1.default.Schema({
         type: String,
         required: false, // Profile image is optional
     },
+    hero: {
+        attackDamage: {
+            type: Number,
+            default: 1,
+        },
+        regenerationRate: {
+            type: Number,
+            default: 1,
+        },
+        maxHealth: {
+            type: Number,
+            default: 20,
+        },
+        level: {
+            type: Number,
+            default: 1,
+        },
+        experience: {
+            type: Number,
+            default: 0,
+        },
+        experienceToNextLevel: {
+            type: Number,
+            default: 100,
+        },
+    },
 });
 UserSchema.methods = {
     updateDailyGoal: async function (target) {
@@ -197,6 +223,19 @@ UserSchema.methods = {
             await this.save();
         }
         await dailyGoal.save();
+    },
+    addBonus: async function (type, amount) {
+        if (type === "attack") {
+            this.hero.attackDamage += amount;
+        }
+        else if (type === "hp") {
+            this.hero.maxHealth += amount;
+            this.hero.currentHealth += amount;
+        }
+        else if (type === "regeneration") {
+            this.hero.regenerationRate += amount;
+        }
+        await this.save();
     },
 };
 UserSchema.methods.attachCard = async function (cardId) {

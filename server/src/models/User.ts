@@ -27,6 +27,15 @@ export interface IUser extends Document {
   currentDailyGoal: mongoose.Types.ObjectId | DailyGoalType; // Current daily goal (ObjectId until populated)
   currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
   image?: string; // Profile image URL (optional)
+  hero: {
+    attackDamage: number;
+    regenerationRate: number;
+    maxHealth: number;
+    currentHealth: number;
+    level: number;
+    experience: number;
+    experienceToNextLevel: number;
+  };
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;
@@ -43,6 +52,9 @@ export interface IUser extends Document {
   createDailyGoal(target: number, date: Date): Promise<DailyGoalType>;
   increaseDailyGoalProgress(increment: number): Promise<boolean>;
   updateDailyGoal(target: number): Promise<number>;
+
+  // Adventure Mode related methods
+  addBonus(type: string, amount: number): Promise<void>;
 }
 
 // Define an interface for the User model (static methods)
@@ -129,6 +141,33 @@ const UserSchema = new mongoose.Schema<IUser>({
   image: {
     type: String,
     required: false, // Profile image is optional
+  },
+
+  hero: {
+    attackDamage: {
+      type: Number,
+      default: 1,
+    },
+    regenerationRate: {
+      type: Number,
+      default: 1,
+    },
+    maxHealth: {
+      type: Number,
+      default: 20,
+    },
+    level: {
+      type: Number,
+      default: 1,
+    },
+    experience: {
+      type: Number,
+      default: 0,
+    },
+    experienceToNextLevel: {
+      type: Number,
+      default: 100,
+    },
   },
 });
 
@@ -264,6 +303,18 @@ UserSchema.methods = {
       await this.save();
     }
     await dailyGoal.save();
+  },
+
+  addBonus: async function (type: string, amount: number) {
+    if (type === "attack") {
+      this.hero.attackDamage += amount;
+    } else if (type === "hp") {
+      this.hero.maxHealth += amount;
+      this.hero.currentHealth += amount;
+    } else if (type === "regeneration") {
+      this.hero.regenerationRate += amount;
+    }
+    await this.save();
   },
 };
 

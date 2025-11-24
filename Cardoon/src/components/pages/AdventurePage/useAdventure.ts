@@ -35,10 +35,10 @@ const enemies: Enemy[] = [
   {
     id: "NightBorne",
     name: "Night Borne",
-    maxHealth: 100,
-    currentHealth: 100,
-    attackDamage: 15,
-    defense: 5,
+    maxHealth: 10,
+    currentHealth: 10,
+    attackDamage: 3,
+    defense: 0,
     experience: 50,
     bonus: {
       type: "hp",
@@ -50,10 +50,10 @@ const enemies: Enemy[] = [
   {
     id: "NightBorne",
     name: "Night Borne",
-    maxHealth: 100,
-    currentHealth: 100,
-    attackDamage: 15,
-    defense: 5,
+    maxHealth: 10,
+    currentHealth: 10,
+    attackDamage: 3,
+    defense: 0,
     experience: 50,
     bonus: {
       type: "regeneration",
@@ -65,10 +65,10 @@ const enemies: Enemy[] = [
   {
     id: "NightBorne",
     name: "Night Borne",
-    maxHealth: 100,
-    currentHealth: 100,
-    attackDamage: 15,
-    defense: 5,
+    maxHealth: 10,
+    currentHealth: 10,
+    attackDamage: 3,
+    defense: 0,
     experience: 50,
     bonus: {
       type: "attack",
@@ -80,10 +80,10 @@ const enemies: Enemy[] = [
   {
     id: "Skeleton",
     name: "Skeleton",
-    maxHealth: 150,
-    currentHealth: 150,
-    attackDamage: 20,
-    defense: 8,
+    maxHealth: 13,
+    currentHealth: 13,
+    attackDamage: 3,
+    defense: 0,
     experience: 75,
     bonus: {
       type: "attack",
@@ -96,7 +96,6 @@ const enemies: Enemy[] = [
 ];
 
 interface Hero {
-  name: string;
   maxHealth: number;
   currentHealth: number;
   regenerationRate: number;
@@ -107,18 +106,6 @@ interface Hero {
   experienceToNextLevel: number;
 }
 
-const baseHero = {
-  name: "Hero",
-  maxHealth: 120,
-  currentHealth: 120,
-  regenerationRate: 1,
-  attackDamage: process.env.NODE_ENV === "development" ? 200 : 25,
-  defense: 10,
-  level: 1,
-  experience: 0,
-  experienceToNextLevel: 100,
-};
-
 export default function useAdventure() {
   const { cards, user } = useUser();
   const queryClient = useQueryClient();
@@ -126,6 +113,8 @@ export default function useAdventure() {
     () => cards.reviewUserCards.data || [],
     [cards.reviewUserCards.data]
   );
+
+  const { hero: baseHero } = user.data;
 
   const [bonusAnimation, setBonusAnimation] = useState<{
     type: "hp" | "attack" | "regeneration";
@@ -184,6 +173,12 @@ export default function useAdventure() {
     }));
   };
 
+  useEffect(() => {
+    if (!hero) {
+      setHero(baseHero);
+    }
+  }, [baseHero, hero]);
+
   // Loose condition
   useEffect(() => {
     if (hero.currentHealth <= 0) {
@@ -239,11 +234,18 @@ export default function useAdventure() {
     }
     // Reset enemy
     setCurrentEnemy(enemies[Math.floor(Math.random() * enemies.length)]);
+
+    // 🎮 Envoyer le bonus au serveur
+    user.addHeroBonus({
+      type: currentEnemy.bonus.type,
+      amount: currentEnemy.bonus.amount,
+    });
   }, [
     currentEnemy.experience,
     currentEnemy.bonus.amount,
     currentEnemy.bonus.type,
     hero,
+    user,
   ]);
 
   useEffect(() => {

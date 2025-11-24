@@ -27,6 +27,7 @@ export const ACTIONS = {
   REMOVE_ITEM: "users/removeItem",
   UPGRADE_ITEM: "users/upgradeItem",
   UPDATE_ME_IMAGE: "users/me/image",
+  ADD_HERO_BONUS: "users/addHeroBonus",
 };
 
 export const useAdminCatchup = () => {

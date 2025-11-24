@@ -58,7 +58,6 @@ const AdventurePage = () => {
               className="AdventurePage__characterImage"
             />
             <p className="AdventurePage__name">
-              {hero.name}
               <span className="AdventurePage__status">
                 {isDev && <img src={devMode} alt="Dev Mode" />}
               </span>

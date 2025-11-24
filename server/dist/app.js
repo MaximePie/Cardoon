@@ -14,7 +14,7 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const helmet_1 = __importDefault(require("helmet"));
-const demo_validation_js_1 = __importDefault(require("./api/demo-validation.js"));
+const adventure_js_1 = __importDefault(require("./api/adventure.js"));
 const items_js_1 = __importDefault(require("./api/items.js"));
 const mistral_js_1 = __importDefault(require("./api/mistral.js"));
 const userCards_js_1 = __importDefault(require("./api/userCards.js"));
@@ -66,11 +66,10 @@ app.use((req, res, next) => {
 });
 app.use("/api/cards", cards_js_1.default);
 app.use("/api/userCards", userCards_js_1.default);
-// app.use("/api/users", usersRoutes); // Temporarily disabled
-app.use("/api/users", users_js_1.default); // New validated users API
-app.use("/api/validation", demo_validation_js_1.default); // Demo validation routes
+app.use("/api/users", users_js_1.default);
 app.use("/api/mistral", mistral_js_1.default);
 app.use("/api/items", items_js_1.default);
+app.use("/api/adventure", adventure_js_1.default);
 const errorHandler = (err, req, res, next) => {
     console.error(err.stack);
     res

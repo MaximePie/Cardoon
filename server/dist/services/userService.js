@@ -11,6 +11,14 @@ const index_js_1 = require("../errors/index.js");
 const User_js_1 = __importDefault(require("../models/User.js"));
 const imagesManager_js_1 = require("../utils/imagesManager.js");
 class UserService {
+    static async addHeroBonus(type, amount, id) {
+        const user = await User_js_1.default.findById(id);
+        if (!user) {
+            throw new index_js_1.AppError("User not found", 404);
+        }
+        await user.addBonus(type, amount);
+        return { user };
+    }
     static getJwtSecret() {
         const jwtSecret = process.env.JWT_SECRET;
         if (!jwtSecret) {

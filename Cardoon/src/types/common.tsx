@@ -56,4 +56,14 @@ export interface User {
     status: "PENDING" | "COMPLETED" | "FAIL";
   };
   image?: string; // URL de l'image de profil
+  hero: {
+    attackDamage: number;
+    regenerationRate: number;
+    defense: number;
+    maxHealth: number;
+    currentHealth: number;
+    level: number;
+    experience: number;
+    experienceToNextLevel: number;
+  };
 }

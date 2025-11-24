@@ -32,6 +32,16 @@ describe("useAdventure", () => {
       closedAt: "2023-10-21",
       status: "PENDING",
     },
+    hero: {
+      attackDamage: 2,
+      regenerationRate: 0,
+      maxHealth: 120,
+      currentHealth: 120,
+      level: 1,
+      experience: 0,
+      experienceToNextLevel: 100,
+      defense: 0,
+    },
   };
 
   const mockCards: PopulatedUserCard[] = [
@@ -111,6 +121,10 @@ describe("useAdventure", () => {
       refresh: () => {},
       updateImage: async (_imageFile: File) => {},
       updateDailyGoal: async (_newDailyGoal: number) => {},
+      addHeroBonus: async (_params: {
+        type: "hp" | "attack" | "regeneration";
+        amount: number;
+      }) => {},
     },
     clearAllErrors: () => {},
   };
@@ -148,7 +162,6 @@ describe("useAdventure", () => {
     it("should initialize with default hero stats", () => {
       const { result } = renderHook(() => useAdventure(), { wrapper });
 
-      expect(result.current.hero.name).toBe("Hero");
       expect(result.current.hero.maxHealth).toBe(120);
       expect(result.current.hero.currentHealth).toBe(120);
       expect(result.current.hero.level).toBe(1);
@@ -161,8 +174,8 @@ describe("useAdventure", () => {
 
       expect(result.current.currentEnemy).toBeDefined();
       expect(result.current.currentEnemy.name).toBe("Night Borne");
-      expect(result.current.currentEnemy.currentHealth).toBe(100);
-      expect(result.current.currentEnemy.maxHealth).toBe(100);
+      expect(result.current.currentEnemy.currentHealth).toBe(10);
+      expect(result.current.currentEnemy.maxHealth).toBe(10);
     });
 
     it("should initialize with idle states", () => {

@@ -70,6 +70,14 @@ router.post("/upgradeItem", auth_js_1.default, (0, simpleValidation_js_1.validat
         .status(200)
         .json((0, simpleValidation_js_1.createSuccessResponse)(upgradedItem, "Item upgraded successfully"));
 }));
+// Add Bonus to Hero after defeating an enemy
+router.post("/addHeroBonus", auth_js_1.default, (0, simpleValidation_js_1.validateBody)(schemas_js_1.addHeroBonusSchema), (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    const { type, amount } = req.validatedBody;
+    const result = await userService_js_1.UserService.addHeroBonus(type, amount, req.user.id);
+    res
+        .status(200)
+        .json((0, simpleValidation_js_1.createSuccessResponse)(result, "Hero bonus added successfully"));
+}));
 // Verify token
 router.get("/verify-token", auth_js_1.default, (req, res) => {
     res.json((0, simpleValidation_js_1.createSuccessResponse)({ valid: true }, "Token is valid"));

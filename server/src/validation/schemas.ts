@@ -175,6 +175,13 @@ export const itemUpgradeSchema = z.object({
   itemId: objectIdSchema,
 });
 
+export const addHeroBonusSchema = z.object({
+  type: z.enum(["attack", "hp", "regeneration"], {
+    message: "Bonus type must be 'attack', 'hp', or 'regeneration'",
+  }),
+  amount: z.number().min(1, "Bonus amount must be at least 1"),
+});
+
 /**
  * Daily Goal validation schemas
  */

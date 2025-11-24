@@ -11,6 +11,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import adventureRoutes from "./api/adventure.js";
 import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
@@ -77,6 +78,7 @@ app.use("/api/userCards", userCardsRoutes);
 app.use("/api/users", usersValidatedRoutes);
 app.use("/api/mistral", mistralRoutes);
 app.use("/api/items", itemsRoutes);
+app.use("/api/adventure", adventureRoutes);
 export const errorHandler = (
   err: Error,
   req: Request,

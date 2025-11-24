@@ -73,6 +73,16 @@ describe("AdventurePage", () => {
       closedAt: "2023-10-21",
       status: "PENDING",
     },
+    hero: {
+      attackDamage: 2,
+      regenerationRate: 0,
+      maxHealth: 120,
+      currentHealth: 120,
+      level: 1,
+      experience: 0,
+      experienceToNextLevel: 100,
+      defense: 0,
+    },
   };
 
   const mockCards: PopulatedUserCard[] = [
@@ -171,6 +181,10 @@ describe("AdventurePage", () => {
       refresh: () => {},
       updateImage: async (_imageFile: File) => {},
       updateDailyGoal: async (_newDailyGoal: number) => {},
+      addHeroBonus: async (_params: {
+        type: "hp" | "attack" | "regeneration";
+        amount: number;
+      }) => {},
     },
     clearAllErrors: () => {},
   };
@@ -248,7 +262,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       // Check that stats are displayed correctly
-      expect(screen.getByText("25")).toBeInTheDocument(); // Attack damage
+      expect(screen.getByText("2")).toBeInTheDocument(); // Attack damage
 
       // Check that hero stats are displayed
       const statsSection = document.querySelector(".AdventurePage__stats");
@@ -266,7 +280,6 @@ describe("AdventurePage", () => {
 
       // Check for hero avatar and info
       expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
-      expect(screen.getByText("Hero")).toBeInTheDocument();
 
       // Check hero health using the health bar element
       const heroHealthElements = document.querySelectorAll(
@@ -283,7 +296,7 @@ describe("AdventurePage", () => {
         ".AdventurePage__healthText"
       );
       expect(enemyHealthElements).toHaveLength(2); // Hero and enemy
-      expect(enemyHealthElements[1]).toHaveTextContent("100 / 100"); // Enemy health
+      expect(enemyHealthElements[1]).toHaveTextContent("10 / 10"); // Enemy health
 
       // Check for health bars (by class name since they don't have specific roles)
       const healthBars = document.querySelectorAll(".AdventurePage__healthBar");
@@ -370,7 +383,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       // Check that attack damage is displayed
-      expect(screen.getByText("25")).toBeInTheDocument(); // Attack damage
+      expect(screen.getByText("2")).toBeInTheDocument(); // Attack damage
 
       // Check that icons are displayed (using getAllByTestId because icons may appear multiple times)
       expect(screen.getAllByTestId("WhatshotIcon").length).toBeGreaterThan(0);
@@ -509,7 +522,7 @@ describe("AdventurePage", () => {
       renderAdventurePage(contextWithNoCards);
 
       // Should still render the page structure with hero
-      expect(screen.getByText("Hero")).toBeInTheDocument();
+      expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
 
       // But no cards should be visible - use queryAllByTestId to check for empty array
       const cardElements = screen.queryAllByTestId(/^card-/);
@@ -637,12 +650,12 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       // Check for character names
-      expect(screen.getByText("Hero")).toBeInTheDocument();
+      expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
       expect(screen.getByText(/Night Borne/)).toBeInTheDocument();
 
       // Check for health displays using more specific queries
       const heroSection = screen
-        .getByText("Hero")
+        .getByAltText("Hero Avatar")
         .closest(".AdventurePage__Hero");
       const enemySection = screen
         .getByText(/Night Borne/)
@@ -666,7 +679,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       // Component should still render normally
-      expect(screen.getByText("Hero")).toBeInTheDocument();
+      expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
 
       // Cards should still be interactive
       const correctButton = screen.getByTestId("correct-card1");
@@ -687,7 +700,7 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       // Component should render normally during loading
-      expect(screen.getByText("Hero")).toBeInTheDocument();
+      expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
       expect(screen.getByTestId("card-card1")).toBeInTheDocument();
     });
   });
@@ -1146,7 +1159,7 @@ describe("AdventurePage", () => {
       const enemyHealthElements = document.querySelectorAll(
         ".AdventurePage__healthText"
       );
-      expect(enemyHealthElements[1]).toHaveTextContent("100 / 100");
+      expect(enemyHealthElements[1]).toHaveTextContent("10 / 10");
 
       // The enemy reset logic is tested through the health bar display
       const healthFills = document.querySelectorAll(

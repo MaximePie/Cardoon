@@ -48,6 +48,7 @@ const mockUserContextValue = {
     refresh: vi.fn(),
     updateImage: vi.fn(),
     updateDailyGoal: vi.fn(),
+    addHeroBonus: vi.fn(),
   },
   clearAllErrors: vi.fn(),
 };

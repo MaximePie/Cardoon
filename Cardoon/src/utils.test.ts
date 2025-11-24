@@ -45,11 +45,26 @@ describe("utils", () => {
 
     it("should modify the original array", () => {
       const original = [1, 2, 3, 4, 5];
-      const copy = [...original];
       const result = shuffleArray(original);
 
-      expect(result).toBe(original); // Same reference
-      expect(original).not.toEqual(copy); // Content might be different
+      // Should return the same reference (mutates in place)
+      expect(result).toBe(original);
+
+      // Verify it's actually shuffling by running multiple times
+      // With a large enough array, at least one shuffle should differ
+      const testArray = Array.from({ length: 20 }, (_, i) => i);
+      const copy = [...testArray];
+      let foundDifference = false;
+
+      for (let i = 0; i < 10; i++) {
+        const shuffled = shuffleArray([...copy]);
+        if (JSON.stringify(shuffled) !== JSON.stringify(copy)) {
+          foundDifference = true;
+          break;
+        }
+      }
+
+      expect(foundDifference).toBe(true);
     });
 
     it("should handle different data types", () => {

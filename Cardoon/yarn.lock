@@ -618,22 +618,22 @@
   integrity sha512-oh9g4Cg3loVMz9MWeKWfDI+ooxxG1aRVetkiKIb2ESS2rrryGecQ/y4pAj4z5A5ebyw450dYRi/c4k/I3UBhHA==
 
 "@huggingface/inference@^4.0.0":
-  version "4.13.2"
-  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.2.tgz#009746c6fd2b627e8e7c8ebd5aed53d1a2ecfb27"
-  integrity sha512-cqs/2Ni3nTiE/iIsaC4gvZboXS/4FFItL+/1WMaP8PFQEpoH1V8bjFodNvkzzFthIxuYziD9tr0N28Db2iE/zQ==
+  version "4.13.4"
+  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.4.tgz#7f4541c65f83bbc64fcc9498c2cc385c8fa504a6"
+  integrity sha512-1G6jBDYLAZw7oNrJdMp+0/CafeoNaCLzrDd9fYSX3nhjzMuyWIPZ/MtP5EwXdC0htlFPx+R6JGqPhctAalQO+w==
   dependencies:
     "@huggingface/jinja" "^0.5.1"
-    "@huggingface/tasks" "^0.19.63"
+    "@huggingface/tasks" "^0.19.65"
 
 "@huggingface/jinja@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.1.tgz#081d334ddcf6237f65561ae3d665bb713a8ff74f"
-  integrity sha512-yUZLld4lrM9iFxHCwFQ7D1HW2MWMwSbeB7WzWqFYDWK+rEb+WldkLdAJxUPOmgICMHZLzZGVcVjFh3w/YGubng==
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.2.tgz#0ff7e4564e471d4f49abc23832d2891dc1fcf8e6"
+  integrity sha512-3KxqfOSYtHDsq6HglCH4BDHGXXHMS7ZHUHpxVGswa4l8ycCCExDR2E4nDlTo9LCa6bxp03ywf/mAIVEsO1Ov1w==
 
-"@huggingface/tasks@^0.19.63":
-  version "0.19.63"
-  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.63.tgz#a4fef3ea92d6a1ab396b56f308747be32d5e0787"
-  integrity sha512-hmd8e5fdjRiIJE7/EYWXS+Pm2SAu89xjZEgfZddN10ubWqlelXLyj2YgHZrVDEVkVA+5+ImMZUpQIez7b2//fw==
+"@huggingface/tasks@^0.19.65":
+  version "0.19.65"
+  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.65.tgz#a6c7256c7b98a4671204633a38e02f220abf4fca"
+  integrity sha512-ecP5bMLwZRKsln6IhTkicIt8Wzn7cYquKYBkJe7K2qkIvvnhzT32wf9dvvFjRqv+cDzdVxOLEdT0DUkVzGiV5A==
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"

@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import { AddHeroBonusParams } from "../../services/heroApi";
 import { Card, PopulatedUserCard, User } from "../../types/common";
 
 export interface UserContextType {
@@ -37,6 +38,7 @@ export interface UserContextType {
     refresh: () => void;
     updateImage: (imageFile: File) => Promise<void>;
     updateDailyGoal: (newDailyGoal: number) => Promise<void>;
+    addHeroBonus: (params: AddHeroBonusParams) => void;
   };
   clearAllErrors: () => void;
 }
@@ -57,6 +59,16 @@ export const emptyUser: User = {
     status: "PENDING", // PENDING, COMPLETED, FAILED
   },
   streak: 0,
+  hero: {
+    attackDamage: 1,
+    regenerationRate: 1,
+    maxHealth: 20,
+    defense: 1,
+    currentHealth: 20,
+    level: 1,
+    experience: 0,
+    experienceToNextLevel: 100,
+  },
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -95,6 +107,7 @@ export const UserContext = createContext<UserContextType>({
     refresh: () => {},
     updateImage: async (_imageFile: File) => {},
     updateDailyGoal: async (_newDailyGoal: number) => {},
+    addHeroBonus: (_params: AddHeroBonusParams) => {},
   },
   clearAllErrors: () => {},
 });

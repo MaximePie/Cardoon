@@ -14,6 +14,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "../../lib/queryClient";
 import {
+  addHeroBonus,
+  AddHeroBonusParams,
+  AddHeroBonusResponse,
+} from "../../services/heroApi";
+import {
   deleteUserCard,
   editUserCard,
   getMe,
@@ -22,7 +27,7 @@ import {
   invertCard,
 } from "../../services/userCardsApi";
 import { updateUserDailyGoal } from "../../services/userDailyGoalApi";
-import { Card, PopulatedUserCard } from "../../types/common";
+import { Card, PopulatedUserCard, User } from "../../types/common";
 
 export const useReviewUserCards = (userId: string | number) => {
   return useQuery({
@@ -510,16 +515,64 @@ export const useUserDailyGoalUpdate = (userId: string | number) => {
   });
 };
 
+/**
+ * Hook pour ajouter un bonus au héros de l'utilisateur
+ *
+ * @description Ce hook envoie une requête pour ajouter un bonus au héros
+ * et met à jour automatiquement le cache utilisateur
+ *
+ * @param userId - ID de l'utilisateur
+ *
+ * @example
+ * ```tsx
+ * const addBonusMutation = useAddHeroBonus(userId);
+ *
+ * const handleEnemyDefeated = () => {
+ *   addBonusMutation.mutate({
+ *     type: "attack",
+ *     amount: 1
+ *   });
+ * };
+ * ```
+ */
+export const useAddHeroBonus = (userId: string | number) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<AddHeroBonusResponse, Error, AddHeroBonusParams>({
+    mutationKey: ["addHeroBonus", userId],
+    mutationFn: (params: AddHeroBonusParams) => addHeroBonus(params),
+    onSuccess: (data) => {
+      // Mettre à jour le cache utilisateur avec les nouvelles stats du héros
+      queryClient.setQueryData(["user", "me"], (oldUser: User | undefined) => {
+        if (!oldUser) return data.user;
+        return {
+          ...oldUser,
+          hero: data.user.hero,
+        };
+      });
+      console.log("🎮 Hero bonus applied successfully");
+    },
+    onError: (error) => {
+      console.error("❌ Error applying hero bonus:", error);
+    },
+  });
+};
+
 export const useUserManager = () => {
   const queryClient = useQueryClient();
   // Implementation of user fetching logic
   const meQuery = useMeQuery();
   const updateUserMutation = useUserDailyGoalUpdate(meQuery.data?._id || "");
+  const addHeroBonusMutation = useAddHeroBonus(meQuery.data?._id || "");
+
   return {
     user: meQuery.data,
     isLoading: meQuery.isLoading,
     error: meQuery.error,
     updateUserDailyGoal: updateUserMutation.mutate,
+    addHeroBonus: addHeroBonusMutation.mutate,
+    isAddingHeroBonus: addHeroBonusMutation.isPending,
+    addHeroBonusError: addHeroBonusMutation.error,
     resetQueries: () => {
       queryClient.removeQueries({ queryKey: ["user", "me"] });
     },

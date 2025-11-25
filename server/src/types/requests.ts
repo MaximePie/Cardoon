@@ -36,6 +36,12 @@ export interface ItemRequest
     itemId: import("mongoose").ObjectId;
   }> {}
 
+export interface AddHeroBonusRequest
+  extends AuthenticatedRequest<{
+    type: "attack" | "hp" | "regeneration";
+    amount: number;
+  }> {}
+
 export interface UploadedFile {
   filepath: string;
   originalFilename?: string;

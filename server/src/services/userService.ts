@@ -17,6 +17,14 @@ export interface AuthResult {
   user: any;
 }
 export class UserService {
+  static async addHeroBonus(type: string, amount: number, id: string) {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+    await user.addBonus(type, amount);
+    return { user };
+  }
   private static getJwtSecret(): string {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {

@@ -11,7 +11,9 @@
     "dev": "nodemon -x npx tsx ./src/app.ts",
     "dev:clean": "node ../scripts/kill-port.js 3000 && npm run dev",
     "kill-port": "node ../scripts/kill-port.js 3000",
-    "security-test": "node scripts/security-test.js"
+    "security-test": "node scripts/security-test.js",
+    "seed": "npx tsx ./src/seeds/index.ts",
+    "seed:dev": "cross-env MONGODB_URI=mongodb://localhost:27017/cardoon npx tsx ./src/seeds/index.ts"
   },
   "keywords": [],
   "author": "",

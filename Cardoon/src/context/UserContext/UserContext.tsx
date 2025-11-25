@@ -21,6 +21,7 @@ export const UserContextProvider = ({
     resetQueries: refetchUser,
     isLoading: isUserLoading,
     updateUserDailyGoal: updateUser,
+    addHeroBonus: addHeroBonusAction,
   } = useUserManager();
 
   const [currentUser, setUser] = useState<User>(user || emptyUser);
@@ -183,6 +184,13 @@ export const UserContextProvider = ({
     updateUser(newDailyGoal);
   };
 
+  const addHeroBonus = (params: {
+    type: "hp" | "attack" | "regeneration";
+    amount: number;
+  }) => {
+    addHeroBonusAction(params);
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -221,6 +229,7 @@ export const UserContextProvider = ({
           refresh,
           updateImage,
           updateDailyGoal,
+          addHeroBonus,
         },
         clearAllErrors,
       }}

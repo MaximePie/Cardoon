@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.multipleIdsSchema = exports.paramIdSchema = exports.avatarUploadSchema = exports.imageUploadSchema = exports.errorResponseSchema = exports.successResponseSchema = exports.dailyGoalProgressSchema = exports.dailyGoalSchema = exports.itemUpgradeSchema = exports.itemPurchaseSchema = exports.itemSchema = exports.cardAnswerSchema = exports.cardUpdateSchema = exports.cardSchema = exports.userUpdateSchema = exports.userLoginSchema = exports.userRegistrationSchema = exports.usernameSchema = exports.passwordSchema = exports.emailSchema = exports.objectIdSchema = void 0;
+exports.multipleIdsSchema = exports.paramIdSchema = exports.avatarUploadSchema = exports.imageUploadSchema = exports.errorResponseSchema = exports.successResponseSchema = exports.dailyGoalProgressSchema = exports.dailyGoalSchema = exports.addHeroBonusSchema = exports.itemUpgradeSchema = exports.itemPurchaseSchema = exports.itemSchema = exports.cardAnswerSchema = exports.cardUpdateSchema = exports.cardSchema = exports.userUpdateSchema = exports.userLoginSchema = exports.userRegistrationSchema = exports.usernameSchema = exports.passwordSchema = exports.emailSchema = exports.objectIdSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const zod_1 = require("zod");
 /**
@@ -157,6 +157,12 @@ exports.itemPurchaseSchema = zod_1.z.object({
 exports.itemUpgradeSchema = zod_1.z.object({
     itemId: exports.objectIdSchema,
 });
+exports.addHeroBonusSchema = zod_1.z.object({
+    type: zod_1.z.enum(["attack", "hp", "regeneration"], {
+        message: "Bonus type must be 'attack', 'hp', or 'regeneration'",
+    }),
+    amount: zod_1.z.number().min(1, "Bonus amount must be at least 1"),
+});
 /**
  * Daily Goal validation schemas
  */
@@ -167,12 +173,6 @@ exports.dailyGoalSchema = zod_1.z.object({
         .int()
         .min(1, "Daily goal target must be at least 1")
         .max(100, "Daily goal target cannot exceed 100"),
-    date: zod_1.z
-        .string()
-        .datetime("Invalid date format")
-        .or(zod_1.z.date())
-        .optional()
-        .transform((val) => (val ? new Date(val) : new Date())),
 });
 // Daily goal progress update schema
 exports.dailyGoalProgressSchema = zod_1.z.object({

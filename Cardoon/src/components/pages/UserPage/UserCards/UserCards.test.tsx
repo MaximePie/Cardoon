@@ -46,6 +46,16 @@ describe("UserCards", () => {
       status: "PENDING",
     },
     streak: 3,
+    hero: {
+      maxHealth: 120,
+      currentHealth: 120,
+      attackDamage: 2,
+      defense: 0,
+      regenerationRate: 0,
+      level: 1,
+      experience: 0,
+      experienceToNextLevel: 100,
+    },
   };
 
   const mockCard1: Card = {
@@ -168,6 +178,7 @@ describe("UserCards", () => {
         refresh: vi.fn(),
         updateImage: vi.fn(),
         updateDailyGoal: vi.fn(),
+        addHeroBonus: vi.fn(),
       },
       cards: {
         allUserCards: {
@@ -471,6 +482,7 @@ describe("UserCards", () => {
           refresh: vi.fn(),
           updateImage: vi.fn(),
           updateDailyGoal: vi.fn(),
+          addHeroBonus: vi.fn(),
         },
         cards: {
           allUserCards: {
@@ -519,6 +531,7 @@ describe("UserCards", () => {
           refresh: vi.fn(),
           updateImage: vi.fn(),
           updateDailyGoal: vi.fn(),
+          addHeroBonus: vi.fn(),
         },
         cards: {
           allUserCards: {
@@ -569,6 +582,7 @@ describe("UserCards", () => {
           refresh: vi.fn(),
           updateImage: vi.fn(),
           updateDailyGoal: vi.fn(),
+          addHeroBonus: vi.fn(),
         },
         cards: {
           allUserCards: {
@@ -666,6 +680,7 @@ describe("UserCards", () => {
           refresh: vi.fn(),
           updateImage: vi.fn(),
           updateDailyGoal: vi.fn(),
+          addHeroBonus: vi.fn(),
         },
         cards: {
           allUserCards: {

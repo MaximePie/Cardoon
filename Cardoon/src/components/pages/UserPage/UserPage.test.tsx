@@ -42,6 +42,7 @@ const createMockUserContext = (user: User, overrides = {}) => ({
     refresh: vi.fn(),
     updateImage: vi.fn(),
     updateDailyGoal: vi.fn(),
+    addHeroBonus: vi.fn(),
   },
   cards: {
     reviewUserCards: {
@@ -84,6 +85,16 @@ describe("UserPage", () => {
       target: 10,
       closedAt: "2023-10-21",
       status: "PENDING",
+    },
+    hero: {
+      maxHealth: 120,
+      currentHealth: 120,
+      attackDamage: 2,
+      defense: 0,
+      regenerationRate: 0,
+      level: 1,
+      experience: 0,
+      experienceToNextLevel: 100,
     },
   };
 

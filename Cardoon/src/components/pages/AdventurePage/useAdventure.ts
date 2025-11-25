@@ -114,8 +114,19 @@ export default function useAdventure() {
     [cards.reviewUserCards.data]
   );
 
-  const { hero: baseHero } = user.data;
-  console.log(baseHero);
+  // Safe default hero object to prevent crashes if user.data.hero is missing
+  const defaultHero: Hero = {
+    maxHealth: 120,
+    currentHealth: 120,
+    regenerationRate: 0,
+    attackDamage: 2,
+    defense: 0,
+    level: 1,
+    experience: 0,
+    experienceToNextLevel: 100,
+  };
+
+  const baseHero = user.data.hero ?? defaultHero;
 
   const [bonusAnimation, setBonusAnimation] = useState<{
     type: "hp" | "attack" | "regeneration";
@@ -125,8 +136,8 @@ export default function useAdventure() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [hero, setHero] = useState<Hero>({
     ...baseHero,
-    currentHealth: baseHero.currentHealth || baseHero.maxHealth,
-    defense: baseHero.defense || 0,
+    currentHealth: baseHero.currentHealth ?? baseHero.maxHealth,
+    defense: baseHero.defense ?? 0,
   });
   const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
   const [enemyState, setEnemyState] = useState<"idle" | "defeated">("idle");
@@ -185,7 +196,7 @@ export default function useAdventure() {
       setHero({
         ...baseHero,
         currentHealth: baseHero.maxHealth,
-        defense: baseHero.defense || 0,
+        defense: baseHero.defense ?? 0,
       });
       setCurrentEnemy(enemies[0]);
     }

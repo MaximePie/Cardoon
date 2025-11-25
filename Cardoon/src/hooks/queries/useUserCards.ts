@@ -28,6 +28,7 @@ import {
 } from "../../services/userCardsApi";
 import { updateUserDailyGoal } from "../../services/userDailyGoalApi";
 import { Card, PopulatedUserCard, User } from "../../types/common";
+import { useSnackbar } from "../contexts/useSnackbar";
 
 export const useReviewUserCards = (userId: string | number) => {
   return useQuery({
@@ -535,7 +536,12 @@ export const useUserDailyGoalUpdate = (userId: string | number) => {
  * };
  * ```
  */
-export const useAddHeroBonus = (userId: string | number) => {
+export const useAddHeroBonus = (
+  userId: string | number,
+  options?: {
+    onError?: (error: Error) => void;
+  }
+) => {
   const queryClient = useQueryClient();
 
   return useMutation<AddHeroBonusResponse, Error, AddHeroBonusParams>({
@@ -554,16 +560,27 @@ export const useAddHeroBonus = (userId: string | number) => {
     },
     onError: (error) => {
       console.error("❌ Error applying hero bonus:", error);
+      if (options?.onError) {
+        options.onError(error);
+      }
     },
   });
 };
 
 export const useUserManager = () => {
   const queryClient = useQueryClient();
+  const { openSnackbarWithMessage } = useSnackbar();
   // Implementation of user fetching logic
   const meQuery = useMeQuery();
   const updateUserMutation = useUserDailyGoalUpdate(meQuery.data?._id || "");
-  const addHeroBonusMutation = useAddHeroBonus(meQuery.data?._id || "");
+  const addHeroBonusMutation = useAddHeroBonus(meQuery.data?._id || "", {
+    onError: (error) => {
+      openSnackbarWithMessage(
+        `Erreur lors de l'ajout du bonus au héros : ${error.message}`,
+        "error"
+      );
+    },
+  });
 
   return {
     user: meQuery.data,

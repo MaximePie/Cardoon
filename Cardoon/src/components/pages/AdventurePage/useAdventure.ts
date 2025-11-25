@@ -115,7 +115,6 @@ export default function useAdventure() {
   );
 
   const { hero: baseHero } = user.data;
-  console.log(baseHero);
 
   const [bonusAnimation, setBonusAnimation] = useState<{
     type: "hp" | "attack" | "regeneration";

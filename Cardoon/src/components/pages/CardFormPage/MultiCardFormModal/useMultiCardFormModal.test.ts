@@ -186,10 +186,14 @@ describe("useMultiCardFormModal", () => {
     });
 
     it("should set loading state during generation", async () => {
-      // Mock to immediately resolve so we can verify loading was set
-      mockAsyncPost.mockImplementation(async () => {
-        return validMistralResponse;
+      // Create a deferred promise we can control
+      let resolvePromise: (value: any) => void;
+      const deferredPromise = new Promise((resolve) => {
+        resolvePromise = resolve;
       });
+
+      // Mock to return our controllable promise
+      mockAsyncPost.mockImplementation(() => deferredPromise);
 
       const { result } = renderHook(() => useMultiCardFormModal());
 
@@ -200,13 +204,21 @@ describe("useMultiCardFormModal", () => {
       // Initially not loading
       expect(result.current.isGenerationLoading).toBe(false);
 
-      // Call generateQuestions and immediately check loading state before awaiting
-      const promise = result.current.generateQuestions(mockEvent);
-
-      // By this point, the function has been called and setIsLoading(true) should have run
-      // But we need to wrap in act and wait for the promise
+      // Call generateQuestions and let the loading state update
+      let promise: Promise<void>;
       await act(async () => {
-        await promise;
+        promise = result.current.generateQuestions(mockEvent);
+        // Wait a tick for the loading state to be set
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+
+      // Now loading state should be true
+      expect(result.current.isGenerationLoading).toBe(true);
+
+      // Now resolve the promise and wait for state updates
+      await act(async () => {
+        resolvePromise!(validMistralResponse);
+        await promise!;
       });
 
       // Should not be loading after completion

@@ -9,6 +9,47 @@ const Enemy_js_1 = __importDefault(require("../models/Enemy.js"));
 const Level_js_1 = __importDefault(require("../models/Level.js"));
 class AdventureService {
     /**
+     * Get all adventure data: levels with their enemies
+     */
+    async getAllAdventureData() {
+        const levels = await Level_js_1.default.find().sort({ order: 1 }).lean();
+        const enemies = await Enemy_js_1.default.find({ isActive: true })
+            .sort({ level: 1, spawnWeight: -1 })
+            .lean();
+        // Group enemies by levelId
+        const enemiesByLevel = enemies.reduce((acc, enemy) => {
+            const levelId = enemy.level.toString();
+            if (!acc[levelId]) {
+                acc[levelId] = [];
+            }
+            acc[levelId].push({
+                id: enemy.id,
+                name: enemy.name,
+                maxHealth: enemy.maxHealth,
+                attackDamage: enemy.attackDamage,
+                defense: enemy.defense,
+                experience: enemy.experience,
+                bonus: enemy.bonus,
+                sprites: enemy.sprites,
+                spawnWeight: enemy.spawnWeight,
+            });
+            return acc;
+        }, {});
+        // Combine levels with their enemies
+        const levelsWithEnemies = levels.map((level) => ({
+            _id: level._id,
+            name: level.name,
+            order: level.order,
+            description: level.description,
+            backgroundImage: level.backgroundImage,
+            minHeroLevel: level.minHeroLevel,
+            enemies: enemiesByLevel[level._id.toString()] || [],
+        }));
+        return {
+            levels: levelsWithEnemies,
+        };
+    }
+    /**
      * Get all available levels sorted by order
      */
     async getAvailableLevels() {

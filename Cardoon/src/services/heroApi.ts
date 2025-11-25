@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 const backUrl = import.meta.env.VITE_API_URL;
 
 export interface AddHeroBonusParams {
-  type: "hp" | "attack" | "regeneration";
+  type: "hp" | "attack" | "regeneration" | "defense";
   amount: number;
 }
 

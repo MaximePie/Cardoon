@@ -8,6 +8,7 @@ const express_1 = require("express");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 dotenv_1.default.config();
 const authMiddleware = (req, res, next) => {
+    console.log("Authenticating request:", req.method, req.url);
     const authHeader = req.headers.authorization;
     if (!authHeader) {
         res.status(401).json({ message: "Authorization header missing" });
@@ -26,6 +27,7 @@ const authMiddleware = (req, res, next) => {
     try {
         const decodedToken = jsonwebtoken_1.default.verify(token, jwtSecret);
         req.user = decodedToken;
+        console.log("Authentication successful for user and for request", decodedToken, req.method, req.url);
         next();
         return;
     }

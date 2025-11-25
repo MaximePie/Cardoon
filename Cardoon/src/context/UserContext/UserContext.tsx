@@ -185,7 +185,7 @@ export const UserContextProvider = ({
   };
 
   const addHeroBonus = (params: {
-    type: "hp" | "attack" | "regeneration";
+    type: "hp" | "attack" | "regeneration" | "defense";
     amount: number;
   }) => {
     addHeroBonusAction(params);

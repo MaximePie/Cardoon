@@ -9,6 +9,7 @@ interface AuthenticatedRequest extends Request {
 }
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  console.log("Authenticating request:", req.method, req.url);
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(401).json({ message: "Authorization header missing" });
@@ -30,6 +31,12 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   try {
     const decodedToken = jwt.verify(token, jwtSecret);
     (req as AuthenticatedRequest).user = decodedToken;
+    console.log(
+      "Authentication successful for user and for request",
+      decodedToken,
+      req.method,
+      req.url
+    );
     next();
     return;
   } catch (err) {

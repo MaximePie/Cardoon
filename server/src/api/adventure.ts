@@ -1,8 +1,24 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import authMiddleware from "../middleware/auth.js";
+import { asyncHandler } from "../middleware/errorHandler.js";
 import adventureService from "../services/adventureService.js";
 
 const router = Router();
+
+/**
+ * GET /adventure
+ * Get all adventure data (levels with their enemies)
+ */
+router.get(
+  "/",
+  authMiddleware,
+  asyncHandler(async (req: Request, res: Response) => {
+    console.log("Fetching all adventure data");
+    const adventureData = await adventureService.getAllAdventureData();
+    res.json(adventureData);
+  })
+);
 
 /**
  * GET /adventure/levels

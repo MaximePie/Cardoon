@@ -4,6 +4,7 @@ import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { SvgIconProps } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAdventureContext } from "../../../context/AdventureContext";
 import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { QueryKeys } from "../../../lib/queryClient";
@@ -24,76 +25,26 @@ interface Enemy {
   defense: number;
   experience: number; // Given exp when defeated
   bonus: {
-    type: "hp" | "attack" | "regeneration";
+    type: "hp" | "attack" | "regeneration" | "defense";
     amount: number;
     icon: React.ComponentType<SvgIconProps>;
     iconColor: SvgIconProps["color"];
   };
 }
 
-const enemies: Enemy[] = [
-  {
-    id: "NightBorne",
-    name: "Night Borne",
-    maxHealth: 5,
-    currentHealth: 5,
-    attackDamage: 2,
-    defense: 0,
-    experience: 50,
-    bonus: {
-      type: "hp",
-      amount: 1,
-      icon: FavoriteIcon,
-      iconColor: "primary",
-    },
-  },
-  {
-    id: "NightBorne",
-    name: "Night Borne",
-    maxHealth: 5,
-    currentHealth: 5,
-    attackDamage: 2,
-    defense: 0,
-    experience: 50,
-    bonus: {
-      type: "regeneration",
-      amount: 1,
-      icon: HealthAndSafetyIcon,
-      iconColor: "success",
-    },
-  },
-  {
-    id: "NightBorne",
-    name: "Night Borne",
-    maxHealth: 5,
-    currentHealth: 5,
-    attackDamage: 2,
-    defense: 0,
-    experience: 50,
-    bonus: {
-      type: "attack",
-      amount: 1,
-      icon: WhatshotIcon,
-      iconColor: "error",
-    },
-  },
-  {
-    id: "Skeleton",
-    name: "Skeleton",
-    maxHealth: 13,
-    currentHealth: 13,
-    attackDamage: 3,
-    defense: 0,
-    experience: 75,
-    bonus: {
-      type: "attack",
-      amount: 1,
-      icon: WhatshotIcon,
-      iconColor: "error",
-    },
-  },
-  // Ajoutez plus d'ennemis ici si nécessaire
-];
+// Helper function to get icon and color for bonus type
+const getBonusIcon = (type: "hp" | "attack" | "regeneration" | "defense") => {
+  switch (type) {
+    case "hp":
+      return { icon: FavoriteIcon, iconColor: "primary" as const };
+    case "attack":
+      return { icon: WhatshotIcon, iconColor: "error" as const };
+    case "regeneration":
+      return { icon: HealthAndSafetyIcon, iconColor: "success" as const };
+    case "defense":
+      return { icon: HealthAndSafetyIcon, iconColor: "info" as const };
+  }
+};
 
 interface Hero {
   maxHealth: number;
@@ -106,31 +57,71 @@ interface Hero {
   experienceToNextLevel: number;
 }
 
-export default function useAdventure() {
+export default function useAdventureGame() {
   const { cards, user } = useUser();
+  const { adventureData } = useAdventureContext();
+
   const queryClient = useQueryClient();
   const reviewUserCards = useMemo(
     () => cards.reviewUserCards.data || [],
     [cards.reviewUserCards.data]
   );
 
-  const { hero: baseHero } = user.data;
+  // Get current level enemies from adventure data
+  // For now, use the first level (Dark Forest) - later can be based on user progress
+  const currentLevelEnemies = useMemo(() => {
+    if (!adventureData?.levels || adventureData.levels.length === 0) {
+      return [];
+    }
+
+    // Find the first unlocked level or default to first level
+    const currentLevel = adventureData.levels[0];
+
+    return currentLevel.enemies.map((enemy) => ({
+      id: enemy.id as EnemyType,
+      name: enemy.name,
+      maxHealth: enemy.maxHealth,
+      currentHealth: enemy.maxHealth,
+      attackDamage: enemy.attackDamage,
+      defense: enemy.defense,
+      experience: enemy.experience,
+      bonus: {
+        type: enemy.bonus.type,
+        amount: enemy.bonus.amount,
+        ...getBonusIcon(enemy.bonus.type),
+      },
+    }));
+  }, [adventureData]);
+
+  // Safe default hero object to prevent crashes if user.data.hero is missing
+  const defaultHero: Hero = {
+    maxHealth: 120,
+    currentHealth: 120,
+    regenerationRate: 0,
+    attackDamage: 2,
+    defense: 0,
+    level: 1,
+    experience: 0,
+    experienceToNextLevel: 100,
+  };
+
+  const baseHero = user.data.hero ?? defaultHero;
 
   const [bonusAnimation, setBonusAnimation] = useState<{
-    type: "hp" | "attack" | "regeneration";
+    type: "hp" | "attack" | "regeneration" | "defense";
     amount: number;
   } | null>(null);
   const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
   const [hero, setHero] = useState<Hero>({
     ...baseHero,
-    currentHealth: baseHero.currentHealth || baseHero.maxHealth,
-    defense: baseHero.defense || 0,
+    currentHealth: baseHero.currentHealth ?? baseHero.maxHealth,
+    defense: baseHero.defense ?? 0,
   });
   const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
   const [enemyState, setEnemyState] = useState<"idle" | "defeated">("idle");
 
-  const [currentEnemy, setCurrentEnemy] = useState<Enemy>(enemies[0]);
+  const [currentEnemy, setCurrentEnemy] = useState<Enemy | null>(null);
 
   // Refs to store timeout IDs for cleanup
   const heroAttackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -141,6 +132,8 @@ export default function useAdventure() {
   const { put: updateUserCard } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
 
   const attack = (enemy: Enemy, isCorrect: boolean) => {
+    if (!currentEnemy) return;
+
     if (isCorrect) {
       // Hero only performs attack animation when answer is correct for visual feedback
       setHeroState("attacking");
@@ -153,10 +146,13 @@ export default function useAdventure() {
       }, 500);
       const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
       const enemyDamage = Math.max(0, enemy.attackDamage - hero.defense);
-      setCurrentEnemy((prev) => ({
-        ...prev,
-        currentHealth: Math.max(0, prev.currentHealth - heroDamange),
-      }));
+      setCurrentEnemy((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          currentHealth: Math.max(0, prev.currentHealth - heroDamange),
+        };
+      });
       setHero((prev) => ({
         ...prev,
         currentHealth: Math.max(0, prev.currentHealth - enemyDamage),
@@ -177,19 +173,28 @@ export default function useAdventure() {
     }));
   };
 
+  // Initialize enemy when enemies are loaded
+  useEffect(() => {
+    if (currentLevelEnemies.length > 0 && !currentEnemy) {
+      setCurrentEnemy(currentLevelEnemies[0]);
+    }
+  }, [currentLevelEnemies, currentEnemy]);
+
   // Loose condition
   useEffect(() => {
-    if (hero.currentHealth <= 0) {
+    if (hero.currentHealth <= 0 && currentLevelEnemies.length > 0) {
       // Reset hero and enemy
       setHero({
         ...baseHero,
         currentHealth: baseHero.maxHealth,
-        defense: baseHero.defense || 0,
+        defense: baseHero.defense ?? 0,
       });
-      setCurrentEnemy(enemies[0]);
+      setCurrentEnemy(currentLevelEnemies[0]);
     }
-  }, [hero.currentHealth, baseHero]);
+  }, [hero.currentHealth, baseHero, currentLevelEnemies]);
   const onEnemyDefeated = useCallback(() => {
+    if (!currentEnemy) return;
+
     setEnemyState("defeated");
     // Clear any existing timeout
     if (enemyDefeatedTimeout.current) {
@@ -233,27 +238,27 @@ export default function useAdventure() {
     if (newExperience >= hero.experienceToNextLevel) {
       levelUp();
     }
-    // Reset enemy
-    setCurrentEnemy(enemies[Math.floor(Math.random() * enemies.length)]);
+    // Reset enemy - pick random enemy from current level
+    if (currentLevelEnemies.length > 0) {
+      const randomEnemy =
+        currentLevelEnemies[
+          Math.floor(Math.random() * currentLevelEnemies.length)
+        ];
+      setCurrentEnemy(randomEnemy);
+    }
 
     // 🎮 Envoyer le bonus au serveur
     user.addHeroBonus({
       type: currentEnemy.bonus.type,
       amount: currentEnemy.bonus.amount,
     });
-  }, [
-    currentEnemy.experience,
-    currentEnemy.bonus.amount,
-    currentEnemy.bonus.type,
-    hero,
-    user,
-  ]);
+  }, [currentEnemy, currentLevelEnemies, hero, user]);
 
   useEffect(() => {
-    if (currentEnemy.currentHealth <= 0) {
+    if (currentEnemy && currentEnemy.currentHealth <= 0) {
       onEnemyDefeated();
     }
-  }, [currentEnemy.currentHealth, onEnemyDefeated]);
+  }, [currentEnemy, onEnemyDefeated]);
 
   const syncCards = useCallback(() => {
     if (reviewUserCards.length === 0) return;
@@ -302,6 +307,8 @@ export default function useAdventure() {
   };
 
   const removeCard = async (card: PopulatedUserCard, isCorrect: boolean) => {
+    if (!currentEnemy) return;
+
     attack(currentEnemy, isCorrect);
 
     setCardsInHand((prev) => {

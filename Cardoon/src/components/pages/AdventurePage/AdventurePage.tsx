@@ -7,7 +7,7 @@ import { PopulatedUserCard } from "../../../types/common";
 import Card from "../../molecules/Card/Card";
 import { getEnemyAssets } from "./enemyAssets";
 import { HeroStats } from "./HeroStats";
-import useAdventure from "./useAdventure";
+import useAdventureGame from "./useAdventure";
 
 const isDev = import.meta.env.DEV;
 
@@ -20,7 +20,11 @@ const AdventurePage = () => {
     currentEnemy,
     removeCard,
     bonusAnimation,
-  } = useAdventure();
+  } = useAdventureGame();
+
+  if (!currentEnemy) {
+    return <div>Loading...</div>;
+  }
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
   const BonusIcon = currentEnemy.bonus.icon;

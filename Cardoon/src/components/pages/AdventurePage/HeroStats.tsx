@@ -14,7 +14,7 @@ interface HeroStatsProps {
   experience: number;
   experienceToNextLevel: number;
   bonusAnimation: {
-    type: "attack" | "regeneration" | "hp";
+    type: "attack" | "regeneration" | "hp" | "defense";
     amount: number;
   } | null;
 }

@@ -5,8 +5,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const NotFoundError_js_1 = require("../errors/NotFoundError.js");
+const auth_js_1 = __importDefault(require("../middleware/auth.js"));
+const errorHandler_js_1 = require("../middleware/errorHandler.js");
 const adventureService_js_1 = __importDefault(require("../services/adventureService.js"));
 const router = (0, express_1.Router)();
+/**
+ * GET /adventure
+ * Get all adventure data (levels with their enemies)
+ */
+router.get("/", auth_js_1.default, (0, errorHandler_js_1.asyncHandler)(async (req, res) => {
+    console.log("Fetching all adventure data");
+    const adventureData = await adventureService_js_1.default.getAllAdventureData();
+    res.json(adventureData);
+}));
 /**
  * GET /adventure/levels
  * Get all available levels

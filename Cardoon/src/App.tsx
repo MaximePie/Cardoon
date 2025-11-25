@@ -10,6 +10,7 @@ import LoginPage from "./components/pages/LoginPage/LoginPage";
 import RegisterPage from "./components/pages/RegisterPage/RegisterPage";
 import ShopPage from "./components/pages/UpgradePage/UpgradePage";
 import UserPage from "./components/pages/UserPage/UserPage";
+import { AdventureContextProvider } from "./context/AdventureContext";
 import { CategoriesContextProvider } from "./context/CategoriesContext";
 import { ConfettiProvider } from "./context/ConfettiContext";
 import { SnackbarContextProvider } from "./context/SnackbarContext";
@@ -21,31 +22,33 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <UserContextProvider>
-        <CategoriesContextProvider>
-          <ConfettiProvider>
-            <SnackbarContextProvider>
-              <Router>
-                <Navbar />
-                <div className="Page">
-                  <Routes>
-                    <Route path="/login" Component={LoginPage} />
-                    <Route path="/" Component={GamePage} />
-                    <Route path="/shop" Component={ShopPage} />
-                    <Route path="/user" Component={UserPage} />
-                    <Route path="/adventure" Component={AdventurePage} />
-                    <Route path="/add-card" Component={CardForm} />
-                    <Route path="/register" Component={RegisterPage} />
-                    <Route path="/ashop" Component={ShopAdminPage} />
-                  </Routes>
-                </div>
-                {/* DevTools désactivés - Décommenter si nécessaire */}
-                {/* {import.meta.env.DEV && (
+        <AdventureContextProvider>
+          <CategoriesContextProvider>
+            <ConfettiProvider>
+              <SnackbarContextProvider>
+                <Router>
+                  <Navbar />
+                  <div className="Page">
+                    <Routes>
+                      <Route path="/login" Component={LoginPage} />
+                      <Route path="/" Component={GamePage} />
+                      <Route path="/shop" Component={ShopPage} />
+                      <Route path="/user" Component={UserPage} />
+                      <Route path="/adventure" Component={AdventurePage} />
+                      <Route path="/add-card" Component={CardForm} />
+                      <Route path="/register" Component={RegisterPage} />
+                      <Route path="/ashop" Component={ShopAdminPage} />
+                    </Routes>
+                  </div>
+                  {/* DevTools désactivés - Décommenter si nécessaire */}
+                  {/* {import.meta.env.DEV && (
                 <ReactQueryDevtools initialIsOpen={false} />
               )} */}
-              </Router>
-            </SnackbarContextProvider>
-          </ConfettiProvider>
-        </CategoriesContextProvider>
+                </Router>
+              </SnackbarContextProvider>
+            </ConfettiProvider>
+          </CategoriesContextProvider>
+        </AdventureContextProvider>
       </UserContextProvider>
     </QueryClientProvider>
   );

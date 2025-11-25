@@ -1,9 +1,59 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
+import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AdventureContext } from "../../../context/AdventureContext/AdventureContext";
 import { UserContext, UserContextType } from "../../../context/UserContext";
 import { PopulatedUserCard, User } from "../../../types/common";
-import useAdventure from "./useAdventure";
+import useAdventureGame from "./useAdventure";
+
+// Mock adventure data
+const mockAdventureData = {
+  levels: [
+    {
+      _id: "level1",
+      name: "Dark Forest",
+      order: 1,
+      description: "A mysterious forest",
+      backgroundImage: "/assets/backgrounds/forest.jpg",
+      minHeroLevel: 1,
+      enemies: [
+        {
+          id: "NightBorne",
+          name: "Night Borne",
+          maxHealth: 5,
+          attackDamage: 2,
+          defense: 0,
+          experience: 50,
+          bonus: { type: "hp" as const, amount: 1 },
+          sprites: {
+            idle: "NightBorne-Idle.png",
+            attack: "NightBorne-Attack.png",
+            hurt: "NightBorne-Hurt.png",
+            defeated: "NightBorne-Death.png",
+          },
+          spawnWeight: 60,
+        },
+        {
+          id: "Skeleton",
+          name: "Skeleton",
+          maxHealth: 13,
+          attackDamage: 3,
+          defense: 0,
+          experience: 75,
+          bonus: { type: "attack" as const, amount: 1 },
+          sprites: {
+            idle: "Skeleton-Idle.png",
+            attack: "Skeleton-Attack.png",
+            hurt: "Skeleton-Hurt.png",
+            defeated: "Skeleton-Death.png",
+          },
+          spawnWeight: 40,
+        },
+      ],
+    },
+  ],
+};
 
 // Mock the server hook
 vi.mock("../../../hooks/server", () => ({
@@ -122,7 +172,7 @@ describe("useAdventure", () => {
       updateImage: async (_imageFile: File) => {},
       updateDailyGoal: async (_newDailyGoal: number) => {},
       addHeroBonus: async (_params: {
-        type: "hp" | "attack" | "regeneration";
+        type: "hp" | "attack" | "regeneration" | "defense";
         amount: number;
       }) => {},
     },
@@ -149,10 +199,21 @@ describe("useAdventure", () => {
       },
     });
 
+    const mockAdventureContextValue = {
+      adventureData: mockAdventureData,
+      currentLevelId: null,
+      setCurrentLevelId: vi.fn(),
+      isLoading: false,
+      error: null,
+      resetQueries: vi.fn(),
+    };
+
     return (
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={mockUserContextValue}>
-          {children}
+          <AdventureContext.Provider value={mockAdventureContextValue}>
+            {children}
+          </AdventureContext.Provider>
         </UserContext.Provider>
       </QueryClientProvider>
     );
@@ -160,7 +221,7 @@ describe("useAdventure", () => {
 
   describe("Initialization", () => {
     it("should initialize with default hero stats", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       expect(result.current.hero.maxHealth).toBe(120);
       expect(result.current.hero.currentHealth).toBe(120);
@@ -169,24 +230,28 @@ describe("useAdventure", () => {
       expect(result.current.hero.experienceToNextLevel).toBe(100);
     });
 
-    it("should initialize with first enemy", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should initialize with first enemy", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
-      expect(result.current.currentEnemy).toBeDefined();
-      expect(result.current.currentEnemy.name).toBe("Night Borne");
-      expect(result.current.currentEnemy.currentHealth).toBe(5);
-      expect(result.current.currentEnemy.maxHealth).toBe(5);
+      // Wait for enemy to be initialized
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      expect(result.current.currentEnemy?.name).toBe("Night Borne");
+      expect(result.current.currentEnemy?.currentHealth).toBe(5);
+      expect(result.current.currentEnemy?.maxHealth).toBe(5);
     });
 
     it("should initialize with idle states", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       expect(result.current.heroState).toBe("idle");
       expect(result.current.enemyState).toBe("idle");
     });
 
     it("should initialize cards in hand", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       await waitFor(() => {
         expect(result.current.cardsInHand.length).toBeGreaterThan(0);
@@ -197,43 +262,55 @@ describe("useAdventure", () => {
   });
 
   describe("Combat System", () => {
-    it("should damage enemy on correct answer", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should damage enemy on correct answer", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
-      const initialEnemyHealth = result.current.currentEnemy.currentHealth;
-
-      act(() => {
-        result.current.attack(result.current.currentEnemy, true);
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
       });
 
-      expect(result.current.currentEnemy.currentHealth).toBeLessThan(
+      const initialEnemyHealth = result.current.currentEnemy!.currentHealth;
+
+      act(() => {
+        result.current.attack(result.current.currentEnemy!, true);
+      });
+
+      expect(result.current.currentEnemy!.currentHealth).toBeLessThan(
         initialEnemyHealth
       );
     });
 
-    it("should damage hero on correct answer (counterattack)", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should damage hero on correct answer (counterattack)", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       const initialHeroHealth = result.current.hero.currentHealth;
 
       act(() => {
-        result.current.attack(result.current.currentEnemy, true);
+        result.current.attack(result.current.currentEnemy!, true);
       });
 
       expect(result.current.hero.currentHealth).toBeLessThan(initialHeroHealth);
     });
 
-    it("should apply 1.5x damage to hero on wrong answer", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should apply 1.5x damage to hero on wrong answer", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       const initialHeroHealth = result.current.hero.currentHealth;
       const enemyDamage = Math.max(
         0,
-        result.current.currentEnemy.attackDamage - result.current.hero.defense
+        result.current.currentEnemy!.attackDamage - result.current.hero.defense
       );
 
       act(() => {
-        result.current.attack(result.current.currentEnemy, false);
+        result.current.attack(result.current.currentEnemy!, false);
       });
 
       const expectedDamage = enemyDamage * 1.5;
@@ -246,44 +323,56 @@ describe("useAdventure", () => {
       expect(result.current.hero.currentHealth).toBe(expectedHealth);
     });
 
-    it("should not damage enemy on wrong answer", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should not damage enemy on wrong answer", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
-      const initialEnemyHealth = result.current.currentEnemy.currentHealth;
-
-      act(() => {
-        result.current.attack(result.current.currentEnemy, false);
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
       });
 
-      expect(result.current.currentEnemy.currentHealth).toBe(
+      const initialEnemyHealth = result.current.currentEnemy!.currentHealth;
+
+      act(() => {
+        result.current.attack(result.current.currentEnemy!, false);
+      });
+
+      expect(result.current.currentEnemy!.currentHealth).toBe(
         initialEnemyHealth
       );
     });
 
-    it("should calculate damage with defense", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should calculate damage with defense", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       const heroDamage = Math.max(
         0,
-        result.current.hero.attackDamage - result.current.currentEnemy.defense
+        result.current.hero.attackDamage - result.current.currentEnemy!.defense
       );
-      const initialEnemyHealth = result.current.currentEnemy.currentHealth;
+      const initialEnemyHealth = result.current.currentEnemy!.currentHealth;
 
       act(() => {
-        result.current.attack(result.current.currentEnemy, true);
+        result.current.attack(result.current.currentEnemy!, true);
       });
 
       const expectedHealth = Math.max(0, initialEnemyHealth - heroDamage);
-      expect(result.current.currentEnemy.currentHealth).toBe(expectedHealth);
+      expect(result.current.currentEnemy!.currentHealth).toBe(expectedHealth);
     });
 
-    it("should not allow negative health values", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should not allow negative health values", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       // Attack multiple times to ensure health doesn't go negative
       act(() => {
         for (let i = 0; i < 10; i++) {
-          result.current.attack(result.current.currentEnemy, false);
+          result.current.attack(result.current.currentEnemy!, false);
         }
       });
 
@@ -292,21 +381,29 @@ describe("useAdventure", () => {
   });
 
   describe("Hero State Management", () => {
-    it("should set hero to attacking state on correct answer", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should set hero to attacking state on correct answer", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       act(() => {
-        result.current.attack(result.current.currentEnemy, true);
+        result.current.attack(result.current.currentEnemy!, true);
       });
 
       expect(result.current.heroState).toBe("attacking");
     });
 
     it("should reset hero to idle after attack", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       act(() => {
-        result.current.attack(result.current.currentEnemy, true);
+        result.current.attack(result.current.currentEnemy!, true);
       });
 
       expect(result.current.heroState).toBe("attacking");
@@ -319,11 +416,15 @@ describe("useAdventure", () => {
       );
     });
 
-    it("should keep hero idle on wrong answer", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should keep hero idle on wrong answer", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       act(() => {
-        result.current.attack(result.current.currentEnemy, false);
+        result.current.attack(result.current.currentEnemy!, false);
       });
 
       expect(result.current.heroState).toBe("idle");
@@ -332,13 +433,17 @@ describe("useAdventure", () => {
 
   describe("Enemy Defeat", () => {
     it("should trigger defeated state when enemy health reaches 0", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       // Attack until enemy is defeated (with limit to prevent infinite loop)
       act(() => {
         let attacks = 0;
-        while (result.current.currentEnemy.currentHealth > 0 && attacks < 20) {
-          result.current.attack(result.current.currentEnemy, true);
+        while (result.current.currentEnemy!.currentHealth > 0 && attacks < 20) {
+          result.current.attack(result.current.currentEnemy!, true);
           attacks++;
         }
       });
@@ -349,12 +454,16 @@ describe("useAdventure", () => {
     });
 
     it("should reset enemy state to idle after defeat animation", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       act(() => {
         let attacks = 0;
-        while (result.current.currentEnemy.currentHealth > 0 && attacks < 20) {
-          result.current.attack(result.current.currentEnemy, true);
+        while (result.current.currentEnemy!.currentHealth > 0 && attacks < 20) {
+          result.current.attack(result.current.currentEnemy!, true);
           attacks++;
         }
       });
@@ -372,33 +481,41 @@ describe("useAdventure", () => {
     });
 
     it("should spawn new enemy after defeat", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       act(() => {
         let attacks = 0;
-        while (result.current.currentEnemy.currentHealth > 0 && attacks < 20) {
-          result.current.attack(result.current.currentEnemy, true);
+        while (result.current.currentEnemy!.currentHealth > 0 && attacks < 20) {
+          result.current.attack(result.current.currentEnemy!, true);
           attacks++;
         }
       });
 
       await waitFor(() => {
-        expect(result.current.currentEnemy.currentHealth).toBe(
-          result.current.currentEnemy.maxHealth
+        expect(result.current.currentEnemy!.currentHealth).toBe(
+          result.current.currentEnemy!.maxHealth
         );
       });
     });
 
     it("should grant experience when enemy is defeated", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       const initialExperience = result.current.hero.experience;
-      const enemyExperience = result.current.currentEnemy.experience;
+      const enemyExperience = result.current.currentEnemy!.experience;
 
       act(() => {
         let attacks = 0;
-        while (result.current.currentEnemy.currentHealth > 0 && attacks < 20) {
-          result.current.attack(result.current.currentEnemy, true);
+        while (result.current.currentEnemy!.currentHealth > 0 && attacks < 20) {
+          result.current.attack(result.current.currentEnemy!, true);
           attacks++;
         }
       });
@@ -418,7 +535,7 @@ describe("useAdventure", () => {
 
   describe("Level Up System", () => {
     it("should level up hero when using levelUp function", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       const initialLevel = result.current.hero.level;
 
@@ -430,7 +547,7 @@ describe("useAdventure", () => {
     });
 
     it("should increase hero stats on level up", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       const initialMaxHealth = result.current.hero.maxHealth;
       const initialAttack = result.current.hero.attackDamage;
@@ -446,7 +563,7 @@ describe("useAdventure", () => {
     });
 
     it("should reset experience to 0 on level up", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       act(() => {
         result.current.levelUp();
@@ -456,7 +573,7 @@ describe("useAdventure", () => {
     });
 
     it("should increase experience requirement on level up", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       const initialRequirement = result.current.hero.experienceToNextLevel;
 
@@ -469,12 +586,16 @@ describe("useAdventure", () => {
       );
     });
 
-    it("should heal hero to full on level up", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should heal hero to full on level up", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       // Damage the hero first
       act(() => {
-        result.current.attack(result.current.currentEnemy, false);
+        result.current.attack(result.current.currentEnemy!, false);
       });
 
       const damagedHealth = result.current.hero.currentHealth;
@@ -492,13 +613,17 @@ describe("useAdventure", () => {
 
   describe("Hero Defeat", () => {
     it("should reset hero when health reaches 0", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       // Take damage until defeated
       act(() => {
         let attacks = 0;
         while (result.current.hero.currentHealth > 0 && attacks < 20) {
-          result.current.attack(result.current.currentEnemy, false);
+          result.current.attack(result.current.currentEnemy!, false);
           attacks++;
         }
       });
@@ -512,32 +637,40 @@ describe("useAdventure", () => {
     });
 
     it("should reset enemy when hero is defeated", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       // Damage the enemy first
       act(() => {
-        result.current.attack(result.current.currentEnemy, true);
+        result.current.attack(result.current.currentEnemy!, true);
       });
 
       // Defeat the hero
       act(() => {
         let attacks = 0;
         while (result.current.hero.currentHealth > 0 && attacks < 20) {
-          result.current.attack(result.current.currentEnemy, false);
+          result.current.attack(result.current.currentEnemy!, false);
           attacks++;
         }
       });
 
       await waitFor(() => {
         // Enemy should be reset when hero is defeated
-        expect(result.current.currentEnemy.currentHealth).toBeGreaterThan(0);
+        expect(result.current.currentEnemy!.currentHealth).toBeGreaterThan(0);
       });
     });
   });
 
   describe("Card Management", () => {
     it("should remove card after answering", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       await waitFor(() => {
         expect(result.current.cardsInHand.length).toBeGreaterThan(0);
@@ -559,7 +692,11 @@ describe("useAdventure", () => {
     });
 
     it("should call updateUserCard when card is answered", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
 
       await waitFor(() => {
         expect(result.current.cardsInHand.length).toBeGreaterThan(0);
@@ -577,7 +714,7 @@ describe("useAdventure", () => {
     });
 
     it("should maintain maximum 5 cards in hand", async () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
       await waitFor(() => {
         expect(result.current.cardsInHand.length).toBeGreaterThan(0);
@@ -588,16 +725,20 @@ describe("useAdventure", () => {
   });
 
   describe("Enemy Bonuses", () => {
-    it("should have bonus information for each enemy", () => {
-      const { result } = renderHook(() => useAdventure(), { wrapper });
+    it("should have bonus information for each enemy", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
 
-      expect(result.current.currentEnemy.bonus).toBeDefined();
-      expect(result.current.currentEnemy.bonus.type).toMatch(
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      expect(result.current.currentEnemy!.bonus).toBeDefined();
+      expect(result.current.currentEnemy!.bonus.type).toMatch(
         /hp|attack|regeneration/
       );
-      expect(result.current.currentEnemy.bonus.amount).toBeGreaterThan(0);
-      expect(result.current.currentEnemy.bonus.icon).toBeDefined();
-      expect(result.current.currentEnemy.bonus.iconColor).toBeDefined();
+      expect(result.current.currentEnemy!.bonus.amount).toBeGreaterThan(0);
+      expect(result.current.currentEnemy!.bonus.icon).toBeDefined();
+      expect(result.current.currentEnemy!.bonus.iconColor).toBeDefined();
     });
   });
 });

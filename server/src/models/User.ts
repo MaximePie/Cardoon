@@ -156,6 +156,10 @@ const UserSchema = new mongoose.Schema<IUser>({
       type: Number,
       default: 20,
     },
+    currentHealth: {
+      type: Number,
+      default: 20,
+    },
     level: {
       type: Number,
       default: 1,

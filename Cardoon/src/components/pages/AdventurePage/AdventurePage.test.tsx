@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { AdventureContext } from "../../../context/AdventureContext/AdventureContext";
 import { UserContext, UserContextType } from "../../../context/UserContext";
 import { PopulatedUserCard, User } from "../../../types/common";
 import AdventurePage from "./AdventurePage";
@@ -55,6 +56,54 @@ vi.mock("../../../hooks/queries/useUserCards", () => ({
 
 // Import the mocked hook
 import { usePut } from "../../../hooks/server";
+
+// Mock adventure data
+const mockAdventureData = {
+  levels: [
+    {
+      _id: "level1",
+      name: "Dark Forest",
+      order: 1,
+      description: "A mysterious forest",
+      backgroundImage: "/assets/backgrounds/forest.jpg",
+      minHeroLevel: 1,
+      enemies: [
+        {
+          id: "NightBorne",
+          name: "Night Borne",
+          maxHealth: 5,
+          attackDamage: 2,
+          defense: 0,
+          experience: 50,
+          bonus: { type: "hp" as const, amount: 1 },
+          sprites: {
+            idle: "NightBorne-Idle.png",
+            attack: "NightBorne-Attack.png",
+            hurt: "NightBorne-Hurt.png",
+            defeated: "NightBorne-Death.png",
+          },
+          spawnWeight: 60,
+        },
+        {
+          id: "Skeleton",
+          name: "Skeleton",
+          maxHealth: 13,
+          attackDamage: 3,
+          defense: 0,
+          experience: 75,
+          bonus: { type: "attack" as const, amount: 1 },
+          sprites: {
+            idle: "Skeleton-Idle.png",
+            attack: "Skeleton-Attack.png",
+            hurt: "Skeleton-Hurt.png",
+            defeated: "Skeleton-Death.png",
+          },
+          spawnWeight: 40,
+        },
+      ],
+    },
+  ],
+};
 
 describe("AdventurePage", () => {
   const mockUser: User = {
@@ -182,7 +231,7 @@ describe("AdventurePage", () => {
       updateImage: async (_imageFile: File) => {},
       updateDailyGoal: async (_newDailyGoal: number) => {},
       addHeroBonus: async (_params: {
-        type: "hp" | "attack" | "regeneration";
+        type: "hp" | "attack" | "regeneration" | "defense";
         amount: number;
       }) => {},
     },
@@ -248,10 +297,21 @@ describe("AdventurePage", () => {
       },
     });
 
+    const mockAdventureContextValue = {
+      adventureData: mockAdventureData,
+      currentLevelId: null,
+      setCurrentLevelId: vi.fn(),
+      isLoading: false,
+      error: null,
+      resetQueries: vi.fn(),
+    };
+
     return render(
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={contextValue}>
-          <AdventurePage />
+          <AdventureContext.Provider value={mockAdventureContextValue}>
+            <AdventurePage />
+          </AdventureContext.Provider>
         </UserContext.Provider>
       </QueryClientProvider>
     );

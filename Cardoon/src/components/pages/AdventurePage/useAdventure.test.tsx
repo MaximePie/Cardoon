@@ -174,8 +174,8 @@ describe("useAdventure", () => {
 
       expect(result.current.currentEnemy).toBeDefined();
       expect(result.current.currentEnemy.name).toBe("Night Borne");
-      expect(result.current.currentEnemy.currentHealth).toBe(10);
-      expect(result.current.currentEnemy.maxHealth).toBe(10);
+      expect(result.current.currentEnemy.currentHealth).toBe(5);
+      expect(result.current.currentEnemy.maxHealth).toBe(5);
     });
 
     it("should initialize with idle states", () => {

@@ -35,9 +35,9 @@ const enemies: Enemy[] = [
   {
     id: "NightBorne",
     name: "Night Borne",
-    maxHealth: 10,
-    currentHealth: 10,
-    attackDamage: 3,
+    maxHealth: 5,
+    currentHealth: 5,
+    attackDamage: 2,
     defense: 0,
     experience: 50,
     bonus: {
@@ -50,9 +50,9 @@ const enemies: Enemy[] = [
   {
     id: "NightBorne",
     name: "Night Borne",
-    maxHealth: 10,
-    currentHealth: 10,
-    attackDamage: 3,
+    maxHealth: 5,
+    currentHealth: 5,
+    attackDamage: 2,
     defense: 0,
     experience: 50,
     bonus: {
@@ -65,9 +65,9 @@ const enemies: Enemy[] = [
   {
     id: "NightBorne",
     name: "Night Borne",
-    maxHealth: 10,
-    currentHealth: 10,
-    attackDamage: 3,
+    maxHealth: 5,
+    currentHealth: 5,
+    attackDamage: 2,
     defense: 0,
     experience: 50,
     bonus: {
@@ -115,6 +115,7 @@ export default function useAdventure() {
   );
 
   const { hero: baseHero } = user.data;
+  console.log(baseHero);
 
   const [bonusAnimation, setBonusAnimation] = useState<{
     type: "hp" | "attack" | "regeneration";
@@ -122,7 +123,11 @@ export default function useAdventure() {
   } | null>(null);
   const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [hero, setHero] = useState<Hero>(baseHero);
+  const [hero, setHero] = useState<Hero>({
+    ...baseHero,
+    currentHealth: baseHero.currentHealth || baseHero.maxHealth,
+    defense: baseHero.defense || 0,
+  });
   const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
   const [enemyState, setEnemyState] = useState<"idle" | "defeated">("idle");
 
@@ -173,21 +178,18 @@ export default function useAdventure() {
     }));
   };
 
-  useEffect(() => {
-    if (!hero) {
-      setHero(baseHero);
-    }
-  }, [baseHero, hero]);
-
   // Loose condition
   useEffect(() => {
     if (hero.currentHealth <= 0) {
       // Reset hero and enemy
-      setHero(baseHero);
+      setHero({
+        ...baseHero,
+        currentHealth: baseHero.maxHealth,
+        defense: baseHero.defense || 0,
+      });
       setCurrentEnemy(enemies[0]);
     }
-  }, [hero.currentHealth]);
-
+  }, [hero.currentHealth, baseHero]);
   const onEnemyDefeated = useCallback(() => {
     setEnemyState("defeated");
     // Clear any existing timeout

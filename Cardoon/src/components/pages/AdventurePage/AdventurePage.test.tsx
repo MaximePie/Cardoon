@@ -296,7 +296,7 @@ describe("AdventurePage", () => {
         ".AdventurePage__healthText"
       );
       expect(enemyHealthElements).toHaveLength(2); // Hero and enemy
-      expect(enemyHealthElements[1]).toHaveTextContent("10 / 10"); // Enemy health
+      expect(enemyHealthElements[1]).toHaveTextContent("5 / 5"); // Enemy health
 
       // Check for health bars (by class name since they don't have specific roles)
       const healthBars = document.querySelectorAll(".AdventurePage__healthBar");
@@ -1159,7 +1159,7 @@ describe("AdventurePage", () => {
       const enemyHealthElements = document.querySelectorAll(
         ".AdventurePage__healthText"
       );
-      expect(enemyHealthElements[1]).toHaveTextContent("10 / 10");
+      expect(enemyHealthElements[1]).toHaveTextContent("5 / 5");
 
       // The enemy reset logic is tested through the health bar display
       const healthFills = document.querySelectorAll(

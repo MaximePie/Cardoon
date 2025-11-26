@@ -117,6 +117,7 @@ export default function useAdventureGame() {
     ...baseHero,
     currentHealth: baseHero.currentHealth ?? baseHero.maxHealth,
     defense: baseHero.defense ?? 0,
+    attackDamage: baseHero.attackDamage ?? 1,
   });
   const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
   const [enemyState, setEnemyState] = useState<

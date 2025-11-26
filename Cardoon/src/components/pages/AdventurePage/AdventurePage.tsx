@@ -83,7 +83,7 @@ const AdventurePage = () => {
             </p>
             <div className="AdventurePage__healthBar">
               <span className="AdventurePage__healthText">
-                {hero.currentHealth} / {hero.maxHealth}
+                {Math.round(hero.currentHealth)} / {hero.maxHealth}
               </span>
               <div
                 className="AdventurePage__healthBar__fill"

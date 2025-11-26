@@ -30,6 +30,14 @@ import { updateUserDailyGoal } from "../../services/userDailyGoalApi";
 import { Card, PopulatedUserCard, User } from "../../types/common";
 import { useSnackbar } from "../contexts/useSnackbar";
 
+// Ajouter cette interface au début du fichier après les imports
+interface ApiError extends Error {
+  response?: {
+    status: number;
+    data?: unknown;
+  };
+}
+
 export const useReviewUserCards = (userId: string | number) => {
   return useQuery({
     queryKey: QueryKeys.reviewUserCards(userId),
@@ -488,11 +496,22 @@ const useMeQuery = () => {
     enabled: hasToken, // Ne lance la query que si un token existe
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: (failureCount, error: Error) => {
-      // Ne pas retry sur les erreurs 401 (token invalid)
-      if (error?.message?.includes("Invalid token")) {
+      // ✅ Type guard pour vérifier si l'erreur a une response
+      const apiError = error as ApiError;
+      if (apiError.response?.status === 401) {
+        console.log("🔴 401 Unauthorized - Token invalide ou expiré");
         return false;
       }
       return failureCount < 3;
+    },
+    // ✅ Ajouter un throwOnError pour capturer l'erreur immédiatement
+    throwOnError: (error: Error) => {
+      const apiError = error as ApiError;
+      if (apiError.response?.status === 401) {
+        console.log("🔴 Erreur 401 capturée:", error);
+        return false;
+      }
+      return true;
     },
   });
 };

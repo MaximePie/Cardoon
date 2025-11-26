@@ -3,7 +3,6 @@ import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { AnimatePresence } from "motion/react";
-import ExpBar from "../../atoms/ExpBar/ExpBar";
 import { BonusAnimation } from "./BonusAnimation";
 
 interface HeroStatsProps {
@@ -24,8 +23,6 @@ export const HeroStats = ({
   regenerationRate,
   maxHealth,
   level,
-  experience,
-  experienceToNextLevel,
   bonusAnimation,
 }: HeroStatsProps) => (
   <div className="AdventurePage__profile">
@@ -74,9 +71,6 @@ export const HeroStats = ({
       </div>
       <div className="AdventurePage__stats-level">
         <p>Forêt toxique</p>
-      </div>
-      <div className="AdventurePage__stats-expBar">
-        <ExpBar currentExp={experience} maxExp={experienceToNextLevel} />
       </div>
     </div>
   </div>

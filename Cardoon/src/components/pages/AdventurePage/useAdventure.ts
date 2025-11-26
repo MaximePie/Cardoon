@@ -352,6 +352,16 @@ export default function useAdventureGame() {
     };
   }, []);
 
+  useEffect(() => {
+    if (user.data.hero) {
+      setHero({
+        ...user.data.hero,
+        currentHealth: user.data.hero.currentHealth ?? user.data.hero.maxHealth,
+        defense: user.data.hero.defense ?? 0,
+      });
+    }
+  }, [user.data.hero]);
+
   return {
     cardsInHand,
     hero,

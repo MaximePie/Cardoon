@@ -123,6 +123,9 @@ export default function useAdventureGame() {
   const [enemyState, setEnemyState] = useState<
     "idle" | "attacking" | "defeated"
   >("idle");
+  const [showDamageAnimation, setShowDamageAnimation] = useState(false);
+  const damageTimeoutRef = useRef<NodeJS.Timeout>();
+  const [damageAnimationKey, setDamageAnimationKey] = useState(0); // ✅ Compteur stable
 
   const [currentEnemy, setCurrentEnemy] = useState<Enemy | null>(null);
 
@@ -136,13 +139,38 @@ export default function useAdventureGame() {
 
   const { put: updateUserCard } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
 
+  // ✅ Effet pour afficher les dégâts quand l'ennemi attaque
+  useEffect(() => {
+    if (enemyState === "attacking") {
+      setShowDamageAnimation(true);
+      setDamageAnimationKey((prev) => prev + 1); // Incrémente le compteur pour forcer la réanimation
+      console.log("Enemy is attacking, show damage animation");
+
+      // Clear any existing timeout
+      if (damageTimeoutRef.current) {
+        clearTimeout(damageTimeoutRef.current);
+      }
+
+      // Cacher les dégâts après 1 seconde (durée de l'animation)
+      damageTimeoutRef.current = setTimeout(() => {
+        setShowDamageAnimation(false);
+      }, 1000);
+    }
+
+    // Cleanup
+    return () => {
+      if (damageTimeoutRef.current) {
+        clearTimeout(damageTimeoutRef.current);
+      }
+    };
+  }, [enemyState]);
   const attack = (enemy: Enemy, isCorrect: boolean) => {
     if (!currentEnemy) return;
+    setEnemyState("attacking");
 
     if (isCorrect) {
       // Hero only performs attack animation when answer is correct for visual feedback
       setHeroState("attacking");
-      setEnemyState("attacking");
       // Clear any existing timeout
       if (heroAttackTimeout.current) {
         clearTimeout(heroAttackTimeout.current);
@@ -154,9 +182,6 @@ export default function useAdventureGame() {
       if (enemyAttackTimeout.current) {
         clearTimeout(enemyAttackTimeout.current);
       }
-      enemyAttackTimeout.current = setTimeout(() => {
-        setEnemyState("idle");
-      }, 500);
 
       const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
       const enemyDamage = Math.max(0, enemy.attackDamage - hero.defense);
@@ -178,6 +203,10 @@ export default function useAdventureGame() {
         currentHealth: prev.currentHealth - damage * 1.5,
       }));
     }
+    enemyAttackTimeout.current = setTimeout(() => {
+      setEnemyState("idle");
+    }, 500);
+
     if (hero.currentHealth > 0) {
       setHero((prev) => ({
         ...prev,
@@ -404,5 +433,7 @@ export default function useAdventureGame() {
     attack,
     removeCard,
     bonusAnimation,
+    showDamageAnimation,
+    damageAnimationKey, // ✅ Clé stable pour l'animation des dégâts
   };
 }

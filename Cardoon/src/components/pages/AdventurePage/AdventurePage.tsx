@@ -20,6 +20,8 @@ const AdventurePage = () => {
     currentEnemy,
     removeCard,
     bonusAnimation,
+    showDamageAnimation,
+    damageAnimationKey,
   } = useAdventureGame();
 
   if (!currentEnemy) {
@@ -27,6 +29,7 @@ const AdventurePage = () => {
   }
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
+  const enemyFinalDamage = currentEnemy.attackDamage - hero.defense;
   let enemyCurrentAsset;
   if (!enemyAssets) {
     enemyCurrentAsset = undefined;
@@ -81,6 +84,40 @@ const AdventurePage = () => {
                 {isDev && <img src={devMode} alt="Dev Mode" />}
               </span>
             </p>
+            <AnimatePresence>
+              {showDamageAnimation && (
+                <motion.span
+                  key={`damage-${damageAnimationKey}`} // ✅ Key unique pour forcer une nouvelle animation
+                  className="AdventurePage__bonusIcon"
+                  initial={{ scale: 0, opacity: 0, y: 0 }}
+                  animate={{
+                    scale: [1, 1.5, 1],
+                    rotate: [0, 15, -15, 0],
+                    y: [-10, -20, -10],
+                    opacity: [0, 1, 1, 0],
+                  }}
+                  exit={{ scale: 0, opacity: 0 }}
+                  style={{
+                    position: "absolute",
+                    top: "30px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    pointerEvents: "none",
+                  }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                >
+                  <span
+                    style={{
+                      fontSize: "2rem",
+                      color: "red",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    -{enemyFinalDamage}
+                  </span>
+                </motion.span>
+              )}
+            </AnimatePresence>
             <div className="AdventurePage__healthBar">
               <span className="AdventurePage__healthText">
                 {Math.round(hero.currentHealth)} / {hero.maxHealth}

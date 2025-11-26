@@ -1,6 +1,5 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
-import StarBorderPurple500Icon from "@mui/icons-material/StarBorderPurple500";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { AnimatePresence } from "motion/react";
 import { BonusAnimation } from "./BonusAnimation";
@@ -9,9 +8,6 @@ interface HeroStatsProps {
   attackDamage: number;
   regenerationRate: number;
   maxHealth: number;
-  level: number;
-  experience: number;
-  experienceToNextLevel: number;
   bonusAnimation: {
     type: "attack" | "regeneration" | "hp" | "defense";
     amount: number;
@@ -22,7 +18,6 @@ export const HeroStats = ({
   attackDamage,
   regenerationRate,
   maxHealth,
-  level,
   bonusAnimation,
 }: HeroStatsProps) => (
   <div className="AdventurePage__profile">
@@ -65,12 +60,9 @@ export const HeroStats = ({
             )}
           </AnimatePresence>
         </span>
-        <span>
-          <StarBorderPurple500Icon color="warning" fontSize="small" /> {level}
-        </span>
       </div>
       <div className="AdventurePage__stats-level">
-        <p>Forêt toxique</p>
+        <span>Forêt toxique</span>
       </div>
     </div>
   </div>

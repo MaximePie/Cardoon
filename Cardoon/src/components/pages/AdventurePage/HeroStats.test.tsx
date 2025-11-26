@@ -19,15 +19,13 @@ describe("HeroStats", () => {
 
       // Check all stats are displayed
       expect(screen.getByText("25")).toBeInTheDocument();
-      const ones = screen.getAllByText("1");
-      expect(ones).toHaveLength(2); // regeneration and level
+      expect(screen.getByText("1")).toBeInTheDocument(); // regeneration
       expect(screen.getByText("120")).toBeInTheDocument();
 
       // Check icons are present
       expect(screen.getByTestId("WhatshotIcon")).toBeInTheDocument();
       expect(screen.getByTestId("HealthAndSafetyIcon")).toBeInTheDocument();
       expect(screen.getByTestId("FavoriteIcon")).toBeInTheDocument();
-      expect(screen.getByTestId("StarBorderPurple500Icon")).toBeInTheDocument();
     });
 
     it("should display the area name", () => {
@@ -42,16 +40,12 @@ describe("HeroStats", () => {
           attackDamage={50}
           regenerationRate={3}
           maxHealth={200}
-          level={5}
-          experience={75}
-          experienceToNextLevel={150}
         />
       );
 
       expect(screen.getByText("50")).toBeInTheDocument();
       expect(screen.getByText("3")).toBeInTheDocument();
       expect(screen.getByText("200")).toBeInTheDocument();
-      expect(screen.getByText("5")).toBeInTheDocument();
     });
   });
 
@@ -199,13 +193,6 @@ describe("HeroStats", () => {
       expect(favoriteIcon).toHaveClass("MuiSvgIcon-colorSuccess");
     });
 
-    it("should display level icon with correct color", () => {
-      render(<HeroStats {...defaultProps} />);
-
-      const starIcon = screen.getByTestId("StarBorderPurple500Icon");
-      expect(starIcon).toHaveClass("MuiSvgIcon-colorWarning");
-    });
-
     it("should display all icons with small size", () => {
       render(<HeroStats {...defaultProps} />);
 
@@ -216,9 +203,6 @@ describe("HeroStats", () => {
         "MuiSvgIcon-fontSizeSmall"
       );
       expect(screen.getByTestId("FavoriteIcon")).toHaveClass(
-        "MuiSvgIcon-fontSizeSmall"
-      );
-      expect(screen.getByTestId("StarBorderPurple500Icon")).toHaveClass(
         "MuiSvgIcon-fontSizeSmall"
       );
     });

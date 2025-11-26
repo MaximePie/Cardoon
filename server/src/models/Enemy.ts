@@ -74,7 +74,7 @@ const EnemySchema = new Schema<IEnemy>(
       amount: {
         type: Number,
         required: true,
-        min: 1,
+        min: 0.1,
       },
     },
     sprites: {

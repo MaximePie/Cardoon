@@ -35,9 +35,6 @@ const AdventurePage = () => {
         attackDamage={hero.attackDamage}
         regenerationRate={hero.regenerationRate}
         maxHealth={hero.maxHealth}
-        level={hero.level}
-        experience={hero.experience}
-        experienceToNextLevel={hero.experienceToNextLevel}
         bonusAnimation={bonusAnimation}
       />
       <div className="AdventurePage__body">
@@ -86,8 +83,8 @@ const AdventurePage = () => {
               alt={currentEnemy.name}
               className="AdventurePage__characterImage"
             />
-            <p className="AdventurePage__name">
-              {currentEnemy.name}
+            <span className="AdventurePage__details">
+              <span className="AdventurePage__name">{currentEnemy.name}</span>
               <span className="AdventurePage__bonusType">
                 (+{currentEnemy.bonus.amount}
                 {BonusIcon && (
@@ -98,7 +95,7 @@ const AdventurePage = () => {
                 )}
                 )
               </span>
-            </p>
+            </span>
             <div className="AdventurePage__healthBar">
               <span className="AdventurePage__healthText">
                 {currentEnemy.currentHealth} / {currentEnemy.maxHealth}

@@ -48,6 +48,15 @@
       font-size: 1.2em;
       font-weight: bold;
       color: #333;
+
+      @media (max-width: 600px) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+      gap: 10px;
     }
   }
 
@@ -55,11 +64,19 @@
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
+    @media (max-width: 600px) {
+      margin-bottom: 0;
+    }
   }
 
   &__characterImage {
     width: 150px;
     height: 150px;
+
+    @media (max-width: 600px) {
+      width: 50px;
+      height: 50px;
+    }
   }
 
   &__Hero {
@@ -70,6 +87,9 @@
     border: 2px solid #000;
     border-radius: 10px;
     padding: 10px;
+    @media (max-width: 600px) {
+      width: 100px;
+    }
   }
   &__Enemy {
     position: relative;
@@ -79,6 +99,9 @@
     border: 2px solid #000;
     border-radius: 10px;
     padding: 10px;
+    @media (max-width: 600px) {
+      width: 130px;
+    }
   }
 
   img {
@@ -118,6 +141,9 @@
 
   &__name {
     height: 24px;
+    @media (max-width: 600px) {
+      display: none;
+    }
   }
 
   &__bonusType {
@@ -130,6 +156,16 @@
       height: 18px;
       margin-left: 3px;
     }
+
+    @media (max-width: 600px) {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      svg {
+        width: 14px;
+        height: 14px;
+      }
+    }
   }
 
   &__Cards {
@@ -138,5 +174,19 @@
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
+
+    @media (max-width: 600px) {
+      gap: 2px;
+
+      .Card {
+        width: 47vw;
+        max-width: 47vw;
+        margin: 0;
+
+        &__edit {
+          display: none;
+        }
+      }
+    }
   }
 }

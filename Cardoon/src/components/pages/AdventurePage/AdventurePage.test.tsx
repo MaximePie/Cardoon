@@ -439,9 +439,6 @@ describe("AdventurePage", () => {
         screen.getAllByTestId("HealthAndSafetyIcon").length
       ).toBeGreaterThan(0);
       expect(screen.getAllByTestId("FavoriteIcon").length).toBeGreaterThan(0);
-      expect(
-        screen.getAllByTestId("StarBorderPurple500Icon").length
-      ).toBeGreaterThan(0);
 
       // Check for stats structure
       const statsSection = document.querySelector(
@@ -1166,48 +1163,6 @@ describe("AdventurePage", () => {
       );
 
       expect(newHeroWidth).toBeLessThan(initialHeroWidth);
-    });
-  });
-
-  describe("Level Up System", () => {
-    it("should display current hero level", () => {
-      renderAdventurePage();
-
-      // Check that hero level is displayed (initially level 1)
-      const statsResources = document.querySelector(
-        ".AdventurePage__stats-resources"
-      );
-      expect(statsResources).toBeInTheDocument();
-
-      // The level should be visible in the stats - check by finding the StarBorderPurple500Icon which indicates level
-      const levelIcon = screen.getAllByTestId("StarBorderPurple500Icon");
-      expect(levelIcon.length).toBeGreaterThan(0); // Level icon is displayed
-    });
-
-    it("should handle enemy defeat and experience gain", () => {
-      renderAdventurePage();
-
-      // Check that enemy health is displayed correctly
-      const enemyHealthElements = document.querySelectorAll(
-        ".AdventurePage__healthText"
-      );
-      expect(enemyHealthElements[1]).toHaveTextContent("5 / 5");
-    });
-
-    it("should reset enemy health when defeated", () => {
-      renderAdventurePage();
-
-      // Check initial enemy health display by targeting the specific health element
-      const enemyHealthElements = document.querySelectorAll(
-        ".AdventurePage__healthText"
-      );
-      expect(enemyHealthElements[1]).toHaveTextContent("5 / 5");
-
-      // The enemy reset logic is tested through the health bar display
-      const healthFills = document.querySelectorAll(
-        ".AdventurePage__healthBar__fill"
-      );
-      expect(healthFills).toHaveLength(2); // Hero and enemy health bars
     });
   });
 

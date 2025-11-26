@@ -35,13 +35,6 @@ describe("HeroStats", () => {
       expect(screen.getByText("Forêt toxique")).toBeInTheDocument();
     });
 
-    it("should render the experience bar", () => {
-      render(<HeroStats {...defaultProps} />);
-
-      // ExpBar should display current and max experience - using more specific text
-      expect(screen.getByText(/0.*\/.*100.*XP/)).toBeInTheDocument();
-    });
-
     it("should render stats with higher values correctly", () => {
       render(
         <HeroStats
@@ -59,8 +52,6 @@ describe("HeroStats", () => {
       expect(screen.getByText("3")).toBeInTheDocument();
       expect(screen.getByText("200")).toBeInTheDocument();
       expect(screen.getByText("5")).toBeInTheDocument();
-      expect(screen.getByText(/75/)).toBeInTheDocument();
-      expect(screen.getByText(/150/)).toBeInTheDocument();
     });
   });
 
@@ -169,9 +160,6 @@ describe("HeroStats", () => {
       expect(
         container.querySelector(".AdventurePage__stats-level")
       ).toBeInTheDocument();
-      expect(
-        container.querySelector(".AdventurePage__stats-expBar")
-      ).toBeInTheDocument();
     });
 
     it("should have relative positioning on stat spans for animations", () => {
@@ -186,46 +174,6 @@ describe("HeroStats", () => {
       expect(spans?.[0]).toHaveStyle({ position: "relative" });
       expect(spans?.[1]).toHaveStyle({ position: "relative" });
       expect(spans?.[2]).toHaveStyle({ position: "relative" });
-    });
-  });
-
-  describe("Experience Bar Integration", () => {
-    it("should pass correct props to ExpBar", () => {
-      render(
-        <HeroStats
-          {...defaultProps}
-          experience={50}
-          experienceToNextLevel={100}
-        />
-      );
-
-      // ExpBar should show 50/100
-      expect(screen.getByText(/50/)).toBeInTheDocument();
-      expect(screen.getByText(/100/)).toBeInTheDocument();
-    });
-
-    it("should handle full experience correctly", () => {
-      render(
-        <HeroStats
-          {...defaultProps}
-          experience={100}
-          experienceToNextLevel={100}
-        />
-      );
-
-      expect(screen.getByText(/100/)).toBeInTheDocument();
-    });
-
-    it("should handle zero experience correctly", () => {
-      render(
-        <HeroStats
-          {...defaultProps}
-          experience={0}
-          experienceToNextLevel={100}
-        />
-      );
-
-      expect(screen.getByText(/0.*\/.*100.*XP/)).toBeInTheDocument();
     });
   });
 

@@ -155,22 +155,24 @@ export default function useAdventureGame() {
       });
       setHero((prev) => ({
         ...prev,
-        currentHealth: Math.max(0, prev.currentHealth - enemyDamage),
+        currentHealth: prev.currentHealth - enemyDamage,
       }));
     } else {
-      const damage = Math.max(0, enemy.attackDamage - hero.defense);
+      const damage = enemy.attackDamage - hero.defense;
       setHero((prev) => ({
         ...prev,
-        currentHealth: Math.max(0, prev.currentHealth - damage * 1.5),
+        currentHealth: prev.currentHealth - damage * 1.5,
       }));
     }
-    setHero((prev) => ({
-      ...prev,
-      currentHealth: Math.min(
-        prev.maxHealth,
-        prev.currentHealth + prev.regenerationRate
-      ),
-    }));
+    if (hero.currentHealth > 0) {
+      setHero((prev) => ({
+        ...prev,
+        currentHealth: Math.min(
+          prev.maxHealth,
+          prev.currentHealth + prev.regenerationRate
+        ),
+      }));
+    }
   };
 
   // Initialize enemy when enemies are loaded
@@ -180,7 +182,7 @@ export default function useAdventureGame() {
     }
   }, [currentLevelEnemies, currentEnemy]);
 
-  // Loose condition
+  // Lose condition
   useEffect(() => {
     if (hero.currentHealth <= 0 && currentLevelEnemies.length > 0) {
       // Reset hero and enemy
@@ -192,6 +194,7 @@ export default function useAdventureGame() {
       setCurrentEnemy(currentLevelEnemies[0]);
     }
   }, [hero.currentHealth, baseHero, currentLevelEnemies]);
+
   const onEnemyDefeated = useCallback(() => {
     if (!currentEnemy) return;
 
@@ -234,10 +237,6 @@ export default function useAdventureGame() {
       setBonusAnimation(null);
     }, 1000);
 
-    // Check for level up
-    if (newExperience >= hero.experienceToNextLevel) {
-      levelUp();
-    }
     // Reset enemy - pick random enemy from current level
     if (currentLevelEnemies.length > 0) {
       const randomEnemy =
@@ -292,19 +291,6 @@ export default function useAdventureGame() {
   useEffect(() => {
     syncCards();
   }, [syncCards]);
-
-  const levelUp = () => {
-    setHero((prev) => ({
-      ...prev,
-      level: prev.level + 1,
-      maxHealth: prev.maxHealth + 20,
-      currentHealth: prev.maxHealth + 20,
-      attackDamage: prev.attackDamage + 5,
-      defense: prev.defense + 2,
-      experience: 0,
-      experienceToNextLevel: Math.floor(prev.experienceToNextLevel * 1.5),
-    }));
-  };
 
   const removeCard = async (card: PopulatedUserCard, isCorrect: boolean) => {
     if (!currentEnemy) return;
@@ -373,7 +359,6 @@ export default function useAdventureGame() {
     enemyState,
     currentEnemy,
     attack,
-    levelUp,
     removeCard,
     bonusAnimation,
   };

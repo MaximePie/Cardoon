@@ -1,14 +1,6 @@
-import React, { createContext, useContext } from "react";
-import {
-  useAdventureManager,
-  type AdventureManagerReturn,
-} from "../../hooks/queries/useAdventureManager";
-
-type AdventureContextType = AdventureManagerReturn;
-
-export const AdventureContext = createContext<AdventureContextType | undefined>(
-  undefined
-);
+import React from "react";
+import { useAdventureManager } from "../../hooks/queries/useAdventureManager";
+import { AdventureContext } from "./AdventureContext";
 
 export const AdventureContextProvider = ({
   children,
@@ -22,14 +14,4 @@ export const AdventureContextProvider = ({
       {children}
     </AdventureContext.Provider>
   );
-};
-
-export const useAdventureContext = () => {
-  const context = useContext(AdventureContext);
-  if (!context) {
-    throw new Error(
-      "useAdventureContext must be used within AdventureContextProvider"
-    );
-  }
-  return context;
 };

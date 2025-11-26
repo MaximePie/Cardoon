@@ -427,18 +427,6 @@ describe("AdventurePage", () => {
   });
 
   describe("Experience System", () => {
-    it("should display hero experience bar", () => {
-      renderAdventurePage();
-
-      // Check for experience bar component
-      const expBar = document.querySelector(".ExpBar");
-      expect(expBar).toBeInTheDocument();
-
-      // Check for XP text within the ExpBar
-      const expBarText = expBar?.querySelector(".ExpBar__text");
-      expect(expBarText).toHaveTextContent("0 / 100 XP");
-    });
-
     it("should display hero stats with icons", () => {
       renderAdventurePage();
 
@@ -1109,13 +1097,9 @@ describe("AdventurePage", () => {
         ".AdventurePage__stats-resources"
       );
       const statsLevel = document.querySelector(".AdventurePage__stats-level");
-      const statsExpBar = document.querySelector(
-        ".AdventurePage__stats-expBar"
-      );
 
       expect(statsResources).toBeInTheDocument();
       expect(statsLevel).toBeInTheDocument();
-      expect(statsExpBar).toBeInTheDocument();
     });
 
     it("should show dev mode status span in hero status", () => {
@@ -1203,13 +1187,11 @@ describe("AdventurePage", () => {
     it("should handle enemy defeat and experience gain", () => {
       renderAdventurePage();
 
-      // Check that onEnemyDefeated function exists and can be called
-      // This would normally require defeating an enemy which is complex to simulate
-      // due to the damage calculations and defense mechanics
-
-      // Instead we test that the experience bar is properly rendered
-      const expBar = document.querySelector(".ExpBar");
-      expect(expBar).toBeInTheDocument();
+      // Check that enemy health is displayed correctly
+      const enemyHealthElements = document.querySelectorAll(
+        ".AdventurePage__healthText"
+      );
+      expect(enemyHealthElements[1]).toHaveTextContent("5 / 5");
     });
 
     it("should reset enemy health when defeated", () => {

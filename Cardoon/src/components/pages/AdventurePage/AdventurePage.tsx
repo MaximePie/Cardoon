@@ -27,6 +27,24 @@ const AdventurePage = () => {
   }
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
+  let enemyCurrentAsset;
+  if (!enemyAssets) {
+    enemyCurrentAsset = undefined;
+  } else {
+    switch (enemyState) {
+      case "idle":
+        enemyCurrentAsset = enemyAssets.idle;
+        break;
+      case "defeated":
+        enemyCurrentAsset = enemyAssets.defeated;
+        break;
+      case "attacking":
+        enemyCurrentAsset = enemyAssets.attack;
+        break;
+      default:
+        enemyCurrentAsset = enemyAssets.idle;
+    }
+  }
   const BonusIcon = currentEnemy.bonus.icon;
 
   return (
@@ -76,13 +94,15 @@ const AdventurePage = () => {
             </div>
           </motion.div>
           <div className="AdventurePage__Enemy">
-            <img
-              src={
-                enemyState === "idle" ? enemyAssets.idle : enemyAssets.defeated
-              }
-              alt={currentEnemy.name}
-              className="AdventurePage__characterImage"
-            />
+            {enemyCurrentAsset ? (
+              <img
+                src={enemyCurrentAsset}
+                alt={currentEnemy.name}
+                className="AdventurePage__characterImage"
+              />
+            ) : (
+              <div className="AdventurePage__characterImage">Loading...</div>
+            )}
             <span className="AdventurePage__details">
               <span className="AdventurePage__name">{currentEnemy.name}</span>
               <span className="AdventurePage__bonusType">

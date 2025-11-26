@@ -14,7 +14,7 @@ interface PutResult {
   userCard: PopulatedUserCard;
 }
 
-export type EnemyType = "NightBorne" | "Skeleton";
+export type EnemyType = "NightBorne" | "Skeleton" | "Goblin";
 
 interface Enemy {
   id: EnemyType;
@@ -119,15 +119,19 @@ export default function useAdventureGame() {
     defense: baseHero.defense ?? 0,
   });
   const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
-  const [enemyState, setEnemyState] = useState<"idle" | "defeated">("idle");
+  const [enemyState, setEnemyState] = useState<
+    "idle" | "attacking" | "defeated"
+  >("idle");
 
   const [currentEnemy, setCurrentEnemy] = useState<Enemy | null>(null);
 
   // Refs to store timeout IDs for cleanup
   const heroAttackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const enemyAttackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const enemyDefeatedTimeout = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
+  const enemySpawnTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { put: updateUserCard } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
 
@@ -137,6 +141,7 @@ export default function useAdventureGame() {
     if (isCorrect) {
       // Hero only performs attack animation when answer is correct for visual feedback
       setHeroState("attacking");
+      setEnemyState("attacking");
       // Clear any existing timeout
       if (heroAttackTimeout.current) {
         clearTimeout(heroAttackTimeout.current);
@@ -144,6 +149,14 @@ export default function useAdventureGame() {
       heroAttackTimeout.current = setTimeout(() => {
         setHeroState("idle");
       }, 500);
+
+      if (enemyAttackTimeout.current) {
+        clearTimeout(enemyAttackTimeout.current);
+      }
+      enemyAttackTimeout.current = setTimeout(() => {
+        setEnemyState("idle");
+      }, 500);
+
       const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
       const enemyDamage = Math.max(0, enemy.attackDamage - hero.defense);
       setCurrentEnemy((prev) => {
@@ -185,18 +198,20 @@ export default function useAdventureGame() {
   // Lose condition
   useEffect(() => {
     if (hero.currentHealth <= 0 && currentLevelEnemies.length > 0) {
-      // Reset hero and enemy
+      // Reset ONLY health, keep all accumulated bonuses (maxHealth, attack, etc.)
       setHero((prev) => ({
-        ...baseHero,
-        currentHealth: Math.max(prev.maxHealth, baseHero.maxHealth),
-        defense: baseHero.defense ?? 0,
+        ...prev,
+        currentHealth: prev.maxHealth, // Use current maxHealth (which includes bonuses)
       }));
       setCurrentEnemy(currentLevelEnemies[0]);
     }
-  }, [hero.currentHealth, baseHero, currentLevelEnemies]);
+  }, [hero.currentHealth, currentLevelEnemies]);
 
   const onEnemyDefeated = useCallback(() => {
     if (!currentEnemy) return;
+
+    // Capture enemy data before state changes
+    const defeatedEnemy = currentEnemy;
 
     setEnemyState("defeated");
     // Clear any existing timeout
@@ -204,55 +219,61 @@ export default function useAdventureGame() {
       clearTimeout(enemyDefeatedTimeout.current);
     }
     enemyDefeatedTimeout.current = setTimeout(() => {
+      const newExperience = hero.experience + defeatedEnemy.experience;
+
+      // Apply bonus based on type
+      const bonusUpdates: Partial<Hero> = {
+        experience: newExperience,
+      };
+
+      if (defeatedEnemy.bonus.type === "attack") {
+        bonusUpdates.attackDamage =
+          hero.attackDamage + defeatedEnemy.bonus.amount;
+      } else if (defeatedEnemy.bonus.type === "hp") {
+        bonusUpdates.maxHealth = hero.maxHealth + defeatedEnemy.bonus.amount;
+        bonusUpdates.currentHealth =
+          hero.currentHealth + defeatedEnemy.bonus.amount;
+      } else if (defeatedEnemy.bonus.type === "regeneration") {
+        bonusUpdates.regenerationRate =
+          hero.regenerationRate + defeatedEnemy.bonus.amount;
+      }
+
+      setHero((prev) => ({ ...prev, ...bonusUpdates }));
+
+      // Trigger bonus animation
+      setBonusAnimation({
+        type: defeatedEnemy.bonus.type,
+        amount: defeatedEnemy.bonus.amount,
+      });
+
+      setTimeout(() => {
+        setBonusAnimation(null);
+      }, 1000);
+
+      // 🎮 Envoyer le bonus au serveur
+      user.addHeroBonus({
+        type: defeatedEnemy.bonus.type,
+        amount: defeatedEnemy.bonus.amount,
+      });
+
+      // Reset enemy state to idle first, then pick new enemy
       setEnemyState("idle");
+
+      // Small delay to ensure state is settled before changing enemy
+      if (enemySpawnTimeout.current) {
+        clearTimeout(enemySpawnTimeout.current);
+      }
+      enemySpawnTimeout.current = setTimeout(() => {
+        if (currentLevelEnemies.length > 0) {
+          const randomEnemy =
+            currentLevelEnemies[
+              Math.floor(Math.random() * currentLevelEnemies.length)
+            ];
+          setCurrentEnemy(randomEnemy);
+        }
+      }, 50);
     }, 1000);
-
-    const newExperience = hero.experience + currentEnemy.experience;
-
-    // Apply bonus based on type
-    const bonusUpdates: Partial<Hero> = {
-      experience: newExperience,
-    };
-
-    if (currentEnemy.bonus.type === "attack") {
-      bonusUpdates.attackDamage = hero.attackDamage + currentEnemy.bonus.amount;
-    } else if (currentEnemy.bonus.type === "hp") {
-      bonusUpdates.maxHealth = hero.maxHealth + currentEnemy.bonus.amount;
-      bonusUpdates.currentHealth =
-        hero.currentHealth + currentEnemy.bonus.amount;
-    } else if (currentEnemy.bonus.type === "regeneration") {
-      bonusUpdates.regenerationRate =
-        hero.regenerationRate + currentEnemy.bonus.amount;
-    }
-
-    setHero((prev) => ({ ...prev, ...bonusUpdates }));
-
-    // Trigger bonus animation
-    setBonusAnimation({
-      type: currentEnemy.bonus.type,
-      amount: currentEnemy.bonus.amount,
-    });
-
-    setTimeout(() => {
-      setBonusAnimation(null);
-    }, 1000);
-
-    // Reset enemy - pick random enemy from current level
-    if (currentLevelEnemies.length > 0) {
-      const randomEnemy =
-        currentLevelEnemies[
-          Math.floor(Math.random() * currentLevelEnemies.length)
-        ];
-      setCurrentEnemy(randomEnemy);
-    }
-
-    // 🎮 Envoyer le bonus au serveur
-    user.addHeroBonus({
-      type: currentEnemy.bonus.type,
-      amount: currentEnemy.bonus.amount,
-    });
   }, [currentEnemy, currentLevelEnemies, hero, user]);
-
   useEffect(() => {
     if (currentEnemy && currentEnemy.currentHealth <= 0) {
       onEnemyDefeated();
@@ -361,6 +382,17 @@ export default function useAdventureGame() {
       });
     }
   }, [user.data.hero]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (heroAttackTimeout.current) clearTimeout(heroAttackTimeout.current);
+      if (enemyAttackTimeout.current) clearTimeout(enemyAttackTimeout.current);
+      if (enemyDefeatedTimeout.current)
+        clearTimeout(enemyDefeatedTimeout.current);
+      if (enemySpawnTimeout.current) clearTimeout(enemySpawnTimeout.current);
+    };
+  }, []);
 
   return {
     cardsInHand,

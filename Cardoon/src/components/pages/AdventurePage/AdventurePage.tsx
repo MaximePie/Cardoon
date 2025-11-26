@@ -35,9 +35,6 @@ const AdventurePage = () => {
         attackDamage={hero.attackDamage}
         regenerationRate={hero.regenerationRate}
         maxHealth={hero.maxHealth}
-        level={hero.level}
-        experience={hero.experience}
-        experienceToNextLevel={hero.experienceToNextLevel}
         bonusAnimation={bonusAnimation}
       />
       <div className="AdventurePage__body">

@@ -40,9 +40,6 @@ describe("HeroStats", () => {
           attackDamage={50}
           regenerationRate={3}
           maxHealth={200}
-          level={5}
-          experience={75}
-          experienceToNextLevel={150}
         />
       );
 

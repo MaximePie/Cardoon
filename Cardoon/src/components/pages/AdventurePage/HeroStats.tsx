@@ -8,9 +8,6 @@ interface HeroStatsProps {
   attackDamage: number;
   regenerationRate: number;
   maxHealth: number;
-  level: number;
-  experience: number;
-  experienceToNextLevel: number;
   bonusAnimation: {
     type: "attack" | "regeneration" | "hp" | "defense";
     amount: number;

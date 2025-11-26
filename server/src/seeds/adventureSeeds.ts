@@ -48,32 +48,44 @@ export async function seedAdventure() {
 
     console.log(`✅ Created ${await Level.countDocuments()} levels`);
 
+    const skeleton = {
+      id: "Skeleton",
+      name: "Skeleton Warrior",
+      level: forestLevel._id,
+      maxHealth: 5,
+      attackDamage: 3,
+      defense: 0,
+      experience: 50,
+      sprites: {
+        idle: "Skeleton-Idle.png",
+        attack: "Skeleton-Attack.png",
+        hurt: "Skeleton-Hurt.png",
+        defeated: "Skeleton-Death.png",
+      },
+      spawnWeight: 60,
+      isActive: true,
+    };
+
     // Create enemies for Dark Forest (Level 1)
     const forestEnemies = [
       {
-        id: "Skeleton",
-        name: "Skeleton Warrior",
-        level: forestLevel._id,
-        maxHealth: 5,
-        attackDamage: 2,
-        defense: 0,
-        experience: 50,
+        ...skeleton,
         bonus: { type: "hp", amount: 1 },
-        sprites: {
-          idle: "Skeleton-Idle.png",
-          attack: "Skeleton-Attack.png",
-          hurt: "Skeleton-Hurt.png",
-          defeated: "Skeleton-Death.png",
-        },
-        spawnWeight: 60,
-        isActive: true,
+      },
+      {
+        ...skeleton,
+        bonus: { type: "attack", amount: 1 },
+      },
+      {
+        ...skeleton,
+        bonus: { type: "regeneration", amount: 1 },
       },
       {
         id: "Goblin",
         name: "Forest Goblin",
         level: forestLevel._id,
         maxHealth: 8,
-        attackDamage: 2,
+        attackDamage: 4,
         defense: 0,
         experience: 40,
         bonus: { type: "attack", amount: 1 },

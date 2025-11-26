@@ -186,11 +186,11 @@ export default function useAdventureGame() {
   useEffect(() => {
     if (hero.currentHealth <= 0 && currentLevelEnemies.length > 0) {
       // Reset hero and enemy
-      setHero({
+      setHero((prev) => ({
         ...baseHero,
-        currentHealth: baseHero.maxHealth,
+        currentHealth: Math.max(prev.maxHealth, baseHero.maxHealth),
         defense: baseHero.defense ?? 0,
-      });
+      }));
       setCurrentEnemy(currentLevelEnemies[0]);
     }
   }, [hero.currentHealth, baseHero, currentLevelEnemies]);

@@ -1,7 +1,3 @@
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
-import WhatshotIcon from "@mui/icons-material/Whatshot";
-import { SvgIconProps } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAdventureContext } from "../../../context/AdventureContext";
@@ -9,52 +5,20 @@ import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { QueryKeys } from "../../../lib/queryClient";
 import { PopulatedUserCard, User } from "../../../types/common";
+import {
+  BonusType,
+  DEFAULT_HERO,
+  Enemy,
+  EnemyState,
+  EnemyType,
+  getBonusIcon,
+  Hero,
+  HeroState,
+} from "./adventure.types";
+
 interface PutResult {
   user: User;
   userCard: PopulatedUserCard;
-}
-
-export type EnemyType = "NightBorne" | "Skeleton" | "Goblin";
-
-interface Enemy {
-  id: EnemyType;
-  name: string;
-  maxHealth: number;
-  currentHealth: number;
-  attackDamage: number;
-  defense: number;
-  experience: number; // Given exp when defeated
-  bonus: {
-    type: "hp" | "attack" | "regeneration" | "defense";
-    amount: number;
-    icon: React.ComponentType<SvgIconProps>;
-    iconColor: SvgIconProps["color"];
-  };
-}
-
-// Helper function to get icon and color for bonus type
-const getBonusIcon = (type: "hp" | "attack" | "regeneration" | "defense") => {
-  switch (type) {
-    case "hp":
-      return { icon: FavoriteIcon, iconColor: "primary" as const };
-    case "attack":
-      return { icon: WhatshotIcon, iconColor: "error" as const };
-    case "regeneration":
-      return { icon: HealthAndSafetyIcon, iconColor: "success" as const };
-    case "defense":
-      return { icon: HealthAndSafetyIcon, iconColor: "info" as const };
-  }
-};
-
-interface Hero {
-  maxHealth: number;
-  currentHealth: number;
-  regenerationRate: number;
-  attackDamage: number;
-  defense: number;
-  level: number;
-  experience: number;
-  experienceToNextLevel: number;
 }
 
 export default function useAdventureGame() {
@@ -93,22 +57,10 @@ export default function useAdventureGame() {
     }));
   }, [adventureData]);
 
-  // Safe default hero object to prevent crashes if user.data.hero is missing
-  const defaultHero: Hero = {
-    maxHealth: 120,
-    currentHealth: 120,
-    regenerationRate: 0,
-    attackDamage: 2,
-    defense: 0,
-    level: 1,
-    experience: 0,
-    experienceToNextLevel: 100,
-  };
-
-  const baseHero = user.data.hero ?? defaultHero;
+  const baseHero = user.data.hero ?? DEFAULT_HERO;
 
   const [bonusAnimation, setBonusAnimation] = useState<{
-    type: "hp" | "attack" | "regeneration" | "defense";
+    type: BonusType;
     amount: number;
   } | null>(null);
   const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>([]);
@@ -119,10 +71,8 @@ export default function useAdventureGame() {
     defense: baseHero.defense ?? 0,
     attackDamage: baseHero.attackDamage ?? 1,
   });
-  const [heroState, setHeroState] = useState<"idle" | "attacking">("idle");
-  const [enemyState, setEnemyState] = useState<
-    "idle" | "attacking" | "defeated"
-  >("idle");
+  const [heroState, setHeroState] = useState<HeroState>("idle");
+  const [enemyState, setEnemyState] = useState<EnemyState>("idle");
   const [showDamageAnimation, setShowDamageAnimation] = useState(false);
   const damageTimeoutRef = useRef<NodeJS.Timeout>();
   const [damageAnimationKey, setDamageAnimationKey] = useState(0); // ✅ Compteur stable

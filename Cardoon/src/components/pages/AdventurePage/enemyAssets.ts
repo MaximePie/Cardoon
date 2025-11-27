@@ -5,7 +5,7 @@
  * pour chaque type d'ennemi de manière scalable.
  */
 
-import type { EnemyType } from "./useAdventure";
+import type { EnemyType } from "./adventure.types";
 
 // NightBorne assets
 import nightBorneAttack from "../../../assets/Enemies/NightBorne_attack.gif";

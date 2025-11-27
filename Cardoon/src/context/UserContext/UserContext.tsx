@@ -17,7 +17,7 @@ export const UserContextProvider = ({
   const { openSnackbarWithMessage } = useContext(SnackbarContext);
   const {
     user,
-    error: userError,
+    error: meError,
     resetQueries: refetchUser,
     isLoading: isUserLoading,
     updateUserDailyGoal: updateUser,
@@ -89,7 +89,8 @@ export const UserContextProvider = ({
   };
 
   const shouldRedirectToLogin =
-    isTokenError(userError) || isTokenError(cardsError);
+    isTokenError(meError) || isTokenError(cardsError);
+
   // Clear the cookie
   const logout = useCallback(() => {
     document.cookie = "token=;max-age=0";
@@ -218,7 +219,7 @@ export const UserContextProvider = ({
         user: {
           data: currentUser,
           isLoading: isUserLoading && !shouldRedirectToLogin,
-          error: userError,
+          error: meError,
           hasItem,
           setUser,
           logout,

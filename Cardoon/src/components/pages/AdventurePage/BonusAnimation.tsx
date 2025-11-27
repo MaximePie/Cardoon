@@ -22,7 +22,7 @@ export const BonusAnimation = ({ type, amount, Icon }: BonusAnimationProps) => (
     style={{
       position: "absolute",
       left: "50%",
-      top: 0,
+      top: "1em",
       transform: "translateX(-50%)",
       color: BONUS_COLORS[type],
       fontWeight: "bold",

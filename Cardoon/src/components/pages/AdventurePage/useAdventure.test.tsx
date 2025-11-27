@@ -495,11 +495,14 @@ describe("useAdventure", () => {
         }
       });
 
-      await waitFor(() => {
-        expect(result.current.currentEnemy!.currentHealth).toBe(
-          result.current.currentEnemy!.maxHealth
-        );
-      });
+      await waitFor(
+        () => {
+          expect(result.current.currentEnemy!.currentHealth).toBe(
+            result.current.currentEnemy!.maxHealth
+          );
+        },
+        { timeout: 1200 }
+      );
     });
 
     it("should grant experience when enemy is defeated", async () => {
@@ -520,16 +523,17 @@ describe("useAdventure", () => {
         }
       });
 
-      await waitFor(() => {
-        expect(result.current.hero.experience).toBeGreaterThanOrEqual(0);
-      });
-
-      // Experience might have been reset to 0 if hero leveled up
-      const newExp = result.current.hero.experience;
-      const didLevelUp = newExp === 0 && result.current.hero.level > 1;
-      const gainedExp = newExp === initialExperience + enemyExperience;
-
-      expect(didLevelUp || gainedExp).toBe(true);
+      await waitFor(
+        () => {
+          expect(result.current.hero.experience).toBeGreaterThanOrEqual(0);
+          // Ensure the experience has actually changed (not just initialized)
+          const newExp = result.current.hero.experience;
+          const didLevelUp = newExp === 0 && result.current.hero.level > 1;
+          const gainedExp = newExp === initialExperience + enemyExperience;
+          expect(didLevelUp || gainedExp).toBe(true);
+        },
+        { timeout: 1200 }
+      );
     });
   });
 

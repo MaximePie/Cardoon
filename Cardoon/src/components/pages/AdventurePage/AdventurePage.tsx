@@ -5,8 +5,8 @@ import devMode from "../../../assets/Hero/devmode.svg";
 import heroIdle from "../../../assets/Hero/idle.gif";
 import { PopulatedUserCard } from "../../../types/common";
 import Card from "../../molecules/Card/Card";
+import { HeroStats } from "./components/HeroStats/HeroStats";
 import { getEnemyAssets } from "./enemyAssets";
-import { HeroStats } from "./HeroStats";
 import useAdventureGame from "./useAdventure";
 
 const isDev = import.meta.env.DEV;

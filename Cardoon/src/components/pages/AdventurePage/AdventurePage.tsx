@@ -29,7 +29,7 @@ const AdventurePage = () => {
   }
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
-  const enemyFinalDamage = currentEnemy.attackDamage - hero.defense;
+  const enemyFinalDamage = Math.max(0, currentEnemy.attackDamage - hero.defense);
   let enemyCurrentAsset;
   if (!enemyAssets) {
     enemyCurrentAsset = undefined;

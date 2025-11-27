@@ -94,7 +94,6 @@ export default function useAdventureGame() {
     if (enemyState === "attacking") {
       setShowDamageAnimation(true);
       setDamageAnimationKey((prev) => prev + 1); // Incrémente le compteur pour forcer la réanimation
-      console.log("Enemy is attacking, show damage animation");
 
       // Clear any existing timeout
       if (damageTimeoutRef.current) {

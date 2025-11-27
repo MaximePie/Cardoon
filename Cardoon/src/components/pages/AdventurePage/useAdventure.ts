@@ -76,6 +76,7 @@ export default function useAdventureGame() {
   const [showDamageAnimation, setShowDamageAnimation] = useState(false);
   const damageTimeoutRef = useRef<NodeJS.Timeout>();
   const [damageAnimationKey, setDamageAnimationKey] = useState(0); // ✅ Compteur stable
+  const [enemyFinalDamage, setEnemyFinalDamage] = useState(0);
 
   const [currentEnemy, setCurrentEnemy] = useState<Enemy | null>(null);
 
@@ -94,7 +95,6 @@ export default function useAdventureGame() {
     if (enemyState === "attacking") {
       setShowDamageAnimation(true);
       setDamageAnimationKey((prev) => prev + 1); // Incrémente le compteur pour forcer la réanimation
-      console.log("Enemy is attacking, show damage animation");
 
       // Clear any existing timeout
       if (damageTimeoutRef.current) {
@@ -135,6 +135,7 @@ export default function useAdventureGame() {
 
       const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
       const enemyDamage = Math.max(0, enemy.attackDamage - hero.defense);
+      setEnemyFinalDamage(enemyDamage);
       setCurrentEnemy((prev) => {
         if (!prev) return null;
         return {
@@ -148,6 +149,7 @@ export default function useAdventureGame() {
       }));
     } else {
       const damage = enemy.attackDamage - hero.defense;
+      setEnemyFinalDamage(damage);
       setHero((prev) => ({
         ...prev,
         currentHealth: prev.currentHealth - damage * 1.5,
@@ -385,5 +387,6 @@ export default function useAdventureGame() {
     bonusAnimation,
     showDamageAnimation,
     damageAnimationKey, // ✅ Clé stable pour l'animation des dégâts
+    enemyFinalDamage,
   };
 }

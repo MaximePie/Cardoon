@@ -22,6 +22,7 @@ const AdventurePage = () => {
     bonusAnimation,
     showDamageAnimation,
     damageAnimationKey,
+    enemyFinalDamage,
   } = useAdventureGame();
 
   if (!currentEnemy) {
@@ -29,7 +30,6 @@ const AdventurePage = () => {
   }
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
-  const enemyFinalDamage = currentEnemy.attackDamage - hero.defense;
   let enemyCurrentAsset;
   if (!enemyAssets) {
     enemyCurrentAsset = undefined;

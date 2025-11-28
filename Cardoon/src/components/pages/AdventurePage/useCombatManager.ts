@@ -9,7 +9,7 @@ import {
 } from "./combat.utils";
 
 const ANIMATION_DURATION = 500;
-const DEFEAT_ANIMATION_DURATION = 1000;
+const DEFEAT_ANIMATION_DURATION = 500;
 const SPAWN_DELAY = 50;
 
 interface UseCombatManagerParams {
@@ -66,17 +66,6 @@ export function useCombatManager({
     }
   }, [enemyState]);
 
-  // Handle lose condition - reset hero health
-  useEffect(() => {
-    if (hero.currentHealth <= 0 && availableEnemies.length > 0) {
-      setHero((prev) => ({
-        ...prev,
-        currentHealth: prev.maxHealth,
-      }));
-      setCurrentEnemy(availableEnemies[0]);
-    }
-  }, [hero.currentHealth, availableEnemies, setHero]);
-
   const spawnNewEnemy = useCallback(() => {
     setEnemyState("idle");
 
@@ -108,12 +97,19 @@ export function useCombatManager({
     [onEnemyDefeated, spawnNewEnemy]
   );
 
+  const handleEnemyDefeatRef = useRef(handleEnemyDefeat);
+
+  // Update ref when callback changes
+  useEffect(() => {
+    handleEnemyDefeatRef.current = handleEnemyDefeat;
+  }, [handleEnemyDefeat]);
+
   // Detect when enemy is defeated
   useEffect(() => {
     if (currentEnemy && currentEnemy.currentHealth <= 0) {
-      handleEnemyDefeat(currentEnemy);
+      handleEnemyDefeatRef.current(currentEnemy);
     }
-  }, [currentEnemy, handleEnemyDefeat]);
+  }, [currentEnemy]);
 
   const performAttack = useCallback(
     (isCorrect: boolean) => {
@@ -143,17 +139,49 @@ export function useCombatManager({
           };
         });
 
-        setHero((prev) => ({
-          ...prev,
-          currentHealth: Math.max(0, prev.currentHealth - enemyDamage),
-        }));
+        setHero((prev) => {
+          const newHealth = Math.max(0, prev.currentHealth - enemyDamage);
+
+          // Check if hero died
+          if (newHealth <= 0 && availableEnemies.length > 0) {
+            // Reset hero to full health
+            setTimeout(() => {
+              setCurrentEnemy(availableEnemies[0]);
+            }, 0);
+            return {
+              ...prev,
+              currentHealth: prev.maxHealth,
+            };
+          }
+
+          return {
+            ...prev,
+            currentHealth: newHealth,
+          };
+        });
       } else {
         const penaltyDamage = calculatePenaltyDamage(currentEnemy, hero);
         setEnemyFinalDamage(penaltyDamage);
-        setHero((prev) => ({
-          ...prev,
-          currentHealth: Math.max(0, prev.currentHealth - penaltyDamage),
-        }));
+        setHero((prev) => {
+          const newHealth = Math.max(0, prev.currentHealth - penaltyDamage);
+
+          // Check if hero died
+          if (newHealth <= 0 && availableEnemies.length > 0) {
+            // Reset hero to full health
+            setTimeout(() => {
+              setCurrentEnemy(availableEnemies[0]);
+            }, 0);
+            return {
+              ...prev,
+              currentHealth: prev.maxHealth,
+            };
+          }
+
+          return {
+            ...prev,
+            currentHealth: newHealth,
+          };
+        });
       }
 
       if (enemyAttackTimeout.current) {
@@ -171,7 +199,7 @@ export function useCombatManager({
         }));
       }
     },
-    [currentEnemy, hero, setHero]
+    [currentEnemy, hero, setHero, availableEnemies]
   );
 
   // Cleanup all timeouts on unmount

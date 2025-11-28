@@ -51,25 +51,27 @@ export default function useAdventureGame() {
 
   const handleEnemyDefeated = useCallback(
     (defeatedEnemy: Enemy) => {
-      const newExperience = hero.experience + defeatedEnemy.experience;
+      setHero((prev) => {
+        const newExperience = prev.experience + defeatedEnemy.experience;
 
-      const bonusUpdates: Partial<Hero> = {
-        experience: newExperience,
-      };
+        const bonusUpdates: Partial<Hero> = {
+          experience: newExperience,
+        };
 
-      if (defeatedEnemy.bonus.type === "attack") {
-        bonusUpdates.attackDamage =
-          hero.attackDamage + defeatedEnemy.bonus.amount;
-      } else if (defeatedEnemy.bonus.type === "hp") {
-        bonusUpdates.maxHealth = hero.maxHealth + defeatedEnemy.bonus.amount;
-        bonusUpdates.currentHealth =
-          hero.currentHealth + defeatedEnemy.bonus.amount;
-      } else if (defeatedEnemy.bonus.type === "regeneration") {
-        bonusUpdates.regenerationRate =
-          hero.regenerationRate + defeatedEnemy.bonus.amount;
-      }
+        if (defeatedEnemy.bonus.type === "attack") {
+          bonusUpdates.attackDamage =
+            prev.attackDamage + defeatedEnemy.bonus.amount;
+        } else if (defeatedEnemy.bonus.type === "hp") {
+          bonusUpdates.maxHealth = prev.maxHealth + defeatedEnemy.bonus.amount;
+          bonusUpdates.currentHealth =
+            prev.currentHealth + defeatedEnemy.bonus.amount;
+        } else if (defeatedEnemy.bonus.type === "regeneration") {
+          bonusUpdates.regenerationRate =
+            prev.regenerationRate + defeatedEnemy.bonus.amount;
+        }
 
-      setHero((prev) => ({ ...prev, ...bonusUpdates }));
+        return { ...prev, ...bonusUpdates };
+      });
 
       setBonusAnimation({
         type: defeatedEnemy.bonus.type,
@@ -85,7 +87,7 @@ export default function useAdventureGame() {
         amount: defeatedEnemy.bonus.amount,
       });
     },
-    [hero, user]
+    [user]
   );
 
   const currentLevelEnemies = useMemo(() => {

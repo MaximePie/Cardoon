@@ -5,8 +5,8 @@ import devMode from "../../../assets/Hero/devmode.svg";
 import heroIdle from "../../../assets/Hero/idle.gif";
 import { PopulatedUserCard } from "../../../types/common";
 import Card from "../../molecules/Card/Card";
+import { HeroStats } from "./components/HeroStats/HeroStats";
 import { getEnemyAssets } from "./enemyAssets";
-import { HeroStats } from "./HeroStats";
 import useAdventureGame from "./useAdventure";
 
 const isDev = import.meta.env.DEV;
@@ -22,6 +22,7 @@ const AdventurePage = () => {
     bonusAnimation,
     showDamageAnimation,
     damageAnimationKey,
+    enemyFinalDamage,
   } = useAdventureGame();
 
   if (!currentEnemy) {
@@ -29,7 +30,6 @@ const AdventurePage = () => {
   }
 
   const enemyAssets = getEnemyAssets(currentEnemy.id);
-  const enemyFinalDamage = Math.max(0, currentEnemy.attackDamage - hero.defense);
   let enemyCurrentAsset;
   if (!enemyAssets) {
     enemyCurrentAsset = undefined;

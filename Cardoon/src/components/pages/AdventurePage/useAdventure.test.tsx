@@ -476,7 +476,7 @@ describe("useAdventure", () => {
         () => {
           expect(result.current.enemyState).toBe("idle");
         },
-        { timeout: 1100 }
+        { timeout: 600 }
       );
     });
 
@@ -501,7 +501,7 @@ describe("useAdventure", () => {
             result.current.currentEnemy!.maxHealth
           );
         },
-        { timeout: 1200 }
+        { timeout: 700 }
       );
     });
 
@@ -532,7 +532,7 @@ describe("useAdventure", () => {
           const gainedExp = newExp === initialExperience + enemyExperience;
           expect(didLevelUp || gainedExp).toBe(true);
         },
-        { timeout: 1200 }
+        { timeout: 700 }
       );
     });
   });

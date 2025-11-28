@@ -161,7 +161,7 @@ exports.addHeroBonusSchema = zod_1.z.object({
     type: zod_1.z.enum(["attack", "hp", "regeneration"], {
         message: "Bonus type must be 'attack', 'hp', or 'regeneration'",
     }),
-    amount: zod_1.z.number().min(1, "Bonus amount must be at least 1"),
+    amount: zod_1.z.number().min(0.1, "Bonus amount must be at least 1"),
 });
 /**
  * Daily Goal validation schemas

@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAdventureContext } from "../../../context/AdventureContext";
 import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
@@ -9,12 +9,12 @@ import {
   BonusType,
   DEFAULT_HERO,
   Enemy,
-  EnemyState,
   EnemyType,
   getBonusIcon,
   Hero,
-  HeroState,
 } from "./adventure.types";
+import { useCardManager } from "./useCardManager";
+import { useCombatManager } from "./useCombatManager";
 
 interface PutResult {
   user: User;
@@ -24,21 +24,77 @@ interface PutResult {
 export default function useAdventureGame() {
   const { cards, user } = useUser();
   const { adventureData } = useAdventureContext();
-
   const queryClient = useQueryClient();
+
   const reviewUserCards = useMemo(
     () => cards.reviewUserCards.data || [],
     [cards.reviewUserCards.data]
   );
 
-  // Get current level enemies from adventure data
-  // For now, use the first level (Dark Forest) - later can be based on user progress
+  const baseHero = user.data.hero ?? DEFAULT_HERO;
+
+  const [hero, setHero] = useState<Hero>({
+    ...baseHero,
+    currentHealth: baseHero.currentHealth ?? baseHero.maxHealth,
+    defense: baseHero.defense ?? 0,
+    attackDamage: baseHero.attackDamage ?? 1,
+  });
+
+  const [bonusAnimation, setBonusAnimation] = useState<{
+    type: BonusType;
+    amount: number;
+  } | null>(null);
+
+  const { put: updateUserCard } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
+
+  const { cardsInHand, removeCardFromHand } = useCardManager(reviewUserCards);
+
+  const handleEnemyDefeated = useCallback(
+    (defeatedEnemy: Enemy) => {
+      setHero((prev) => {
+        const newExperience = prev.experience + defeatedEnemy.experience;
+
+        const bonusUpdates: Partial<Hero> = {
+          experience: newExperience,
+        };
+
+        if (defeatedEnemy.bonus.type === "attack") {
+          bonusUpdates.attackDamage =
+            prev.attackDamage + defeatedEnemy.bonus.amount;
+        } else if (defeatedEnemy.bonus.type === "hp") {
+          bonusUpdates.maxHealth = prev.maxHealth + defeatedEnemy.bonus.amount;
+          bonusUpdates.currentHealth =
+            prev.currentHealth + defeatedEnemy.bonus.amount;
+        } else if (defeatedEnemy.bonus.type === "regeneration") {
+          bonusUpdates.regenerationRate =
+            prev.regenerationRate + defeatedEnemy.bonus.amount;
+        }
+
+        return { ...prev, ...bonusUpdates };
+      });
+
+      setBonusAnimation({
+        type: defeatedEnemy.bonus.type,
+        amount: defeatedEnemy.bonus.amount,
+      });
+
+      setTimeout(() => {
+        setBonusAnimation(null);
+      }, 1000);
+
+      user.addHeroBonus({
+        type: defeatedEnemy.bonus.type,
+        amount: defeatedEnemy.bonus.amount,
+      });
+    },
+    [user]
+  );
+
   const currentLevelEnemies = useMemo(() => {
     if (!adventureData?.levels || adventureData.levels.length === 0) {
       return [];
     }
 
-    // Find the first unlocked level or default to first level
     const currentLevel = adventureData.levels[0];
 
     return currentLevel.enemies.map((enemy) => ({
@@ -57,300 +113,49 @@ export default function useAdventureGame() {
     }));
   }, [adventureData]);
 
-  const baseHero = user.data.hero ?? DEFAULT_HERO;
-
-  const [bonusAnimation, setBonusAnimation] = useState<{
-    type: BonusType;
-    amount: number;
-  } | null>(null);
-  const [cardsInHand, setCardsInHand] = useState<PopulatedUserCard[]>([]);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [hero, setHero] = useState<Hero>({
-    ...baseHero,
-    currentHealth: baseHero.currentHealth ?? baseHero.maxHealth,
-    defense: baseHero.defense ?? 0,
-    attackDamage: baseHero.attackDamage ?? 1,
+  const {
+    currentEnemy,
+    heroState,
+    enemyState,
+    showDamageAnimation,
+    damageAnimationKey,
+    enemyFinalDamage,
+    performAttack,
+  } = useCombatManager({
+    hero,
+    setHero,
+    availableEnemies: currentLevelEnemies,
+    onEnemyDefeated: handleEnemyDefeated,
   });
-  const [heroState, setHeroState] = useState<HeroState>("idle");
-  const [enemyState, setEnemyState] = useState<EnemyState>("idle");
-  const [showDamageAnimation, setShowDamageAnimation] = useState(false);
-  const damageTimeoutRef = useRef<NodeJS.Timeout>();
-  const [damageAnimationKey, setDamageAnimationKey] = useState(0); // ✅ Compteur stable
 
-  const [currentEnemy, setCurrentEnemy] = useState<Enemy | null>(null);
-
-  // Refs to store timeout IDs for cleanup
-  const heroAttackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const enemyAttackTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const enemyDefeatedTimeout = useRef<ReturnType<typeof setTimeout> | null>(
-    null
+  const attack = useCallback(
+    (_enemy: Enemy, isCorrect: boolean) => {
+      if (!currentEnemy) return;
+      performAttack(isCorrect);
+    },
+    [currentEnemy, performAttack]
   );
-  const enemySpawnTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const { put: updateUserCard } = usePut<PutResult>(ACTIONS.UPDATE_INTERVAL);
-
-  // ✅ Effet pour afficher les dégâts quand l'ennemi attaque
-  useEffect(() => {
-    if (enemyState === "attacking") {
-      setShowDamageAnimation(true);
-      setDamageAnimationKey((prev) => prev + 1); // Incrémente le compteur pour forcer la réanimation
-
-      // Clear any existing timeout
-      if (damageTimeoutRef.current) {
-        clearTimeout(damageTimeoutRef.current);
-      }
-
-      // Cacher les dégâts après 1 seconde (durée de l'animation)
-      damageTimeoutRef.current = setTimeout(() => {
-        setShowDamageAnimation(false);
-      }, 1000);
-    }
-
-    // Cleanup
-    return () => {
-      if (damageTimeoutRef.current) {
-        clearTimeout(damageTimeoutRef.current);
-      }
-    };
-  }, [enemyState]);
-  const attack = (enemy: Enemy, isCorrect: boolean) => {
-    if (!currentEnemy) return;
-    setEnemyState("attacking");
-
-    if (isCorrect) {
-      // Hero only performs attack animation when answer is correct for visual feedback
-      setHeroState("attacking");
-      // Clear any existing timeout
-      if (heroAttackTimeout.current) {
-        clearTimeout(heroAttackTimeout.current);
-      }
-      heroAttackTimeout.current = setTimeout(() => {
-        setHeroState("idle");
-      }, 500);
-
-      if (enemyAttackTimeout.current) {
-        clearTimeout(enemyAttackTimeout.current);
-      }
-
-      const heroDamange = Math.max(0, hero.attackDamage - enemy.defense);
-      const enemyDamage = Math.max(0, enemy.attackDamage - hero.defense);
-      setCurrentEnemy((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          currentHealth: Math.max(0, prev.currentHealth - heroDamange),
-        };
-      });
-      setHero((prev) => ({
-        ...prev,
-        currentHealth: prev.currentHealth - enemyDamage,
-      }));
-    } else {
-      const damage = enemy.attackDamage - hero.defense;
-      setHero((prev) => ({
-        ...prev,
-        currentHealth: prev.currentHealth - damage * 1.5,
-      }));
-    }
-    enemyAttackTimeout.current = setTimeout(() => {
-      setEnemyState("idle");
-    }, 500);
-
-    if (hero.currentHealth > 0) {
-      setHero((prev) => ({
-        ...prev,
-        currentHealth: Math.min(
-          prev.maxHealth,
-          prev.currentHealth + prev.regenerationRate
-        ),
-      }));
-    }
-  };
-
-  // Initialize enemy when enemies are loaded
-  useEffect(() => {
-    if (currentLevelEnemies.length > 0 && !currentEnemy) {
-      setCurrentEnemy(currentLevelEnemies[0]);
-    }
-  }, [currentLevelEnemies, currentEnemy]);
-
-  // Lose condition
-  useEffect(() => {
-    if (hero.currentHealth <= 0 && currentLevelEnemies.length > 0) {
-      // Reset ONLY health, keep all accumulated bonuses (maxHealth, attack, etc.)
-      setHero((prev) => ({
-        ...prev,
-        currentHealth: prev.maxHealth, // Use current maxHealth (which includes bonuses)
-      }));
-      setCurrentEnemy(currentLevelEnemies[0]);
-    }
-  }, [hero.currentHealth, currentLevelEnemies]);
-
-  const onEnemyDefeated = useCallback(() => {
-    if (!currentEnemy) return;
-
-    // Capture enemy data before state changes
-    const defeatedEnemy = currentEnemy;
-
-    setEnemyState("defeated");
-    // Clear any existing timeout
-    if (enemyDefeatedTimeout.current) {
-      clearTimeout(enemyDefeatedTimeout.current);
-    }
-    enemyDefeatedTimeout.current = setTimeout(() => {
-      const newExperience = hero.experience + defeatedEnemy.experience;
-
-      // Apply bonus based on type
-      const bonusUpdates: Partial<Hero> = {
-        experience: newExperience,
-      };
-
-      if (defeatedEnemy.bonus.type === "attack") {
-        bonusUpdates.attackDamage =
-          hero.attackDamage + defeatedEnemy.bonus.amount;
-      } else if (defeatedEnemy.bonus.type === "hp") {
-        bonusUpdates.maxHealth = hero.maxHealth + defeatedEnemy.bonus.amount;
-        bonusUpdates.currentHealth =
-          hero.currentHealth + defeatedEnemy.bonus.amount;
-      } else if (defeatedEnemy.bonus.type === "regeneration") {
-        bonusUpdates.regenerationRate =
-          hero.regenerationRate + defeatedEnemy.bonus.amount;
-      }
-
-      setHero((prev) => ({ ...prev, ...bonusUpdates }));
-
-      // Trigger bonus animation
-      setBonusAnimation({
-        type: defeatedEnemy.bonus.type,
-        amount: defeatedEnemy.bonus.amount,
-      });
-
-      setTimeout(() => {
-        setBonusAnimation(null);
-      }, 1000);
-
-      // 🎮 Envoyer le bonus au serveur
-      user.addHeroBonus({
-        type: defeatedEnemy.bonus.type,
-        amount: defeatedEnemy.bonus.amount,
-      });
-
-      // Reset enemy state to idle first, then pick new enemy
-      setEnemyState("idle");
-
-      // Small delay to ensure state is settled before changing enemy
-      if (enemySpawnTimeout.current) {
-        clearTimeout(enemySpawnTimeout.current);
-      }
-      enemySpawnTimeout.current = setTimeout(() => {
-        if (currentLevelEnemies.length > 0) {
-          const randomEnemy =
-            currentLevelEnemies[
-              Math.floor(Math.random() * currentLevelEnemies.length)
-            ];
-          setCurrentEnemy(randomEnemy);
-        }
-      }, 50);
-    }, 1000);
-  }, [currentEnemy, currentLevelEnemies, hero, user]);
-  useEffect(() => {
-    if (currentEnemy && currentEnemy.currentHealth <= 0) {
-      onEnemyDefeated();
-    }
-  }, [currentEnemy, onEnemyDefeated]);
-
-  const syncCards = useCallback(() => {
-    if (reviewUserCards.length === 0) return;
-
-    // Initialisation une seule fois
-    if (!isInitialized) {
-      setCardsInHand(reviewUserCards.slice(0, 5));
-      setIsInitialized(true);
-      return;
-    }
-
-    // Ajouter des cartes seulement si on en a moins de 5
-    setCardsInHand((currentCards) => {
-      if (currentCards.length >= 5) return currentCards;
-
-      const currentCardIds = new Set(currentCards.map((c) => c._id));
-      const availableCards = reviewUserCards.filter(
-        (card) => !currentCardIds.has(card._id)
-      );
-
-      if (availableCards.length > 0) {
-        const cardsToAdd = availableCards.slice(0, 5 - currentCards.length);
-        return [...currentCards, ...cardsToAdd];
-      }
-
-      return currentCards;
-    });
-  }, [reviewUserCards, isInitialized]);
-
-  // Déclencher la synchronisation quand les données changent
-  useEffect(() => {
-    syncCards();
-  }, [syncCards]);
 
   const removeCard = async (card: PopulatedUserCard, isCorrect: boolean) => {
     if (!currentEnemy) return;
 
-    attack(currentEnemy, isCorrect);
-
-    setCardsInHand((prev) => {
-      // 1. Enlever la carte supprimée
-      const remainingCards = prev.filter((c) => c._id !== card._id);
-
-      // 2. Trouver les cartes disponibles (pas déjà en main)
-      const currentCardIds = new Set(remainingCards.map((c) => c._id));
-      const availableCards = reviewUserCards.filter(
-        (availableCard) =>
-          !currentCardIds.has(availableCard._id) &&
-          availableCard._id !== card._id
-      );
-
-      // 3. Ajouter une nouvelle carte si disponible
-      if (availableCards.length > 0 && remainingCards.length < 5) {
-        const newCard = availableCards[0]; // Prendre la première carte disponible
-        return [...remainingCards, newCard];
-      }
-
-      return remainingCards;
-    });
+    performAttack(isCorrect);
+    removeCardFromHand(card._id);
 
     try {
-      // Mettre à jour sur le serveur
       await updateUserCard(card._id, { isCorrectAnswer: isCorrect });
 
-      // 🚀 SOLUTION: Mise à jour optimiste du cache sans refetch
-      // Retirer la carte du cache local des reviewUserCards car elle ne doit plus apparaître
       queryClient.setQueryData(
         QueryKeys.reviewUserCards(user.data?._id),
         (oldCards: PopulatedUserCard[] | undefined) => {
           if (!oldCards) return [];
-          // Filtrer la carte qui vient d'être mise à jour
           return oldCards.filter((c) => c._id !== card._id);
         }
       );
-
-      console.log("🎯 Card removed from reviewUserCards cache optimistically");
     } catch (error) {
-      console.error("🎯 Error updating card:", error);
-      // En cas d'erreur, on pourrait restaurer le cache, mais pour l'instant on laisse comme ça
+      console.error("Error updating card:", error);
     }
   };
-
-  // Cleanup timeouts when component unmounts
-  useEffect(() => {
-    return () => {
-      if (heroAttackTimeout.current) {
-        clearTimeout(heroAttackTimeout.current);
-      }
-      if (enemyDefeatedTimeout.current) {
-        clearTimeout(enemyDefeatedTimeout.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (user.data.hero) {
@@ -362,17 +167,6 @@ export default function useAdventureGame() {
     }
   }, [user.data.hero]);
 
-  // Cleanup timeouts on unmount
-  useEffect(() => {
-    return () => {
-      if (heroAttackTimeout.current) clearTimeout(heroAttackTimeout.current);
-      if (enemyAttackTimeout.current) clearTimeout(enemyAttackTimeout.current);
-      if (enemyDefeatedTimeout.current)
-        clearTimeout(enemyDefeatedTimeout.current);
-      if (enemySpawnTimeout.current) clearTimeout(enemySpawnTimeout.current);
-    };
-  }, []);
-
   return {
     cardsInHand,
     hero,
@@ -383,6 +177,7 @@ export default function useAdventureGame() {
     removeCard,
     bonusAnimation,
     showDamageAnimation,
-    damageAnimationKey, // ✅ Clé stable pour l'animation des dégâts
+    damageAnimationKey,
+    enemyFinalDamage,
   };
 }

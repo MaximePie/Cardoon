@@ -2,7 +2,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { AnimatePresence } from "motion/react";
-import { BonusAnimation } from "./BonusAnimation";
+import { BonusAnimation } from "../BonusAnimation/BonusAnimation";
 
 interface HeroStatsProps {
   attackDamage: number;

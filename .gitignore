@@ -15,8 +15,14 @@ server/config/config.js
 *.local
 server/.env
 Cardoon/.env
-Cardoon/coverage
-server/coverage
+Cardoon/coverage/*
+!Cardoon/coverage/.tmp
+Cardoon/coverage/.tmp/*
+!Cardoon/coverage/.tmp/.gitkeep
+server/coverage/*
+!server/coverage/.tmp
+server/coverage/.tmp/*
+!server/coverage/.tmp/.gitkeep
 
 # Editor directories and files
 .vscode/*

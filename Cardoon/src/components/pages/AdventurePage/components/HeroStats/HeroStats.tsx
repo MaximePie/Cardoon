@@ -14,6 +14,10 @@ interface HeroStatsProps {
   } | null;
 }
 
+function roundToTwo(num: number) {
+  return Math.round(num * 100) / 100;
+}
+
 export const HeroStats = ({
   attackDamage,
   regenerationRate,
@@ -24,12 +28,13 @@ export const HeroStats = ({
     <div className="AdventurePage__stats">
       <div className="AdventurePage__stats-resources">
         <span style={{ position: "relative" }}>
-          <WhatshotIcon color="error" fontSize="small" /> {attackDamage}
+          <WhatshotIcon color="error" fontSize="small" />{" "}
+          {roundToTwo(attackDamage)}
           <AnimatePresence>
             {bonusAnimation?.type === "attack" && (
               <BonusAnimation
                 type="attack"
-                amount={bonusAnimation.amount}
+                amount={roundToTwo(bonusAnimation.amount)}
                 Icon={WhatshotIcon}
               />
             )}
@@ -37,24 +42,25 @@ export const HeroStats = ({
         </span>
         <span style={{ position: "relative" }}>
           <HealthAndSafetyIcon color="warning" fontSize="small" />{" "}
-          {regenerationRate}
+          {roundToTwo(regenerationRate)}
           <AnimatePresence>
             {bonusAnimation?.type === "regeneration" && (
               <BonusAnimation
                 type="regeneration"
-                amount={bonusAnimation.amount}
+                amount={roundToTwo(bonusAnimation.amount)}
                 Icon={HealthAndSafetyIcon}
               />
             )}
           </AnimatePresence>
         </span>
         <span style={{ position: "relative" }}>
-          <FavoriteIcon color="success" fontSize="small" /> {maxHealth}
+          <FavoriteIcon color="success" fontSize="small" />{" "}
+          {roundToTwo(maxHealth)}
           <AnimatePresence>
             {bonusAnimation?.type === "hp" && (
               <BonusAnimation
                 type="hp"
-                amount={bonusAnimation.amount}
+                amount={roundToTwo(bonusAnimation.amount)}
                 Icon={FavoriteIcon}
               />
             )}

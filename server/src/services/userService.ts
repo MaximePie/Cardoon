@@ -17,12 +17,20 @@ export interface AuthResult {
   user: any;
 }
 export class UserService {
+  /**
+   * Add the max between [amount]% and .1 to the user hero bonus to the user
+   * @param type
+   * @param amount
+   * @param id
+   * @returns
+   */
   static async addHeroBonus(type: string, amount: number, id: string) {
     const user = await User.findById(id);
     if (!user) {
       throw new AppError("User not found", 404);
     }
-    await user.addBonus(type, amount);
+    const minAmount = Math.max(amount / 100, 0.1);
+    await user.addBonus(type, minAmount);
     return { user };
   }
   private static getJwtSecret(): string {

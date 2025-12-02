@@ -309,14 +309,27 @@ UserSchema.methods = {
     await dailyGoal.save();
   },
 
+  // It receives a % bonnus and applies the max between amount% and 0.1 flat bonus
   addBonus: async function (type: string, amount: number) {
     if (type === "attack") {
-      this.hero.attackDamage += amount;
+      this.hero.attackDamage += Math.max(
+        (this.hero.attackDamage * amount) / 100,
+        0.1
+      );
     } else if (type === "hp") {
-      this.hero.maxHealth += amount;
-      this.hero.currentHealth += amount;
+      this.hero.maxHealth += Math.max(
+        (this.hero.maxHealth * amount) / 100,
+        0.1
+      );
+      this.hero.currentHealth += Math.max(
+        (this.hero.currentHealth * amount) / 100,
+        0.1
+      );
     } else if (type === "regeneration") {
-      this.hero.regenerationRate += amount;
+      this.hero.regenerationRate += Math.max(
+        (this.hero.regenerationRate * amount) / 100,
+        0.1
+      );
     }
     await this.save();
   },

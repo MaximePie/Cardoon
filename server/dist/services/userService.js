@@ -23,8 +23,7 @@ class UserService {
         if (!user) {
             throw new index_js_1.AppError("User not found", 404);
         }
-        const minAmount = Math.max(amount / 100, 0.1);
-        await user.addBonus(type, minAmount);
+        await user.addBonus(type, amount);
         return { user };
     }
     static getJwtSecret() {

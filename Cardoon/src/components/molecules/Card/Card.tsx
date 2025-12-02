@@ -139,16 +139,14 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
               >
                 <Edit />
               </IconButton>
-              <p>
-                {answer}
-                {expectedAnswers?.length && expectedAnswers.length > 0 ? (
-                  <ul>
-                    {expectedAnswers.map((expectedAnswer, index) => (
-                      <li key={index}>{expectedAnswer}</li>
-                    ))}
-                  </ul>
-                ) : undefined}
-              </p>
+              <p>{answer}</p>
+              {expectedAnswers?.length && expectedAnswers.length > 0 ? (
+                <ul>
+                  {expectedAnswers.map((expectedAnswer, index) => (
+                    <li key={index}>{expectedAnswer}</li>
+                  ))}
+                </ul>
+              ) : undefined}
               <Stack spacing={1} direction="row">
                 <Button color="success" onClick={succeed}>
                   ok

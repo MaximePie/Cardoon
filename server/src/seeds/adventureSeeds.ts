@@ -98,6 +98,24 @@ export async function seedAdventure() {
         spawnWeight: 40,
         isActive: true,
       },
+      {
+        id: "BigGoblin",
+        name: "Big Forest Goblin",
+        level: forestLevel._id,
+        maxHealth: 20,
+        attackDamage: 8,
+        defense: 0,
+        experience: 40,
+        bonus: { type: "attack", amount: 2 },
+        sprites: {
+          idle: "Goblin-Idle.png",
+          attack: "Goblin-Attack.png",
+          hurt: "Goblin-Hurt.png",
+          defeated: "Goblin-Death.png",
+        },
+        spawnWeight: 40,
+        isActive: true,
+      },
     ];
 
     // Create enemies for Ancient Dungeon (Level 2)

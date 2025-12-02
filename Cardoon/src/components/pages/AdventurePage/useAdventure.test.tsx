@@ -675,7 +675,6 @@ describe("useAdventure", () => {
       });
 
       const initialMaxHealth = result.current.hero.maxHealth;
-      const initialCurrentHealth = result.current.hero.currentHealth;
 
       // Find and defeat an enemy with hp bonus
       let enemyWithHpBonus = result.current.currentEnemy;
@@ -705,7 +704,7 @@ describe("useAdventure", () => {
         attempts++;
       }
 
-      if (enemyWithHpBonus!.bonus.type === "hp") {
+      if (enemyWithHpBonus && enemyWithHpBonus.bonus.type === "hp") {
         const bonusPercentage = enemyWithHpBonus.bonus.amount;
         const expectedBonus = Math.max(
           initialMaxHealth * (bonusPercentage / 100),
@@ -774,7 +773,10 @@ describe("useAdventure", () => {
         attempts++;
       }
 
-      if (enemyWithAttackBonus!.bonus.type === "attack") {
+      if (
+        enemyWithAttackBonus &&
+        enemyWithAttackBonus.bonus.type === "attack"
+      ) {
         const bonusPercentage = enemyWithAttackBonus.bonus.amount;
         const expectedBonus = Math.max(
           initialAttackDamage * (bonusPercentage / 100),
@@ -846,7 +848,10 @@ describe("useAdventure", () => {
       }
 
       // Skip test if no regeneration enemy found in mock data
-      if (enemyWithRegenBonus!.bonus.type === "regeneration") {
+      if (
+        enemyWithRegenBonus &&
+        enemyWithRegenBonus.bonus.type === "regeneration"
+      ) {
         const bonusPercentage = enemyWithRegenBonus.bonus.amount;
         const expectedBonus = Math.max(
           initialRegenerationRate * (bonusPercentage / 100),

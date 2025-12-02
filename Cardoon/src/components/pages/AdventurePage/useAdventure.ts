@@ -51,6 +51,22 @@ export default function useAdventureGame() {
 
   const handleEnemyDefeated = useCallback(
     (defeatedEnemy: Enemy) => {
+      const getAmount = (
+        bonus: { type: BonusType; amount: number },
+        hero: Hero
+      ) => {
+        switch (bonus.type) {
+          case "attack":
+            return Math.max(hero.attackDamage * (bonus.amount / 100), 0.1);
+          case "hp":
+            return Math.max(hero.maxHealth * (bonus.amount / 100), 0.1);
+          case "regeneration":
+            return Math.max(hero.regenerationRate * (bonus.amount / 100), 0.1);
+        }
+        return bonus.amount;
+      };
+      const amount = getAmount(defeatedEnemy.bonus, hero);
+
       setHero((prev) => {
         const newExperience = prev.experience + defeatedEnemy.experience;
 
@@ -59,15 +75,12 @@ export default function useAdventureGame() {
         };
 
         if (defeatedEnemy.bonus.type === "attack") {
-          bonusUpdates.attackDamage =
-            prev.attackDamage + defeatedEnemy.bonus.amount;
+          bonusUpdates.attackDamage = prev.attackDamage + amount;
         } else if (defeatedEnemy.bonus.type === "hp") {
-          bonusUpdates.maxHealth = prev.maxHealth + defeatedEnemy.bonus.amount;
-          bonusUpdates.currentHealth =
-            prev.currentHealth + defeatedEnemy.bonus.amount;
+          bonusUpdates.maxHealth = prev.maxHealth + amount;
+          bonusUpdates.currentHealth = prev.currentHealth + amount;
         } else if (defeatedEnemy.bonus.type === "regeneration") {
-          bonusUpdates.regenerationRate =
-            prev.regenerationRate + defeatedEnemy.bonus.amount;
+          bonusUpdates.regenerationRate = prev.regenerationRate + amount;
         }
 
         return { ...prev, ...bonusUpdates };
@@ -75,7 +88,7 @@ export default function useAdventureGame() {
 
       setBonusAnimation({
         type: defeatedEnemy.bonus.type,
-        amount: defeatedEnemy.bonus.amount,
+        amount,
       });
 
       setTimeout(() => {
@@ -87,7 +100,7 @@ export default function useAdventureGame() {
         amount: defeatedEnemy.bonus.amount,
       });
     },
-    [user]
+    [user, hero]
   );
 
   const currentLevelEnemies = useMemo(() => {

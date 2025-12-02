@@ -666,5 +666,315 @@ describe("useAdventure", () => {
       expect(result.current.currentEnemy!.bonus.icon).toBeDefined();
       expect(result.current.currentEnemy!.bonus.iconColor).toBeDefined();
     });
+
+    it("should calculate hp bonus as percentage of current maxHealth", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      const initialMaxHealth = result.current.hero.maxHealth;
+      const initialCurrentHealth = result.current.hero.currentHealth;
+
+      // Find and defeat an enemy with hp bonus
+      let enemyWithHpBonus = result.current.currentEnemy;
+      let attempts = 0;
+      while (enemyWithHpBonus!.bonus.type !== "hp" && attempts < 50) {
+        act(() => {
+          let attacks = 0;
+          while (
+            result.current.currentEnemy!.currentHealth > 0 &&
+            attacks < 20
+          ) {
+            result.current.attack(result.current.currentEnemy!, true);
+            attacks++;
+          }
+        });
+
+        await waitFor(
+          () => {
+            expect(result.current.currentEnemy!.currentHealth).toBe(
+              result.current.currentEnemy!.maxHealth
+            );
+          },
+          { timeout: 700 }
+        );
+
+        enemyWithHpBonus = result.current.currentEnemy;
+        attempts++;
+      }
+
+      if (enemyWithHpBonus!.bonus.type === "hp") {
+        const bonusPercentage = enemyWithHpBonus.bonus.amount;
+        const expectedBonus = Math.max(
+          initialMaxHealth * (bonusPercentage / 100),
+          0.1
+        );
+
+        act(() => {
+          let attacks = 0;
+          while (
+            result.current.currentEnemy!.currentHealth > 0 &&
+            attacks < 20
+          ) {
+            result.current.attack(result.current.currentEnemy!, true);
+            attacks++;
+          }
+        });
+
+        await waitFor(
+          () => {
+            const newMaxHealth = result.current.hero.maxHealth;
+            // Only check maxHealth since currentHealth is affected by enemy damage
+            expect(newMaxHealth).toBeCloseTo(
+              initialMaxHealth + expectedBonus,
+              0
+            );
+          },
+          { timeout: 700 }
+        );
+      }
+    });
+
+    it("should calculate attack bonus as percentage of current attackDamage", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      const initialAttackDamage = result.current.hero.attackDamage;
+
+      // Find and defeat an enemy with attack bonus
+      let enemyWithAttackBonus = result.current.currentEnemy;
+      let attempts = 0;
+      while (enemyWithAttackBonus!.bonus.type !== "attack" && attempts < 50) {
+        act(() => {
+          let attacks = 0;
+          while (
+            result.current.currentEnemy!.currentHealth > 0 &&
+            attacks < 20
+          ) {
+            result.current.attack(result.current.currentEnemy!, true);
+            attacks++;
+          }
+        });
+
+        await waitFor(
+          () => {
+            expect(result.current.currentEnemy!.currentHealth).toBe(
+              result.current.currentEnemy!.maxHealth
+            );
+          },
+          { timeout: 700 }
+        );
+
+        enemyWithAttackBonus = result.current.currentEnemy;
+        attempts++;
+      }
+
+      if (enemyWithAttackBonus!.bonus.type === "attack") {
+        const bonusPercentage = enemyWithAttackBonus.bonus.amount;
+        const expectedBonus = Math.max(
+          initialAttackDamage * (bonusPercentage / 100),
+          0.1
+        );
+
+        act(() => {
+          let attacks = 0;
+          while (
+            result.current.currentEnemy!.currentHealth > 0 &&
+            attacks < 20
+          ) {
+            result.current.attack(result.current.currentEnemy!, true);
+            attacks++;
+          }
+        });
+
+        await waitFor(
+          () => {
+            const newAttackDamage = result.current.hero.attackDamage;
+            expect(newAttackDamage).toBeCloseTo(
+              initialAttackDamage + expectedBonus,
+              1
+            );
+          },
+          { timeout: 700 }
+        );
+      }
+    });
+
+    it("should calculate regeneration bonus as percentage of current regenerationRate", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      const initialRegenerationRate = result.current.hero.regenerationRate;
+
+      // Find and defeat an enemy with regeneration bonus
+      let enemyWithRegenBonus = result.current.currentEnemy;
+      let attempts = 0;
+      while (
+        enemyWithRegenBonus!.bonus.type !== "regeneration" &&
+        attempts < 10
+      ) {
+        act(() => {
+          let attacks = 0;
+          while (
+            result.current.currentEnemy!.currentHealth > 0 &&
+            attacks < 20
+          ) {
+            result.current.attack(result.current.currentEnemy!, true);
+            attacks++;
+          }
+        });
+
+        await waitFor(
+          () => {
+            expect(result.current.currentEnemy!.currentHealth).toBe(
+              result.current.currentEnemy!.maxHealth
+            );
+          },
+          { timeout: 700 }
+        );
+
+        enemyWithRegenBonus = result.current.currentEnemy;
+        attempts++;
+      }
+
+      // Skip test if no regeneration enemy found in mock data
+      if (enemyWithRegenBonus!.bonus.type === "regeneration") {
+        const bonusPercentage = enemyWithRegenBonus.bonus.amount;
+        const expectedBonus = Math.max(
+          initialRegenerationRate * (bonusPercentage / 100),
+          0.1
+        );
+
+        act(() => {
+          let attacks = 0;
+          while (
+            result.current.currentEnemy!.currentHealth > 0 &&
+            attacks < 20
+          ) {
+            result.current.attack(result.current.currentEnemy!, true);
+            attacks++;
+          }
+        });
+
+        await waitFor(
+          () => {
+            const newRegenerationRate = result.current.hero.regenerationRate;
+            expect(newRegenerationRate).toBeCloseTo(
+              initialRegenerationRate + expectedBonus,
+              0
+            );
+          },
+          { timeout: 700 }
+        );
+      }
+    }, 10000);
+
+    it("should ensure minimum bonus of 0.1", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      // Even if the hero has 0 in a stat (like regenerationRate),
+      // defeating an enemy should give at least 0.1 bonus
+      const initialStats = {
+        attackDamage: result.current.hero.attackDamage,
+        maxHealth: result.current.hero.maxHealth,
+        regenerationRate: result.current.hero.regenerationRate,
+      };
+
+      act(() => {
+        let attacks = 0;
+        while (result.current.currentEnemy!.currentHealth > 0 && attacks < 20) {
+          result.current.attack(result.current.currentEnemy!, true);
+          attacks++;
+        }
+      });
+
+      await waitFor(
+        () => {
+          const bonusType = result.current.currentEnemy!.bonus.type;
+          let statIncreased = false;
+
+          if (bonusType === "attack") {
+            statIncreased =
+              result.current.hero.attackDamage >
+              initialStats.attackDamage + 0.09;
+          } else if (bonusType === "hp") {
+            statIncreased =
+              result.current.hero.maxHealth > initialStats.maxHealth + 0.09;
+          } else if (bonusType === "regeneration") {
+            statIncreased =
+              result.current.hero.regenerationRate >
+              initialStats.regenerationRate + 0.09;
+          }
+
+          expect(statIncreased).toBe(true);
+        },
+        { timeout: 700 }
+      );
+    });
+
+    it("should display bonus animation when enemy is defeated", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      expect(result.current.bonusAnimation).toBeNull();
+
+      act(() => {
+        let attacks = 0;
+        while (result.current.currentEnemy!.currentHealth > 0 && attacks < 20) {
+          result.current.attack(result.current.currentEnemy!, true);
+          attacks++;
+        }
+      });
+
+      await waitFor(() => {
+        expect(result.current.bonusAnimation).not.toBeNull();
+        expect(result.current.bonusAnimation?.type).toMatch(
+          /hp|attack|regeneration/
+        );
+        expect(result.current.bonusAnimation?.amount).toBeGreaterThan(0);
+      });
+    });
+
+    it("should clear bonus animation after 1 second", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      act(() => {
+        let attacks = 0;
+        while (result.current.currentEnemy!.currentHealth > 0 && attacks < 20) {
+          result.current.attack(result.current.currentEnemy!, true);
+          attacks++;
+        }
+      });
+
+      await waitFor(() => {
+        expect(result.current.bonusAnimation).not.toBeNull();
+      });
+
+      await waitFor(
+        () => {
+          expect(result.current.bonusAnimation).toBeNull();
+        },
+        { timeout: 1500 }
+      );
+    });
   });
 });

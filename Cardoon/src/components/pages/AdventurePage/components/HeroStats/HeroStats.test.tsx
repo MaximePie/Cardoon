@@ -7,6 +7,7 @@ describe("HeroStats", () => {
     attackDamage: 25,
     regenerationRate: 1,
     maxHealth: 120,
+    lucidityShards: 0,
     level: 1,
     experience: 0,
     experienceToNextLevel: 100,
@@ -156,18 +157,20 @@ describe("HeroStats", () => {
       ).toBeInTheDocument();
     });
 
-    it("should have relative positioning on stat spans for animations", () => {
+    it("should have stat items for animations", () => {
       const { container } = render(<HeroStats {...defaultProps} />);
 
       const statsContainer = container.querySelector(
         ".AdventurePage__stats-resources"
       );
-      const spans = statsContainer?.querySelectorAll("span[style]");
+      const spans = statsContainer?.querySelectorAll(".HeroStats__stat-item");
 
-      // Check first three spans have relative positioning
-      expect(spans?.[0]).toHaveStyle({ position: "relative" });
-      expect(spans?.[1]).toHaveStyle({ position: "relative" });
-      expect(spans?.[2]).toHaveStyle({ position: "relative" });
+      // Check we have the expected stat items
+      expect(spans).toHaveLength(4); // lucidity, attack, regeneration, hp
+      expect(spans?.[0]).toBeInTheDocument();
+      expect(spans?.[1]).toBeInTheDocument();
+      expect(spans?.[2]).toBeInTheDocument();
+      expect(spans?.[3]).toBeInTheDocument();
     });
   });
 

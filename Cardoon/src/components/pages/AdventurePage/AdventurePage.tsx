@@ -58,6 +58,7 @@ const AdventurePage = () => {
         regenerationRate={hero.regenerationRate}
         maxHealth={hero.maxHealth}
         bonusAnimation={bonusAnimation}
+        lucidityShards={100}
       />
       <div className="AdventurePage__body">
         <div

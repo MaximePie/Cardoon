@@ -5,10 +5,11 @@ const BONUS_COLORS = {
   attack: "#f44336",
   regeneration: "#ff9800",
   hp: "#4caf50",
+  shard: "#942fcfff",
 } as const;
 
 interface BonusAnimationProps {
-  type: "attack" | "regeneration" | "hp";
+  type: "attack" | "regeneration" | "hp" | "shard";
   amount: number;
   Icon?: React.ComponentType<SvgIconProps>;
 }

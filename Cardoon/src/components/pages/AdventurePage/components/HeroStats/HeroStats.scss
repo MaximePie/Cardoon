@@ -1,0 +1,8 @@
+.HeroStats {
+  &__stat-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+}

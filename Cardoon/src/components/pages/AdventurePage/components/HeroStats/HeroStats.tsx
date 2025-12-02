@@ -2,6 +2,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { AnimatePresence } from "motion/react";
+import { roundToTwo } from "../../../../../utils/numbers";
 import { BonusAnimation } from "../BonusAnimation/BonusAnimation";
 
 interface HeroStatsProps {
@@ -12,10 +13,6 @@ interface HeroStatsProps {
     type: "attack" | "regeneration" | "hp" | "defense";
     amount: number;
   } | null;
-}
-
-function roundToTwo(num: number) {
-  return Math.round(num * 100) / 100;
 }
 
 export const HeroStats = ({

@@ -4,6 +4,7 @@ import heroAttack from "../../../assets/Hero/attack1.gif";
 import devMode from "../../../assets/Hero/devmode.svg";
 import heroIdle from "../../../assets/Hero/idle.gif";
 import { PopulatedUserCard } from "../../../types/common";
+import { roundToTwo } from "../../../utils/numbers";
 import Card from "../../molecules/Card/Card";
 import { HeroStats } from "./components/HeroStats/HeroStats";
 import { getEnemyAssets } from "./enemyAssets";
@@ -120,7 +121,7 @@ const AdventurePage = () => {
             </AnimatePresence>
             <div className="AdventurePage__healthBar">
               <span className="AdventurePage__healthText">
-                {Math.round(hero.currentHealth)} / {hero.maxHealth}
+                {roundToTwo(hero.currentHealth)} / {roundToTwo(hero.maxHealth)}
               </span>
               <div
                 className="AdventurePage__healthBar__fill"
@@ -155,7 +156,8 @@ const AdventurePage = () => {
             </span>
             <div className="AdventurePage__healthBar">
               <span className="AdventurePage__healthText">
-                {currentEnemy.currentHealth} / {currentEnemy.maxHealth}
+                {roundToTwo(currentEnemy.currentHealth)} /{" "}
+                {roundToTwo(currentEnemy.maxHealth)}
               </span>
               <div
                 className="AdventurePage__healthBar__fill"

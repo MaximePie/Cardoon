@@ -78,7 +78,7 @@ export async function seedAdventure() {
       },
       {
         ...skeleton,
-        bonus: { type: "regeneration", amount: 0.1 },
+        bonus: { type: "regeneration", amount: 1 },
       },
       {
         id: "Goblin",

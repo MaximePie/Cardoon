@@ -32,7 +32,6 @@ const EnemySchema = new Schema<IEnemy>(
     id: {
       type: String,
       required: true,
-      enum: ["NightBorne", "Skeleton", "Goblin", "Dragon"],
     },
     name: {
       type: String,

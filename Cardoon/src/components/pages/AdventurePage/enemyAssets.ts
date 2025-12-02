@@ -42,6 +42,11 @@ const ENEMY_ASSETS_MAP: Record<EnemyType, EnemyAssets> = {
     defeated: skeletonDeath,
     attack: skeletonAttack,
   },
+  BigGoblin: {
+    idle: goblinIdle,
+    defeated: goblinDeath,
+    attack: goblinAttack,
+  },
   Goblin: {
     idle: goblinIdle,
     defeated: goblinDeath,

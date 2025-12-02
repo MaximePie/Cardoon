@@ -38,7 +38,6 @@ const EnemySchema = new mongoose_1.Schema({
     id: {
         type: String,
         required: true,
-        enum: ["NightBorne", "Skeleton", "Goblin", "Dragon"],
     },
     name: {
         type: String,

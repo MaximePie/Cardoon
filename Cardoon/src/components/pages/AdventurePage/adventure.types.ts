@@ -3,7 +3,7 @@ import HealthAndSafetyIcon from "@mui/icons-material/HealthAndSafety";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { SvgIconProps } from "@mui/material";
 
-export type EnemyType = "NightBorne" | "Skeleton" | "Goblin";
+export type EnemyType = "NightBorne" | "Skeleton" | "Goblin" | "BigGoblin";
 export type BonusType = "hp" | "attack" | "regeneration" | "defense";
 export type HeroState = "idle" | "attacking";
 export type EnemyState = "idle" | "attacking" | "defeated";

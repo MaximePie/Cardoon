@@ -10,3 +10,9 @@ export const formattedNumber = (number: number) => {
     return goldAmount.toString();
   }
 };
+
+// In : .021
+// Out : 0.02
+export function roundToTwo(num: number) {
+  return Math.round(num * 100) / 100;
+}

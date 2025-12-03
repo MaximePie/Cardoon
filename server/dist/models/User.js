@@ -228,14 +228,15 @@ UserSchema.methods = {
         }
         await dailyGoal.save();
     },
-    // It receives a % bonnus and applies the max between amount% and 0.1 flat bonus
+    // Applies a percentage bonus to hero stats with a minimum flat bonus of 0.1
     addBonus: async function (type, amount) {
         if (type === "attack") {
             this.hero.attackDamage += Math.max((this.hero.attackDamage * amount) / 100, 0.1);
         }
         else if (type === "hp") {
-            this.hero.maxHealth += Math.max((this.hero.maxHealth * amount) / 100, 0.1);
-            this.hero.currentHealth += Math.max((this.hero.currentHealth * amount) / 100, 0.1);
+            const bonus = Math.max((this.hero.maxHealth * amount) / 100, 0.1);
+            this.hero.maxHealth += bonus;
+            this.hero.currentHealth += bonus;
         }
         else if (type === "regeneration") {
             this.hero.regenerationRate += Math.max((this.hero.regenerationRate * amount) / 100, 0.1);

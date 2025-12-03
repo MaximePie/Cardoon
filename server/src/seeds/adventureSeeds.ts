@@ -53,7 +53,7 @@ export async function seedAdventure() {
       name: "Skeleton Warrior",
       level: forestLevel._id,
       maxHealth: 5,
-      attackDamage: 3,
+      attackDamage: 1.5,
       defense: 0,
       experience: 50,
       sprites: {

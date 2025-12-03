@@ -163,6 +163,166 @@ describe("useCombatManager", () => {
     });
   });
 
+  describe("Hero Defeat", () => {
+    it("should set hero health to 0 when receiving fatal damage", () => {
+      let testHero = {
+        ...mockHero,
+        currentHealth: 3,
+      };
+
+      const setHeroSpy = vi.fn((update) => {
+        if (typeof update === "function") {
+          testHero = update(testHero);
+        } else {
+          testHero = update;
+        }
+      });
+
+      const { result, unmount } = renderHook(() =>
+        useCombatManager({
+          hero: testHero,
+          setHero: setHeroSpy,
+          availableEnemies: mockEnemies,
+          onEnemyDefeated: mockOnEnemyDefeated,
+        })
+      );
+
+      act(() => {
+        // Wrong answer triggers enemy attack (3 damage * 1.5 = 4.5 damage)
+        result.current.performAttack(false);
+      });
+
+      // Verify setHero was called
+      expect(setHeroSpy).toHaveBeenCalled();
+
+      // Verify the hero health is now 0
+      expect(testHero.currentHealth).toBe(0);
+
+      unmount();
+    });
+
+    it("should not allow hero to attack when defeated", () => {
+      let testHero = {
+        ...mockHero,
+        currentHealth: 3,
+      };
+
+      const setHeroSpy = vi.fn((update) => {
+        if (typeof update === "function") {
+          testHero = update(testHero);
+        } else {
+          testHero = update;
+        }
+      });
+
+      const { result, unmount } = renderHook(() =>
+        useCombatManager({
+          hero: testHero,
+          setHero: setHeroSpy,
+          availableEnemies: mockEnemies,
+          onEnemyDefeated: mockOnEnemyDefeated,
+        })
+      );
+
+      // Defeat the hero
+      act(() => {
+        result.current.performAttack(false);
+      });
+
+      // Verify hero has 0 health
+      expect(testHero.currentHealth).toBe(0);
+
+      unmount();
+    });
+  });
+
+  describe("startNewAdventure", () => {
+    it("should reset hero health to max", () => {
+      const damagedHero = {
+        ...mockHero,
+        currentHealth: 50,
+      };
+
+      const { result, unmount } = renderHook(() =>
+        useCombatManager({
+          hero: damagedHero,
+          setHero: mockSetHero,
+          availableEnemies: mockEnemies,
+          onEnemyDefeated: mockOnEnemyDefeated,
+        })
+      );
+
+      act(() => {
+        result.current.startNewAdventure();
+      });
+
+      // setHero should be called with a function that updates currentHealth
+      expect(mockSetHero).toHaveBeenCalled();
+      const updateFunction = mockSetHero.mock.calls[0][0];
+      const updatedHero = updateFunction(damagedHero);
+      expect(updatedHero.currentHealth).toBe(mockHero.maxHealth);
+      unmount();
+    });
+
+    it("should reset hero state to idle", () => {
+      const { result, unmount } = renderHook(() =>
+        useCombatManager({
+          hero: mockHero,
+          setHero: mockSetHero,
+          availableEnemies: mockEnemies,
+          onEnemyDefeated: mockOnEnemyDefeated,
+        })
+      );
+
+      act(() => {
+        result.current.performAttack(true);
+      });
+
+      act(() => {
+        result.current.startNewAdventure();
+      });
+
+      expect(result.current.heroState).toBe("idle");
+      unmount();
+    });
+
+    it("should reset enemy state to idle", () => {
+      const { result, unmount } = renderHook(() =>
+        useCombatManager({
+          hero: mockHero,
+          setHero: mockSetHero,
+          availableEnemies: mockEnemies,
+          onEnemyDefeated: mockOnEnemyDefeated,
+        })
+      );
+
+      act(() => {
+        result.current.startNewAdventure();
+      });
+
+      expect(result.current.enemyState).toBe("idle");
+      unmount();
+    });
+
+    it("should set current enemy to first available enemy", () => {
+      const { result, unmount } = renderHook(() =>
+        useCombatManager({
+          hero: mockHero,
+          setHero: mockSetHero,
+          availableEnemies: mockEnemies,
+          onEnemyDefeated: mockOnEnemyDefeated,
+        })
+      );
+
+      act(() => {
+        result.current.startNewAdventure();
+      });
+
+      expect(result.current.currentEnemy?.id).toBe(mockEnemies[0].id);
+      unmount();
+    });
+  });
+
   describe("Animations", () => {
     it("should show damage animation when attacked", () => {
       const { result, unmount } = renderHook(() =>

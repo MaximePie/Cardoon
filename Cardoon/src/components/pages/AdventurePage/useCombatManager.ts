@@ -117,6 +117,8 @@ export function useCombatManager({
 
       setEnemyState("attacking");
 
+      let heroSurvived = true;
+
       if (isCorrect) {
         setHeroState("attacking");
 
@@ -144,14 +146,10 @@ export function useCombatManager({
 
           // Check if hero died
           if (newHealth <= 0 && availableEnemies.length > 0) {
-            // Reset hero to full health
-            setTimeout(() => {
-              setCurrentEnemy(availableEnemies[0]);
-            }, 0);
-            return {
-              ...prev,
-              currentHealth: prev.maxHealth,
-            };
+            if (heroAttackTimeout.current)
+              clearTimeout(heroAttackTimeout.current);
+            setHeroState("defeated");
+            heroSurvived = false;
           }
 
           return {
@@ -167,14 +165,9 @@ export function useCombatManager({
 
           // Check if hero died
           if (newHealth <= 0 && availableEnemies.length > 0) {
-            // Reset hero to full health
-            setTimeout(() => {
-              setCurrentEnemy(availableEnemies[0]);
-            }, 0);
-            return {
-              ...prev,
-              currentHealth: prev.maxHealth,
-            };
+            clearTimeout(heroAttackTimeout.current!);
+            setHeroState("defeated");
+            heroSurvived = false;
           }
 
           return {
@@ -191,8 +184,8 @@ export function useCombatManager({
         setEnemyState("idle");
       }, ANIMATION_DURATION);
 
-      // Apply regeneration if hero is alive
-      if (hero.currentHealth > 0) {
+      // Apply regeneration only if hero survived
+      if (heroSurvived) {
         setHero((prev) => ({
           ...prev,
           currentHealth: applyRegeneration(prev),
@@ -201,6 +194,20 @@ export function useCombatManager({
     },
     [currentEnemy, hero, setHero, availableEnemies]
   );
+
+  /**
+   * Start a new adventure by resetting states and selecting the first enemy
+   * Refill hero's health
+   * Reset hero and enemy states to idle
+   */
+  const startNewAdventure = useCallback(() => {
+    if (availableEnemies.length > 0) {
+      setHero((prev) => ({ ...prev, currentHealth: prev.maxHealth }));
+      setCurrentEnemy(availableEnemies[0]);
+      setHeroState("idle");
+      setEnemyState("idle");
+    }
+  }, [availableEnemies, setHero]);
 
   // Cleanup all timeouts on unmount
   useEffect(() => {
@@ -222,5 +229,6 @@ export function useCombatManager({
     damageAnimationKey,
     enemyFinalDamage,
     performAttack,
+    startNewAdventure,
   };
 }

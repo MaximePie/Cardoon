@@ -5,7 +5,7 @@ import { SvgIconProps } from "@mui/material";
 
 export type EnemyType = "NightBorne" | "Skeleton" | "Goblin" | "BigGoblin";
 export type BonusType = "hp" | "attack" | "regeneration" | "defense";
-export type HeroState = "idle" | "attacking";
+export type HeroState = "idle" | "attacking" | "defeated";
 export type EnemyState = "idle" | "attacking" | "defeated";
 
 export interface Enemy {

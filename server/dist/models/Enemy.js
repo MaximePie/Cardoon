@@ -98,6 +98,10 @@ const EnemySchema = new mongoose_1.Schema({
         type: Boolean,
         default: true,
     },
+    coinsDrop: {
+        type: Number,
+        default: 0,
+    },
 }, {
     timestamps: true,
 });

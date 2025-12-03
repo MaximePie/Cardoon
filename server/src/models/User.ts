@@ -35,6 +35,7 @@ export interface IUser extends Document {
     level: number;
     experience: number;
     experienceToNextLevel: number;
+    primaryUpgrades: Upgrade[];
   };
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
@@ -64,6 +65,14 @@ interface IUserModel extends Model<IUser> {
   getUserByEmail(email: string): Promise<IUser | null>;
   onItemRemoved(itemId: ObjectId): Promise<void>;
 }
+
+export type Upgrade = {
+  id: string;
+  level: number;
+  nextLevelCost: number;
+  maxLevel: number;
+  isUnlocked: boolean;
+};
 
 const UserSchema = new mongoose.Schema<IUser>({
   username: {
@@ -171,6 +180,22 @@ const UserSchema = new mongoose.Schema<IUser>({
     experienceToNextLevel: {
       type: Number,
       default: 100,
+    },
+    coins: {
+      type: Number,
+      default: 0,
+    },
+    primaryUpgrades: {
+      type: [
+        {
+          id: { type: String, required: true },
+          level: { type: Number, default: 0 },
+          nextLevelCost: { type: Number, default: 0 },
+          maxLevel: { type: Number, default: 1 },
+          isUnlocked: { type: Boolean, default: false },
+        },
+      ],
+      default: [],
     },
   },
 });

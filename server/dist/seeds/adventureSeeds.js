@@ -6,6 +6,51 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.seedAdventure = seedAdventure;
 const Enemy_js_1 = __importDefault(require("../models/Enemy.js"));
 const Level_js_1 = __importDefault(require("../models/Level.js"));
+const User_js_1 = __importDefault(require("../models/User.js"));
+/**
+ * Fill in .hero for all users
+    primaryUpgrades: {
+      type: Map,
+      of: {
+        level: Number,
+        nextLevelCost: Number,
+        maxLevel: Number,
+        isUnlocked: Boolean,
+      },
+    },
+
+    All field is unlocked = true, level = 0, nextLevelCost = base cost, maxLevel = 10
+ */
+async function initializeUpgradesShop() {
+    // Placeholder for the actual implementation of initializing the upgrades shop
+    console.log("Initializing upgrades shop...");
+    // Add your logic here to seed or reset the upgrades shop data
+    const upgrades = [
+        { id: "hp1", level: 0, nextLevelCost: 100, maxLevel: 10, isUnlocked: true },
+        {
+            id: "hp2",
+            level: 0,
+            nextLevelCost: 2000,
+            maxLevel: 10,
+            isUnlocked: false,
+        },
+        {
+            id: "attack1",
+            level: 0,
+            nextLevelCost: 150,
+            maxLevel: 10,
+            isUnlocked: true,
+        },
+        {
+            id: "regeneration1",
+            level: 0,
+            nextLevelCost: 120,
+            maxLevel: 10,
+            isUnlocked: true,
+        },
+    ];
+    await User_js_1.default.updateMany({}, { $set: { "hero.primaryUpgrades": upgrades } });
+}
 async function seedAdventure() {
     try {
         console.log("🌱 Seeding adventure data...");
@@ -62,6 +107,7 @@ async function seedAdventure() {
             },
             spawnWeight: 60,
             isActive: true,
+            coinsDrop: 1,
         };
         // Create enemies for Dark Forest (Level 1)
         const forestEnemies = [
@@ -93,6 +139,7 @@ async function seedAdventure() {
                     defeated: "Goblin-Death.png",
                 },
                 spawnWeight: 40,
+                coinsDrop: 2,
                 isActive: true,
             },
             {
@@ -111,6 +158,7 @@ async function seedAdventure() {
                     defeated: "Goblin-Death.png",
                 },
                 spawnWeight: 40,
+                coinsDrop: 5,
                 isActive: true,
             },
         ];
@@ -220,6 +268,7 @@ async function seedAdventure() {
             ...castleEnemies,
             ...dragonLairEnemies,
         ]);
+        await initializeUpgradesShop();
         console.log(`✅ Created ${await Enemy_js_1.default.countDocuments()} enemies`);
         console.log("🎉 Adventure data seeded successfully!");
     }

@@ -1,5 +1,54 @@
-import Enemy from "../models/Enemy.js";
+import mongoose from "mongoose";
+import Enemy, { IEnemy } from "../models/Enemy.js";
 import Level from "../models/Level.js";
+import User from "../models/User.js";
+import { Upgrade } from "../types/Upgrades.js";
+
+/**
+ * Fill in .hero for all users
+    primaryUpgrades: {
+      type: Map,
+      of: {
+        level: Number,
+        nextLevelCost: Number,
+        maxLevel: Number,
+        isUnlocked: Boolean,
+      },
+    },
+
+    All field is unlocked = true, level = 0, nextLevelCost = base cost, maxLevel = 10
+ */
+async function initializeUpgradesShop() {
+  // Placeholder for the actual implementation of initializing the upgrades shop
+  console.log("Initializing upgrades shop...");
+  // Add your logic here to seed or reset the upgrades shop data
+  const upgrades: Upgrade[] = [
+    { id: "hp1", level: 0, nextLevelCost: 100, maxLevel: 10, isUnlocked: true },
+    {
+      id: "hp2",
+      level: 0,
+      nextLevelCost: 2000,
+      maxLevel: 10,
+      isUnlocked: false,
+    },
+    {
+      id: "attack1",
+      level: 0,
+      nextLevelCost: 150,
+      maxLevel: 10,
+      isUnlocked: true,
+    },
+    {
+      id: "regeneration1",
+      level: 0,
+      nextLevelCost: 120,
+      maxLevel: 10,
+      isUnlocked: true,
+    },
+  ];
+
+  await User.updateMany({}, { $set: { "hero.primaryUpgrades": upgrades } });
+}
 
 export async function seedAdventure() {
   try {
@@ -48,10 +97,10 @@ export async function seedAdventure() {
 
     console.log(`✅ Created ${await Level.countDocuments()} levels`);
 
-    const skeleton = {
+    const skeleton: Partial<IEnemy> = {
       id: "Skeleton",
       name: "Skeleton Warrior",
-      level: forestLevel._id,
+      level: forestLevel._id as mongoose.Types.ObjectId,
       maxHealth: 5,
       attackDamage: 1.5,
       defense: 0,
@@ -64,6 +113,7 @@ export async function seedAdventure() {
       },
       spawnWeight: 60,
       isActive: true,
+      coinsDrop: 1,
     };
 
     // Create enemies for Dark Forest (Level 1)
@@ -96,6 +146,7 @@ export async function seedAdventure() {
           defeated: "Goblin-Death.png",
         },
         spawnWeight: 40,
+        coinsDrop: 2,
         isActive: true,
       },
       {
@@ -114,6 +165,7 @@ export async function seedAdventure() {
           defeated: "Goblin-Death.png",
         },
         spawnWeight: 40,
+        coinsDrop: 5,
         isActive: true,
       },
     ];
@@ -227,6 +279,8 @@ export async function seedAdventure() {
       ...castleEnemies,
       ...dragonLairEnemies,
     ]);
+
+    await initializeUpgradesShop();
 
     console.log(`✅ Created ${await Enemy.countDocuments()} enemies`);
     console.log("🎉 Adventure data seeded successfully!");

@@ -22,6 +22,7 @@ export interface IEnemy extends Document {
     defeated: string;
   };
   spawnWeight: number;
+  coinsDrop: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -91,6 +92,10 @@ const EnemySchema = new Schema<IEnemy>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    coinsDrop: {
+      type: Number,
+      default: 0,
     },
   },
   {

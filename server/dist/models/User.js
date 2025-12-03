@@ -113,6 +113,22 @@ const UserSchema = new mongoose_1.default.Schema({
             type: Number,
             default: 100,
         },
+        coins: {
+            type: Number,
+            default: 0,
+        },
+        primaryUpgrades: {
+            type: [
+                {
+                    id: { type: String, required: true },
+                    level: { type: Number, default: 0 },
+                    nextLevelCost: { type: Number, default: 0 },
+                    maxLevel: { type: Number, default: 1 },
+                    isUnlocked: { type: Boolean, default: false },
+                },
+            ],
+            default: [],
+        },
     },
 });
 UserSchema.methods = {

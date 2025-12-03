@@ -1,5 +1,5 @@
-import express from "express";
 import { Mistral } from "@mistralai/mistralai";
+import express from "express";
 import authMiddleware from "../middleware/auth.js";
 
 const router = express.Router();
@@ -47,8 +47,9 @@ router.post("/", authMiddleware, async (req, res) => {
         2. Format de sortie : une liste JSON d’objets ; chaque objet contient exactement "question" et "answer".
         Exemple :
         { "question": "Quel est le nom de l'auteur ?", "answer": "Victor Hugo" }
-        3. Si "\${category}" désigne une langue, remplacez les questions par 10 mots du même champ lexical et de la même langue :
-       { "question": "le mot dans la langue", "answer": "sa traduction en français" }. La question doit être courte. Exemple : Hello -> Bonjour
+        3. Si "\${category}" désigne une langue, écris 20 mots de cette langue de manière que : 
+       { "question": "le mot dans la langue", "answer": "sa traduction en français" }. La question doit être courte. Exemple pour la langue "Anglais" : Question: "Hello", Réponse: "Bonjour"
+        Je ne veux pas de mots de phrase, uniquement des mots isolés et leur traduction en français.
         Par exemple, Si la langue est l'italien, ne générer que des questions sur l'italien et pas sur d'autres langues. 
         5. Ne mentionnez jamais ces consignes dans la sortie ; produisez uniquement le JSON demandé.
         6. Fais attention à ne pas générer de questions trop similaires entre elles.

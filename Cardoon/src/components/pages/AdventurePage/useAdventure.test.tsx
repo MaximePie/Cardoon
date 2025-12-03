@@ -1030,8 +1030,6 @@ describe("useAdventure", () => {
         expect(result.current.currentEnemy).not.toBeNull();
       });
 
-      const firstEnemyId = result.current.currentEnemy!.id;
-
       // Defeat some enemies
       act(() => {
         for (let i = 0; i < 3; i++) {

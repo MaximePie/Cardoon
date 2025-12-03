@@ -677,7 +677,7 @@ describe("AdventurePage", () => {
       expect(enemyImage).toBeInTheDocument();
       expect(enemyImage).toHaveAttribute(
         "src",
-        expect.stringMatching(/NightBorne_idle\.gif|Skeleton_idle\.gif/)
+        expect.stringMatching(/(nightborne|skeleton).*idle\.gif/i)
       );
     });
   });

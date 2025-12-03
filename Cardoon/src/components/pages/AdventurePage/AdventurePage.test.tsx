@@ -347,16 +347,20 @@ describe("AdventurePage", () => {
       );
       expect(heroHealthElements[0]).toHaveTextContent("120 / 120"); // Hero health
 
-      // Check for enemy image and info
-      expect(screen.getByAltText("Night Borne")).toBeInTheDocument();
-      expect(screen.getByText(/Night Borne/)).toBeInTheDocument();
+      // Check for enemy image and info - enemy is randomly selected
+      const enemyImages = screen.queryAllByAltText(/Night Borne|Skeleton/);
+      expect(enemyImages.length).toBeGreaterThan(0);
+
+      const enemyTexts = screen.queryAllByText(/Night Borne|Skeleton/);
+      expect(enemyTexts.length).toBeGreaterThan(0);
 
       // Check for enemy health - use class selector to be specific
       const enemyHealthElements = document.querySelectorAll(
         ".AdventurePage__healthText"
       );
       expect(enemyHealthElements).toHaveLength(2); // Hero and enemy
-      expect(enemyHealthElements[1]).toHaveTextContent("5 / 5"); // Enemy health
+      // Enemy health varies depending on which enemy is selected
+      expect(enemyHealthElements[1].textContent).toMatch(/\d+ \/ \d+/);
 
       // Check for health bars (by class name since they don't have specific roles)
       const healthBars = document.querySelectorAll(".AdventurePage__healthBar");
@@ -665,12 +669,15 @@ describe("AdventurePage", () => {
     it("should display enemy with correct initial stats", () => {
       renderAdventurePage();
 
-      // Check enemy image is rendered
-      const enemyImage = screen.getByAltText("Night Borne");
+      // Check enemy image is rendered - enemy is randomly selected
+      const enemyImages = screen.queryAllByAltText(/Night Borne|Skeleton/);
+      expect(enemyImages.length).toBeGreaterThan(0);
+
+      const enemyImage = enemyImages[0];
       expect(enemyImage).toBeInTheDocument();
       expect(enemyImage).toHaveAttribute(
         "src",
-        expect.stringContaining("NightBorne_idle.gif")
+        expect.stringMatching(/NightBorne_idle\.gif|Skeleton_idle\.gif/)
       );
     });
   });
@@ -680,7 +687,10 @@ describe("AdventurePage", () => {
       renderAdventurePage();
 
       expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
-      expect(screen.getByAltText("Night Borne")).toBeInTheDocument();
+
+      // Enemy is randomly selected
+      const enemyImages = screen.queryAllByAltText(/Night Borne|Skeleton/);
+      expect(enemyImages.length).toBeGreaterThan(0);
     });
 
     it("should have accessible buttons", () => {
@@ -696,15 +706,16 @@ describe("AdventurePage", () => {
 
       // Check for character names
       expect(screen.getByAltText("Hero Avatar")).toBeInTheDocument();
-      expect(screen.getByText(/Night Borne/)).toBeInTheDocument();
+
+      // Enemy is randomly selected
+      const enemyTexts = screen.queryAllByText(/Night Borne|Skeleton/);
+      expect(enemyTexts.length).toBeGreaterThan(0);
 
       // Check for health displays using more specific queries
       const heroSection = screen
         .getByAltText("Hero Avatar")
         .closest(".AdventurePage__Hero");
-      const enemySection = screen
-        .getByText(/Night Borne/)
-        .closest(".AdventurePage__Enemy");
+      const enemySection = enemyTexts[0].closest(".AdventurePage__Enemy");
 
       expect(heroSection).toBeInTheDocument();
       expect(enemySection).toBeInTheDocument();
@@ -1040,21 +1051,29 @@ describe("AdventurePage", () => {
     it("should display enemy in idle state initially", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Night Borne");
+      // Enemy is randomly selected
+      const enemyImages = screen.queryAllByAltText(/Night Borne|Skeleton/);
+      expect(enemyImages.length).toBeGreaterThan(0);
+
+      const enemyImage = enemyImages[0];
       expect(enemyImage).toBeInTheDocument();
       expect(enemyImage).toHaveAttribute(
         "src",
-        expect.stringContaining("NightBorne_idle.gif")
+        expect.stringMatching(/(nightborne|skeleton).*idle\.gif/i)
       );
     });
 
     it("should handle enemy defeat animation", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Night Borne");
+      // Enemy is randomly selected, so we check for any enemy image
+      const enemyImages = screen.queryAllByAltText(/Night Borne|Skeleton/);
+      expect(enemyImages.length).toBeGreaterThan(0);
+
+      const enemyImage = enemyImages[0];
       expect(enemyImage).toHaveAttribute(
         "src",
-        expect.stringContaining("NightBorne_idle.gif")
+        expect.stringMatching(/(nightborne|skeleton).*idle\.gif/i)
       );
 
       // Test that enemy has proper asset references
@@ -1067,12 +1086,16 @@ describe("AdventurePage", () => {
     it("should use correct enemy asset imports", () => {
       renderAdventurePage();
 
-      const enemyImage = screen.getByAltText("Night Borne");
+      // Enemy is randomly selected
+      const enemyImages = screen.queryAllByAltText(/Night Borne|Skeleton/);
+      expect(enemyImages.length).toBeGreaterThan(0);
+
+      const enemyImage = enemyImages[0];
 
       // Check that enemy image uses the imported idle asset
       expect(enemyImage).toHaveAttribute(
         "src",
-        expect.stringContaining("NightBorne_idle.gif")
+        expect.stringMatching(/(nightborne|skeleton).*idle\.gif/i)
       );
       expect(enemyImage).toHaveClass("AdventurePage__characterImage");
     });
@@ -1177,11 +1200,14 @@ describe("AdventurePage", () => {
         expect.stringContaining("idle.gif")
       );
 
-      // Test enemy assets
-      const enemyImage = screen.getByAltText("Night Borne");
+      // Test enemy assets - enemy is randomly selected
+      const enemyImages = screen.queryAllByAltText(/Night Borne|Skeleton/);
+      expect(enemyImages.length).toBeGreaterThan(0);
+
+      const enemyImage = enemyImages[0];
       expect(enemyImage).toHaveAttribute(
         "src",
-        expect.stringContaining("NightBorne_idle.gif")
+        expect.stringMatching(/(nightborne|skeleton).*idle\.gif/i)
       );
 
       // Test background asset

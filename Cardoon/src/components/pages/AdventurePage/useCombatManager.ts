@@ -46,7 +46,9 @@ export function useCombatManager({
   // Initialize enemy when enemies are loaded
   useEffect(() => {
     if (availableEnemies.length > 0 && !currentEnemy) {
-      setCurrentEnemy(availableEnemies[0]);
+      setCurrentEnemy(
+        availableEnemies[Math.floor(Math.random() * availableEnemies.length)]
+      );
     }
   }, [availableEnemies, currentEnemy]);
 
@@ -203,7 +205,9 @@ export function useCombatManager({
   const startNewAdventure = useCallback(() => {
     if (availableEnemies.length > 0) {
       setHero((prev) => ({ ...prev, currentHealth: prev.maxHealth }));
-      setCurrentEnemy(availableEnemies[0]);
+      setCurrentEnemy(
+        availableEnemies[Math.floor(Math.random() * availableEnemies.length)]
+      );
       setHeroState("idle");
       setEnemyState("idle");
     }

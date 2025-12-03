@@ -238,9 +238,11 @@ describe("useAdventure", () => {
         expect(result.current.currentEnemy).not.toBeNull();
       });
 
-      expect(result.current.currentEnemy?.name).toBe("Night Borne");
-      expect(result.current.currentEnemy?.currentHealth).toBe(5);
-      expect(result.current.currentEnemy?.maxHealth).toBe(5);
+      // Enemy is randomly selected from available enemies
+      const validEnemyNames = ["Night Borne", "Skeleton"];
+      expect(validEnemyNames).toContain(result.current.currentEnemy?.name);
+      expect(result.current.currentEnemy?.currentHealth).toBeGreaterThan(0);
+      expect(result.current.currentEnemy?.maxHealth).toBeGreaterThan(0);
     });
 
     it("should initialize with idle states", () => {
@@ -1055,8 +1057,10 @@ describe("useAdventure", () => {
         result.current.startNewAdventure();
       });
 
+      // Enemy is randomly selected, so we just verify it's a valid enemy
       await waitFor(() => {
-        expect(result.current.currentEnemy!.id).toBe(firstEnemyId);
+        const validEnemyIds = ["NightBorne", "Skeleton"];
+        expect(validEnemyIds).toContain(result.current.currentEnemy!.id);
       });
     });
   });

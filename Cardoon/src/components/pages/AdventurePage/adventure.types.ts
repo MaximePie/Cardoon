@@ -8,6 +8,15 @@ export type BonusType = "hp" | "attack" | "regeneration" | "defense";
 export type HeroState = "idle" | "attacking" | "defeated";
 export type EnemyState = "idle" | "attacking" | "defeated";
 
+export interface Upgrade {
+  id: string;
+  level: number;
+  nextLevelCost: number;
+  maxLevel: number;
+  isUnlocked: boolean;
+  amount?: number;
+}
+
 export interface Enemy {
   id: EnemyType;
   name: string;
@@ -16,6 +25,7 @@ export interface Enemy {
   attackDamage: number;
   defense: number;
   experience: number;
+  coinsDrop?: number;
   bonus: {
     type: BonusType;
     amount: number;
@@ -33,6 +43,8 @@ export interface Hero {
   level: number;
   experience: number;
   experienceToNextLevel: number;
+  coins?: number;
+  primaryUpgrades: Upgrade[];
 }
 
 export const DEFAULT_HERO: Hero = {
@@ -44,6 +56,7 @@ export const DEFAULT_HERO: Hero = {
   level: 1,
   experience: 0,
   experienceToNextLevel: 100,
+  primaryUpgrades: [],
 };
 
 // Helper function to get icon and color for bonus type

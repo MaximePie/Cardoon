@@ -1,51 +1,28 @@
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
-import React from "react";
 import Button from "../../../../atoms/Button/Button";
-export default function Shop() {
-  // Example local state for demonstration purposes
-  const [currency, setCurrency] = React.useState(500);
-  const [stats, setStats] = React.useState({
-    hp: 100,
-    attack: 10,
-    regeneration: 5,
-  });
+import { Hero } from "../../adventure.types";
 
-  const upgradeCosts = {
-    hp: 100,
-    attack: 150,
-    regeneration: 120,
-  };
-
-  const buyUpgrade = (
-    type: "hp" | "attack" | "regeneration",
-    amount: number
-  ) => {
-    const cost = upgradeCosts[type] * amount;
-    if (currency < cost) {
-      alert("Not enough currency to buy this upgrade.");
-      return;
-    }
-    setCurrency(currency - cost);
-    setStats((prevStats) => ({
-      ...prevStats,
-      [type]: prevStats[type] + amount,
-    }));
-    alert(`Bought upgrade: ${type} +${amount}`);
-  };
+export default function Shop({ hero }: { hero: Hero }) {
   return (
     <div className="Shop">
-      <h2>Shop Page</h2>
-      <div>Currency: {currency}</div>
-      <div>
-        HP: {stats.hp} | Attack: {stats.attack} | Regeneration:{" "}
-        {stats.regeneration}
-      </div>
       <div className="Shop__item">
         <h3>PV +1%</h3>
-        <Button variant="secondary" onClick={() => buyUpgrade("hp", 1)}>
+        <Button disabled={(hero?.coins || 0) < 100} variant="secondary">
           100 <SelfImprovementIcon color="primary" fontSize="small" />
         </Button>
       </div>
+      {hero.primaryUpgrades.map((upgrade) => (
+        <div key={upgrade.id} className="Shop__item">
+          <h3>{upgrade.id}</h3>
+          <Button
+            disabled={(hero?.coins || 0) < upgrade.nextLevelCost}
+            variant="secondary"
+          >
+            {upgrade.nextLevelCost}{" "}
+            <SelfImprovementIcon color="primary" fontSize="small" />
+          </Button>
+        </div>
+      ))}
     </div>
   );
 }

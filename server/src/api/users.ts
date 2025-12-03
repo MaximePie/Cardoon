@@ -12,6 +12,7 @@ import {
   AuthenticatedRequest,
   DailyGoalRequest,
   ItemRequest,
+  OnEnemyDefeatRequest,
   UploadedFile,
   UserLoginRequest,
   UserRegistrationRequest,
@@ -22,6 +23,7 @@ import {
   dailyGoalSchema,
   itemPurchaseSchema,
   itemUpgradeSchema,
+  onEnemyDefeatSchema,
   userLoginSchema,
   userRegistrationSchema,
 } from "../validation/schemas.js";
@@ -143,6 +145,25 @@ router.post(
     res
       .status(200)
       .json(createSuccessResponse(result, "Hero bonus added successfully"));
+  })
+);
+
+// Handle enemy defeat (bonuses + coins)
+router.post(
+  "/onEnemyDefeat",
+  authMiddleware,
+  validateBody(onEnemyDefeatSchema),
+  asyncHandler(async (req: OnEnemyDefeatRequest, res: Response) => {
+    const { type, amount, coinsDrop } = req.validatedBody!;
+    const result = await UserService.onEnemyDefeat(
+      type,
+      amount,
+      coinsDrop,
+      req.user.id
+    );
+    res
+      .status(200)
+      .json(createSuccessResponse(result, "Enemy defeated successfully"));
   })
 );
 

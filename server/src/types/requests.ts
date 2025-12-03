@@ -42,6 +42,13 @@ export interface AddHeroBonusRequest
     amount: number;
   }> {}
 
+export interface OnEnemyDefeatRequest
+  extends AuthenticatedRequest<{
+    type: "attack" | "hp" | "regeneration";
+    amount: number;
+    coinsDrop: number;
+  }> {}
+
 export interface UploadedFile {
   filepath: string;
   originalFilename?: string;

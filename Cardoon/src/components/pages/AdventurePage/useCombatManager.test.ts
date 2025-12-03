@@ -23,6 +23,7 @@ describe("useCombatManager", () => {
       experience: 0,
       experienceToNextLevel: 100,
       defense: 0,
+      primaryUpgrades: [],
     };
 
     mockEnemies = [

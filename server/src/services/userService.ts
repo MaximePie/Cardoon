@@ -32,6 +32,33 @@ export class UserService {
     await user.addBonus(type, amount);
     return { user };
   }
+
+  static async onEnemyDefeat(
+    bonusType: string,
+    bonusAmount: number,
+    coinsDrop: number,
+    userId: string
+  ) {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    // Apply bonus to hero
+    await user.addBonus(bonusType, bonusAmount);
+
+    // Add coins to hero
+    user.hero.coins = (user.hero.coins || 0) + coinsDrop;
+
+    await user.save();
+
+    return {
+      hero: user.hero,
+      bonusApplied: { type: bonusType, amount: bonusAmount },
+      coinsEarned: coinsDrop,
+      totalCoins: user.hero.coins,
+    };
+  }
   private static getJwtSecret(): string {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {

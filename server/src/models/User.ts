@@ -10,6 +10,17 @@ interface PopulatedUserItem {
   level: number;
   currentCost: number;
 }
+interface Hero {
+  attackDamage: number;
+  regenerationRate: number;
+  maxHealth: number;
+  currentHealth: number;
+  level: number;
+  experience: number;
+  experienceToNextLevel: number;
+  coins: number;
+  primaryUpgrades: Upgrade[];
+}
 // Define an interface for the User document
 export interface IUser extends Document {
   username: string;
@@ -27,16 +38,7 @@ export interface IUser extends Document {
   currentDailyGoal: mongoose.Types.ObjectId | DailyGoalType; // Current daily goal (ObjectId until populated)
   currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
   image?: string; // Profile image URL (optional)
-  hero: {
-    attackDamage: number;
-    regenerationRate: number;
-    maxHealth: number;
-    currentHealth: number;
-    level: number;
-    experience: number;
-    experienceToNextLevel: number;
-    primaryUpgrades: Upgrade[];
-  };
+  hero: Hero;
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;

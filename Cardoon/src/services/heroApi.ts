@@ -17,10 +17,23 @@ export interface AddHeroBonusParams {
   amount: number;
 }
 
+export interface OnEnemyDefeatParams {
+  type: "hp" | "attack" | "regeneration" | "defense";
+  amount: number;
+  coinsDrop: number;
+}
+
 import { User } from "../types/common";
 
 export interface AddHeroBonusResponse {
   user: User;
+}
+
+export interface OnEnemyDefeatResponse {
+  hero: any;
+  bonusApplied: { type: string; amount: number };
+  coinsEarned: number;
+  totalCoins: number;
 }
 
 /**
@@ -63,6 +76,52 @@ export const addHeroBonus = async (
     if (axios.isAxiosError(error)) {
       const message =
         error.response?.data?.message || "Failed to add hero bonus";
+      throw new Error(message);
+    }
+    throw error;
+  }
+};
+
+/**
+ * Handle enemy defeat - applies bonus and awards coins
+ *
+ * @param params - Defeat parameters (type, amount, coinsDrop)
+ * @returns Promise with updated hero data
+ *
+ * @throws Error if request fails or user is not authenticated
+ *
+ * @example
+ * ```typescript
+ * const result = await onEnemyDefeat({ type: "attack", amount: 10, coinsDrop: 25 });
+ * console.log(result.coinsEarned); // 25
+ * ```
+ */
+export const onEnemyDefeat = async (
+  params: OnEnemyDefeatParams
+): Promise<OnEnemyDefeatResponse> => {
+  const token = Cookies.get("token");
+
+  if (!token) {
+    throw new Error("No authentication token found");
+  }
+
+  try {
+    const response = await axios.post<OnEnemyDefeatResponse>(
+      `${backUrl}/api/users/onEnemyDefeat`,
+      params,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.message || "Failed to handle enemy defeat";
       throw new Error(message);
     }
     throw error;

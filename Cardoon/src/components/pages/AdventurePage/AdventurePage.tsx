@@ -1,4 +1,3 @@
-import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import { Box, Modal } from "@mui/material";
 import { AnimatePresence, motion } from "motion/react";
 import adventureBackground from "../../../assets/adventure-background.svg";
@@ -65,12 +64,7 @@ const AdventurePage = () => {
           <p>
             Vous avez perdu, mais vous avez quand même gagné des ressources !
           </p>
-          <div>
-            <h4>
-              +50 Fragments de lucidité <SelfImprovementIcon color="primary" />
-            </h4>
-          </div>
-          <Shop />
+          <Shop hero={hero} />
           <Button onClick={startNewAdventure}>Start New Adventure</Button>
         </Box>
       </Modal>
@@ -79,7 +73,7 @@ const AdventurePage = () => {
         regenerationRate={hero.regenerationRate}
         maxHealth={hero.maxHealth}
         bonusAnimation={bonusAnimation}
-        lucidityShards={100}
+        lucidityShards={hero.coins || 0}
       />
       <div className="AdventurePage__body">
         <div

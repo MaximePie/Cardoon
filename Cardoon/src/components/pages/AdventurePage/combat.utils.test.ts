@@ -19,6 +19,7 @@ describe("combat.utils", () => {
     experience: 0,
     experienceToNextLevel: 100,
     defense: 2,
+    primaryUpgrades: [],
   };
 
   const mockEnemy: Enemy = {

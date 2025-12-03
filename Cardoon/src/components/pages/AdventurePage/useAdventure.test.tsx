@@ -982,4 +982,82 @@ describe("useAdventure", () => {
       );
     });
   });
+
+  describe("Start New Adventure", () => {
+    it("should expose startNewAdventure function", () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      expect(result.current.startNewAdventure).toBeDefined();
+      expect(typeof result.current.startNewAdventure).toBe("function");
+    });
+
+    it("should reset hero health when calling startNewAdventure", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      // Damage the hero
+      act(() => {
+        result.current.attack(result.current.currentEnemy!, false);
+      });
+
+      await waitFor(() => {
+        expect(result.current.hero.currentHealth).toBeLessThan(
+          result.current.hero.maxHealth
+        );
+      });
+
+      const maxHealth = result.current.hero.maxHealth;
+
+      // Start new adventure
+      act(() => {
+        result.current.startNewAdventure();
+      });
+
+      await waitFor(() => {
+        expect(result.current.hero.currentHealth).toBe(maxHealth);
+      });
+    });
+
+    it("should reset to first enemy when calling startNewAdventure", async () => {
+      const { result } = renderHook(() => useAdventureGame(), { wrapper });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy).not.toBeNull();
+      });
+
+      const firstEnemyId = result.current.currentEnemy!.id;
+
+      // Defeat some enemies
+      act(() => {
+        for (let i = 0; i < 3; i++) {
+          let attacks = 0;
+          while (
+            result.current.currentEnemy!.currentHealth > 0 &&
+            attacks < 20
+          ) {
+            result.current.attack(result.current.currentEnemy!, true);
+            attacks++;
+          }
+        }
+      });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy!.currentHealth).toBe(
+          result.current.currentEnemy!.maxHealth
+        );
+      });
+
+      // Start new adventure
+      act(() => {
+        result.current.startNewAdventure();
+      });
+
+      await waitFor(() => {
+        expect(result.current.currentEnemy!.id).toBe(firstEnemyId);
+      });
+    });
+  });
 });

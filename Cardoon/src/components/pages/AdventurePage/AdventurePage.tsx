@@ -1,12 +1,18 @@
+import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
+import { Box, Modal } from "@mui/material";
 import { AnimatePresence, motion } from "motion/react";
 import adventureBackground from "../../../assets/adventure-background.svg";
+
 import heroAttack from "../../../assets/Hero/attack1.gif";
 import devMode from "../../../assets/Hero/devmode.svg";
+import heroDie from "../../../assets/Hero/die.gif";
 import heroIdle from "../../../assets/Hero/idle.gif";
 import { PopulatedUserCard } from "../../../types/common";
 import { roundToTwo } from "../../../utils/numbers";
+import Button from "../../atoms/Button/Button";
 import Card from "../../molecules/Card/Card";
 import { HeroStats } from "./components/HeroStats/HeroStats";
+import Shop from "./components/Shop/Shop";
 import { getEnemyAssets } from "./enemyAssets";
 import useAdventureGame from "./useAdventure";
 
@@ -24,6 +30,7 @@ const AdventurePage = () => {
     showDamageAnimation,
     damageAnimationKey,
     enemyFinalDamage,
+    startNewAdventure,
   } = useAdventureGame();
 
   if (!currentEnemy) {
@@ -53,6 +60,20 @@ const AdventurePage = () => {
 
   return (
     <div>
+      <Modal open={heroState === "defeated"}>
+        <Box className="AdventurePage__modal">
+          <p>
+            Vous avez perdu, mais vous avez quand même gagné des ressources !
+          </p>
+          <div>
+            <h4>
+              +50 Fragments de lucidité <SelfImprovementIcon color="primary" />
+            </h4>
+          </div>
+          <Shop />
+          <Button onClick={startNewAdventure}>Start New Adventure</Button>
+        </Box>
+      </Modal>
       <HeroStats
         attackDamage={hero.attackDamage}
         regenerationRate={hero.regenerationRate}
@@ -77,7 +98,13 @@ const AdventurePage = () => {
             transition={{ ease: "easeInOut" }}
           >
             <img
-              src={heroState === "idle" ? heroIdle : heroAttack}
+              src={
+                heroState === "idle"
+                  ? heroIdle
+                  : heroState === "attacking"
+                    ? heroAttack
+                    : heroDie
+              }
               alt="Hero Avatar"
               className="AdventurePage__characterImage"
             />

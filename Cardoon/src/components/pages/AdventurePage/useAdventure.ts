@@ -133,6 +133,7 @@ export default function useAdventureGame() {
     showDamageAnimation,
     damageAnimationKey,
     enemyFinalDamage,
+    startNewAdventure,
     performAttack,
   } = useCombatManager({
     hero,
@@ -192,5 +193,6 @@ export default function useAdventureGame() {
     showDamageAnimation,
     damageAnimationKey,
     enemyFinalDamage,
+    startNewAdventure,
   };
 }

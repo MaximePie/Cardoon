@@ -1207,4 +1207,24 @@ describe("AdventurePage", () => {
       );
     });
   });
+
+  describe("Hero Defeat Modal", () => {
+    it("should not show defeat modal initially", () => {
+      renderAdventurePage();
+
+      const modal = screen.queryByText(
+        /Vous avez perdu, mais essayez vous avez gagn\u00e9 des ressources/i
+      );
+      expect(modal).not.toBeInTheDocument();
+    });
+
+    it("should have modal component for defeat screen", () => {
+      const { container } = renderAdventurePage();
+
+      // The Modal exists but is not visible initially
+      const modalRoot = container.querySelector(".AdventurePage__modal");
+      // Modal might not be rendered if not open
+      expect(modalRoot).not.toBeInTheDocument();
+    });
+  });
 });

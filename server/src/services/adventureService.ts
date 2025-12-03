@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Enemy, { IEnemy } from "../models/Enemy.js";
+import Enemy, { EnemyType, IEnemy } from "../models/Enemy.js";
 import Level, { ILevel } from "../models/Level.js";
 
 export class AdventureService {
@@ -13,24 +13,17 @@ export class AdventureService {
       .lean();
 
     // Group enemies by levelId
-    const enemiesByLevel = enemies.reduce((acc, enemy) => {
-      const levelId = enemy.level.toString();
-      if (!acc[levelId]) {
-        acc[levelId] = [];
-      }
-      acc[levelId].push({
-        id: enemy.id,
-        name: enemy.name,
-        maxHealth: enemy.maxHealth,
-        attackDamage: enemy.attackDamage,
-        defense: enemy.defense,
-        experience: enemy.experience,
-        bonus: enemy.bonus,
-        sprites: enemy.sprites,
-        spawnWeight: enemy.spawnWeight,
-      });
-      return acc;
-    }, {} as Record<string, any[]>);
+    const enemiesByLevel: Record<string, EnemyType[]> = enemies.reduce(
+      (acc, enemy) => {
+        const levelId = enemy.level.toString();
+        if (!acc[levelId]) {
+          acc[levelId] = [];
+        }
+        acc[levelId].push(enemy);
+        return acc;
+      },
+      {} as Record<string, any[]>
+    );
 
     // Combine levels with their enemies
     const levelsWithEnemies = levels.map((level) => ({

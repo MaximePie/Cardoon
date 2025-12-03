@@ -33,6 +33,7 @@ const mockAdventureData = {
             defeated: "NightBorne-Death.png",
           },
           spawnWeight: 60,
+          coinsDrop: 10,
         },
         {
           id: "Skeleton",
@@ -49,6 +50,7 @@ const mockAdventureData = {
             defeated: "Skeleton-Death.png",
           },
           spawnWeight: 40,
+          coinsDrop: 15,
         },
       ],
     },

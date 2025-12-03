@@ -23,6 +23,7 @@ export interface Enemy {
   bonus: EnemyBonus;
   sprites: EnemySprites;
   spawnWeight: number;
+  coinsDrop: number;
 }
 
 export interface Level {

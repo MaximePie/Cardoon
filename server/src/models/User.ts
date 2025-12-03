@@ -10,6 +10,17 @@ interface PopulatedUserItem {
   level: number;
   currentCost: number;
 }
+interface Hero {
+  attackDamage: number;
+  regenerationRate: number;
+  maxHealth: number;
+  currentHealth: number;
+  level: number;
+  experience: number;
+  experienceToNextLevel: number;
+  coins: number;
+  primaryUpgrades: Upgrade[];
+}
 // Define an interface for the User document
 export interface IUser extends Document {
   username: string;
@@ -27,15 +38,7 @@ export interface IUser extends Document {
   currentDailyGoal: mongoose.Types.ObjectId | DailyGoalType; // Current daily goal (ObjectId until populated)
   currentGoldMultiplier: number; // Depending on the items, updated when the user buys or upgrades an item
   image?: string; // Profile image URL (optional)
-  hero: {
-    attackDamage: number;
-    regenerationRate: number;
-    maxHealth: number;
-    currentHealth: number;
-    level: number;
-    experience: number;
-    experienceToNextLevel: number;
-  };
+  hero: Hero;
 
   attachCard(cardId: ObjectId): Promise<typeof UserCard>;
   getCards(): Promise<any[]>;
@@ -64,6 +67,14 @@ interface IUserModel extends Model<IUser> {
   getUserByEmail(email: string): Promise<IUser | null>;
   onItemRemoved(itemId: ObjectId): Promise<void>;
 }
+
+export type Upgrade = {
+  id: string;
+  level: number;
+  nextLevelCost: number;
+  maxLevel: number;
+  isUnlocked: boolean;
+};
 
 const UserSchema = new mongoose.Schema<IUser>({
   username: {
@@ -171,6 +182,22 @@ const UserSchema = new mongoose.Schema<IUser>({
     experienceToNextLevel: {
       type: Number,
       default: 100,
+    },
+    coins: {
+      type: Number,
+      default: 0,
+    },
+    primaryUpgrades: {
+      type: [
+        {
+          id: { type: String, required: true },
+          level: { type: Number, default: 0 },
+          nextLevelCost: { type: Number, default: 0 },
+          maxLevel: { type: Number, default: 1 },
+          isUnlocked: { type: Boolean, default: false },
+        },
+      ],
+      default: [],
     },
   },
 });

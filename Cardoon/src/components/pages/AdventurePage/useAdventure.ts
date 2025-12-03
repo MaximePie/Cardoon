@@ -4,6 +4,7 @@ import { useAdventureContext } from "../../../context/AdventureContext";
 import { useUser } from "../../../context/UserContext";
 import { ACTIONS, usePut } from "../../../hooks/server";
 import { QueryKeys } from "../../../lib/queryClient";
+import { onEnemyDefeat } from "../../../services/heroApi";
 import { PopulatedUserCard, User } from "../../../types/common";
 import {
   BonusType,
@@ -31,13 +32,14 @@ export default function useAdventureGame() {
     [cards.reviewUserCards.data]
   );
 
-  const baseHero = user.data.hero ?? DEFAULT_HERO;
+  const baseHero = (user.data.hero ?? DEFAULT_HERO) as Hero;
 
   const [hero, setHero] = useState<Hero>({
     ...baseHero,
     currentHealth: baseHero.currentHealth ?? baseHero.maxHealth,
     defense: baseHero.defense ?? 0,
     attackDamage: baseHero.attackDamage ?? 1,
+    primaryUpgrades: baseHero.primaryUpgrades ?? [],
   });
 
   const [bonusAnimation, setBonusAnimation] = useState<{
@@ -50,7 +52,7 @@ export default function useAdventureGame() {
   const { cardsInHand, removeCardFromHand } = useCardManager(reviewUserCards);
 
   const handleEnemyDefeated = useCallback(
-    (defeatedEnemy: Enemy) => {
+    async (defeatedEnemy: Enemy) => {
       const getAmount = (
         bonus: { type: BonusType; amount: number },
         hero: Hero
@@ -66,12 +68,14 @@ export default function useAdventureGame() {
         return bonus.amount;
       };
       const amount = getAmount(defeatedEnemy.bonus, hero);
+      const coinsDrop = defeatedEnemy.coinsDrop || 0;
 
       setHero((prev) => {
         const newExperience = prev.experience + defeatedEnemy.experience;
 
         const bonusUpdates: Partial<Hero> = {
           experience: newExperience,
+          coins: (prev.coins || 0) + coinsDrop,
         };
 
         if (defeatedEnemy.bonus.type === "attack") {
@@ -95,12 +99,17 @@ export default function useAdventureGame() {
         setBonusAnimation(null);
       }, 1000);
 
-      user.addHeroBonus({
-        type: defeatedEnemy.bonus.type,
-        amount: defeatedEnemy.bonus.amount,
-      });
+      try {
+        await onEnemyDefeat({
+          type: defeatedEnemy.bonus.type,
+          amount: defeatedEnemy.bonus.amount,
+          coinsDrop,
+        });
+      } catch (error) {
+        console.error("Failed to update hero on enemy defeat:", error);
+      }
     },
-    [user, hero]
+    [hero]
   );
 
   const currentLevelEnemies = useMemo(() => {
@@ -118,6 +127,7 @@ export default function useAdventureGame() {
       attackDamage: enemy.attackDamage,
       defense: enemy.defense,
       experience: enemy.experience,
+      coinsDrop: enemy.coinsDrop,
       bonus: {
         type: enemy.bonus.type,
         amount: enemy.bonus.amount,
@@ -174,9 +184,10 @@ export default function useAdventureGame() {
   useEffect(() => {
     if (user.data.hero) {
       setHero({
-        ...user.data.hero,
+        ...(user.data.hero as Hero),
         currentHealth: user.data.hero.currentHealth ?? user.data.hero.maxHealth,
         defense: user.data.hero.defense ?? 0,
+        primaryUpgrades: (user.data.hero as Hero).primaryUpgrades ?? [],
       });
     }
   }, [user.data.hero]);

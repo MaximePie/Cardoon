@@ -65,5 +65,14 @@ export interface User {
     level: number;
     experience: number;
     experienceToNextLevel: number;
+    coins?: number;
+    primaryUpgrades?: Array<{
+      id: string;
+      level: number;
+      nextLevelCost: number;
+      maxLevel: number;
+      isUnlocked: boolean;
+      amount?: number;
+    }>;
   };
 }

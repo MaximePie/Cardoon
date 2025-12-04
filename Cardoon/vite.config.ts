@@ -18,6 +18,7 @@ export default defineConfig({
   },
   build: {
     outDir: "dist", // Définissez le dossier de production si ce n'est pas déjà le cas
+    sourcemap: true, // Génère des fichiers source map pour le débogage
   },
   resolve: {
     alias: [{ find: "@", replacement: "/src" }],

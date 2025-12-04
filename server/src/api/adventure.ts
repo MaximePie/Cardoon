@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import { asyncHandler } from "../middleware/asyncHandler.js";
 import authMiddleware from "../middleware/auth.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
 import adventureService from "../services/adventureService.js";
 
 const router = Router();

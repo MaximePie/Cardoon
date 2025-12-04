@@ -4,8 +4,6 @@ import cardsRoutes from "./api/cards.js";
 import connectDB from "./config/db.js";
 import { helmetConfig, securityConfig } from "./config/security.js";
 
-import { Request, Response } from "express";
-
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -16,6 +14,7 @@ import itemsRoutes from "./api/items.js";
 import mistralRoutes from "./api/mistral.js";
 import userCardsRoutes from "./api/userCards.js";
 import usersValidatedRoutes from "./api/users.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 // import usersRoutes from "./api/users"; // Temporarily disabled due to validation errors
 
 dotenv.config();
@@ -79,18 +78,6 @@ app.use("/api/users", usersValidatedRoutes);
 app.use("/api/mistral", mistralRoutes);
 app.use("/api/items", itemsRoutes);
 app.use("/api/adventure", adventureRoutes);
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: any
-) => {
-  console.error(err.stack);
-  res
-    .status(err.name === "ValidationError" ? 400 : 500)
-    .json({ message: "An error occurred", error: err.message });
-  return;
-};
 app.use(errorHandler);
 connectDB();
 

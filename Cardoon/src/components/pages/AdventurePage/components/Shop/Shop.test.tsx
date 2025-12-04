@@ -27,16 +27,15 @@ const mockHero: Hero = {
 
 describe("Shop", () => {
   describe("Rendering", () => {
-    it("should render the shop title", () => {
+    it("should render the shop component", () => {
       render(<Shop hero={mockHero} />);
-      // Shop currently doesn't have a title, checking for Shop component render
-      const shop = screen.getByText("PV +1%");
+      const shop = screen.getByText("hp");
       expect(shop).toBeInTheDocument();
     });
 
     it("should render HP upgrade item", () => {
       render(<Shop hero={mockHero} />);
-      expect(screen.getByText("PV +1%")).toBeInTheDocument();
+      expect(screen.getByText("hp")).toBeInTheDocument();
     });
 
     it("should render upgrade button with cost", () => {

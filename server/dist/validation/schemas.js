@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.multipleIdsSchema = exports.paramIdSchema = exports.avatarUploadSchema = exports.imageUploadSchema = exports.errorResponseSchema = exports.successResponseSchema = exports.dailyGoalProgressSchema = exports.dailyGoalSchema = exports.addHeroBonusSchema = exports.itemUpgradeSchema = exports.itemPurchaseSchema = exports.itemSchema = exports.cardAnswerSchema = exports.cardUpdateSchema = exports.cardSchema = exports.userUpdateSchema = exports.userLoginSchema = exports.userRegistrationSchema = exports.usernameSchema = exports.passwordSchema = exports.emailSchema = exports.objectIdSchema = void 0;
+exports.multipleIdsSchema = exports.paramIdSchema = exports.avatarUploadSchema = exports.imageUploadSchema = exports.errorResponseSchema = exports.successResponseSchema = exports.dailyGoalProgressSchema = exports.dailyGoalSchema = exports.onEnemyDefeatSchema = exports.addHeroBonusSchema = exports.itemUpgradeSchema = exports.itemPurchaseSchema = exports.itemSchema = exports.cardAnswerSchema = exports.cardUpdateSchema = exports.cardSchema = exports.userUpdateSchema = exports.userLoginSchema = exports.userRegistrationSchema = exports.usernameSchema = exports.passwordSchema = exports.emailSchema = exports.objectIdSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const zod_1 = require("zod");
 /**
@@ -162,6 +162,13 @@ exports.addHeroBonusSchema = zod_1.z.object({
         message: "Bonus type must be 'attack', 'hp', or 'regeneration'",
     }),
     amount: zod_1.z.number().min(0.1, "Bonus amount must be at least 1"),
+});
+exports.onEnemyDefeatSchema = zod_1.z.object({
+    type: zod_1.z.enum(["attack", "hp", "regeneration"], {
+        message: "Bonus type must be 'attack', 'hp', or 'regeneration'",
+    }),
+    amount: zod_1.z.number().min(0.1, "Bonus amount must be at least 1"),
+    coinsDrop: zod_1.z.number().nonnegative("Coins drop must be non-negative"),
 });
 /**
  * Daily Goal validation schemas

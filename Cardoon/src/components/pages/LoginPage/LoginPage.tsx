@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSnackbar } from "../../../context/SnackbarContext";
 import { useUser } from "../../../context/UserContext/useUserContext";
 import { ACTIONS, usePost } from "../../../hooks/server";
 import { User } from "../../../types/common";
+import { getErrorMessage } from "../../../utils/errorMessages";
 import Input from "../../atoms/Input/Input";
 import SubmitButton from "../../atoms/SubmitButton/SubmitButton";
 
@@ -16,11 +18,11 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { openSnackbarWithMessage } = useSnackbar();
   const {
     user: { setUser, login },
     clearAllErrors,
   } = useUser();
-  const [formError, setFormError] = useState<string | undefined>(undefined);
   const [isErroneous, setIsErroneous] = useState(false);
 
   const [rememberMe, setRememberMe] = useState(false);
@@ -33,7 +35,6 @@ export default function LoginForm() {
       setIsErroneous(true);
     } else {
       setIsErroneous(false);
-      setFormError(undefined);
     }
   }, [email, password]);
 
@@ -42,10 +43,20 @@ export default function LoginForm() {
     clearAllErrors();
   }, [clearAllErrors]);
 
+  // Handle errors from the API
+  useEffect(() => {
+    if (error) {
+      const errorMessage = getErrorMessage(error);
+      openSnackbarWithMessage(errorMessage, "error");
+      setLoading(false);
+    }
+  }, [error, openSnackbarWithMessage]);
+
   useEffect(() => {
     if (data) {
       if (!data.token) {
         console.error("No token in response");
+        setLoading(false);
         return;
       }
       axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
@@ -61,14 +72,13 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
     if (!email || !password) {
-      setFormError("Please fill in all fields");
-      setLoading(false);
+      openSnackbarWithMessage("Veuillez remplir tous les champs.", "error");
       return;
     }
-    // TODO - add remember me functionality
+
+    setLoading(true);
     post({ email, password, rememberMe });
   };
 
@@ -109,7 +119,6 @@ export default function LoginForm() {
             Mot de passe oublié ?
           </a>
         </div>
-        {error && <p className="LoginPage__error">{error}</p>}
         <div className="LoginPage__actions">
           <SubmitButton
             className="LoginPage__submit"
@@ -119,9 +128,6 @@ export default function LoginForm() {
             Se connecter
           </SubmitButton>
         </div>
-
-        {formError && <p className="formError">{formError}</p>}
-        {error && <p>{error}</p>}
       </form>
     </div>
   );

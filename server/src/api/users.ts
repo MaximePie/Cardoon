@@ -1,6 +1,6 @@
 import express, { Response } from "express";
+import { asyncHandler } from "../middleware/asyncHandler.js";
 import authMiddleware from "../middleware/auth.js";
-import { asyncHandler } from "../middleware/errorHandler.js";
 import { validateImageUpload } from "../middleware/fileUpload.js";
 import {
   createSuccessResponse,

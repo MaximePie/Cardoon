@@ -22,17 +22,7 @@ class AdventureService {
             if (!acc[levelId]) {
                 acc[levelId] = [];
             }
-            acc[levelId].push({
-                id: enemy.id,
-                name: enemy.name,
-                maxHealth: enemy.maxHealth,
-                attackDamage: enemy.attackDamage,
-                defense: enemy.defense,
-                experience: enemy.experience,
-                bonus: enemy.bonus,
-                sprites: enemy.sprites,
-                spawnWeight: enemy.spawnWeight,
-            });
+            acc[levelId].push(enemy);
             return acc;
         }, {});
         // Combine levels with their enemies

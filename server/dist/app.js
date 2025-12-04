@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorHandler = void 0;
 // app.js
 const express_1 = __importDefault(require("express"));
 const cards_js_1 = __importDefault(require("./api/cards.js"));
@@ -19,6 +18,7 @@ const items_js_1 = __importDefault(require("./api/items.js"));
 const mistral_js_1 = __importDefault(require("./api/mistral.js"));
 const userCards_js_1 = __importDefault(require("./api/userCards.js"));
 const users_js_1 = __importDefault(require("./api/users.js"));
+const errorHandler_js_1 = require("./middleware/errorHandler.js");
 // import usersRoutes from "./api/users"; // Temporarily disabled due to validation errors
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -70,15 +70,7 @@ app.use("/api/users", users_js_1.default);
 app.use("/api/mistral", mistral_js_1.default);
 app.use("/api/items", items_js_1.default);
 app.use("/api/adventure", adventure_js_1.default);
-const errorHandler = (err, req, res, next) => {
-    console.error(err.stack);
-    res
-        .status(err.name === "ValidationError" ? 400 : 500)
-        .json({ message: "An error occurred", error: err.message });
-    return;
-};
-exports.errorHandler = errorHandler;
-app.use(exports.errorHandler);
+app.use(errorHandler_js_1.errorHandler);
 (0, db_js_1.default)();
 const port = parseInt(process.env.PORT || "8082");
 const server = app.listen(port, "0.0.0.0", () => console.log(`Server running on port ${port}`));

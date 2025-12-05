@@ -1,16 +1,16 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AppError, NotFoundError, ValidationError } from "../errors";
 
 export const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
-  next: any
+  next: NextFunction
 ) => {
   console.error("Error caught by errorHandler:", {
     name: err.name,
     message: err.message,
-    stack: err.stack,
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
   });
 
   // Handle ValidationError (from Zod or custom)

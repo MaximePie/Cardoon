@@ -1,9 +1,7 @@
-import { Hero } from "../../adventure.types";
-
-export function useShop(_hero: Hero) {
+export function useShop() {
   const buyUpgrade = () => {
-    // Implementation for buying an upgrade
-    console.log("Upgrade purchased!");
+    // TODO: Implement the logic for buying an upgrade
+    throw new Error("buyUpgrade is not yet implemented.");
   };
   return { buyUpgrade };
 }

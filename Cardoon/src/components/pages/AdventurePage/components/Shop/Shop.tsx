@@ -4,7 +4,7 @@ import { Hero } from "../../adventure.types";
 import { useShop } from "./useShop";
 
 export default function Shop({ hero }: { hero: Hero }) {
-  const { buyUpgrade } = useShop(hero);
+  const { buyUpgrade } = useShop();
   return (
     <div className="Shop">
       {hero.primaryUpgrades.map((upgrade) => (

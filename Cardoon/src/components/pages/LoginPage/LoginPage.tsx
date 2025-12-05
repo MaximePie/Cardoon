@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "../../../context/SnackbarContext";
 import { useUser } from "../../../context/UserContext/useUserContext";
+import { useAdventure } from "../../../hooks/contexts/useAdventure";
 import { ACTIONS, usePost } from "../../../hooks/server";
 import { User } from "../../../types/common";
 import { getErrorMessage } from "../../../utils/errorMessages";
@@ -23,6 +24,7 @@ export default function LoginForm() {
     user: { setUser, login },
     clearAllErrors,
   } = useUser();
+  const { resetQueries: clearAdventureErrors } = useAdventure();
   const [isErroneous, setIsErroneous] = useState(false);
 
   const [rememberMe, setRememberMe] = useState(false);
@@ -41,7 +43,8 @@ export default function LoginForm() {
   // Remove the remaining Errors from other requests and pages
   useEffect(() => {
     clearAllErrors();
-  }, [clearAllErrors]);
+    clearAdventureErrors();
+  }, [clearAllErrors, clearAdventureErrors]);
 
   // Handle errors from the API
   useEffect(() => {

@@ -11,8 +11,14 @@ export interface LevelWithUnlockStatus extends Level {
  * Hook to consume adventure context with computed unlock status
  */
 export const useAdventure = () => {
-  const { adventureData, currentLevelId, setCurrentLevelId, isLoading, error } =
-    useAdventureContext();
+  const {
+    adventureData,
+    currentLevelId,
+    setCurrentLevelId,
+    isLoading,
+    error,
+    resetQueries,
+  } = useAdventureContext();
   const { user } = useUser();
 
   const heroLevel = user.data.hero?.level ?? 1;
@@ -47,5 +53,6 @@ export const useAdventure = () => {
     firstUnlockedLevel,
     isLoading,
     error,
+    resetQueries,
   };
 };

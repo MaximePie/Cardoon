@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as SnackbarContext from "../../../context/SnackbarContext";
 import * as UserContext from "../../../context/UserContext/useUserContext";
+import * as adventureHooks from "../../../hooks/contexts/useAdventure";
 import * as serverHooks from "../../../hooks/server";
 import { User } from "../../../types/common";
 import LoginForm from "./LoginPage";
@@ -12,6 +13,7 @@ import LoginForm from "./LoginPage";
 vi.mock("../../../context/SnackbarContext");
 vi.mock("../../../context/UserContext/useUserContext");
 vi.mock("../../../hooks/server");
+vi.mock("../../../hooks/contexts/useAdventure");
 
 // Mock navigate
 const mockNavigate = vi.fn();
@@ -29,6 +31,7 @@ describe("LoginPage", () => {
   const mockLogin = vi.fn();
   const mockClearAllErrors = vi.fn();
   const mockPost = vi.fn();
+  const mockResetQueries = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -39,6 +42,18 @@ describe("LoginPage", () => {
       showError: vi.fn(),
       openSnackbarWithMessage: mockOpenSnackbar,
       handleCloseSnackbar: vi.fn(),
+    });
+
+    // Mock useAdventure
+    vi.spyOn(adventureHooks, "useAdventure").mockReturnValue({
+      levels: [],
+      currentLevel: null,
+      currentLevelId: null,
+      setCurrentLevelId: vi.fn(),
+      firstUnlockedLevel: null,
+      isLoading: false,
+      error: null,
+      resetQueries: mockResetQueries,
     });
 
     // Mock useUser

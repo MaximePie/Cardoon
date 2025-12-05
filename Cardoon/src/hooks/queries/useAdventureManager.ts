@@ -10,7 +10,6 @@ export const ADVENTURE_QUERY_KEY = "adventure";
 export const useAdventureManager = () => {
   const queryClient = useQueryClient();
   const [currentLevelId, setCurrentLevelId] = useState<string | null>(null);
-
   // Fetch all adventure data
   const {
     data: adventureData,

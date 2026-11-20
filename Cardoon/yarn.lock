@@ -613,27 +613,27 @@
   integrity sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==
 
 "@fontsource/roboto@^5.1.1":
-  version "5.2.8"
-  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-5.2.8.tgz#73411c434b9162019b8ca18abd8245489809cca9"
-  integrity sha512-oh9g4Cg3loVMz9MWeKWfDI+ooxxG1aRVetkiKIb2ESS2rrryGecQ/y4pAj4z5A5ebyw450dYRi/c4k/I3UBhHA==
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-5.3.0.tgz#fd0dcdaa0c6ef3a1621253ea702db933ca1b573a"
+  integrity sha512-BapRJOWYP+LZ21zp+wBQjfpPYKRoxc4LspJ/RLuI+HSMBD5u/X4O+ESDrSvEqDSy0rAl7GwBJ+09mdc16cVQ1Q==
 
 "@huggingface/inference@^4.0.0":
-  version "4.13.4"
-  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.4.tgz#7f4541c65f83bbc64fcc9498c2cc385c8fa504a6"
-  integrity sha512-1G6jBDYLAZw7oNrJdMp+0/CafeoNaCLzrDd9fYSX3nhjzMuyWIPZ/MtP5EwXdC0htlFPx+R6JGqPhctAalQO+w==
+  version "4.13.33"
+  resolved "https://registry.yarnpkg.com/@huggingface/inference/-/inference-4.13.33.tgz#533bfab086b96c1c81c05b060da12ad2ebf7b3c8"
+  integrity sha512-2BvmSaCNOO5tkJ+OD6KICSfhNE2qliU5pTwme+VMGAlC/y0jFQnmUuY1ZVSIgEzUitYWyQF62F02PioupNwphg==
   dependencies:
-    "@huggingface/jinja" "^0.5.1"
-    "@huggingface/tasks" "^0.19.65"
+    "@huggingface/jinja" "^0.5.13"
+    "@huggingface/tasks" "^0.22.13"
 
-"@huggingface/jinja@^0.5.1":
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.2.tgz#0ff7e4564e471d4f49abc23832d2891dc1fcf8e6"
-  integrity sha512-3KxqfOSYtHDsq6HglCH4BDHGXXHMS7ZHUHpxVGswa4l8ycCCExDR2E4nDlTo9LCa6bxp03ywf/mAIVEsO1Ov1w==
+"@huggingface/jinja@^0.5.13":
+  version "0.5.13"
+  resolved "https://registry.yarnpkg.com/@huggingface/jinja/-/jinja-0.5.13.tgz#57b64e2172eaed4bee2cb74230832047d539a08d"
+  integrity sha512-jM17MqFily1iyT/1LD3r5w8/CZiyapVB0+7vOw48PfVtzyKsXStmHE4jVTyDAD05Tqv3un1xrS9ILUU1ugQAYQ==
 
-"@huggingface/tasks@^0.19.65":
-  version "0.19.65"
-  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.19.65.tgz#a6c7256c7b98a4671204633a38e02f220abf4fca"
-  integrity sha512-ecP5bMLwZRKsln6IhTkicIt8Wzn7cYquKYBkJe7K2qkIvvnhzT32wf9dvvFjRqv+cDzdVxOLEdT0DUkVzGiV5A==
+"@huggingface/tasks@^0.22.13":
+  version "0.22.22"
+  resolved "https://registry.yarnpkg.com/@huggingface/tasks/-/tasks-0.22.22.tgz#53f49b109c55f192f0508204bfea1f0388fd1eab"
+  integrity sha512-NeCyoRi2cgNh+u+dVOWzqKZObBbpDIJRPDtFH/bf8QIXcwFXzyU/80UHxiuPc8cfJ1Yp9BWnJLNBHeCHJX23Eg==
 
 "@humanfs/core@^0.19.1":
   version "0.19.1"
